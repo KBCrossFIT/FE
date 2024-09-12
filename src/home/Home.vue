@@ -28,8 +28,39 @@ export default {
 </script>
 
 <style scoped>
-/* Home.vue specific styling if needed */
-.portfolio-page {
-  font-family: Arial, sans-serif;
+.home-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 250px; /* Adjust this value based on your sidebar width */
+  padding: 20px;
+}
+
+.home-header {
+  background-color: #e9ecef;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.home-main {
+  flex: 1;
+  margin-top: 20px;
+}
+
+.carousel {
+  margin-bottom: 20px;
+}
+
+.comparison-section {
+  margin-bottom: 20px;
+}
+
+.product-list-section {
+  margin-bottom: 20px;
+}
+
+.home-footer {
+  background-color: #e9ecef;
+  padding: 20px;
+  border-top: 1px solid #ddd;
 }
 </style>
