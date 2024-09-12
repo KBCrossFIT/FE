@@ -1,131 +1,117 @@
 <template>
-    <div class="mypage-container">
-      <h1>마이페이지</h1>
-      <form @submit.prevent="handleUpdate">
-        <div class="form-group">
-          <label for="fullName">전체 이름</label>
-          <input type="text" id="fullName" v-model="user.fullName" />
-        </div>
-  
-        <div class="form-group">
-          <label for="email">이메일</label>
-          <input type="email" id="email" v-model="user.email" />
-        </div>
-  
-        <div class="form-group">
-          <label for="dob">생년월일</label>
-          <input type="date" id="dob" v-model="user.dob" />
-        </div>
-  
-        <div class="form-group gender-group">
-          <label>성별</label>
-          <div class="gender-options">
-            <label>
-              <input type="radio" v-model="user.gender" value="male" /> 남성
-            </label>
-            <label>
-              <input type="radio" v-model="user.gender" value="female" /> 여성
-            </label>
-            <label>
-              <input type="radio" v-model="user.gender" value="other" /> 기타
-            </label>
-          </div>
-        </div>
-  
-        <button type="submit">저장</button>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'MyPage',
-    data() {
-      return {
-        user: {
-          fullName: '홍길동',
-          email: 'hong@example.com',
-          dob: '',
-          gender: 'male',
-        },
-      };
-    },
-    methods: {
-      handleUpdate() {
-        // Handle user data update logic
-        console.log('User data updated:', this.user);
-        alert('정보가 업데이트되었습니다.');
+  <v-app>
+    <v-container fluid>
+      <v-row justify="center">
+        <v-col cols="12" md="8" lg="6">
+          <v-card class="pa-8" elevation="2">
+            <v-card-title class="text-h5 teal--text">마이페이지</v-card-title>
+
+            <v-card-text>
+              <v-form @submit.prevent="handleUpdate">
+                <v-text-field
+                  label="전체 이름"
+                  v-model="user.fullName"
+                  prepend-icon="mdi-account"
+                ></v-text-field>
+
+                <v-text-field
+                  label="이메일"
+                  v-model="user.email"
+                  prepend-icon="mdi-email"
+                  type="email"
+                ></v-text-field>
+
+                <v-menu
+                  ref="menu"
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-model="user.dob"
+                      label="생년월일"
+                      prepend-icon="mdi-calendar"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker v-model="user.dob" @input="menu = false"></v-date-picker>
+                </v-menu>
+
+                <v-radio-group v-model="user.gender" row>
+                  <v-radio label="남성" value="male"></v-radio>
+                  <v-radio label="여성" value="female"></v-radio>
+                  <v-radio label="기타" value="other"></v-radio>
+                </v-radio-group>
+
+                <v-btn color="teal" block type="submit">저장</v-btn>
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
+</template>
+
+<script>
+export default {
+  name: 'MyPage',
+  data() {
+    return {
+      user: {
+        fullName: '홍길동',
+        email: 'hong@example.com',
+        dob: null,
+        gender: 'male',
       },
+      menu: false,
+    };
+  },
+  methods: {
+    handleUpdate() {
+      // Handle user data update logic
+      console.log('User data updated:', this.user);
+      alert('정보가 업데이트되었습니다.');
     },
-  };
-  </script>
-  
-  <style scoped>
-  .mypage-container {
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h1 {
-    text-align: center;
-    color: #004990;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .gender-group {
-    margin-bottom: 15px;
-  }
-  
-  .gender-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .gender-options {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .gender-options label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #004990;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #003670;
-  }
-  </style>
-  
+  },
+};
+</script>
+
+<style scoped>
+/* Styling to match the login and signup pages */
+.v-application {
+  background-color: #f0f9f9;
+}
+
+.v-card {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.v-card-title {
+  text-align: center;
+  color: #4db6ac;
+  margin-bottom: 20px;
+}
+
+.v-text-field {
+  margin-bottom: 15px;
+}
+
+.v-btn {
+  background-color: #4db6ac;
+  color: white;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.v-btn:hover {
+  background-color: #399d91;
+}
+</style>
