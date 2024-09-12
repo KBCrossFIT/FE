@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h2>Login</h2>
+      <h1>Login</h1>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="username">아이디</label>
@@ -14,8 +14,10 @@
         <button type="submit" class="login-button">LOGIN</button>
       </form>
       <div class="footer-links">
-        <a href="#">ID/PW 찾기</a>
-        <router-link to="/signup">회원가입</router-link>
+        <div class="link-container">
+          <a href="/find" class="find-link">ID/PW 찾기</a>
+          <router-link to="/signup" class="signup-link">회원가입</router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -38,32 +40,33 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f0f9f9;
+  background: linear-gradient(to bottom, #e0f2f1, #ffffff); /* Gradient from light mint to white */
 }
 
 .login-box {
   background-color: white;
-  padding: 40px;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 400px;
+  width: 300px;
   text-align: center;
+  position: relative;
 }
 
-h2 {
+h1 {
   margin-bottom: 20px;
   color: #4db6ac;
 }
 
 .form-group {
   margin-bottom: 20px;
+  text-align: left; /* Align labels and inputs to the left */
 }
 
 label {
@@ -95,18 +98,22 @@ input {
 }
 
 .footer-links {
-  display: flex;
-  justify-content: space-between;
   margin-top: 10px;
 }
 
-.footer-links a {
-  font-size: 12px;
-  color: #999;
+.link-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.signup-link,
+.find-link {
+  color: #4db6ac;
   text-decoration: none;
 }
 
-.footer-links a:hover {
+.signup-link:hover,
+.find-link:hover {
   text-decoration: underline;
 }
 </style>
