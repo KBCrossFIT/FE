@@ -15,7 +15,7 @@
       </form>
       <div class="footer-links">
         <a href="#">ID/PW 찾기</a>
-        <a href="#">회원가입</a>
+        <router-link to="/signup">회원가입</router-link>
       </div>
     </div>
   </div>
@@ -37,6 +37,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .login-container {
