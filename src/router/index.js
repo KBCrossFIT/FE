@@ -1,16 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router';
+
+// Import your components
 import Home from '../home/Home.vue';
 import About from '../views/About.vue';
-import Login from '../views/Login.vue';  // Import the Login component
-import SignUp from '../views/SignUp.vue'; // Import the SignUp component
+import Login from '../views/Login.vue';
+import SignUp from '../views/SignUp.vue';
 import MyPage from '../views/MyPage.vue';
+import FinancialProducts from '../views/FinancialProducts.vue';  // Component for Financial Products
+import Cart from '../views/Cart.vue';  // Component for Cart
+import Portfolio from '../views/Portfolio.vue';  // Component for Portfolio
+import RecentlyViewed from '../views/RecentlyViewed.vue';  // Component for Recently Viewed
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/about', name: 'About', component: About },
-  { path: '/login', name: 'Login', component: Login },  // Route for login
-  { path: '/signup', name: 'SignUp', component: SignUp }, // Route for sign up
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/signup', name: 'SignUp', component: SignUp },
   { path: '/mypage', name: 'MyPage', component: MyPage },
+  { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts },
+  { path: '/cart', name: 'Cart', component: Cart },
+  { path: '/portfolio', name: 'Portfolio', component: Portfolio },
+  { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
 ];
 
 const router = createRouter({

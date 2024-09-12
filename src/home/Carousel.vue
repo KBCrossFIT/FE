@@ -1,61 +1,118 @@
 <template>
-  <section class="carousel">
-    <div class="carousel-content">
-      <h2>Lessons and insights <span>from 8 years</span></h2>
-      <p>Where to grow your business as a marketplace seller or social media?</p>
-      <button class="register-btn">Register</button>
+  <div class="carousel">
+    <!-- Left Arrow -->
+    <div class="carousel-arrow left" @click="prevImage">
+      &#10094; <!-- Unicode left arrow -->
     </div>
+
+    <!-- Images -->
+    <div class="carousel-images">
+      <img :src="images[currentImage]" alt="Carousel Image" />
+    </div>
+
+    <!-- Right Arrow -->
+    <div class="carousel-arrow right" @click="nextImage">
+      &#10095; <!-- Unicode right arrow -->
+    </div>
+
+    <!-- Dots for navigation -->
     <div class="carousel-nav">
-      <span class="dot"></span>
-      <span class="dot active"></span>
-      <span class="dot"></span>
+      <span 
+        class="dot" 
+        v-for="(image, index) in images" 
+        :key="index" 
+        :class="{ active: currentImage === index }" 
+        @click="changeImage(index)">
+      </span>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'CarouselSection'
+  data() {
+    return {
+      currentImage: 0,
+      images: [
+        // Add your image URLs here
+        '/path-to-your-image1.jpg',
+        '/path-to-your-image2.jpg',
+        '/path-to-your-image3.jpg'
+      ]
+    };
+  },
+  methods: {
+    changeImage(index) {
+      this.currentImage = index;
+    },
+    nextImage() {
+      this.currentImage = (this.currentImage + 1) % this.images.length;
+    },
+    prevImage() {
+      this.currentImage = (this.currentImage - 1 + this.images.length) % this.images.length;
+    }
+  },
+  mounted() {
+    // Automatically swap images every 10 seconds
+    setInterval(() => {
+      this.nextImage();
+    }, 10000);
+  }
 };
 </script>
 
 <style scoped>
 .carousel {
-  background-color: #e9f5e9; /* Light minty green */
-  text-align: center;
-  padding: 50px 0;
+  position: relative;
+  height: 400px; /* Adjust this to make the carousel smaller */
+  overflow: hidden;
 }
 
-.carousel-content h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
-  color: #2d6a4f; /* Minty green color */
+.carousel-images img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.carousel-content p {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.register-btn {
-  background-color: #2d6a4f; /* Minty green color */
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
   color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
   cursor: pointer;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  user-select: none;
 }
 
-.carousel-nav .dot {
+.carousel-arrow.left {
+  left: 20px;
+}
+
+.carousel-arrow.right {
+  right: 20px;
+}
+
+.carousel-nav {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.dot {
   display: inline-block;
   width: 12px;
   height: 12px;
   background-color: #ddd;
   border-radius: 50%;
   margin: 5px;
+  cursor: pointer;
 }
 
-.carousel-nav .dot.active {
-  background-color: #2d6a4f; /* Minty green color */
+.dot.active {
+  background-color: #007bff;
 }
 </style>
