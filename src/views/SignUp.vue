@@ -1,33 +1,31 @@
 <template>
   <div class="signup-container">
-    <div class="signup-header">
-      <h1>회원가입</h1>
-    </div>
     <div class="signup-box">
-      <form @submit.prevent="handleSubmit" class="signup-form">
+      <h2>회원가입</h2>
+      <form class="signup-form">
         <div class="form-group">
           <label for="username">아이디</label>
-          <input type="text" id="username" placeholder="아이디" v-model="username" required />
+          <input type="text" id="username" placeholder="Full name" v-model="username" required />
         </div>
 
         <div class="form-group">
           <label for="displayName">사용자 이름</label>
-          <input type="text" id="displayName" placeholder="사용자 이름" v-model="displayName" required />
+          <input type="text" id="displayName" placeholder="Full name" v-model="displayName" required />
         </div>
 
         <div class="form-group">
           <label for="password">비밀번호</label>
-          <input type="password" id="password" placeholder="비밀번호" v-model="password" required />
+          <input type="password" id="password" placeholder="Password" v-model="password" required />
         </div>
 
         <div class="form-group">
           <label for="confirmPassword">비밀번호 확인</label>
-          <input type="password" id="confirmPassword" placeholder="비밀번호 확인" v-model="confirmPassword" required />
+          <input type="password" id="confirmPassword" placeholder="Confirm Password" v-model="confirmPassword" required />
         </div>
 
         <div class="form-group">
           <label for="email">이메일 주소</label>
-          <input type="email" id="email" placeholder="이메일 주소" v-model="email" required />
+          <input type="email" id="email" placeholder="Email Address" v-model="email" required />
         </div>
 
         <div class="form-group">
@@ -36,17 +34,17 @@
         </div>
           
         <div class="form-group">
-          <label>성별</label>
+          <label>Gender</label>
           <div class="gender-radio">
-            <label><input type="radio" name="gender" value="man" v-model="gender" /> 남자</label>
-            <label><input type="radio" name="gender" value="woman" v-model="gender" /> 여자</label>
+            <label><input type="radio" name="gender" value="man" v-model="gender" /> Man</label>
+            <label><input type="radio" name="gender" value="woman" v-model="gender" /> Woman</label>
           </div>
         </div>
 
-        <button class="create-btn" type="submit">회원가입</button>
+        <button class="create-btn" type="submit">Create Account</button>
       </form>
       <div class="login-link">
-        이미 계정이 있으신가요? <router-link to="/login">로그인</router-link>
+        Already have an account? <a href="/login">Login</a>
       </div>
     </div>
   </div>
@@ -68,7 +66,6 @@ export default {
   methods: {
     handleSubmit() {
       // Add your form submission logic here
-      console.log('Signing up with', this.username, this.displayName, this.password, this.confirmPassword, this.email, this.dob, this.gender);
     },
   },
 };
@@ -77,36 +74,28 @@ export default {
 <style scoped>
 .signup-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom, #e0f2f1, #ffffff); /* Gradient from light mint to white */
-  padding: 20px;
-}
-
-.signup-header {
-  margin-bottom: 20px;
-}
-
-.signup-header h1 {
-  font-size: 2.5rem;
-  color: #4db6ac;
-  text-align: center;
+  background-color: #f0f9f9;
 }
 
 .signup-box {
   background-color: white;
-  padding: 20px;
+  padding: 40px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px; /* Smaller box */
+  width: 400px;
   text-align: center;
 }
 
+h2 {
+  margin-bottom: 20px;
+  color: #4db6ac;
+}
+
 .form-group {
-  margin-bottom: 15px;
-  text-align: left;
+  margin-bottom: 20px;
 }
 
 label {
@@ -117,7 +106,7 @@ label {
 }
 
 input {
-  width: calc(100% - 22px);
+  width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -138,7 +127,6 @@ input {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 10px;
 }
 
 .create-btn:hover {
