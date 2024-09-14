@@ -10,8 +10,11 @@ import FinancialProducts from '../views/FinancialProducts.vue';  // Component fo
 import Cart from '../views/Cart.vue';  // Component for Cart
 import Portfolio from '../views/Portfolio.vue';  // Component for Portfolio
 import RecentlyViewed from '../views/RecentlyViewed.vue';  // Component for Recently Viewed
+import FindId from '../views/Find.vue';
+
 
 const routes = [
+  { path: '/find', name: 'Find', component: FindId },
   { path: '/', name: 'Home', component: Home },
   { path: '/about', name: 'About', component: About },
   { path: '/login', name: 'Login', component: Login },
