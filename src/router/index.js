@@ -11,8 +11,10 @@ import FinancialProducts from '../views/FinancialProducts.vue'; // Component for
 import Cart from '../views/Cart.vue'; // Component for Cart
 import Portfolio from '../views/Portfolio.vue'; // Component for Portfolio
 import RecentlyViewed from '../views/RecentlyViewed.vue'; // Component for Recently Viewed
+
 import FindId from '../views/Find.vue';
 import changePW from '../views/ChangePW.vue';
+
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
