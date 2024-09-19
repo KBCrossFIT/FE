@@ -1,21 +1,25 @@
 <template>
     <div class="portfolio-page">
         <Header />
-        <DevBtnSection />
-        <CarouselSection />
-        <ComparisonSection />
-        <ProductListSection />
-        <Footer />
+
+        <div class="nonHeader">
+            <DevBtnSection />
+            <CarouselSection />
+            <ComparisonSection />
+            <ProductListSection />
+            <Footer />
+        </div>
     </div>
 </template>
 
 <script>
-import Header from './Header.vue';
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+
 import CarouselSection from './Carousel.vue';
 import DevBtnSection from './DevBtn.vue';
 import ComparisonSection from './ComparisonSection.vue';
 import ProductListSection from './ProductList.vue';
-import Footer from './Footer.vue';
 
 export default {
     name: 'HomePage',
@@ -31,11 +35,14 @@ export default {
 </script>
 
 <style scoped>
-.home-container {
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px; /* Adjust this value based on your sidebar width */
-    padding: 20px;
+.portfolio-page {
+    /* display: flex; */
+    /* margin: 0 220px 0 220px; */
+    /* padding: 20px; */
+}
+
+.nonHeader {
+    margin: 0 220px 0 220px;
 }
 
 .home-header {
