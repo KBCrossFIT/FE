@@ -17,12 +17,14 @@ export default {
     provide('cart', cart);
 
     return {
-      cart
+      cart,
     };
-  }
+  },
 };
 </script>
 
 <style>
 /* Add your styles here */
 </style>
+
+<!-- 커밋 컨벤션 -->

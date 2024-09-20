@@ -16,6 +16,7 @@ import FinancialProducts from '../views/financialProducts/FinancialProducts.vue'
 import Cart from '../views/financialProducts/Cart.vue';
 import RecentlyViewed from '../views/financialProducts/RecentlyViewed.vue';
 
+// insight
 import Influencer from '../views/insight/Influencer.vue';
 import News from '../views/insight/News.vue';
 import Youtube from '../views/insight/Youtube.vue';
@@ -31,34 +32,65 @@ import MyPortfolio from '../views/portfolio/MyPortfolio.vue';
 import ProductComparison from '../views/portfolio/ProductComparison.vue';
 
 const routes = [
-    { path: '/', name: 'Home', component: Home },
-    { path: '/find', name: 'Find', component: FindId },
-    { path: '/about', name: 'About', component: About },
-    { path: '/login', name: 'Login', component: Login },
-    { path: '/signup', name: 'SignUp', component: SignUp },
-    { path: '/mypage', name: 'MyPage', component: MyPage },
-    { path: '/mypageEdit', name: 'MyPageEdit', component: MyPageEdit },
-    { path: '/changePW', name: 'ChangePW', component: ChangePW },
-    { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
-    { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts },
-    { path: '/cart', name: 'Cart', component: Cart },
-    { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
-    { path: '/influencer', name: 'Influencer', component: Influencer },
-    { path: '/news', name: 'News', component: News },
-    { path: '/youtube', name: 'Youtube', component: Youtube },
-    { path: '/investment-test', name: 'InvestmentTest', component: InvestmentTest },
-    { path: '/investment-test-end', name: 'InvestmentTestEnd', component: InvestmentTestEnd },
-    { path: '/investment-test-start', name: 'InvestmentTestStart', component: InvestmentTestStart },
-    { path: '/my-investment-analyze', name: 'MyInvestmentAnalyze', component: MyInvestmentAnalyze },
-    { path: '/portfolio', name: 'Portfolio', component: Portfolio },
-    { path: '/make-portfolio', name: 'MakePortfolio', component: MakePortfolio },
-    { path: '/my-portfolio', name: 'MyPortfolio', component: MyPortfolio },
-    { path: '/product-comparison', name: 'ProductComparison', component: ProductComparison },
+  { path: '/', name: 'Home', component: Home },
+  { path: '/find', name: 'Find', component: FindId },
+  { path: '/about', name: 'About', component: About },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/signup', name: 'SignUp', component: SignUp },
+  { path: '/mypage', name: 'MyPage', component: MyPage },
+  { path: '/mypageEdit', name: 'MyPageEdit', component: MyPageEdit },
+  { path: '/changePW', name: 'ChangePW', component: ChangePW },
+  { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
+  {
+    path: '/financial-products',
+    name: 'FinancialProducts',
+    component: FinancialProducts,
+  },
+  { path: '/cart', name: 'Cart', component: Cart },
+  {
+    path: '/recently-viewed',
+    name: 'RecentlyViewed',
+    component: RecentlyViewed,
+  },
+
+  // insight
+  { path: '/influencer', name: 'Influencer', component: Influencer },
+  { path: '/news', name: 'News', component: News },
+  { path: '/youtube', name: 'Youtube', component: Youtube },
+
+  {
+    path: '/investment-test',
+    name: 'InvestmentTest',
+    component: InvestmentTest,
+  },
+  {
+    path: '/investment-test-end',
+    name: 'InvestmentTestEnd',
+    component: InvestmentTestEnd,
+  },
+  {
+    path: '/investment-test-start',
+    name: 'InvestmentTestStart',
+    component: InvestmentTestStart,
+  },
+  {
+    path: '/my-investment-analyze',
+    name: 'MyInvestmentAnalyze',
+    component: MyInvestmentAnalyze,
+  },
+  { path: '/portfolio', name: 'Portfolio', component: Portfolio },
+  { path: '/make-portfolio', name: 'MakePortfolio', component: MakePortfolio },
+  { path: '/my-portfolio', name: 'MyPortfolio', component: MyPortfolio },
+  {
+    path: '/product-comparison',
+    name: 'ProductComparison',
+    component: ProductComparison,
+  },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes,
 });
 
 export default router;
