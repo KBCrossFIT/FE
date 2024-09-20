@@ -18,30 +18,43 @@
                 </div>
 
                 <button class="deleteAccount-btn" type="submit">탈퇴</button>
-                <v-btn color="teal" block @click="navigateTo('/mypageEdit')">취소</v-btn>
+                <v-btn color="teal" block @click="navigateTo('/mypage')">취소</v-btn>
             </form>
         </div>
     </div>
 </template>
 
 <script>
+import { dummyUsers } from '@/dummydata.js';
+
 export default {
     name: 'deleteAccount',
     data() {
         return {
             password: '',
-            user_pw: '1234',
+            user_pw: '',
         };
     },
 
     methods: {
         handleSubmit() {
-            if (this.password !== this.user_pw) {
-                alert('비밀번호가 일치하지 않습니다.');
+            // Get the current user's info from local storage
+            const userInfo = JSON.parse(localStorage.getItem('user'));
+            if (!userInfo) {
+                alert('로그인 정보를 찾을 수 없습니다.');
                 return;
             }
 
-            alert('회원 탈퇴 성공.');
+            // Find the user in dummy data
+            const user = dummyUsers.find((user) => user.username === userInfo.username);
+
+            if (user && this.password === user.password) {
+                alert('회원 탈퇴 성공.');
+                this.$router.push('/');
+                // Here you would add code to handle account deletion, e.g., removing the user from dummyUsers
+            } else {
+                alert('비밀번호가 일치하지 않습니다.');
+            }
         },
 
         navigateTo(path) {
