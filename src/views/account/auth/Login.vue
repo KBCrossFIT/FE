@@ -24,17 +24,31 @@
 </template>
 
 <script>
+import { dummyUsers } from '@/dummydata.js'; // Ensure this path is correct
+
 export default {
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
     };
   },
   methods: {
     handleLogin() {
-      // Add your login logic here
-      console.log('Logging in with', this.username, this.password);
+      const user = dummyUsers.find(
+        (user) => user.username === this.username && user.password === this.password
+      );
+
+      if (user) {
+        // Save user info in local storage
+        localStorage.setItem('user', JSON.stringify({
+          username: user.username,
+          picture: 'path/to/profile/pic.png' // Update with actual path
+        }));
+        this.$router.push('/'); // Redirect to homepage
+      } else {
+        alert('아이디 또는 비밀번호가 잘못되었습니다.');
+      }
     }
   }
 };
@@ -46,7 +60,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom, #e0f2f1, #ffffff); /* Gradient from light mint to white */
+  background: linear-gradient(to bottom, #e0f2f1, #ffffff);
 }
 
 .login-box {
@@ -56,7 +70,6 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
-  position: relative;
 }
 
 h1 {
@@ -66,7 +79,7 @@ h1 {
 
 .form-group {
   margin-bottom: 20px;
-  text-align: left; /* Align labels and inputs to the left */
+  text-align: left;
 }
 
 label {
