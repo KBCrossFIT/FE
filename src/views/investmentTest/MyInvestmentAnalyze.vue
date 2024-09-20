@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>About Page</h1>
+        <h1>내 투자성향 페이지</h1>
     </div>
 </template>
 

@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import Home from '../views/home/Home.vue';
-import About from '../views/About.vue';
 
 import Login from '../views/account/auth/Login.vue';
 import SignUp from '../views/account/auth/SignUp.vue';
@@ -33,7 +32,6 @@ import ProductComparison from '../views/portfolio/ProductComparison.vue';
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/find', name: 'Find', component: FindId },
-    { path: '/about', name: 'About', component: About },
     { path: '/login', name: 'Login', component: Login },
     { path: '/signup', name: 'SignUp', component: SignUp },
     { path: '/mypage', name: 'MyPage', component: MyPage },
