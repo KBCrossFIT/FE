@@ -12,9 +12,19 @@
                 <li>My Investment</li>
             </ul>
         </nav>
+
         <div class="user-controls">
-            <button class="login-btn" @click="navigateToLogin">로그인</button>
-            <button class="signup-btn" @click="navigateToSignup">회원가입</button>
+            <template v-if="isLoggedIn">
+                <div class="profile-info" @click="navigateToProfile">
+                    <img :src="userProfile.picture" alt="Profile Picture" class="profile-picture" />
+                    <span class="username">{{ userProfile.username }}</span>
+                </div>
+                <button class="logout-btn" @click="handleLogout">로그아웃</button>
+            </template>
+            <template v-else>
+                <button class="login-btn" @click="navigateToLogin">로그인</button>
+                <button class="signup-btn" @click="navigateToSignup">회원가입</button>
+            </template>
         </div>
     </header>
 </template>
@@ -22,6 +32,15 @@
 <script>
 export default {
     name: 'Header',
+    data() {
+        return {
+            isLoggedIn: false,
+            userProfile: {
+                username: '',
+                picture: 'path/to/default/profile/pic.png'
+            }
+        };
+    },
     methods: {
         navigateToHome() {
             this.$router.push('/');
@@ -32,7 +51,27 @@ export default {
         navigateToSignup() {
             this.$router.push('/signup');
         },
+        navigateToProfile() {
+            this.$router.push('/profile');
+        },
+        handleLogout() {
+            this.isLoggedIn = false;
+            this.userProfile = { username: '', picture: 'path/to/default/profile/pic.png' };
+            localStorage.removeItem('user'); // Clear user data from local storage
+            this.navigateToHome(); // Redirect to homepage
+        },
+        updateUserProfile(username, picture) {
+            this.userProfile.username = username;
+            this.userProfile.picture = picture;
+            this.isLoggedIn = true;
+        }
     },
+    mounted() {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+            this.updateUserProfile(storedUser.username, storedUser.picture || this.userProfile.picture);
+        }
+    }
 };
 </script>
 
@@ -56,7 +95,7 @@ export default {
     font-weight: bold;
 }
 
-.logoBox :hover {
+.logoBox:hover {
     cursor: pointer;
 }
 
@@ -83,6 +122,20 @@ nav ul li:hover {
 .user-controls {
     display: flex;
     gap: 10px;
+    align-items: center;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 8px;
 }
 
 .user-controls button {
@@ -106,5 +159,14 @@ nav ul li:hover {
 
 .user-controls .signup-btn:hover {
     background-color: #163d2a;
+}
+
+.user-controls .logout-btn {
+    background-color: #ff4d4d; /* Red background for logout */
+    color: white;
+}
+
+.user-controls .logout-btn:hover {
+    background-color: #cc0000; /* Darker red on hover */
 }
 </style>
