@@ -15,6 +15,7 @@ import FinancialProducts from '../views/financialProducts/FinancialProducts.vue'
 import Cart from '../views/financialProducts/Cart.vue';
 import RecentlyViewed from '../views/financialProducts/RecentlyViewed.vue';
 
+// insight
 import Influencer from '../views/insight/Influencer.vue';
 import News from '../views/insight/News.vue';
 import Youtube from '../views/insight/Youtube.vue';
@@ -55,8 +56,8 @@ const routes = [
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes,
 });
 
 export default router;
