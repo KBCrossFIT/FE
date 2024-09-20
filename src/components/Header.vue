@@ -1,6 +1,9 @@
 <template>
     <header class="header">
-        <div class="logo">ProPortFolio</div>
+        <div class="logoBox" @click="navigateToHome()">
+            <div class="logo">ProPortFolio</div>
+        </div>
+
         <nav>
             <ul>
                 <li>포트폴리오</li>
@@ -20,6 +23,9 @@
 export default {
     name: 'Header',
     methods: {
+        navigateToHome() {
+            this.$router.push('/');
+        },
         navigateToLogin() {
             this.$router.push('/login');
         },
@@ -36,14 +42,22 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #2d6a4f; /* Minty green color */
+    background-color: #2d6a4f;
     color: white;
-    border-bottom: 2px solid #1b4332; /* Darker green for border */
+    border-bottom: 2px solid #1b4332;
 }
 
+.logoBox {
+    width: 200px;
+    height: 65px;
+}
 .logo {
     font-size: 24px;
     font-weight: bold;
+}
+
+.logoBox :hover {
+    cursor: pointer;
 }
 
 nav ul {
@@ -61,7 +75,7 @@ nav ul li {
 }
 
 nav ul li:hover {
-    background-color: #1b4332; /* Darker green for hover */
+    background-color: #1b4332;
     color: white;
     border-radius: 5px;
 }
@@ -86,11 +100,11 @@ nav ul li:hover {
 }
 
 .user-controls .signup-btn {
-    background-color: #1b4332; /* Darker green for signup button */
+    background-color: #1b4332;
     color: white;
 }
 
 .user-controls .signup-btn:hover {
-    background-color: #163d2a; /* Even darker green for hover */
+    background-color: #163d2a;
 }
 </style>

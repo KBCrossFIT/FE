@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>About Page</h1>
+        <h1>인플루언서 페이지</h1>
     </div>
 </template>
 
