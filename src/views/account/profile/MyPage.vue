@@ -78,7 +78,11 @@
                                     >수정하기</v-btn
                                 >
                                 <v-btn color="teal" block @click="navigateTo('/')">돌아가기</v-btn>
-                                <v-btn color="teal" block @click="handleDelete()">탈퇴하기</v-btn>
+                                <v-btn color="teal" block @click="navigateTo('/deleteAccount')"
+                                    >탈퇴하기</v-btn
+                                >
+
+                                <!-- <v-btn color="teal" block @click="handleDelete()">탈퇴하기</v-btn> -->
                             </v-form>
                         </v-card-text>
                     </v-card>
@@ -87,7 +91,7 @@
         </v-container>
 
         <!-- Confirmation Dialog -->
-        <v-dialog v-model="dialog" persistent max-width="290">
+        <!-- <v-dialog v-model="dialog" persistent max-width="290">
             <v-card>
                 <v-card-title class="headline">탈퇴 확인</v-card-title>
                 <v-card-text>정말로 탈퇴하시겠습니까?</v-card-text>
@@ -97,7 +101,7 @@
                     <v-btn color="grey" text @click="dialog = false">취소</v-btn>
                 </v-card-actions>
             </v-card>
-        </v-dialog>
+        </v-dialog> -->
     </v-app>
 </template>
 
