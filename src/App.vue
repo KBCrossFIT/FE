@@ -1,11 +1,14 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <DefaultLayout>
+      <router-view />
+    </DefaultLayout>
   </div>
 </template>
 
 <script>
 import { provide, reactive } from 'vue';
+import DefaultLayout from './components/DefaultLayout.vue';
 
 export default {
   name: 'App',

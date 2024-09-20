@@ -1,6 +1,4 @@
 <template>
-  <Header />
-
   <div id="main">
     <div id="left">
       <v-card class="pa-4" elevation="2" style="height: 100%">
@@ -81,8 +79,6 @@
       </div>
     </div>
   </div>
-
-  <Footer />
 </template>
 
 <script>

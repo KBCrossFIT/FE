@@ -13,13 +13,13 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
-
 import CarouselSection from './Carousel.vue';
 import DevBtnSection from './DevBtn.vue';
 import ComparisonSection from './ComparisonSection.vue';
 import ProductListSection from './ProductList.vue';
+
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
 
 export default {
   name: 'HomePage',
