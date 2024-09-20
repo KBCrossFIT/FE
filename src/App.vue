@@ -8,7 +8,7 @@
 
 <script>
 import { provide, reactive } from 'vue';
-import DefaultLayout from './components/DefaultLayout.vue';
+// import DefaultLayout from './components/DefaultLayout.vue';
 
 export default {
     name: 'App',
