@@ -8,9 +8,7 @@
                 <v-btn color="teal" block @click="navigateTo('/find')">아디비번찾기</v-btn>
             </v-col>
             <v-col cols="6" md="3" lg="2">
-                <v-btn color="teal" block @click="navigateTo('/my-investment-analyze')"
-                    >내 투자성향</v-btn
-                >
+                <v-btn color="teal" block @click="navigateTo('/about')">about</v-btn>
             </v-col>
             <v-col cols="6" md="3" lg="2">
                 <v-btn color="teal" block @click="navigateTo('/login')">로그인</v-btn>
