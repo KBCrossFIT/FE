@@ -5,7 +5,7 @@ import vuetify from './plugins/vuetify';
 import DefaultLayout from './components/DefaultLayout.vue';
 
 // Vuetify 플러그인 가져오기
-import vuetify from './plugins/vuetify';
+
 import '@fortawesome/fontawesome-free/css/all.min.css'; // 아이콘 설정
 
 const app = createApp(App);
