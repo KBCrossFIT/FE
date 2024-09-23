@@ -3,6 +3,7 @@ import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
 import DefaultLayout from './components/DefaultLayout.vue';
+import '@mdi/font/css/materialdesignicons.css';
 
 // Vuetify 플러그인 가져오기
 

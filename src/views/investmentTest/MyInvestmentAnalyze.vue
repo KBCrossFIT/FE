@@ -127,6 +127,7 @@ export default {
     justify-content: space-between; /* 상단과 하단 요소 배치 */
     height: 100vh; /* 전체 화면 높이 */
     padding: 20px; /* 좌우 여백 */
+    /* overflow-y: auto; */
 }
 
 .MyInvestment-body {
@@ -187,7 +188,7 @@ export default {
     display: flex;
     justify-content: flex-end; /* 우측 정렬 */
     width: 100%; /* 가로 길이 전체 차지 */
-    margin-top: auto; /* 남는 공간을 채우고 버튼을 아래로 */
+    /* margin-top: auto; 남는 공간을 채우고 버튼을 아래로 */
 }
 
 .MyInvestment-btn {
