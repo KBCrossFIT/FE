@@ -18,7 +18,20 @@ import SideBar from './Sidebar.vue';
 </template>
 
 <style scoped>
+.container {
+    /* display: flex;  */
+    /* background: linear-gradient(to bottom, #e0f2f1, #ffffff); */
+}
+
 .main {
+    display: flex;
+    flex-direction: column; /* Arrange children in a column */
     margin-right: 60px;
+    min-height: 100vh; /* Ensure it takes at least full viewport height */
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
 }
 </style>

@@ -5,12 +5,21 @@
         </div>
 
         <nav>
-            <ul>
-                <li>포트폴리오</li>
-                <li>금융상품</li>
-                <li>Insight</li>
-                <li>My Investment</li>
-            </ul>
+            <v-menu v-for="(item, index) in navItems" :key="index" open-on-hover>
+                <template v-slot:activator="{ props }">
+                    <v-btn color="primary" v-bind="props">{{ item.title }}</v-btn>
+                </template>
+
+                <v-list>
+                    <v-list-item
+                        v-for="(subItem, subIndex) in item.subItems"
+                        :key="subIndex"
+                        @click="$router.push(subItem.link)"
+                    >
+                        <v-list-item-title>{{ subItem.name }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </nav>
 
         <div class="user-controls">
@@ -39,6 +48,37 @@ export default {
                 username: '',
                 picture: 'path/to/default/profile/pic.png',
             },
+            navItems: [
+                {
+                    title: '포트폴리오',
+                    subItems: [
+                        { name: '내 포트폴리오', link: '/my-portfolio' },
+                        { name: '포트폴리오 구성하기', link: '/make-portfolio' },
+                    ],
+                },
+                {
+                    title: '금융상품',
+                    subItems: [
+                        { name: '상품 리스트', link: '/financial-products' },
+                        { name: '장바구니', link: '/cart' },
+                    ],
+                },
+                {
+                    title: 'Insight',
+                    subItems: [
+                        { name: '뉴스', link: '/news' },
+                        { name: '유튜브', link: '/youtube' },
+                        { name: '인플루언서', link: '/influencer' },
+                    ],
+                },
+                {
+                    title: 'My Investment',
+                    subItems: [
+                        { name: '내 투자성향 분석', link: '/my-investment-analyze' },
+                        { name: '투자성향 분석하기', link: '/investment-test-start' },
+                    ],
+                },
+            ],
         };
     },
     methods: {
@@ -52,12 +92,12 @@ export default {
             this.$router.push('/signup');
         },
         navigateToProfile() {
-            this.$router.push('/myPage'); // Adjust to your profile route
+            this.$router.push('/myPage');
         },
         handleLogout() {
-            localStorage.removeItem('user'); // Clear user data
-            this.updateUserProfile(); // Update state
-            this.navigateToHome(); // Redirect to homepage
+            localStorage.removeItem('user');
+            this.updateUserProfile();
+            this.navigateToHome();
         },
         updateUserProfile() {
             const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -73,13 +113,12 @@ export default {
         },
     },
     watch: {
-        // Watch for changes to the user profile in local storage
         $route(to, from) {
-            this.updateUserProfile(); // Check user profile on route change
+            this.updateUserProfile();
         },
     },
     mounted() {
-        this.updateUserProfile(); // Check user profile on mount
+        this.updateUserProfile();
     },
 };
 </script>
@@ -99,6 +138,7 @@ export default {
     width: 200px;
     height: 65px;
 }
+
 .logo {
     font-size: 24px;
     font-weight: bold;
@@ -108,24 +148,35 @@ export default {
     cursor: pointer;
 }
 
-nav ul {
+nav {
     display: flex;
-    list-style: none;
     gap: 20px;
-    margin: 0;
-    padding: 0;
 }
 
-nav ul li {
-    cursor: pointer;
+.v-btn {
     padding: 10px;
-    transition: background-color 0.3s, color 0.3s;
+    background-color: #2d6a4f !important; /* !important를 사용하여 우선권 부여 */
+    color: white;
+    transition: background-color 0.1s, color 0.1s;
 }
 
-nav ul li:hover {
-    background-color: #1b4332;
+.v-btn:hover {
+    background-color: #1b4332 !important; /* !important를 사용하여 우선권 부여 */
     color: white;
-    border-radius: 5px;
+}
+
+.v-list {
+    background-color: #ffffff;
+}
+
+.v-list-item {
+    padding: 10px;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+.v-list-item:hover {
+    background-color: #e0e0e0;
+    color: #333;
 }
 
 .user-controls {
