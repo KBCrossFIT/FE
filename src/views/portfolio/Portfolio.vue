@@ -60,7 +60,7 @@
 
 <script>
 import VueApexCharts from 'vue3-apexcharts';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
@@ -70,6 +70,8 @@ export default {
     },
     setup() {
         const route = useRoute();
+        const router = useRouter();
+
         const portfolioId = route.params.id;
 
         // Replace this with your method to fetch the portfolio data based on the ID
@@ -156,11 +158,13 @@ export default {
 
         const editPortfolio = (id) => {
             // Logic to edit portfolio
+            router.push('/make-portfolio');
             console.log(`Editing portfolio with ID: ${id}`);
         };
 
         const deletePortfolio = (id) => {
             // Logic to delete portfolio
+            router.push('/my-Portfolio');
             console.log(`Deleting portfolio with ID: ${id}`);
         };
 

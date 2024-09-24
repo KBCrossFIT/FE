@@ -30,8 +30,6 @@ import MakePortfolio from '../views/portfolio/MakePortfolio.vue';
 import MyPortfolio from '../views/portfolio/MyPortfolio.vue';
 import ProductComparison from '../views/portfolio/ProductComparison.vue';
 
-import memo from '../memo.vue';
-
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/find', name: 'Find', component: FindId },

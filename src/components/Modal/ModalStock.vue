@@ -28,6 +28,13 @@
                     <td>{{ item.itmsNm }}</td>
                     <td>{{ item.type }}</td>
                     <td>{{ item.DailyPrice }}</td>
+                    <td>
+                        <input
+                            type="number"
+                            v-model.number="quantities[item.id]"
+                            placeholder="개수 입력"
+                        />
+                    </td>
                     <td>{{ item.clpr }}</td>
                     <td>{{ (item.fltRt * 100).toFixed(2) }}%</td>
                     <td>{{ item.Field }}</td>
@@ -51,6 +58,7 @@ export default {
     setup(props, { emit }) {
         const searchQuery = ref('');
         const selected = ref([]);
+        const quantities = ref({});
 
         const products = ref(dummyStocks); // 더미 데이터 사용
 
@@ -85,7 +93,7 @@ export default {
             const selectedStocks = products.value.filter((product) =>
                 selected.value.includes(product.id)
             );
-            console.log('포트폴리오에 추가할 주식:', selectedStocks);
+            console.log('포트폴리오에 추가할 주식:', selectedStocks, quantities, "개");
             // 실제로 포트폴리오에 추가하는 로직을 구현해야 함
         };
 
@@ -97,6 +105,7 @@ export default {
         return {
             searchQuery,
             selected,
+            quantities,
             filteredStocks,
             toggleSelect,
             addToPortfolio,
