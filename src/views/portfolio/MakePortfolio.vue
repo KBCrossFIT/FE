@@ -103,11 +103,17 @@
             @finished="InvestMentTest = true"
             @investMentTestStarted="InvestMentTest = true"
         />
+
+        <div class="MakePortfolioEnd-btn">
+            <v-btn type="submit" @click="goToMyPortfolio">저장</v-btn>
+            <v-btn @click="goToMyPortfolio">취소</v-btn>
+        </div>
     </div>
 </template>
 
 <script>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import VueApexCharts from 'vue3-apexcharts'; // apexcharts 파이 차트 사용.
 import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
 import Modal from '@/components/Modal/ModalStock.vue'; // 모달 컴포넌트 import
@@ -182,6 +188,12 @@ export default {
             isModalOpen.value = true; // 모달 열기
         };
 
+        const router = useRouter();
+        const goToMyPortfolio = () => {
+            console.log('내 포트폴리오 리스트로');
+            router.push('/my-portfolio');
+        };
+
         return {
             searchQuery,
             selectedCategory,
@@ -192,6 +204,7 @@ export default {
             series,
             isModalOpen,
             openModal,
+            goToMyPortfolio,
         };
     },
 };

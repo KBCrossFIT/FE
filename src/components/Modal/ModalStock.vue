@@ -22,7 +22,7 @@
         >
             <template #item="{ item }">
                 <tr @click="toggleSelect(item)">
-                    <td></td>
+                    <td><input type="checkbox"></input></td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.StockName }}</td>
                     <td>{{ item.itmsNm }}</td>

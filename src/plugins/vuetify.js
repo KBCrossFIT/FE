@@ -30,6 +30,11 @@ import {
     VBtn, // 추가
     VPagination, // 추가
     VDataTable, // 추가
+    VCheckbox,
+    VSparkline,
+    VSheet,
+    VDivider,
+    VIcon,
 } from 'vuetify/components';
 
 // Create Vuetify instance
@@ -65,6 +70,11 @@ const vuetify = createVuetify({
         VBtn, // 추가
         VPagination, // 추가
         VDataTable, // 추가
+        VCheckbox,
+        VSparkline,
+        VSheet,
+        VDivider,
+        VIcon,
     },
     theme: {
         defaultTheme: 'light', // or 'dark'
