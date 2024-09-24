@@ -1,14 +1,10 @@
 <template>
-    <div class="portfolio-page">
-        <!-- <Header /> -->
-
-        <div class="nonHeader">
-            <DevBtnSection />
-            <CarouselSection />
-            <ComparisonSection />
-            <ProductListSection />
-            <!-- <Footer /> -->
-        </div>
+  <div class="portfolio-page">
+    <div class="nonHeader">
+      <DevBtnSection />
+      <CarouselSection />
+      <ComparisonSection />
+      <ProductListSection />
     </div>
 </template>
 
@@ -18,19 +14,14 @@ import DevBtnSection from './DevBtn.vue';
 import ComparisonSection from './ComparisonSection.vue';
 import ProductListSection from './ProductList.vue';
 
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
-
 export default {
-    name: 'HomePage',
-    components: {
-        Header,
-        CarouselSection,
-        DevBtnSection,
-        ComparisonSection,
-        ProductListSection,
-        Footer,
-    },
+  name: 'HomePage',
+  components: {
+    CarouselSection,
+    DevBtnSection,
+    ComparisonSection,
+    ProductListSection,
+  },
 };
 </script>
 

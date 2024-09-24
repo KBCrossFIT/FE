@@ -1,5 +1,6 @@
 <template>
-  <div id="main">
+  <div id="All">
+    <!-- 왼쪽 메뉴 바 -->
     <div id="left">
       <v-card class="pa-4" elevation="2" style="height: 100%">
         <v-card-text>
@@ -23,50 +24,27 @@
         </v-card-text>
       </v-card>
     </div>
-
+    <!-- 상품명 검색, 제목 -->
     <div id="right">
       <v-container>
         <div id="seartext" class="search-container">
-          <div class="portfolio-title">인플루언서 포트폴리오</div>
+          <h1 class="sixth">_</h1>
 
           <div id="search" class="search-filter">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
             <input
               v-model="searchQuery"
               type="text"
               class="form-control"
-              placeholder="상품명 검색..."
+              placeholder="검색어를 입력해 주세요"
             />
           </div>
         </div>
 
-        <v-row justify="center">
-          <v-col v-for="n in 4" :key="n" cols="auto">
-            <v-card class="my-4" max-width="344">
-              <v-img
-                height="200px"
-                src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                cover
-              ></v-img>
-              <v-card-title>Top Western Road Trips</v-card-title>
-              <v-card-subtitle>1,000 miles of wonder</v-card-subtitle>
-              <v-card-actions>
-                <v-btn color="orange lighten-2" text>Explore</v-btn>
-                <v-spacer></v-spacer>
-                <v-btn
-                  :icon="show[n - 1] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                  @click="toggleShow(n - 1)"
-                  :aria-label="show[n - 1] ? 'Collapse' : 'Expand'"
-                ></v-btn>
-              </v-card-actions>
-              <v-expand-transition>
-                <div v-show="show[n - 1]">
-                  <v-divider></v-divider>
-                </div>
-              </v-expand-transition>
-            </v-card>
-          </v-col>
-        </v-row>
-        <!-- Additional rows can be added here -->
+        <!-- 메인 -->
+        <Youtube_title />
+
+        <!-- 하단 페이지 넘기는 바  -->
       </v-container>
       <div id="Pagination">
         <v-container>
@@ -82,71 +60,86 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
+import Youtube_title from './Youtube_title.vue';
 
 export default {
-  name: 'Influencer',
+  name: 'Youtube',
   components: {
-    Header,
-    Footer,
+    Youtube_title,
   },
   data() {
     return {
-      searchQuery: '', // 검색어 데이터 추가
-      show: Array(4).fill(false), // 4개의 카드에 대한 show 상태 초기화
+      searchQuery: '', // 검색어 데이터
       page: 1, // 현재 페이지
     };
   },
   methods: {
-    toggleShow(index) {
-      this.show[index] = !this.show[index]; // 배열의 값을 직접 토글
-    },
     navigateTo(path) {
       this.$router.push(path);
     },
     onPageChange(newPage) {
       this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-      console.log(`Current page: ${newPage}`); // 현재 페이지 출력
+      console.log(`Current page: ${newPage}`);
     },
   },
 };
 </script>
 
 <style scoped>
-.my-4 {
-  margin-top: 16px; /* 카드 사이의 여백 조정 */
-}
-#main {
+#All {
   display: flex;
   align-items: stretch; /* 왼쪽과 오른쪽 영역을 세로로 늘림 */
+  padding-left: 100px;
 }
 #left {
   width: 300px; /* 고정된 너비 (300px) */
 }
 #right {
   flex: 1; /* 오른쪽 영역은 남은 공간을 모두 차지 */
-  align-items: flex-start; /* 수직 정렬 */
-  margin-right: 250px;
 }
 .search-container {
   display: flex;
   align-items: center; /* 수직 정렬 */
   margin-bottom: 20px; /* 아래 여백 추가 */
+  justify-content: space-between;
 }
 #search {
-  margin-left: 6px; /* 제목과의 간격 조정 */
-}
-#seartext {
-  justify-content: center;
+  display: flex; /* 아이콘과 인풋을 나란히 배치 */
+  align-items: center; /* 수직 중앙 정렬 */
+  gap: 10px; /* 아이콘과 인풋 간격 */
 }
 .form-control {
-  width: 100%;
+  flex: 1; /* 인풋 필드를 남은 공간에 맞게 확장 */
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-.portfolio-title {
-  font-size: 24px; /* 글꼴 크기 조정 */
+h1.sixth {
+  position: relative;
+}
+
+h1.sixth:before,
+h1.sixth:after {
+  content: '금융 ';
+  display: inline-block;
+  position: relative;
+  top: 1px;
+  height: 100%;
+  font-size: 1.25em;
+  color: black;
+
+  transition: all 0.5s ease;
+}
+
+h1.sixth:after {
+  content: ' 유튜브';
+}
+
+h1.sixth:hover:before {
+  transform: translateX(-5px);
+}
+
+h1.sixth:hover:after {
+  transform: translateX(5px);
 }
 </style>
