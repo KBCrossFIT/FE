@@ -80,8 +80,8 @@ export default {
     onPageChange(newPage) {
       this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
       console.log(`Current page: ${newPage}`);
+
     },
-  },
 };
 </script>
 
