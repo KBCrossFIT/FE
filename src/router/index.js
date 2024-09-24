@@ -50,14 +50,15 @@ const routes = [
     { path: '/investment-test-start', name: 'InvestmentTestStart', component: InvestmentTestStart },
     { path: '/my-investment-analyze', name: 'MyInvestmentAnalyze', component: MyInvestmentAnalyze },
     { path: '/portfolio', name: 'Portfolio', component: Portfolio },
+    { path: '/portfolio/:id', name: 'Portfolio', component: Portfolio },
     { path: '/make-portfolio', name: 'MakePortfolio', component: MakePortfolio },
     { path: '/my-portfolio', name: 'MyPortfolio', component: MyPortfolio },
     { path: '/product-comparison', name: 'ProductComparison', component: ProductComparison },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 export default router;

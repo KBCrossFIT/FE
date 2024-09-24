@@ -21,10 +21,6 @@
             </li>
             <li class="menu4" @click="toggleDropdown(4)">
                 <a href="./make-portfolio">포트폴리오 구성하기</a>
-
-                <!-- <div v-if="activeDropdown === 4" class="dropdown-content">
-                    <p>포트폴리오 구성 관련 내용</p>
-                </div> -->
             </li>
         </ul>
     </div>
