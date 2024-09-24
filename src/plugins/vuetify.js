@@ -35,6 +35,9 @@ import {
     VSheet,
     VDivider,
     VIcon,
+    VImg,
+    VListItemSubtitle,
+    VCardActions,
 } from 'vuetify/components';
 
 // Create Vuetify instance
@@ -75,6 +78,10 @@ const vuetify = createVuetify({
         VSheet,
         VDivider,
         VIcon,
+        VListItem,
+        VImg,
+        VListItemSubtitle,
+        VCardActions,
     },
     theme: {
         defaultTheme: 'light', // or 'dark'

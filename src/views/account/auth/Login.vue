@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { dummyUsers } from '@/dummydata.js'; // Ensure this path is correct
+import { dummyUsers } from '@/dummyData.js'; // Ensure this path is correct
 
 export default {
     data() {
