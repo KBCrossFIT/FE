@@ -1,11 +1,14 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <DefaultLayout>
+      <router-view />
+    </DefaultLayout>
   </div>
 </template>
 
 <script>
 import { provide, reactive } from 'vue';
+import DefaultLayout from './components/DefaultLayout.vue';
 
 export default {
   name: 'App',
@@ -17,12 +20,14 @@ export default {
     provide('cart', cart);
 
     return {
-      cart
+      cart,
     };
-  }
+  },
 };
 </script>
 
 <style>
 /* Add your styles here */
 </style>
+
+<!-- 커밋 컨벤션 -->

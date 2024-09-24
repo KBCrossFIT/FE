@@ -1,3 +1,4 @@
+import '@mdi/font/css/materialdesignicons.css';
 import { createVuetify } from 'vuetify';
 import 'vuetify/styles'; // Global Vuetify styles
 import * as components from 'vuetify/components';
@@ -19,10 +20,10 @@ import {
   VList,
   VListItem,
   VListItemTitle,
-  VCardTitle, // 추가
-  VCardText, // 추가
-  VContainer, // 추가
-  VTextField, // 추가
+  VCardTitle,  // 추가
+  VCardText,   // 추가
+  VContainer,  // 추가
+  VTextField,  // 추가
   VDatePicker, // 추가
   VForm, // 추가
   VRadioGroup, // 추가
@@ -33,7 +34,7 @@ import {
 
 const vuetify = createVuetify({
   icons: {
-    defaultSet: 'mdi', // MDI 아이콘 세트 사용
+    defaultSet: 'mdi', // MDI 아����� 세��� 사���
   },
   components: {
     VApp,
@@ -50,16 +51,16 @@ const vuetify = createVuetify({
     VList,
     VListItem,
     VListItemTitle,
-    VCardTitle, // 추가
-    VCardText, // 추가
-    VContainer, // 추가
-    VTextField, // 추가
+    VCardTitle,  // 추가
+    VCardText,   // 추가
+    VContainer,  // 추가
+    VTextField,  // 추가
     VDatePicker, // 추가
     VForm, // 추가
     VRadioGroup, // 추가
-    VRadio, // 추가
-    VMenu, // 추가
-    VBtn, // 추가
+    VRadio,      // 추가
+    VMenu,       // 추가
+    VBtn,        // 추가
   },
   theme: {
     defaultTheme: 'light', // or 'dark'
