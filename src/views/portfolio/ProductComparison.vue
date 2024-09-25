@@ -30,7 +30,13 @@
                 </v-btn>
             </div>
         </div>
+        <div v-if="warningMessage" class="alert-warning">
+            {{ warningMessage }}
+        </div>
 
+        <div v-if="confirmMessage" class="alert-confirm">
+            {{ confirmMessage }}
+        </div>
         <div class="product-list">
             <div v-for="product in paginatedProducts" :key="product.id" class="product-card card">
                 <div class="card-body" @click="addToCompare(product)">
@@ -62,6 +68,7 @@
         <h1>비교군 목록</h1>
         <div class="CandidatesCompare-body">
             <h3>최대 세 카드(compare) 담을 수 있는 박스</h3>
+            <v-btn @click="clearAllProducts">일괄 비우기</v-btn>
             <div class="compare-cards">
                 <div
                     v-for="(product, index) in compareProducts"
@@ -100,25 +107,96 @@
                     :series="series"
                 ></apexchart>
             </div>
+            <!-- 비교한 상품들의 상세 정보 카드 -->
+            <div v-if="compareProducts.length > 0" class="product-details-container">
+                <h3>비교한 상품 상세 정보</h3>
+                <div class="card-container">
+                    <v-card
+                        v-for="(product, index) in compareProducts"
+                        :key="product.id"
+                        class="product-card"
+                        elevation="3"
+                    >
+                        <v-card-title>{{ product.name }} (ID: {{ product.id }})</v-card-title>
+                        <v-card-text>
+                            <p>상품 종류: {{ product.type }}</p>
+                            <p v-if="product.yield && product.yield.length > 0">
+                                수익률: {{ product.yield.join(', ') }}%
+                            </p>
+                            <p v-else>수익률 정보 없음</p>
+                        </v-card-text>
+                    </v-card>
+                </div>
+            </div>
+
+            <div v-else>
+                <p>비교할 상품이 없습니다.</p>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed, inject } from 'vue';
+import { ref, computed } from 'vue';
+import VueApexCharts from 'vue3-apexcharts';
 import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
 
 export default {
     name: 'ProductComparison',
+    components: {
+        apexchart: VueApexCharts,
+    },
     setup() {
         const searchQuery = ref('');
         const selectedCategory = ref('savings');
         const compare = ref([]);
+        const currentProductType = ref(null); // 현재 선택된 상품의 타입 저장
         const page = ref(1);
         const itemsPerPage = 4; // 페이지당 아이템 수
+        const warningMessage = ref('');
+        const confirmMessage = ref('');
 
         const products = ref(dummyProducts); // 더미 데이터 사용
 
+        // 차트 옵션 및 시리즈 생성
+        const chartOptions = ref({
+            chart: {
+                type: 'bar',
+                height: 350,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                },
+            },
+            xaxis: {
+                categories: ['3개월', '6개월', '12개월'],
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            yaxis: {
+                title: {
+                    text: '수익률 (%)',
+                },
+            },
+        });
+
+        // 비교한 상품의 수익률 데이터를 차트에 표시
+        const series = computed(() => {
+            return compare.value.map((product) => {
+                // 수익률이 없으면 [0, 0, 0] 기본값 사용
+                const productYield =
+                    product.yield && product.yield.length > 0 ? product.yield : [0, 0, 0];
+                return {
+                    name: product.name,
+                    data: productYield,
+                };
+            });
+        });
+
+        // 필터링된 제품 목록
         const filteredProducts = computed(() => {
             return products.value.filter((product) => {
                 const matchesCategory = selectedCategory.value
@@ -144,21 +222,51 @@ export default {
             return Math.ceil(filteredProducts.value.length / itemsPerPage);
         });
 
+        // 비교 리스트에 상품을 추가하는 함수
         const addToCompare = (product) => {
-            if (compare) {
-                compare.value.push(product);
-                alert(`${product.name}이 비교리스트에 추가되었습니다.`);
+            if (compare.value.length < 3) {
+                // 이미 비교 리스트에 추가된 상품이 아닌 경우에만 추가
+                if (!compare.value.find((item) => item.id === product.id)) {
+                    if (compare.value.length === 0) {
+                        // 첫 번째 상품일 때만 타입 설정
+                        currentProductType.value = product.type;
+                    }
+
+                    if (product.type === currentProductType.value) {
+                        compare.value.push(product);
+                        warningMessage.value = '';
+                        confirmMessage.value = `${product.name}이(가) 비교 리스트에 추가되었습니다.`;
+                    } else {
+                        warningMessage.value = '같은 종류의 상품만 비교할 수 있습니다.';
+                        confirmMessage.value = '';
+                    }
+                } else {
+                    warningMessage.value = '이미 비교 리스트에 있는 상품입니다.';
+                    confirmMessage.value = '';
+                }
+            } else {
+                warningMessage.value = '비교 리스트가 가득 찼습니다.(최대 3 상품)';
+                confirmMessage.value = '';
             }
         };
-        const compareProducts = computed(() => {
-            return compare ? compare.value : [];
-        });
 
+        // 비교 리스트에서 상품을 제거하는 함수
         const removeFromCompare = (index) => {
-            if (compare) {
-                compare.value.splice(index, 1);
-                alert('비교 목록에서 카드가 제거되었습니다.');
+            compare.value.splice(index, 1);
+            warningMessage.value = '';
+            confirmMessage.value = `비교 목록에서 상품이 제거되었습니다.`;
+            // 비교 리스트가 비었으면 상품 타입도 초기화
+            if (compare.value.length === 0) {
+                currentProductType.value = null;
             }
+        };
+
+        // 비교 리스트 비우기
+        const clearAllProducts = () => {
+            compare.value = [];
+            currentProductType.value = null; // 상품 타입 초기화
+            warningMessage.value = ''; // 경고 메시지 초기화
+            confirmMessage.value = ''; // 확인 메시지 초기화
         };
 
         return {
@@ -170,8 +278,13 @@ export default {
             addToCompare,
             page,
             selectCategory,
-            compareProducts,
+            compareProducts: compare,
             removeFromCompare,
+            warningMessage,
+            confirmMessage,
+            chartOptions,
+            series,
+            clearAllProducts,
         };
     },
 };
@@ -254,5 +367,50 @@ export default {
     text-align: center; /* 텍스트 가운데 정렬 */
     background-color: #f9f9f9; /* 배경 색상 */
     margin: 20px; /* 카드 간의 간격 */
+}
+
+.alert-warning {
+    background-color: #ffcc00; /* Bright yellow background */
+    color: #000; /* Black text color */
+    border: 2px solid #e6b800; /* Darker border for emphasis */
+    padding: 15px; /* Padding for spacing */
+    border-radius: 5px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center the text */
+    margin: 20px 0; /* Margin for spacing above and below */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+}
+
+.alert-confirm {
+    background-color: #48e2b4; /* Bright yellow background */
+    color: #000; /* Black text color */
+    border: 2px solid #48e2b4; /* Darker border for emphasis */
+    padding: 15px; /* Padding for spacing */
+    border-radius: 5px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    text-align: center; /* Center the text */
+    margin: 20px 0; /* Margin for spacing above and below */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+}
+.product-details-container {
+    margin-top: 20px;
+}
+
+.card-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px; /* 카드 사이의 간격 */
+}
+
+.product-card {
+    width: 30%; /* 3개의 카드가 한 줄에 배치되도록 너비 설정 */
+    height: 400px; /* 세로로 긴 직사각형 카드 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.v-card {
+    padding: 20px;
 }
 </style>

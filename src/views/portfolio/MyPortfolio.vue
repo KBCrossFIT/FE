@@ -53,7 +53,7 @@ export default {
         const portfolios = ref([
             {
                 id: 1,
-                CreationDate: '2024-09-01',
+                CreationDate: '2024-09-23',
                 Total: 1000000,
                 ExpectedReturn: 8.5,
                 RiskLevel: '중간',
