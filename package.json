@@ -13,6 +13,7 @@
     "@mdi/font": "^7.4.47",
     "apexcharts": "^3.53.0",
     "pinia": "^2.2.2",
+    "rollup": "^4.22.4",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3",
     "vue3-apexcharts": "^1.6.0",
@@ -21,7 +22,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
-    "vite": "^5.3.1",
+    "vite": "^5.4.7",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.2"
   }
