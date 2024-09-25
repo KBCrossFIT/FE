@@ -15,10 +15,9 @@
                     <tr>
                         <th>
                             <!-- 전체 선택 체크박스 -->
-                            <v-checkbox v-model="allSelected" @change="toggleSelectAll" label="" />
                         </th>
                         <th>포트폴리오 이름</th>
-                        <th>예상 수익률</th>
+                        <th>예상 수익률</th>    
                         <th>위험도</th>
                     </tr>
                 </template>
