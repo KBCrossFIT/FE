@@ -6,23 +6,15 @@
             </div>
             <div class="products-box">
                 <div class="tabs">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link" :class="{ active: selectedTab === '예금' }" @click="selectTab('예금')">예금</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" :class="{ active: selectedTab === '적금' }" @click="selectTab('적금')">적금</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" :class="{ active: selectedTab === '펀드' }" @click="selectTab('펀드')">펀드</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" :class="{ active: selectedTab === '채권' }" @click="selectTab('채권')">채권</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" :class="{ active: selectedTab === '주식' }" @click="selectTab('주식')">주식</a>
-                        </li>
-                    </ul>
+                    <v-btn
+                        v-for="tab in tabs"
+                        :key="tab"
+                        :class="{ 'v-btn--active': selectedTab === tab }"
+                        @click="selectTab(tab)"
+                        class="nav-button"
+                    >
+                        {{ tab }}
+                    </v-btn>
                 </div>
 
                 <table class="products-table">
@@ -43,7 +35,8 @@
                             <td>{{ product.riskLevel }}</td>
                             <td>
                                 <v-btn icon @click="addToCart(product)">
-                                    <v-icon>mdi-cart</v-icon> <!-- 장바구니 아이콘 -->
+                                    <v-icon>mdi-cart</v-icon>
+                                    <!-- 장바구니 아이콘 -->
                                 </v-btn>
                             </td>
                         </tr>
@@ -61,17 +54,39 @@ export default {
     data() {
         return {
             selectedTab: '예금',
+            tabs: ['예금', '적금', '펀드', '채권', '주식'], // 탭 목록
             products: [
-                { id: 1, name: '예금 상품 A', rate: '2.5%', term: '1년', riskLevel: '안전형', category: '예금' },
-                { id: 2, name: '적금 상품 B', rate: '3.0%', term: '2년', riskLevel: '위험중립형', category: '적금' },
-                { id: 3, name: '펀드 상품 C', rate: '5.0%', term: '3년', riskLevel: '적극투자형', category: '펀드' },
+                {
+                    id: 1,
+                    name: '예금 상품 A',
+                    rate: '2.5%',
+                    term: '1년',
+                    riskLevel: '안전형',
+                    category: '예금',
+                },
+                {
+                    id: 2,
+                    name: '적금 상품 B',
+                    rate: '3.0%',
+                    term: '2년',
+                    riskLevel: '위험중립형',
+                    category: '적금',
+                },
+                {
+                    id: 3,
+                    name: '펀드 상품 C',
+                    rate: '5.0%',
+                    term: '3년',
+                    riskLevel: '적극투자형',
+                    category: '펀드',
+                },
                 // 필요에 따라 더 많은 상품 추가
             ],
         };
     },
     computed: {
         filteredProducts() {
-            return this.products.filter(product => product.category === this.selectedTab);
+            return this.products.filter((product) => product.category === this.selectedTab);
         },
     },
     methods: {
@@ -124,10 +139,29 @@ export default {
     width: 100%; /* 레이아웃 개선을 위한 조정 */
 }
 
-.tabs {
-    margin-bottom: 20px;
+/* 각각 버튼 스타일 */
+.nav-button {
+    text-align: center;
+    width: 20%;
+    margin: 0; /* 버튼 사이의 마진 제거 */
+    border-radius: 40px, 40px, 0, 0;
+    /* flex-grow: 1; */
 }
 
+/* 버튼 묶음 스타일 */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    /* flex-wrap: wrap; */
+    /* gap: 20px; */
+}
+
+.v-btn--active {
+    background-color: #ca207b; /* 선택된 버튼 색상 */
+}
+.v-btn {
+    border: none; /* 기본 테두리 제거 */
+}
 .nav-tabs {
     display: flex;
     justify-content: center;

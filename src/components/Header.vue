@@ -61,6 +61,7 @@ export default {
                     subItems: [
                         { name: '상품 리스트', link: '/financial-products' },
                         { name: '장바구니', link: '/cart' },
+                        { name: '최근 본 상품', link: '/recently-viewed' },
                     ],
                 },
                 {
