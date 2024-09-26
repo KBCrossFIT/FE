@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
+import store from './store';
 import vuetify from './plugins/vuetify';
 import DefaultLayout from './components/DefaultLayout.vue';
 
@@ -16,6 +17,7 @@ app.component('DefaultLayout', DefaultLayout);
 
 // Vue 라우터 및 Vuetify 플러그인 사용
 app.use(router);
+app.use(store);
 app.use(vuetify);
 
 // 애플리케이션을 #app 엘리먼트에 마운트
