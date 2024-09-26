@@ -43,6 +43,18 @@
             <v-col cols="6" md="3" lg="2">
                 <v-btn color="teal" block @click="navigateTo('/changePW')">비밀번호 변경</v-btn>
             </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/bonds')">채권 리스트</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/deposits')">예금 리스트</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/savings')">적금 리스트</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/funds')">펀드 리스트</v-btn>
+            </v-col>
         </v-row>
     </v-container>
 </template>
