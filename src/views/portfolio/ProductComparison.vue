@@ -114,7 +114,7 @@
                     <v-card
                         v-for="(product, index) in compareProducts"
                         :key="product.id"
-                        class="product-card"
+                        class="desc-card"
                         elevation="3"
                     >
                         <v-card-title>{{ product.name }} (ID: {{ product.id }})</v-card-title>
@@ -402,7 +402,7 @@ export default {
     gap: 16px; /* 카드 사이의 간격 */
 }
 
-.product-card {
+.desc-card {
     width: 30%; /* 3개의 카드가 한 줄에 배치되도록 너비 설정 */
     height: 400px; /* 세로로 긴 직사각형 카드 */
     display: flex;
