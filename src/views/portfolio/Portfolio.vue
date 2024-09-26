@@ -118,12 +118,12 @@ export default {
             );
         };
 
-        // Update graph every 24 hours (86400000 ms)
+        // Update graph every 24 hours (86400000 ms) 2628000000
         let intervalId;
 
         onMounted(() => {
             calculateInvestmentProgress();
-            intervalId = setInterval(calculateInvestmentProgress, 2628000000); // Update daily
+            intervalId = setInterval(calculateInvestmentProgress, 86400000); // Update daily
         });
 
         onBeforeUnmount(() => {

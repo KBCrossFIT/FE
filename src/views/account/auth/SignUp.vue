@@ -91,10 +91,12 @@
                         회원가입
                     </button>
                 </form>
+
                 <Modal
+                    ref="modal"
                     :isOpen="isModalOpen"
                     :currentComponent="currentComponent"
-                    @close="isModalOpen = false"
+                    @close="handleClose"
                     @finished="InvestMentTest = true"
                     @update:currentComponent="updateCurrentComponent"
                     @investMentTestStarted="InvestMentTest = true"
@@ -110,10 +112,10 @@
 </template>
 
 <script>
-import Modal from '@/components/Modal/Modal.vue';
-import ModalTestStart from '@/components/Modal/ModalTestStart.vue'; // Test start component
-import ModalTest from '@/components/Modal/ModalTest.vue'; // Main test component
-import ModalTestEnd from '@/components/Modal/ModalTestEnd.vue'; // Test end component
+import Modal from '@/components/modal/Modal.vue';
+import ModalTestStart from '@/components/modal/ModalTestStart.vue'; // Test start component
+import ModalTest from '@/components/modal/ModalTest.vue'; // Main test component
+import ModalTestEnd from '@/components/modal/ModalTestEnd.vue'; // Test end component
 import { markRaw } from 'vue';
 
 export default {
@@ -135,6 +137,8 @@ export default {
             isModalOpen: false,
             currentComponent: markRaw(ModalTestStart),
             InvestMentTest: false,
+            questions: [],
+            currentQuestionIndex: 0, // Initialize current question index
         };
     },
     methods: {
@@ -157,14 +161,27 @@ export default {
             this.currentComponent = markRaw(ModalTestStart);
         },
 
+        handleClose() {
+            this.isModalOpen = false; // 모달을 닫습니다.
+            console.log('모달이 닫혔습니다.', this.isModalOpen); // 닫힘 확인용 로그
+        },
         nextStep() {
             console.log('nextStep 호출됨');
             if (this.currentComponent.__file.includes('ModalTestStart.vue')) {
                 console.log('현재 ModalTestStart에서 ModalTest로 이동');
-                this.currentComponent = markRaw(ModalTest); // 다음 컴포넌트로 이동
+                this.currentComponent = markRaw(ModalTest); // Move to the next component
+
+                // Set questions prop for ModalTest
+                this.$nextTick(() => {
+                    if (this.$refs.modal.currentComponentRef) {
+                        this.$refs.modal.currentComponentRef.setQuestions(this.questions);
+                        this.$refs.modal.currentComponentRef.currentQuestionIndex =
+                            this.currentQuestionIndex;
+                    }
+                });
             } else if (this.currentComponent.__file.includes('ModalTest.vue')) {
                 console.log('현재 ModalTest에서 ModalTestEnd로 이동');
-                this.currentComponent = markRaw(ModalTestEnd); // 종료 컴포넌트로 이동
+                this.currentComponent = markRaw(ModalTestEnd); // Move to the end component
             }
 
             console.log('현재 컴포넌트:', this.currentComponent);
@@ -268,5 +285,13 @@ input {
 
 .login-link a:hover {
     text-decoration: underline;
+}
+.ModalTest-btn {
+    padding: 10px;
+    background-color: #4db6ac;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 </style>
