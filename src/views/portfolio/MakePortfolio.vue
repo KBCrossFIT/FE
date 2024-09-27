@@ -96,7 +96,7 @@
                 show-select
             ></v-data-table>
 
-            <Modal
+            <ModalStock
                 v-if="isModalOpen"
                 :isOpen="isModalOpen"
                 @close="isModalOpen = false"
@@ -117,13 +117,13 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import VueApexCharts from 'vue3-apexcharts'; // apexcharts 파이 차트 사용.
 import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
-import Modal from '@/components/Modal/ModalStock.vue'; // 모달 컴포넌트 import
+import ModalStock from '@/components/Modal/ModalStock.vue'; // 모달 컴포넌트 import
 
 export default {
     name: 'MakePortfolio',
     components: {
         apexchart: VueApexCharts,
-        Modal,
+        ModalStock,
     },
     setup() {
         const searchQuery = ref('');

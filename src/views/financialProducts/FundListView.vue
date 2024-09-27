@@ -1,9 +1,13 @@
 <template>
     <div>
       <h1>Fund Products</h1>
-      <div v-if="fundProducts && fundProducts.length > 0">
+      <input type="text" v-model="keyword" placeholder="펀드 검색..." />
+      <button @click="searchFunds">Search</button>
+  
+      <!-- 검색된 리스트가 있으면 검색된 리스트를, 없으면 전체 리스트를 출력 -->
+      <div v-if="currentFundList && currentFundList.length > 0">
         <ul>
-          <li v-for="fund in fundProducts" :key="fund.productId">
+          <li v-for="fund in currentFundList" :key="fund.productId">
             <div class="fund-item">
               <h2>{{ fund.productNm }}</h2>
               <p><strong>Company:</strong> {{ fund.companyNm }}</p>
@@ -31,18 +35,41 @@
   
   export default {
     name: 'FundListView',
+    data() {
+      return {
+        keyword: '', // 검색어 바인딩
+        searchMode: false, // 검색 모드 여부
+      };
+    },
     computed: {
-      ...mapGetters(['getFundList']), // Vuex에서 펀드 리스트 상태 가져오기
-      fundProducts() {
-        return this.getFundList; // getter를 통해 펀드 리스트 반환
-      }
+      ...mapGetters('fund', ['getFundList', 'getSearchFundList']), // Vuex에서 펀드 리스트 상태 가져오기
+      // 검색모드일 때는 검색된 리스트, 아닐 때는 전체 리스트 반환
+      currentFundList() {
+        return this.searchMode && this.getSearchFundList.length > 0
+          ? this.getSearchFundList
+          : this.getFundList;
+      },
     },
     created() {
-      // 컴포넌트가 생성될 때 펀드 리스트 데이터 가져오기
+      // 컴포넌트가 생성될 때 전체 펀드 리스트 데이터 가져오기
       this.fetchFundList();
     },
     methods: {
-      ...mapActions(['fetchFundList']), // Vuex에서 API 호출 액션 매핑
+      ...mapActions('fund', ['fetchFundList', 'searchFundList']), // Vuex에서 API 호출 액션 매핑
+      searchFunds() {
+        if (this.keyword.trim().length > 1) {
+          this.searchFundList(this.keyword)
+            .then(() => {
+              this.searchMode = true; // 검색이 완료되면 검색 모드로 전환
+            })
+            .catch((error) => {
+              console.error('Error during search:', error);
+              this.searchMode = false;
+            });
+        } else {
+          alert('검색어는 2자 이상 입력해야 합니다.');
+        }
+      },
     },
   };
   </script>

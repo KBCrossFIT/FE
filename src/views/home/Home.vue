@@ -1,7 +1,7 @@
 <template>
     <div class="portfolio-page">
         <div class="nonHeader">
-            <!-- <DevBtnSection /> -->
+            <DevBtnSection />
             <CarouselSection />
             <ComparisonSection />
             <ProductListSection />
@@ -31,6 +31,9 @@ export default {
   display: flex; 
   margin: 0 220px 0 220px; 
   padding: 20px;
+} */
+/* .nonHeader {
+    background-color: black;
 } */
 
 .home-header {

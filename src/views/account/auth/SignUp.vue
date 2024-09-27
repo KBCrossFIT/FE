@@ -93,8 +93,8 @@
                 </form>
 
                 <Modal
-                    ref="modal"
                     :isOpen="isModalOpen"
+                    :InvestMentTest="InvestMentTest"
                     :currentComponent="currentComponent"
                     @close="handleClose"
                     @finished="InvestMentTest = true"
@@ -157,6 +157,7 @@ export default {
             );
         },
         openModal() {
+            console.log('모달테스트 시작 창 열기');
             this.isModalOpen = true;
             this.currentComponent = markRaw(ModalTestStart);
         },

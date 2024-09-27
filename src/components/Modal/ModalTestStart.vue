@@ -15,16 +15,23 @@
 </template>
 
 <script>
-import { defineComponent, toRefs } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     props: {
-        // 필요한 props를 여기에 추가하세요
+        isOpen: {
+            type: Boolean,
+            required: false,
+        },
+        InvestMentTest: {
+            type: Boolean,
+            required: false,
+        },
     },
     setup(props, { emit }) {
         const startTest = () => {
-            emit('next'); // 다음 컴포넌트로 이동
-            emit('investMentTestStarted'); // InvestMentTest 상태를 true로 설정하는 이벤트 전달
+            emit('next');
+            emit('investMentTestStarted');
             console.log('진짜이동함??');
         };
 
