@@ -141,7 +141,7 @@ export default {
 }
 
 .nav-aside li {
-    width: 100%;
+    width: 90%;
     text-align: right;
 }
 
