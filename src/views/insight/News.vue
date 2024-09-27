@@ -40,28 +40,33 @@
                         />
                     </div>
                 </div>
-
-                <!-- 메인 -->
-                <Youtube_title />
-
-                <!-- 하단 페이지 넘기는 바  -->
+                <!-- 상품명 검색, 제목 -->
+                <div id="right">
+                    <v-container>
+                        <div id="seartext" class="search-container">
+                            <h1 class="sixth">_</h1>
+                            <!-- 메인 -->
+                            <News_title />
+                            <v-pagination
+                                v-model="page"
+                                :length="5"
+                                @input="onPageChange"
+                            ></v-pagination>
+                        </div>
+                    </v-container>
+                </div>
             </v-container>
-            <div id="Pagination">
-                <v-container>
-                    <v-pagination v-model="page" :length="5" @input="onPageChange"></v-pagination>
-                </v-container>
-            </div>
         </div>
     </div>
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import News_title from './News_title.vue';
 
 export default {
-    name: 'Youtube',
+    name: 'News',
     components: {
-        Youtube_title,
+        News_title,
     },
     data() {
         return {
@@ -73,9 +78,14 @@ export default {
         navigateTo(path) {
             this.$router.push(path);
         },
-        onPageChange(newPage) {
-            this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-            console.log(`Current page: ${newPage}`);
+        methods: {
+            navigateTo(path) {
+                this.$router.push(path);
+            },
+            onPageChange(newPage) {
+                this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
+                console.log(`Current page: ${newPage}`);
+            },
         },
     },
 };

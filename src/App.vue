@@ -1,27 +1,27 @@
 <template>
-    <div id="app">
-        <DefaultLayout>
-            <router-view />
-        </DefaultLayout>
-    </div>
+  <div id="app">
+    <DefaultLayout>
+      <router-view />
+    </DefaultLayout>
+  </div>
 </template>
 
 <script>
 import { provide, reactive } from 'vue';
 
 export default {
-    name: 'App',
-    setup() {
-        // Use reactive to make the cart reactive
-        const cart = reactive([]);
+  name: 'App',
+  setup() {
+    // Use reactive to make the cart reactive
+    const cart = reactive([]);
 
-        // Provide the cart to child components
-        provide('cart', cart);
+    // Provide the cart to child components
+    provide('cart', cart);
 
-        return {
-            cart,
-        };
-    },
+    return {
+      cart,
+    };
+  },
 };
 </script>
 

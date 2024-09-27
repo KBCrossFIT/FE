@@ -123,37 +123,43 @@ export default {
 .uiNavAside {
     position: fixed;
     right: 20px;
-    top: 15%;
-    height: 480px;
+    top: 50%;
+    transform: translateY(-50%); /* Vertical center alignment */
     width: 80px;
-    background-color: #333;
+    background-color: #585654;
     display: flex;
     flex-direction: column;
     z-index: 9999;
-    border-radius: 5cqh;
+    border-radius: 5px;
+    padding: 10px;
 }
 
 .nav-aside {
     list-style-type: none;
-    top: 10%;
     padding: 0;
     margin: 0;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Even spacing between buttons */
+    height: 100%; /* Ensure full height usage */
 }
 
 .nav-aside li {
-    width: 90%;
-    text-align: right;
+    text-align: center;
 }
 
 .nav-aside a {
-    display: flex; /* Changed to flex for icon and text alignment */
-    align-items: center; /* Center icons and text vertically */
+    display: flex;
+    flex-direction: column; /* Icon above text */
+    align-items: center; /* Center icon and text */
     color: white;
     padding: 15px;
     text-decoration: none;
     background-color: #333;
     width: 100%;
+    height: auto;
+    margin-bottom: 5px;
+    border-radius: 5px;
 }
 
 .nav-aside li:hover a {
@@ -161,38 +167,33 @@ export default {
 }
 
 .menu-text {
-    font-size: 0.9rem; /* Smaller font size */
-    margin-left: 8px; /* Space between icon and text */
+    font-size: 0.9rem;
+    margin-top: 5px; /* Space between icon and text */
 }
 
 .dropdown-content {
     position: absolute;
-    right: 60px;
+    right: 80px;
     top: 0;
     background-color: #444;
     color: white;
     padding: 10px;
-    text-align: left;
-    width: 300px; /* Width of the dropdown */
-    height: auto; /* Set height to auto to fit content */
+    width: 300px;
     border-left: 1px solid #575757;
-    display: flex;
-    flex-direction: column; /* Column layout for dropdown items */
-    z-index: 9999; /* Ensure dropdown is above other content */
+    z-index: 9999;
 }
 
 .portfolio-dropdown {
-    width: 100%;
     padding: 20px;
-    background-color: #f0f8f4; /* Light mint background */
+    background-color: #f0f8f4;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
-    font-size: 1.2rem; /* Adjusted title size */
+    font-size: 1.2rem;
     margin-bottom: 20px;
-    color: #2d6a4f; /* Mint green color */
+    color: #2d6a4f;
 }
 
 .portfolio-table {
@@ -204,9 +205,9 @@ export default {
 .portfolio-table th,
 .portfolio-table td {
     text-align: left;
-    padding: 8px; /* Reduced padding for smaller font */
+    padding: 8px;
     border-bottom: 1px solid #ddd;
-    font-size: 0.9rem; /* Smaller font size for table */
+    font-size: 0.9rem;
 }
 
 .portfolio-table th {
@@ -215,19 +216,19 @@ export default {
 }
 
 .portfolio-name {
-    color: #2d6a4f; /* Change color for portfolio names */
+    color: #2d6a4f;
 }
 
 .portfolio-table td.positive {
-    color: red; /* Positive return color */
+    color: red;
 }
 
 .portfolio-table td.negative {
-    color: blue; /* Negative return color */
+    color: blue;
 }
 
 .risk-level {
-    color: #ffcc00; /* Change color for risk level */
+    color: #ffcc00;
 }
 
 .action-buttons {
@@ -237,7 +238,7 @@ export default {
 }
 
 .action-buttons button {
-    background-color: #2d6a4f; /* Mint green */
+    background-color: #2d6a4f;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -246,6 +247,6 @@ export default {
 }
 
 .action-buttons button:hover {
-    background-color: #1b4633; /* Darker mint green on hover */
+    background-color: #1b4633;
 }
 </style>
