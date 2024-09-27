@@ -1,45 +1,28 @@
 <template>
-  <div id="All">
-    <!-- 왼쪽 메뉴 바 -->
-    <div id="left">
-      <v-card class="pa-4" elevation="2" style="height: 100%">
-        <v-card-text>
-          <v-list>
-            <v-list-item @click="navigateTo('/Youtube')">
-              <v-list-item-content>
-                <v-list-item-title>금융 유튜브</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="navigateTo('/Influencer')">
-              <v-list-item-content>
-                <v-list-item-title>인플루언서</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="navigateTo('/News')">
-              <v-list-item-content>
-                <v-list-item-title>뉴스</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-      </v-card>
-    </div>
-    <!-- 상품명 검색, 제목 -->
-    <div id="right">
-      <v-container>
-        <div id="seartext" class="search-container">
-          <h1 class="sixth">_</h1>
-
-          <div id="search" class="search-filter">
-            <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
-            <input
-              v-model="searchQuery"
-              type="text"
-              class="form-control"
-              placeholder="검색어를 입력해 주세요"
-            />
-          </div>
-
+    <div id="All">
+        <!-- 왼쪽 메뉴 바 -->
+        <div id="left">
+            <v-card class="pa-4" elevation="2" style="height: 100%">
+                <v-card-text>
+                    <v-list>
+                        <v-list-item @click="navigateTo('/Youtube')">
+                            <v-list-item-content>
+                                <v-list-item-title>금융 유튜브</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item @click="navigateTo('/Influencer')">
+                            <v-list-item-content>
+                                <v-list-item-title>인플루언서</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                        <v-list-item @click="navigateTo('/News')">
+                            <v-list-item-content>
+                                <v-list-item-title>뉴스</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
+                    </v-list>
+                </v-card-text>
+            </v-card>
         </div>
         <!-- 상품명 검색, 제목 -->
         <div id="right">
@@ -47,11 +30,32 @@
                 <div id="seartext" class="search-container">
                     <h1 class="sixth">_</h1>
 
-        <!-- 메인 -->
-        <News_title />
-    v-pagination v-model="page" :length="5" @input="onPageChange"></v-pagination>
-                </v-container>
-            </div>
+                    <div id="search" class="search-filter">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            class="form-control"
+                            placeholder="검색어를 입력해 주세요"
+                        />
+                    </div>
+                </div>
+                <!-- 상품명 검색, 제목 -->
+                <div id="right">
+                    <v-container>
+                        <div id="seartext" class="search-container">
+                            <h1 class="sixth">_</h1>
+                            <!-- 메인 -->
+                            <News_title />
+                            <v-pagination
+                                v-model="page"
+                                :length="5"
+                                @input="onPageChange"
+                            ></v-pagination>
+                        </div>
+                    </v-container>
+                </div>
+            </v-container>
         </div>
     </div>
 </template>
@@ -60,32 +64,30 @@
 import News_title from './News_title.vue';
 
 export default {
-                                    
-  name: 'News',
-  components: {
-    News_title,
-  },
-  data() {
-    return {
-      searchQuery: '', // 검색어 데이터
-      page: 1, // 현재 페이지
-    };
-  },
-  methods: {
-    navigateTo(path) {
-      this.$router.push(path);
-
+    name: 'News',
+    components: {
+        News_title,
+    },
+    data() {
+        return {
+            searchQuery: '', // 검색어 데이터
+            page: 1, // 현재 페이지
+        };
     },
     methods: {
         navigateTo(path) {
             this.$router.push(path);
         },
-        onPageChange(newPage) {
-            this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-            console.log(`Current page: ${newPage}`);
+        methods: {
+            navigateTo(path) {
+                this.$router.push(path);
+            },
+            onPageChange(newPage) {
+                this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
+                console.log(`Current page: ${newPage}`);
+            },
         },
     },
-  },
 };
 </script>
 
