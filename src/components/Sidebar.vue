@@ -57,6 +57,7 @@
 </template>
 
 <script>
+
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -93,7 +94,8 @@ export default {
     };
 
     onMounted(() => {
-      document.addEventListener('click', handleClickOutside); // Add click event listener
+      document.ad
+      entListener('click', handleClickOutside); // Add click event listener
     });
 
     onUnmounted(() => {
@@ -137,6 +139,7 @@ export default {
 }
 
 .nav-aside a {
+
   display: flex; /* Changed to flex for icon and text alignment */
   align-items: center; /* Center icons and text vertically */
   color: white;
@@ -163,6 +166,7 @@ export default {
   color: white;
   padding: 10px;
   text-align: left;
+
   width: 300px; /* Width of the dropdown */
   height: auto; /* Set height to auto to fit content */
   border-left: 1px solid #575757;

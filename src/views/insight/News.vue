@@ -1,28 +1,45 @@
 <template>
-    <div id="All">
-        <!-- 왼쪽 메뉴 바 -->
-        <div id="left">
-            <v-card class="pa-4" elevation="2" style="height: 100%">
-                <v-card-text>
-                    <v-list>
-                        <v-list-item @click="navigateTo('/Youtube')">
-                            <v-list-item-content>
-                                <v-list-item-title>금융 유튜브</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item @click="navigateTo('/Influencer')">
-                            <v-list-item-content>
-                                <v-list-item-title>인플루언서</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item @click="navigateTo('/News')">
-                            <v-list-item-content>
-                                <v-list-item-title>뉴스</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list>
-                </v-card-text>
-            </v-card>
+  <div id="All">
+    <!-- 왼쪽 메뉴 바 -->
+    <div id="left">
+      <v-card class="pa-4" elevation="2" style="height: 100%">
+        <v-card-text>
+          <v-list>
+            <v-list-item @click="navigateTo('/Youtube')">
+              <v-list-item-content>
+                <v-list-item-title>금융 유튜브</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="navigateTo('/Influencer')">
+              <v-list-item-content>
+                <v-list-item-title>인플루언서</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="navigateTo('/News')">
+              <v-list-item-content>
+                <v-list-item-title>뉴스</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
+    </div>
+    <!-- 상품명 검색, 제목 -->
+    <div id="right">
+      <v-container>
+        <div id="seartext" class="search-container">
+          <h1 class="sixth">_</h1>
+
+          <div id="search" class="search-filter">
+            <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
+            <input
+              v-model="searchQuery"
+              type="text"
+              class="form-control"
+              placeholder="검색어를 입력해 주세요"
+            />
+          </div>
+
         </div>
         <!-- 상품명 검색, 제목 -->
         <div id="right">
@@ -30,25 +47,9 @@
                 <div id="seartext" class="search-container">
                     <h1 class="sixth">_</h1>
 
-                    <div id="search" class="search-filter">
-                        <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
-                        <input
-                            v-model="searchQuery"
-                            type="text"
-                            class="form-control"
-                            placeholder="검색어를 입력해 주세요"
-                        />
-                    </div>
-                </div>
-
-                <!-- 메인 -->
-                <Youtube_title />
-
-                <!-- 하단 페이지 넘기는 바  -->
-            </v-container>
-            <div id="Pagination">
-                <v-container>
-                    <v-pagination v-model="page" :length="5" @input="onPageChange"></v-pagination>
+        <!-- 메인 -->
+        <News_title />
+    v-pagination v-model="page" :length="5" @input="onPageChange"></v-pagination>
                 </v-container>
             </div>
         </div>
@@ -56,18 +57,24 @@
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import News_title from './News_title.vue';
 
 export default {
-    name: 'Youtube',
-    components: {
-        Youtube_title,
-    },
-    data() {
-        return {
-            searchQuery: '', // 검색어 데이터
-            page: 1, // 현재 페이지
-        };
+                                    
+  name: 'News',
+  components: {
+    News_title,
+  },
+  data() {
+    return {
+      searchQuery: '', // 검색어 데이터
+      page: 1, // 현재 페이지
+    };
+  },
+  methods: {
+    navigateTo(path) {
+      this.$router.push(path);
+
     },
     methods: {
         navigateTo(path) {
@@ -78,6 +85,7 @@ export default {
             console.log(`Current page: ${newPage}`);
         },
     },
+  },
 };
 </script>
 
