@@ -28,7 +28,7 @@
     <div id="right">
       <v-container>
         <div id="seartext" class="search-container">
-          <h1 class="sixth">_</h1>
+          <h1 class="titleYoutube">_</h1>
 
           <div id="search" class="search-filter">
             <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
@@ -80,8 +80,8 @@ export default {
     onPageChange(newPage) {
       this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
       console.log(`Current page: ${newPage}`);
-
     },
+  },
 };
 </script>
 
@@ -114,12 +114,12 @@ export default {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-h1.sixth {
+h1.title youtube {
   position: relative;
 }
 
-h1.sixth:before,
-h1.sixth:after {
+h1.titleYoutube:before,
+h1.titleYoutube:after {
   content: '금융 ';
   display: inline-block;
   position: relative;
@@ -131,15 +131,15 @@ h1.sixth:after {
   transition: all 0.5s ease;
 }
 
-h1.sixth:after {
+h1.titleYoutube:after {
   content: ' 유튜브';
 }
 
-h1.sixth:hover:before {
+h1.titleYoutube:hover:before {
   transform: translateX(-5px);
 }
 
-h1.sixth:hover:after {
+h1.titleYoutube:hover:after {
   transform: translateX(5px);
 }
 </style>

@@ -6,6 +6,7 @@
       <ComparisonSection />
       <ProductListSection />
     </div>
+  </div>
 </template>
 
 <script>
@@ -32,36 +33,32 @@ export default {
   padding: 20px;
 } */
 
-.nonHeader {
-    margin: 0 220px 0 220px;
-}
-
 .home-header {
-    background-color: #e9ecef;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
+  background-color: #e9ecef;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
 }
 
 .home-main {
-    flex: 1;
-    margin-top: 20px;
+  flex: 1;
+  margin-top: 20px;
 }
 
 .carousel {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .comparison-section {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .product-list-section {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .home-footer {
-    background-color: #e9ecef;
-    padding: 20px;
-    border-top: 1px solid #ddd;
+  background-color: #e9ecef;
+  padding: 20px;
+  border-top: 1px solid #ddd;
 }
 </style>

@@ -1,5 +1,4 @@
 <template>
-
   <div id="All">
     <!-- 왼쪽 메뉴 바 -->
     <div id="left">
@@ -43,7 +42,7 @@
         </div>
 
         <!-- 메인 -->
-        <Youtube_title />
+        <News_title />
 
         <!-- 하단 페이지 넘기는 바  -->
       </v-container>
@@ -61,12 +60,12 @@
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import News_title from './News_title.vue';
 
 export default {
-  name: 'Youtube',
+  name: 'News',
   components: {
-    Youtube_title,
+    News_title,
   },
   data() {
     return {
@@ -82,6 +81,7 @@ export default {
       this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
       console.log(`Current page: ${newPage}`);
     },
+  },
 };
 </script>
 
