@@ -124,17 +124,18 @@ export default {
     position: fixed;
     right: 20px;
     top: 15%;
-    height: 500px;
-    width: 100px;
+    height: 480px;
+    width: 80px;
     background-color: #333;
     display: flex;
     flex-direction: column;
     z-index: 9999;
-    border-radius: 30%;
+    border-radius: 5cqh;
 }
 
 .nav-aside {
     list-style-type: none;
+    top: 10%;
     padding: 0;
     margin: 0;
     width: 100%;
