@@ -1,7 +1,7 @@
 <template>
     <div class="portfolio-page">
         <div class="nonHeader">
-            <DevBtnSection />
+            <!-- <DevBtnSection /> -->
             <CarouselSection />
             <ComparisonSection />
             <ProductListSection />
