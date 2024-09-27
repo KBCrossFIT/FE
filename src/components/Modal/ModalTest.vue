@@ -1,63 +1,60 @@
 <template>
     <div>
-        <h2>본 테스트 지문 표시</h2>
-
-        <div class="InvestmentTest-query">
-            <p>{{ currentQuestion.question }}</p>
-            <div v-for="(option, index) in currentQuestion.options" :key="index">
-                <p>{{ option }}</p>
+        <h2>투자 성향 분석 테스트</h2>
+        <div class="question-container">
+            <div class="question-text">
+                {{ currentQuestion.question }}
+                <!-- Display the current question -->
+            </div>
+            <div class="answers">
+                <v-btn
+                    v-for="(option, index) in currentQuestion.options"
+                    :key="index"
+                    @click="selectAnswer(option)"
+                >
+                    {{ option }}
+                </v-btn>
+            </div>
+            <div class="navigation">
+                <v-btn v-if="!isLastQuestion" class="ModalTest-btn" @click="nextQuestion">
+                    다음 질문
+                </v-btn>
+                <v-btn v-else class="ModalTest-btn" @click="finishTest">테스트 완료</v-btn>
             </div>
         </div>
-
-        <v-btn class="ModalTest-btn" @click="nextQuestion"> 다음 문제 </v-btn>
-        <v-btn class="ModalTest-btn" @click="closeModal">취소 </v-btn>
     </div>
 </template>
 
 <script>
-import { questions } from '@/dummyQuestion.js';
+import { questions } from '@/dummyQuestion.js'; // Import the questions from dummyQuestion.js
 
 export default {
-    name: 'ModalTest',
-    props: {
-        questions: {
-            type: Array,
-            required: true,
-            default: () => [],
-        },
-        currentQuestionIndex: {
-            type: Number,
-            required: true,
-            default: 0,
-        },
-    },
     data() {
-        return {};
+        return {
+            currentQuestionIndex: 0, // Track the current question
+            questions, // Load all questions from dummyQuestion.js
+        };
     },
-
     computed: {
         currentQuestion() {
-            if (questions.length === 0 || this.currentQuestionIndex >= questions.length) {
-                return {}; // Return an empty object if there's no valid question
-            }
-            return questions[this.currentQuestionIndex];
+            return this.questions[this.currentQuestionIndex]; // Get the current question object
+        },
+        isLastQuestion() {
+            return this.currentQuestionIndex === this.questions.length - 1; // Check if this is the last question
         },
     },
-
     methods: {
-        setQuestions(newQuestions) {
-            this.questions = newQuestions; // Update questions
-        },
-        closeModal() {
-            console.log('모달 닫기 작동 확인');
-            this.$emit('close'); // Emit close event to parent
-        },
         nextQuestion() {
-            if (this.currentQuestionIndex < questions.length - 1) {
+            if (this.currentQuestionIndex < this.questions.length - 1) {
                 this.currentQuestionIndex++;
-            } else {
-                this.$emit('next');
             }
+        },
+        selectAnswer(option) {
+            console.log('선택한 답변:', option); // Log the selected answer
+            // Optionally handle answer selection, e.g., store it or process it
+        },
+        finishTest() {
+            this.$emit('next'); // Emit 'next' event to switch to ModalTestEnd.vue
         },
     },
 };

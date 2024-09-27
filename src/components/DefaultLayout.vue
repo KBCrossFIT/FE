@@ -29,4 +29,7 @@ import SideBar from './Sidebar.vue';
     flex: 1;
     padding: 20px;
 }
+/* .main {
+    background-color: #f9f9f9; 
+} */
 </style>
