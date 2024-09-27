@@ -30,9 +30,15 @@ import MakePortfolio from '../views/portfolio/MakePortfolio.vue';
 import MyPortfolio from '../views/portfolio/MyPortfolio.vue';
 import ProductComparison from '../views/portfolio/ProductComparison.vue';
 
-import memo from '../memo.vue';
+// finance
+import BondListView from '../views/financialProducts/BondListView.vue';
+import DepositListView from '@/views/financialProducts/DepositListView.vue';
+import SavingListView from '@/views/financialProducts/SavingListView.vue';
+import FundListView from '@/views/financialProducts/FundListView.vue';
+
 
 const routes = [
+
   { path: '/', name: 'Home', component: Home },
   { path: '/find', name: 'Find', component: FindId },
   { path: '/login', name: 'Login', component: Login },
@@ -85,7 +91,6 @@ const routes = [
     component: ProductComparison,
   },
   { path: '/memo', name: 'memo', component: memo },
-];
 
 const router = createRouter({
   history: createWebHistory(),

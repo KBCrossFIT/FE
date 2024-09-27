@@ -165,6 +165,7 @@ export default {
         {
           breakpoint: 480,
           options: {
+
             chart: {
               width: 200,
             },
@@ -203,5 +204,6 @@ export default {
       labels,
     };
   },
+
 };
 </script>

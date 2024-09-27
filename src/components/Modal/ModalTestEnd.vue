@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2>테스트 종료 설명</h2>
-        <button @click.prevent="finish">완료</button>
+        <v-btn class="ModalTest-btn" @click.prevent="finish">완료 </v-btn>
     </div>
 </template>
 

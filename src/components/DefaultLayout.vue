@@ -5,24 +5,19 @@ import SideBar from './Sidebar.vue';
 </script>
 
 <template>
-  <div class="container">
-    <SideBar />
-    <div class="main">
-      <Header />
-      <div class="content my-5 px-3">
-        <slot></slot>
-      </div>
-      <Footer />
+    <div class="container">
+        <SideBar />
+        <div class="main">
+            <Header />
+            <div class="content my-5 px-3">
+                <slot></slot>
+            </div>
+            <Footer />
+        </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
-.container {
-    /* display: flex;  */
-    /* background: linear-gradient(to bottom, #e0f2f1, #ffffff); */
-}
-
 .main {
     margin-right: 60px;
     display: flex;

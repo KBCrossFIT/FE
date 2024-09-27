@@ -22,7 +22,9 @@
                 <v-btn color="teal" block @click="navigateTo('/mypage')">개인정보</v-btn>
             </v-col>
             <v-col cols="6" md="3" lg="2">
-                <v-btn color="teal" block @click="navigateTo('/mypageEdit')">개인정보수정</v-btn>
+                <v-btn color="teal" block @click="navigateTo('/product-comparison')"
+                    >상품 비교</v-btn
+                >
             </v-col>
             <v-col cols="6" md="3" lg="2">
                 <v-btn color="teal" block @click="navigateTo('/financial-products')"
@@ -36,10 +38,22 @@
                 <v-btn color="teal" block @click="navigateTo('/recently-viewed')">최근본상품</v-btn>
             </v-col>
             <v-col cols="6" md="3" lg="2">
-                <v-btn color="teal" block @click="navigateTo('/portfolio')">포트폴리오</v-btn>
+                <v-btn color="teal" block @click="navigateTo('/my-portfolio')">포트폴리오</v-btn>
             </v-col>
             <v-col cols="6" md="3" lg="2">
                 <v-btn color="teal" block @click="navigateTo('/changePW')">비밀번호 변경</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/bonds')">채권 리스트</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/deposits')">예금 리스트</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/savings')">적금 리스트</v-btn>
+            </v-col>
+            <v-col cols="6" md="3" lg="2">
+                <v-btn color="teal" block @click="navigateTo('/funds')">펀드 리스트</v-btn>
             </v-col>
         </v-row>
     </v-container>

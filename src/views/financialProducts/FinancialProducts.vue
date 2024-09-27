@@ -1,154 +1,210 @@
 <template>
-    <div class="financial-products-container">
-        <h1>금융상품 페이지</h1>
-        <div class="search-filter">
-            <input
-                v-model="searchQuery"
-                type="text"
-                class="form-control"
-                placeholder="상품명 검색..."
-            />
-            <select v-model="selectedCategory" class="form-select">
-                <option value="">모든 카테고리</option>
-                <option value="savings">예/적금</option>
-                <option value="bonds">채권</option>
-                <option value="funds">펀드</option>
-            </select>
-        </div>
+    <div class="products-wrapper">
+        <div class="products-container">
+            <div class="products-box">
+                <!-- Search bar -->
+                <v-text-field
+                    v-model="searchQuery"
+                    label="금융 상품을 검색하세요"
+                    clearable
+                    append-icon="mdi-magnify"
+                    class="search-bar"
+                ></v-text-field>
 
-        <div class="product-list">
-            <div v-for="product in paginatedProducts" :key="product.id" class="product-card card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">
-                        <strong>수익률:</strong><br />
-                        <span v-if="product.type === 'bonds'">
-                            3개월: {{ product.yield[0] }}%<br />
-                            6개월: {{ product.yield[1] }}%<br />
-                            12개월: {{ product.yield[2] }}%</span
-                        >
-                        <span v-else-if="product.type === 'funds'">
-                            3개월: {{ product.yield[0] }}%<br />
-                            6개월: {{ product.yield[1] }}%<br />
-                            12개월: {{ product.yield[2] }}%</span
-                        >
-                        <span v-else>수익률 정보 없음<br /><br /><br /></span>
-                    </p>
-                    <button @click="addToCart(product)" class="btn btn-primary">
-                        장바구니 담기
-                    </button>
+                <div class="tabs">
+                    <v-btn
+                        v-for="tab in tabs"
+                        :key="tab"
+                        :class="{ 'v-btn--active': selectedTab === tab }"
+                        @click="selectTab(tab)"
+                        class="nav-button"
+                        :style="selectedTab === tab ? activeButtonStyle : {}"
+                    >
+                        {{ tab }}
+                    </v-btn>
                 </div>
-            </div>
-        </div>
 
-        <div class="text-center">
-            <v-pagination v-model="page" :length="totalPages" :total-visible="7"></v-pagination>
+                <!-- Combined table with headers and items -->
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th v-if="selectedTab !== '펀드'">상품종류</th>
+                            <th v-if="selectedTab === '펀드'">상품종류</th>
+                            <th v-if="selectedTab === '펀드'">펀드유형</th>
+                            <th>상품명</th>
+                            <th v-if="selectedTab !== '펀드'">기본금리</th>
+                            <th v-if="selectedTab !== '펀드'">최고금리</th>
+                            <th v-if="selectedTab === '펀드'">수익률</th>
+                            <th>장바구니</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in filteredProducts" :key="product.id">
+                            <td>{{ product.type }}</td>
+                            <td v-if="selectedTab === '펀드'">{{ product.fundType }}</td>
+                            <td>{{ product.name }}</td>
+                            <td v-if="selectedTab !== '펀드'">{{ product.baseRate }}</td>
+                            <td v-if="selectedTab !== '펀드'">{{ product.maxRate }}</td>
+                            <td v-if="selectedTab === '펀드'">{{ product.yield }}</td>
+                            <td>
+                                <v-btn
+                                    icon
+                                    :class="{ 'in-cart': cart.includes(product.id) }"
+                                    @click="toggleCart(product.id)"
+                                    :style="cart.includes(product.id) ? 'background-color: #4caf50; color: white;' : ''"
+                                >
+                                    <v-icon>mdi-cart</v-icon>
+                                </v-btn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div v-if="filteredProducts.length === 0" class="no-products">상품이 없습니다.</div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { ref, computed, inject } from 'vue';
-import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
-
 export default {
-    name: 'FinancialProducts',
-    setup() {
-        const searchQuery = ref('');
-        const selectedCategory = ref('');
-        const cart = inject('cart');
-        const page = ref(1);
-        const itemsPerPage = 9; // 페이지당 아이템 수
-
-        if (!cart) {
-            throw new Error('Cart not provided');
-        }
-
-        const products = ref(dummyProducts); // 더미 데이터 사용
-
-        const filteredProducts = computed(() => {
-            return products.value.filter((product) => {
-                const matchesCategory = selectedCategory.value
-                    ? product.type === selectedCategory.value
-                    : true;
-                const matchesSearch = product.name
-                    .toLowerCase()
-                    .includes(searchQuery.value.toLowerCase());
-                return matchesCategory && matchesSearch;
-            });
-        });
-
-        const paginatedProducts = computed(() => {
-            const start = (page.value - 1) * itemsPerPage;
-            return filteredProducts.value.slice(start, start + itemsPerPage);
-        });
-
-        const totalPages = computed(() => {
-            return Math.ceil(filteredProducts.value.length / itemsPerPage);
-        });
-
-        const addToCart = (product) => {
-            if (cart) {
-                cart.value.push(product);
-                alert(`${product.name}이 장바구니에 추가되었습니다.`);
-            }
-        };
-
+    data() {
         return {
-            searchQuery,
-            selectedCategory,
-            filteredProducts,
-            paginatedProducts,
-            totalPages,
-            addToCart,
-            page,
+            selectedTab: '예금',
+            searchQuery: '',
+            tabs: ['예금', '적금', '펀드', '채권', '주식'],
+            products: [
+                {
+                    id: 1,
+                    type: '예금',
+                    bank: '우리은행',
+                    name: '정기예금 A',
+                    baseRate: '2.5%',
+                    maxRate: '3.0%',
+                },
+                {
+                    id: 2,
+                    type: '적금',
+                    bank: '신한은행',
+                    name: '정기적금 B',
+                    baseRate: '3.0%',
+                    maxRate: '3.5%',
+                },
+                {
+                    id: 3,
+                    type: '펀드',
+                    fundType: '주식형',
+                    name: '펀드 C',
+                    yield: '5.0%',
+                },
+                {
+                    id: 5,
+                    type: '주식',
+                    bank: 'NH농협은행',
+                    name: '주식 E',
+                    baseRate: '6.0%',
+                    maxRate: '7.0%',
+                },
+            ],
+            activeButtonStyle: {
+                backgroundColor: '#4db6ac',
+                color: 'white',
+            },
+            cart: [] // Array to keep track of cart items
         };
+    },
+    computed: {
+        filteredProducts() {
+            return this.products.filter((product) => {
+                if (this.selectedTab === '펀드') {
+                    return product.type === this.selectedTab && product.name.includes(this.searchQuery);
+                }
+                return product.type === this.selectedTab && product.name.includes(this.searchQuery);
+            });
+        },
+    },
+    methods: {
+        selectTab(tab) {
+            this.selectedTab = tab;
+        },
+        toggleCart(productId) {
+            const index = this.cart.indexOf(productId);
+            if (index === -1) {
+                this.cart.push(productId); // Add to cart
+            } else {
+                this.cart.splice(index, 1); // Remove from cart
+            }
+        },
     },
 };
 </script>
 
 <style scoped>
-.financial-products-container {
-    padding: 20px;
-}
-
-.search-filter {
-    margin-bottom: 20px;
+.products-wrapper {
     display: flex;
-    gap: 10px;
-}
-
-.form-control {
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
     flex: 1;
 }
 
-.form-select {
-    flex: 0.3;
-}
-
-.product-list {
+.products-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    width: 100%;
+    margin: 0 auto;
+    background: linear-gradient(to bottom, #e0f2f1, #ffffff);
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 
-.product-card {
-    flex: 0 1 300px; /* 최소 너비를 300px로 설정 */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
+.search-bar {
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.card-body {
+.products-box {
+    background-color: white;
     padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    border: none;
+.nav-button {
+    text-align: center;
+    width: 20%;
+    margin: 0;
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove grid */
+}
+
+.products-table th,
+.products-table td {
+    text-align: left;
+    padding: 10px;
+}
+
+.products-table th {
+    border-bottom: 2px solid #ddd; /* Keep the horizontal line under the header */
+}
+
+.no-products {
+    color: #ff5722;
+}
+
+/* New styles for cart button */
+.in-cart {
+    background-color: #4caf50; /* Change button background to green when in cart */
+    color: white; /* Ensure the text is readable */
 }
 </style>

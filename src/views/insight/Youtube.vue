@@ -39,43 +39,46 @@
               placeholder="검색어를 입력해 주세요"
             />
           </div>
+
         </div>
+        <!-- 상품명 검색, 제목 -->
+        <div id="right">
+            <v-container>
+                <div id="seartext" class="search-container">
+                    <h1 class="sixth">_</h1>
 
-        <!-- 메인 -->
-        <Youtube_title />
+                    <div id="search" class="search-filter">
+                        <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
+                        <input
+                            v-model="searchQuery"
+                            type="text"
+                            class="form-control"
+                            placeholder="검색어를 입력해 주세요"
+                        />
+                    </div>
+                </div>
 
-        <!-- 하단 페이지 넘기는 바  -->
-      </v-container>
-      <div id="Pagination">
-        <v-container>
-          <v-pagination
-            v-model="page"
-            :length="5"
-            @input="onPageChange"
-          ></v-pagination>
-        </v-container>
-      </div>
+                <!-- 메인 -->
+                <Youtube_title />
+
+                <!-- 하단 페이지 넘기는 바  -->
+            </v-container>
+            <div id="Pagination">
+                <v-container>
+                    <v-pagination v-model="page" :length="5" @input="onPageChange"></v-pagination>
+                </v-container>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
 import Youtube_title from './Youtube_title.vue';
 
 export default {
-  name: 'Youtube',
-  components: {
-    Youtube_title,
-  },
-  data() {
-    return {
-      searchQuery: '', // 검색어 데이터
-      page: 1, // 현재 페이지
-    };
-  },
-  methods: {
-    navigateTo(path) {
-      this.$router.push(path);
+    name: 'Youtube',
+    components: {
+        Youtube_title,
     },
     onPageChange(newPage) {
       this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
@@ -87,32 +90,32 @@ export default {
 
 <style scoped>
 #All {
-  display: flex;
-  align-items: stretch; /* 왼쪽과 오른쪽 영역을 세로로 늘림 */
-  padding-left: 100px;
+    display: flex;
+    align-items: stretch; /* 왼쪽과 오른쪽 영역을 세로로 늘림 */
+    padding-left: 100px;
 }
 #left {
-  width: 300px; /* 고정된 너비 (300px) */
+    width: 300px; /* 고정된 너비 (300px) */
 }
 #right {
-  flex: 1; /* 오른쪽 영역은 남은 공간을 모두 차지 */
+    flex: 1; /* 오른쪽 영역은 남은 공간을 모두 차지 */
 }
 .search-container {
-  display: flex;
-  align-items: center; /* 수직 정렬 */
-  margin-bottom: 20px; /* 아래 여백 추가 */
-  justify-content: space-between;
+    display: flex;
+    align-items: center; /* 수직 정렬 */
+    margin-bottom: 20px; /* 아래 여백 추가 */
+    justify-content: space-between;
 }
 #search {
-  display: flex; /* 아이콘과 인풋을 나란히 배치 */
-  align-items: center; /* 수직 중앙 정렬 */
-  gap: 10px; /* 아이콘과 인풋 간격 */
+    display: flex; /* 아이콘과 인풋을 나란히 배치 */
+    align-items: center; /* 수직 중앙 정렬 */
+    gap: 10px; /* 아이콘과 인풋 간격 */
 }
 .form-control {
-  flex: 1; /* 인풋 필드를 남은 공간에 맞게 확장 */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    flex: 1; /* 인풋 필드를 남은 공간에 맞게 확장 */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 h1.title youtube {
   position: relative;
@@ -128,18 +131,6 @@ h1.titleYoutube:after {
   font-size: 1.25em;
   color: black;
 
-  transition: all 0.5s ease;
-}
 
-h1.titleYoutube:after {
-  content: ' 유튜브';
+    transition: all 0.5s ease;
 }
-
-h1.titleYoutube:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.titleYoutube:hover:after {
-  transform: translateX(5px);
-}
-</style>
