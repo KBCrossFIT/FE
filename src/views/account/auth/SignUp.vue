@@ -92,14 +92,12 @@
                     </button>
                 </form>
 
-                <Modal
+                <ModalTest
                     :isOpen="isModalOpen"
                     :InvestMentTest="InvestMentTest"
                     :currentComponent="currentComponent"
                     @close="handleClose"
-                    @finished="InvestMentTest = true"
-                    @update:currentComponent="updateCurrentComponent"
-                    @investMentTestStarted="InvestMentTest = true"
+                    @finishTest="markTestAsFinished"
                     @next="nextStep"
                 />
 
@@ -135,10 +133,8 @@ export default {
             dob: null,
             gender: 'man',
             isModalOpen: false,
-            currentComponent: markRaw(ModalTestStart),
-            InvestMentTest: false,
-            questions: [],
-            currentQuestionIndex: 0, // Initialize current question index
+            currentComponent: markRaw(ModalTestStart), // Starting modal component
+            InvestMentTest: false, // Check if investment test is done
         };
     },
     methods: {
@@ -167,25 +163,15 @@ export default {
             console.log('모달이 닫혔습니다.', this.isModalOpen); // 닫힘 확인용 로그
         },
         nextStep() {
-            console.log('nextStep 호출됨');
             if (this.currentComponent.__file.includes('ModalTestStart.vue')) {
-                console.log('현재 ModalTestStart에서 ModalTest로 이동');
-                this.currentComponent = markRaw(ModalTest); // Move to the next component
-
-                // Set questions prop for ModalTest
-                this.$nextTick(() => {
-                    if (this.$refs.modal.currentComponentRef) {
-                        this.$refs.modal.currentComponentRef.setQuestions(this.questions);
-                        this.$refs.modal.currentComponentRef.currentQuestionIndex =
-                            this.currentQuestionIndex;
-                    }
-                });
+                this.currentComponent = markRaw(ModalTest); // Move to the test component
             } else if (this.currentComponent.__file.includes('ModalTest.vue')) {
-                console.log('현재 ModalTest에서 ModalTestEnd로 이동');
                 this.currentComponent = markRaw(ModalTestEnd); // Move to the end component
             }
-
-            console.log('현재 컴포넌트:', this.currentComponent);
+        },
+        markTestAsFinished() {
+            this.InvestMentTest = true; // Update the test status when test is finished
+            this.closeModal(); // Optionally close the modal when test is done
         },
 
         updateCurrentComponent(component) {

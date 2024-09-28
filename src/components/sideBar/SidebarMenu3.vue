@@ -21,14 +21,26 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: 'RecentProductSection',
     props: ['activeDropdown', 'recentProducts'],
     methods: {
         toggleDropdown(menuNumber) {
             this.$emit('toggleDropdown', menuNumber);
         },
     },
-};
+    data() {
+        return {
+            recentProducts: [
+                { name: '상품 A', price: 10000 },
+                { name: '상품 B', price: 20000 },
+                { name: '상품 C', price: 30000 },
+            ],
+        };
+    },
+});
 </script>
 
 <style scoped>
