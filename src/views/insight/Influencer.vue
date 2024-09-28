@@ -42,7 +42,7 @@
         </div>
 
         <!-- 메인 -->
-        <Youtube_title />
+        <Influencer_title />
 
         <!-- 하단 페이지 넘기는 바  -->
       </v-container>
@@ -60,12 +60,12 @@
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import Influencer_title from './Influencer_title.vue';
 
 export default {
-  name: 'Youtube',
+  name: 'Influencer',
   components: {
-    Youtube_title,
+    Influencer_title,
   },
   data() {
     return {

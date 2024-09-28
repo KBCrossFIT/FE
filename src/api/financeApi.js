@@ -1,21 +1,21 @@
 import axios from 'axios';
 
 const bondApi = axios.create({
-    baseURL: 'http://localhost:8080/api/bond', // API 엔드 포인트
+    baseURL: 'http://localhost:8080/api/bond', // 채권 API 엔드 포인트
     headers: { 
         'Content-Type': 'application/json',
     },
 });
 
 const savingApi = axios.create({
-    baseURL: 'http://localhost:8080/api/saving-products', // API 엔드 포인트
+    baseURL: 'http://localhost:8080/api/saving-products', // 예/적금 API 엔드 포인트
     headers: { 
         'Content-Type': 'application/json',
     },
 });
 
 const fundApi = axios.create({
-    baseURL: 'http://localhost:8080/api/fund-products', // API 엔드 포인트
+    baseURL: 'http://localhost:8080/api/fund-products', // 펀드 API 엔드 포인트
     headers: {
       'Content-Type': 'application/json',
     },
@@ -61,6 +61,19 @@ export async function fetchFundProducts() {
         return response.data;
     } catch(error) {
         console.error('Error fetching fund product: ', error);
+        throw error;
+    }
+}
+
+// 펀드 상품 검색 API
+export async function searchFundProduct(keyword) {
+    try {
+        const response = await fundApi.get(`/search`, {
+            params: { keyword },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error searching fund product: ", error);
         throw error;
     }
 }

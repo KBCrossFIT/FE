@@ -36,7 +36,7 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'DepositListView',
   computed: {
-    ...mapGetters(['getDepositList']),  // Vuex에서 deposit 리스트 상태 가져오기
+    ...mapGetters('deposit',['getDepositList']),  // Vuex에서 deposit 리스트 상태 가져오기
     depositProducts() {
       return this.getDepositList;  // getter를 통해 예금 상품 리스트 반환
     }
@@ -46,7 +46,7 @@ export default {
     this.fetchDepositList();
   },
   methods: {
-    ...mapActions(['fetchDepositList']),  // Vuex에서 API 호출 액션 매핑
+    ...mapActions('deposit',['fetchDepositList']),  // Vuex에서 API 호출 액션 매핑
   },
 };
 </script>

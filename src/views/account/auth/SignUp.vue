@@ -93,8 +93,8 @@
                 </form>
 
                 <Modal
-                    ref="modal"
                     :isOpen="isModalOpen"
+                    :InvestMentTest="InvestMentTest"
                     :currentComponent="currentComponent"
                     @close="handleClose"
                     @finished="InvestMentTest = true"
@@ -112,10 +112,10 @@
 </template>
 
 <script>
-import Modal from '@/components/modal/Modal.vue';
-import ModalTestStart from '@/components/modal/ModalTestStart.vue'; // Test start component
-import ModalTest from '@/components/modal/ModalTest.vue'; // Main test component
-import ModalTestEnd from '@/components/modal/ModalTestEnd.vue'; // Test end component
+import Modal from '@/components/Modal/Modal.vue';
+import ModalTestStart from '@/components/Modal/ModalTestStart.vue'; // Test start component
+import ModalTest from '@/components/Modal/ModalTest.vue'; // Main test component
+import ModalTestEnd from '@/components/Modal/ModalTestEnd.vue'; // Test end component
 import { markRaw } from 'vue';
 
 export default {
@@ -157,6 +157,7 @@ export default {
             );
         },
         openModal() {
+            console.log('모달테스트 시작 창 열기');
             this.isModalOpen = true;
             this.currentComponent = markRaw(ModalTestStart);
         },

@@ -86,7 +86,7 @@ export default {
 
         const addToPortfolio = () => {
             if (selected.value.length === 0) {
-                console.log('선택한 주식이 없습니다.');
+                alert('선택한 주식이 없습니다.');
                 return; // 선택된 주식이 없으면 함수를 종료
             }
             // 선택한 주식을 포트폴리오에 추가하는 로직
@@ -94,6 +94,7 @@ export default {
                 selected.value.includes(product.id)
             );
             console.log('포트폴리오에 추가할 주식:', selectedStocks, quantities, "개");
+            emit('close');
             // 실제로 포트폴리오에 추가하는 로직을 구현해야 함
         };
 

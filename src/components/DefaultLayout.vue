@@ -19,10 +19,9 @@ import SideBar from './Sidebar.vue';
 
 <style scoped>
 .main {
-    margin-right: 60px;
     display: flex;
     flex-direction: column; /* Arrange children in a column */
-    margin-right: 60px;
+    /* margin-right: 60px; */
     min-height: 100vh; /* Ensure it takes at least full viewport height */
 }
 
@@ -30,4 +29,7 @@ import SideBar from './Sidebar.vue';
     flex: 1;
     padding: 20px;
 }
+/* .main {
+    background-color: #f9f9f9; 
+} */
 </style>

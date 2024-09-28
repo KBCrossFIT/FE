@@ -32,10 +32,9 @@ export default {
   margin: 0 220px 0 220px; 
   padding: 20px;
 } */
-
-.nonHeader {
-    margin: 0 220px 0 220px;
-}
+/* .nonHeader {
+    background-color: black;
+} */
 
 .home-header {
     background-color: #e9ecef;

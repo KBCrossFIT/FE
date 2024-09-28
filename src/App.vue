@@ -1,9 +1,11 @@
 <template>
-    <div id="app">
+    <v-app>
         <DefaultLayout>
-            <router-view />
+            <v-main>
+                <router-view />
+            </v-main>
         </DefaultLayout>
-    </div>
+    </v-app>
 </template>
 
 <script>
@@ -28,5 +30,3 @@ export default {
 <style>
 /* Add your styles here */
 </style>
-
-<!-- 커밋 컨벤션 -->

@@ -1,112 +1,113 @@
 <template>
-    <div class="Make-Header">
-        <h1>포트폴리오 구성페이지</h1>
-    </div>
-    <hr />
-    <div class="recommendProportion">
-        <h3>유형 별 추천 포트폴리오 구성 비율</h3>
-        <div class="PortfolioChart">
-            <div class="SelectionChar">
-                <label>유형 선택 체크박스 버튼</label>
-                <div class="CharCheck-radio">
-                    <label
-                        ><input type="radio" name="InvestChar" value="char1" v-model="chart" />
-                        공격투자형</label
-                    >
-                    <label
-                        ><input type="radio" name="InvestChar" value="char2" v-model="chart" />
-                        적극투자형</label
-                    >
-                    <label
-                        ><input type="radio" name="InvestChar" value="char3" v-model="chart" />
-                        위험중립형</label
-                    >
-                    <label
-                        ><input type="radio" name="InvestChar" value="char4" v-model="chart" />
-                        위험회피형</label
-                    >
-                    <label
-                        ><input type="radio" name="InvestChar" value="char5" v-model="chart" />
-                        안정형</label
-                    >
-                </div>
-            </div>
-            <div class="ProportionChart">
-                파이 차트
-                <div id="chart">
-                    <apexchart
-                        type="pie"
-                        width="380"
-                        :options="chartOptions"
-                        :series="series"
-                    ></apexchart>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <br />
-
-    <div class="ProductSelection">
-        <h1>상품종류</h1>
-        <h4>(현재 장바구니가 아닌 dummyfinancial에서 불러옴)</h4>
+    <div id="wrap"></div>
+    <div id="wrap-center">
+        <h1 class="header">포트폴리오 구성페이지</h1>
         <hr />
-        <!-- 일반 상품 페이지 -->
-        <div class="Product-filter">
-            <input
-                v-model="searchQuery"
-                type="text"
-                class="form-control"
-                placeholder="상품명 검색..."
-            />
-            <select v-model="selectedCategory" class="form-select">
-                <option value="">모든 카테고리</option>
-                <option value="savings">예/적금</option>
-                <option value="bonds">채권</option>
-                <option value="funds">펀드</option>
-            </select>
+        <div class="recommendProportion">
+            <h3>유형 별 추천 포트폴리오 구성 비율</h3>
+            <div class="PortfolioChart">
+                <div class="SelectionChar">
+                    <label>유형 선택 체크박스 버튼</label>
+                    <div class="CharCheck-radio">
+                        <label
+                            ><input type="radio" name="InvestChar" value="char1" v-model="chart" />
+                            공격투자형</label
+                        >
+                        <label
+                            ><input type="radio" name="InvestChar" value="char2" v-model="chart" />
+                            적극투자형</label
+                        >
+                        <label
+                            ><input type="radio" name="InvestChar" value="char3" v-model="chart" />
+                            위험중립형</label
+                        >
+                        <label
+                            ><input type="radio" name="InvestChar" value="char4" v-model="chart" />
+                            위험회피형</label
+                        >
+                        <label
+                            ><input type="radio" name="InvestChar" value="char5" v-model="chart" />
+                            안정형</label
+                        >
+                    </div>
+                </div>
+                <div class="ProportionChart">
+                    파이 차트
+                    <div id="chart">
+                        <apexchart
+                            type="pie"
+                            width="380"
+                            :options="chartOptions"
+                            :series="series"
+                        ></apexchart>
+                    </div>
+                </div>
+            </div>
         </div>
-        <v-data-table
-            v-model="selected"
-            :items="filteredProducts"
-            item-value="name"
-            show-select
-        ></v-data-table>
+
         <br />
 
-        <!-- 주식 상품 페이지 -->
-        <h1>주식 종류</h1>
-        <h4>(현재 주식검색창이 아닌 dummyStock에서 불러옴)</h4>
-        <div class="MakePortfolio-btn">
-            <v-btn @click="openModal">주식 추가하기</v-btn>
-        </div>
-        <hr />
-        <div class="Stock-filter">
-            <input
-                v-model="searchQuery"
-                type="text"
-                class="form-control"
-                placeholder="상품명 검색..."
+        <div class="ProductSelection">
+            <h1>상품종류</h1>
+            <h4>(현재 장바구니가 아닌 dummyfinancial에서 불러옴)</h4>
+            <hr />
+            <!-- 일반 상품 페이지 -->
+            <div class="Product-filter">
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    class="form-control"
+                    placeholder="상품명 검색..."
+                />
+                <select v-model="selectedCategory" class="form-select">
+                    <option value="">모든 카테고리</option>
+                    <option value="savings">예/적금</option>
+                    <option value="bonds">채권</option>
+                    <option value="funds">펀드</option>
+                </select>
+            </div>
+            <v-data-table
+                v-model="selected"
+                :items="filteredProducts"
+                item-value="name"
+                show-select
+            ></v-data-table>
+            <br />
+
+            <!-- 주식 상품 페이지 -->
+            <h1>주식 종류</h1>
+            <h4>(현재 주식검색창이 아닌 dummyStock에서 불러옴)</h4>
+            <div class="MakePortfolio-btn">
+                <v-btn @click="openModal">주식 추가하기</v-btn>
+            </div>
+            <hr />
+            <div class="Stock-filter">
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    class="form-control"
+                    placeholder="상품명 검색..."
+                />
+            </div>
+            <v-data-table
+                v-model="selected"
+                :items="filteredProducts"
+                item-value="id"
+                show-select
+            ></v-data-table>
+
+            <ModalStock
+                v-if="isModalOpen"
+                :isOpen="isModalOpen"
+                @close="isModalOpen = false"
+                @finished="InvestMentTest = true"
+                @investMentTestStarted="InvestMentTest = true"
             />
-        </div>
-        <v-data-table
-            v-model="selected"
-            :items="filteredProducts"
-            item-value="id"
-            show-select
-        ></v-data-table>
 
-        <Modal
-            v-if="isModalOpen"
-            :isOpen="isModalOpen"
-            @close="isModalOpen = false"
-            @finished="InvestMentTest = true"
-            @investMentTestStarted="InvestMentTest = true"
-        />
-
-        <div class="MakePortfolioEnd-btn">
-            <v-btn type="submit" @click="goToMyPortfolio">저장</v-btn>
-            <v-btn @click="goToMyPortfolio">취소</v-btn>
+            <div class="MakePortfolioEnd-btn">
+                <v-btn type="submit" @click="goToMyPortfolio">저장</v-btn>
+                <v-btn @click="goToMyPortfolio">취소</v-btn>
+            </div>
         </div>
     </div>
 </template>
@@ -116,13 +117,13 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import VueApexCharts from 'vue3-apexcharts'; // apexcharts 파이 차트 사용.
 import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
-import Modal from '@/components/modal/ModalStock.vue'; // 모달 컴포넌트 import
+import ModalStock from '@/components/Modal/ModalStock.vue'; // 모달 컴포넌트 import
 
 export default {
     name: 'MakePortfolio',
     components: {
         apexchart: VueApexCharts,
-        Modal,
+        ModalStock,
     },
     setup() {
         const searchQuery = ref('');
@@ -211,6 +212,17 @@ export default {
 </script>
 
 <style scoped>
+#wrap {
+    width: 100%;
+    background-color: black;
+}
+#wrap-center {
+    width: 100%; /* 요소의 너비를 100%로 설정하여 부모 요소의 전체 너비를 사용 */
+    max-width: 1280px; /* 요소의 최대 너비를 1280px로 제한 */
+    margin: 0 auto; /* 상하 여백은 0으로, 좌우 여백을 자동으로 설정하여 중앙 정렬 */
+    padding: 0 40px; /* 상하 패딩은 0, 좌우 패딩은 40px으로 설정 */
+}
+
 .v-btn {
     background-color: #4db6ac;
 }
