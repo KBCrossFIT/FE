@@ -1,6 +1,5 @@
 <template>
     <div class="news-list">
-        <h2 class="title">뉴스 게시글</h2>
         <v-container class="news-container">
             <v-row>
                 <v-col v-for="(news, index) in paginatedNews" :key="index" cols="12">
@@ -8,11 +7,9 @@
                     <v-card class="news-card">
                         <v-row>
                             <v-col cols="3">
-                                <v-img
-                                    :src="news.image"
-                                    aspect-ratio="2"
-                                    class="news-image"
-                                ></v-img>
+                                <v-img :src="news.image" aspect-ratio="2" class="news-image"
+                                    >이미지 박스</v-img
+                                >
                             </v-col>
                             <v-col cols="9">
                                 <v-card-title class="news-title">{{ news.title }}</v-card-title>
@@ -120,6 +117,7 @@ export default {
 
 .news-image {
     height: 120px; /* 뉴스 이미지 크기 */
+    background-color: #b7d78d;
 }
 
 .news-title {
