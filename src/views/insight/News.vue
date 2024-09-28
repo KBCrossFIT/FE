@@ -4,26 +4,17 @@
         <div id="left">
             <v-card class="pa-4" elevation="2" style="height: 100%">
                 <v-card-text>
-                    <v-list>
-                        <v-list-item @click="navigateTo('/Youtube')">
-                            <v-list-item-content>
-                                <v-list-item-title>금융 유튜브</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item @click="navigateTo('/Influencer')">
-                            <v-list-item-content>
-                                <v-list-item-title>인플루언서</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item @click="navigateTo('/News')">
-                            <v-list-item-content>
-                                <v-list-item-title>뉴스</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list>
+                    <div class="list-container">
+                        <span @click="navigateTo('/Youtube')" class="list-item"> 금융 유튜브 </span>
+                        <span @click="navigateTo('/Influencer')" class="list-item">
+                            인플루언서
+                        </span>
+                        <span @click="navigateTo('/News')" class="list-item"> 뉴스 </span>
+                    </div>
                 </v-card-text>
             </v-card>
         </div>
+
         <!-- 상품명 검색, 제목 -->
         <div id="right">
             <v-container>
@@ -44,14 +35,8 @@
                 <div id="right">
                     <v-container>
                         <div id="seartext" class="search-container">
-                            <h1 class="sixth">_</h1>
                             <!-- 메인 -->
                             <News_title />
-                            <v-pagination
-                                v-model="page"
-                                :length="5"
-                                @input="onPageChange"
-                            ></v-pagination>
                         </div>
                     </v-container>
                 </div>
@@ -138,7 +123,7 @@ h1.sixth:after {
 }
 
 h1.sixth:after {
-    content: ' 유튜브';
+    content: ' 뉴스';
 }
 
 h1.sixth:hover:before {
@@ -147,5 +132,22 @@ h1.sixth:hover:before {
 
 h1.sixth:hover:after {
     transform: translateX(5px);
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.list-item {
+    display: block;
+    padding: 10px 0;
+    cursor: pointer;
+    color: #3f51b5; /* Vuetify 기본 색상 중 하나 */
+    font-size: 16px;
+}
+
+.list-item:hover {
+    background-color: #f0f0f0;
 }
 </style>

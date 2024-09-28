@@ -3,6 +3,7 @@
         <a href="javascript:void(0)" class="sidebar-link">
             <i class="fas fa-shopping-cart"></i>
             <span class="menu-text">장바구니</span>
+            <span v-if="cart.length > 0" class="item-count">{{ cart.length }}</span>
         </a>
         <div
             v-if="activeDropdown === 2"
@@ -120,6 +121,7 @@ export default {
     border-radius: 5px;
     margin-bottom: 5px;
     width: 100%;
+    position: relative; /* Added to position the item count */
 }
 
 .sidebar-link:hover {
@@ -171,6 +173,18 @@ export default {
 
 .item-name {
     color: #2d6a4f;
+}
+
+/* 아이콘 우상단 개수 표시 스타일 */
+.item-count {
+    position: absolute;
+    top: 5px; /* Adjust this value to position it correctly */
+    right: 5px; /* Adjust this value to position it correctly */
+    background-color: red; /* Background color for visibility */
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.8rem; /* Font size for the count */
 }
 
 .action-buttons {
