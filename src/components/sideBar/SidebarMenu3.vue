@@ -11,7 +11,11 @@
             <div class="recent-dropdown">
                 <h3 class="section-title">최근 본 상품</h3>
                 <ul>
-                    <li v-for="(product, index) in recentProducts" :key="index" class="recent-item">
+                    <li
+                        v-for="(product, index) in recentProductSide"
+                        :key="index"
+                        class="recent-item"
+                    >
                         {{ product.name }} - {{ product.price }}원
                     </li>
                 </ul>
@@ -21,14 +25,26 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+    name: 'RecentProductSection',
     props: ['activeDropdown', 'recentProducts'],
     methods: {
         toggleDropdown(menuNumber) {
             this.$emit('toggleDropdown', menuNumber);
         },
     },
-};
+    data() {
+        return {
+            recentProductSide: [
+                { name: '상품 A', price: 10000 },
+                { name: '상품 B', price: 20000 },
+                { name: '상품 C', price: 30000 },
+            ],
+        };
+    },
+});
 </script>
 
 <style scoped>

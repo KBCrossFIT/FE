@@ -3,6 +3,9 @@
         <a href="javascript:void(0)" class="sidebar-link">
             <i class="fas fa-briefcase"></i>
             <span class="menu-text">포트폴리오</span>
+            <span v-if="portfolios && portfolios.length > 0" class="item-count">
+                {{ portfolios.length > 9 ? '...' : portfolios.length }}
+            </span>
         </a>
         <div
             v-if="activeDropdown === 1"
@@ -44,7 +47,20 @@
 
 <script>
 export default {
-    props: ['activeDropdown', 'portfolios'],
+    props: {
+        activeDropdown: {
+            type: Number,
+            default: null,
+        },
+        portfolios: {
+            type: Array,
+            default: () => [],
+        },
+        portfolios: {
+            type: Array,
+            default: () => [],
+        },
+    },
     methods: {
         toggleDropdown(menuNumber) {
             this.$emit('toggleDropdown', menuNumber);
@@ -76,22 +92,34 @@ export default {
 
 .dropdown-content {
     position: absolute;
-    left: -300px; /* 버튼의 왼쪽에 펼쳐지도록 조정 */
+    left: -300px; /* Adjusts dropdown to appear on the left side */
     top: 0;
     background-color: #bab3b3;
     color: white;
     padding: 10px;
-    width: 300px; /* 드롭다운 너비 */
-    height: 320px; /* 버튼 그룹과 동일한 높이 */
-    border-radius: 5px; /* 모서리 둥글게 */
-    overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+    width: 300px; /* Dropdown width */
+    height: 320px; /* Match button group height */
+    border-radius: 5px; /* Rounded corners */
+    overflow-y: auto; /* Scroll if content is too long */
     z-index: 5555;
-    transform: translateX(-100%); /* 기본적으로 숨기기 */
-    transition: transform 0.5s ease; /* 애니메이션 효과 */
+    transform: translateX(-100%); /* Initially hidden */
+    transition: transform 0.5s ease; /* Animation effect */
+}
+
+/* 아이콘 우상단 개수 표시 스타일 */
+.item-count {
+    position: absolute;
+    top: 5px; /* Adjust this value to position it correctly */
+    right: 5px; /* Adjust this value to position it correctly */
+    background-color: red; /* Background color for visibility */
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.8rem; /* Font size for the count */
 }
 
 .dropdown-content.active {
-    transform: translateX(0); /* 드롭다운을 보이게 하기 위해 원위치 */
+    transform: translateX(0); /* Show dropdown */
 }
 
 .portfolio-dropdown {
