@@ -9,8 +9,8 @@ import MyPage from '@/views/account/profile/MyPage.vue';
 import MyPageEdit from '@/views/account/profile/MyPageEdit.vue';
 import ChangePW from '@/views/account/profile/ChangePW.vue';
 import DeleteAccount from '@/views/account/profile/DeleteAccount.vue';
-import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue';
-import ProductDesc from '@/views/financialProducts/ProductDesc.vue';
+import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue'; // Your financial products page
+import ProductDesc from '@/views/financialProducts/ProductDesc.vue'; // Individual product description page
 import Cart from '@/views/financialProducts/Cart.vue';
 import RecentlyViewed from '@/views/financialProducts/RecentlyViewed.vue';
 
@@ -48,8 +48,8 @@ const routes = [
     { path: '/mypageEdit', name: 'MyPageEdit', component: MyPageEdit },
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
-    { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts },
-    { path: '/productDesc/:id', name: 'ProductDesc', component: ProductDesc },
+    { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts }, // Financial products page
+    { path: '/productDesc/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },
