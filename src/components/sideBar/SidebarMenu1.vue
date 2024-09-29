@@ -3,9 +3,9 @@
         <a href="javascript:void(0)" class="sidebar-link">
             <i class="fas fa-briefcase"></i>
             <span class="menu-text">포트폴리오</span>
-            <span v-if="portfolios && portfolios.length > 0" class="item-count">{{
-                portfolios.length
-            }}</span>
+            <span v-if="portfolios && portfolios.length > 0" class="item-count">
+                {{ portfolios.length > 9 ? '...' : portfolios.length }}
+            </span>
         </a>
         <div
             v-if="activeDropdown === 1"

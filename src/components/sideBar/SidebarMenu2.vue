@@ -3,7 +3,9 @@
         <a href="javascript:void(0)" class="sidebar-link">
             <i class="fas fa-shopping-cart"></i>
             <span class="menu-text">장바구니</span>
-            <span v-if="cart.length > 0" class="item-count">{{ cart.length }}</span>
+            <span v-if="cart.length > 0" class="item-count">{{
+                cart.length > 9 ? '...' : cart.length
+            }}</span>
         </a>
         <div
             v-if="activeDropdown === 2"
@@ -55,8 +57,19 @@ import { useRouter } from 'vue-router';
 export default {
     props: ['activeDropdown', 'cartItems'],
     setup(props, { emit }) {
+        // 9개 이상일 때 '...'으로 표시되는지 확인함.
         const cart = ref([
             { id: 1, name: '상품 A', price: 5000, quantity: 1 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
+            { id: 2, name: '상품 B', price: 3000, quantity: 2 },
             { id: 2, name: '상품 B', price: 3000, quantity: 2 },
         ]);
 
