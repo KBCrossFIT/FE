@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import { dummyUsers } from '@/dummyData.js'; // Ensure this path is correct
-
 export default {
     data() {
         return {
@@ -35,16 +33,15 @@ export default {
     },
     methods: {
         handleLogin() {
-            const user = dummyUsers.find(
-                (user) => user.username === this.username && user.password === this.password
-            );
+            // Check for the user in local storage
+            const storedUser = JSON.parse(localStorage.getItem('user'));
 
-            if (user) {
-                // Save user info in local storage
+            if (storedUser && storedUser.username === this.username && storedUser.password === this.password) {
+                // If login is successful, save user info in local storage
                 localStorage.setItem(
                     'user',
                     JSON.stringify({
-                        username: user.username,
+                        username: storedUser.username,
                         picture: 'path/to/profile/pic.png', // Update with actual path
                     })
                 );
