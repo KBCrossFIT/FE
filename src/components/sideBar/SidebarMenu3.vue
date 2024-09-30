@@ -75,7 +75,6 @@ export default defineComponent({
     width: 300px; /* 드롭다운 너비 */
     height: 320px; /* 버튼 그룹과 동일한 높이 */
     border-radius: 5px; /* 모서리 둥글게 */
-    overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
     z-index: 5555;
     transform: translateX(-100%); /* 기본적으로 숨기기 */
     transition: transform 0.5s ease; /* 애니메이션 효과 */

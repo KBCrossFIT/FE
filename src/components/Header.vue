@@ -1,7 +1,12 @@
 <template>
     <header class="header">
         <div class="logoBox" @click="navigateToHome">
-            <div class="logo">ProPortFolio</div>
+            <img src="@/assets/img/LogoMVP.png" alt="Logo" class="logo-image" />
+            <div class="logo-text">
+                <span>My</span>
+                <span>InvestMent</span>
+                <span>Portfolio</span>
+            </div>
         </div>
 
         <nav>
@@ -44,7 +49,6 @@
                             >
                                 장바구니
                             </li>
-                            <!-- <li :class="{ 'active': isActive('/recently-viewed') }" @click="$router.push('/recently-viewed')">최근 본 상품</li> -->
                         </ul>
                     </div>
 
@@ -174,17 +178,37 @@ export default {
     background-color: #80eebd;
     color: rgb(10, 1, 1);
     border-bottom: 2px solid #1b4332;
-    position: relative; /* Added */
+    position: relative;
 }
 
 .logoBox {
-    width: 200px;
-    height: 65px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    height: 100px; /* Set height to 50px */
 }
 
-.logo {
-    font-size: 24px;
+.logo-image {
+    height: 100px; /* Set image height to 50px */
+    width: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Space between image and text */
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column; /* Stack text vertically */
+    justify-content: center;
+    height: 60px; /* Set text container height to match image */
+    position: relative;
+    left: -10px;
     font-weight: bold;
+    font-style: italic;
+}
+
+.logo-text span {
+    font-size: 18px; /* Adjust font size as needed */
+    line-height: 1; /* Set line-height to minimize spacing */
+    margin: 0; /* Remove any default margin */
 }
 
 .logoBox:hover {

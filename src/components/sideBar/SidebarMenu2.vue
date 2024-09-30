@@ -36,11 +36,13 @@
                         </tr>
                     </tbody>
                 </table>
-                <v-pagination
-                    v-model="currentPage"
-                    :length="totalPages"
-                    @input="updatePagination"
-                ></v-pagination>
+                <div class="pagination-container">
+                    <v-pagination
+                        v-model="currentPage"
+                        :length="totalPages"
+                        @input="updatePagination"
+                    ></v-pagination>
+                </div>
                 <div class="action-buttons">
                     <button @click="goToCompare">상품 비교해보기</button>
                     <button @click="goToMakePortfolio">포트폴리오 구성하기</button>
@@ -74,7 +76,7 @@ export default {
         ]);
 
         const currentPage = ref(1);
-        const itemsPerPage = 5;
+        const itemsPerPage = 3;
 
         const totalPages = computed(() => Math.ceil(cart.value.length / itemsPerPage));
         const paginatedCart = computed(() => {
@@ -134,7 +136,7 @@ export default {
     border-radius: 5px;
     margin-bottom: 5px;
     width: 100%;
-    position: relative; /* Added to position the item count */
+    position: relative;
 }
 
 .sidebar-link:hover {
@@ -149,12 +151,13 @@ export default {
     color: white;
     padding: 10px;
     width: 300px;
-    height: 320px;
+    max-height: 3350px;
     border-radius: 5px;
-    overflow-y: auto;
     z-index: 5555;
     transform: translateX(-100%);
     transition: transform 0.5s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .dropdown-content.active {
@@ -162,7 +165,7 @@ export default {
 }
 
 .cart-dropdown {
-    padding: 20px;
+    flex: 1; /* Allow the dropdown to grow */
 }
 
 .section-title {
@@ -202,21 +205,26 @@ export default {
 
 .action-buttons {
     display: flex;
-    justify-content: space-between; /* 버튼을 양쪽에 정렬 */
-    margin-top: 20px;
+    justify-content: space-between; /* Align buttons on opposite sides */
+    margin-top: 10px; /* Optional spacing above buttons */
 }
 
 .action-buttons button {
+    font-size: 10px;
     background-color: #2d6a4f;
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    width: 48%; /* 버튼의 너비를 48%로 설정해 여백을 맞춤 */
+    width: 45%; /* 버튼의 너비를 48%로 설정해 여백을 맞춤 */
 }
 
 .action-buttons button:hover {
     background-color: #1b4633;
+}
+
+.pagination-container {
+    margin-top: 10px; /* Optional spacing above pagination */
 }
 </style>

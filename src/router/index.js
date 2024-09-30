@@ -38,7 +38,7 @@ import SavingListView from '@/views/financialProducts/SavingListView.vue';
 import FundListView from '@/views/financialProducts/FundListView.vue';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
-import CartItem from "@/views/cart/CartItem.vue";
+import CartItem from '@/views/cart/CartItem.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -50,7 +50,7 @@ const routes = [
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
     { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts }, // Financial products page
-    { path: '/productDesc/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
+    { path: '/productDesc/:ProductType/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },
