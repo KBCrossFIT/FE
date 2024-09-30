@@ -29,15 +29,14 @@
 </template>
 
 <script>
+import image1 from '@/assets/img/shinhanInvestChart.jpg';
+
 export default {
   data() {
     return {
       currentImage: 0,
       images: [
-        // Add your image URLs here
-        '/path-to-your-image1.jpg',
-        '/path-to-your-image2.jpg',
-        '/path-to-your-image3.jpg'
+        image1,
       ]
     };
   },
@@ -60,6 +59,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .carousel {
