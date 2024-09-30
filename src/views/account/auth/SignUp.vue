@@ -195,7 +195,7 @@ export default {
       },
   },
 };
-</script> -->
+</script>
 
 <style scoped>
 .signup-wrapper {
@@ -276,7 +276,6 @@ input {
 .login-link a:hover {
     text-decoration: underline;
 }
-<<<<<<< HEAD
 
 .dob-container {
     display: flex;
