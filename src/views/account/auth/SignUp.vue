@@ -128,7 +128,6 @@ import ModalTestStart from '@/components/Modal/ModalTestStart.vue';
 import ModalTest from '@/components/Modal/ModalTest.vue';
 import ModalTestEnd from '@/components/Modal/ModalTestEnd.vue';
 import { markRaw } from 'vue';
-
 export default {
   components: {
       Modal,
@@ -196,7 +195,7 @@ export default {
       },
   },
 };
-</script>
+</script> -->
 
 <style scoped>
 .signup-wrapper {
@@ -277,6 +276,7 @@ input {
 .login-link a:hover {
     text-decoration: underline;
 }
+<<<<<<< HEAD
 
 .dob-container {
     display: flex;
@@ -296,5 +296,4 @@ input {
     border-radius: 5px;
     cursor: pointer;
 }
-
 </style>

@@ -38,6 +38,7 @@ import SavingListView from '@/views/financialProducts/SavingListView.vue';
 import FundListView from '@/views/financialProducts/FundListView.vue';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
+import CartItem from '@/views/cart/CartItem.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -49,7 +50,7 @@ const routes = [
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
     { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts }, // Financial products page
-    { path: '/productDesc/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
+    { path: '/productDesc/:ProductType/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },
@@ -64,12 +65,13 @@ const routes = [
     { path: '/make-portfolio', name: 'MakePortfolio', component: MakePortfolio },
     { path: '/my-portfolio', name: 'MyPortfolio', component: MyPortfolio },
     { path: '/product-comparison', name: 'ProductComparison', component: ProductComparison },
-    { path: '/bonds', name: 'BondList', component: BondListView },
-    { path: '/deposits', name: 'DepositList', component: DepositListView },
-    { path: '/savings', name: 'SavingList', component: SavingListView },
-    { path: '/funds', name: 'FundList', component: FundListView },
-    { path: '/stocks', name: 'StockList', component: StockList },
+    { path: '/bonds', name: 'BondListView', component: BondListView },
+    { path: '/deposits', name: 'DepositListView', component: DepositListView },
+    { path: '/savings', name: 'SavingListView', component: SavingListView },
+    { path: '/funds', name: 'FundListView', component: FundListView },
+    { path: '/stocks', name: 'StockListView', component: StockList },
     { path: '/stock-search', name: 'StockSearch', component: StockSearch },
+    { path: '/cartItem', name: 'CartItem', component: CartItem },
 ];
 
 const router = createRouter({
