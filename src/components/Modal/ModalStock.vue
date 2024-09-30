@@ -13,16 +13,25 @@
                 placeholder="종목명 검색..."
             />
         </div>
-        <v-data-table
-            class="stockList"
-            v-model="selected"
-            :items="filteredStocks"
-            item-value="id"
-            show-select
-        >
+        <v-data-table class="stockList" :items="filteredStocks" :headers="headers" item-value="id">
+            <template #top>
+                <th>
+                    <input type="checkbox" :checked="isAllSelected" @change="toggleAll" />
+                </th>
+            </template>
+
             <template #item="{ item }">
-                <tr @click="toggleSelect(item)">
-                    <td><input type="checkbox"></input></td>
+                <tr
+                    @click="toggleSelect(item)"
+                    :class="{ 'selected-row': selected.includes(item.id) }"
+                >
+                    <td>
+                        <input
+                            type="checkbox"
+                            :checked="selected.includes(item.id)"
+                            @change="toggleSelect(item)"
+                        />
+                    </td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.StockName }}</td>
                     <td>{{ item.itmsNm }}</td>
@@ -71,15 +80,28 @@ export default {
             });
         });
 
+        const isAllSelected = computed(() => {
+            return (
+                filteredStocks.value.length > 0 &&
+                filteredStocks.value.every((item) => selected.value.includes(item.id))
+            );
+        });
+
+        const toggleAll = () => {
+            if (isAllSelected.value) {
+                selected.value = [];
+            } else {
+                selected.value = filteredStocks.value.map((item) => item.id);
+            }
+        };
+
         const toggleSelect = (item) => {
             const index = selected.value.indexOf(item.id);
             if (index > -1) {
-                console.log(item.id, '선택 해제 클릭됨');
-                // 이미 선택된 경우, 선택 해제
+                // 이미 선택된 경우 선택 해제
                 selected.value.splice(index, 1);
             } else {
-                console.log(item.id, '번 선택함.');
-                // 선택되지 않은 경우, 선택
+                // 선택되지 않은 경우 선택
                 selected.value.push(item.id);
             }
         };
@@ -93,13 +115,12 @@ export default {
             const selectedStocks = products.value.filter((product) =>
                 selected.value.includes(product.id)
             );
-            console.log('포트폴리오에 추가할 주식:', selectedStocks, quantities, "개");
+            console.log('포트폴리오에 추가할 주식:', selectedStocks, quantities, '개');
             emit('close');
             // 실제로 포트폴리오에 추가하는 로직을 구현해야 함
         };
 
         const closeModal = () => {
-            console.log('모달 닫기');
             emit('close');
         };
 
@@ -108,6 +129,8 @@ export default {
             selected,
             quantities,
             filteredStocks,
+            isAllSelected,
+            toggleAll,
             toggleSelect,
             addToPortfolio,
             closeModal,
@@ -148,10 +171,8 @@ export default {
     max-height: 450px; /* 최대 높이 조정 */
 }
 
-.ModalStock-btn {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px; /* 여백 추가 */
+.selected-row {
+    background-color: #e0f7fa; /* 선택된 행의 배경 색상 */
 }
 
 .ModalStock-btn {

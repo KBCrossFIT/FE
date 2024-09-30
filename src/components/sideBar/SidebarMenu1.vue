@@ -92,18 +92,21 @@ export default {
 
 .dropdown-content {
     position: absolute;
-    left: -300px; /* Adjusts dropdown to appear on the left side */
+    left: -300px;
     top: 0;
     background-color: #bab3b3;
     color: white;
     padding: 10px;
-    width: 300px; /* Dropdown width */
-    height: 320px; /* Match button group height */
-    border-radius: 5px; /* Rounded corners */
-    overflow-y: auto; /* Scroll if content is too long */
+    width: 300px;
+    height: 100%; /* Match the height of the sidebar */
+    max-height: 400px; /* Optional: Set a maximum height */
+    border-radius: 5px;
+    /* overflow-y: auto; */
     z-index: 5555;
-    transform: translateX(-100%); /* Initially hidden */
-    transition: transform 0.5s ease; /* Animation effect */
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    display: flex;
+    flex-direction: column; /* Stack contents vertically */
 }
 
 /* 아이콘 우상단 개수 표시 스타일 */
