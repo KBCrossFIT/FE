@@ -1,80 +1,81 @@
 <template>
     <div>
-      <h1>회원가입</h1>
-      <form @submit.prevent="handleSubmit">
-        <div>
-          <label for="username">사용자 이름</label>
-          <input type="text" v-model="username" required />
-        </div>
-        <div>
-          <label for="displayName">표시 이름</label>
-          <input type="text" v-model="displayName" required />
-        </div>
-        <div>
-          <label for="password">비밀번호</label>
-          <input type="password" v-model="password" required />
-        </div>
-        <div>
-          <label for="email">이메일</label>
-          <input type="email" v-model="email" required />
-        </div>
-        <div>
-          <label for="dob">생일</label>
-          <input type="date" v-model="dob" required />
-        </div>
-        <div>
-          <label for="gender">성별</label>
-          <select v-model="gender" required>
-            <option value="">선택하세요</option>
-            <option value="male">남성</option>
-            <option value="female">여성</option>
-            <option value="other">기타</option>
-          </select>
-        </div>
-        <button type="submit">회원가입</button>
-      </form>
+        <h1>회원가입</h1>
+        <form @submit.prevent="handleSubmit">
+            <div>
+                <label for="username">사용자 이름</label>
+                <input type="text" v-model="username" required />
+            </div>
+            <div>
+                <label for="displayName">표시 이름</label>
+                <input type="text" v-model="displayName" required />
+            </div>
+            <div>
+                <label for="password">비밀번호</label>
+                <input type="password" v-model="password" required />
+            </div>
+            <div>
+                <label for="email">이메일</label>
+                <input type="email" v-model="email" required />
+            </div>
+            <div>
+                <label for="dob">생일</label>
+                <input type="date" v-model="dob" required />
+            </div>
+            <div>
+                <label for="gender">성별</label>
+                <select v-model="gender" required>
+                    <option value="">선택하세요</option>
+                    <option value="male">남성</option>
+                    <option value="female">여성</option>
+                    <option value="other">기타</option>
+                </select>
+            </div>
+            <button type="submit">회원가입</button>
+        </form>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    data() {
-      return {
-        username: '',
-        displayName: '',
-        password: '',
-        email: '',
-        dob: '',
-        gender: ''
-      };
-    },
-    methods: {
-      async handleSubmit() {
-        try {
-          const response = await axios.post('YOUR_BACKEND_API_URL/signup', {
-            username: this.username,
-            displayName: this.displayName,
-            password: this.password,
-            email: this.email,
-            dob: this.dob,
-            gender: this.gender,
-          });
-          console.log('회원가입 성공', response.data);
-          // Optionally redirect or show a success message
-          this.$router.push('/login'); // Redirect to login page after successful signup
-        } catch (error) {
-          console.error('회원가입 실패', error);
-          // Handle errors, e.g., show an error message
-          alert('회원가입에 실패했습니다. 다시 시도해 주세요.'); // Display error message
-        }
-      },
-    },
-  };
+</template>
 
 <script>
-import ModalTest from '@/components/Modal/ModalTest.vue'; // Main test component
+import axios from 'axios';
+
+export default {
+    data() {
+        return {
+            username: '',
+            displayName: '',
+            password: '',
+            email: '',
+            dob: '',
+            gender: '',
+        };
+    },
+    methods: {
+        async handleSubmit() {
+            try {
+                const response = await axios.post('YOUR_BACKEND_API_URL/signup', {
+                    username: this.username,
+                    displayName: this.displayName,
+                    password: this.password,
+                    email: this.email,
+                    dob: this.dob,
+                    gender: this.gender,
+                });
+                console.log('회원가입 성공', response.data);
+                // Optionally redirect or show a success message
+                this.$router.push('/login'); // Redirect to login page after successful signup
+            } catch (error) {
+                console.error('회원가입 실패', error);
+                // Handle errors, e.g., show an error message
+                alert('회원가입에 실패했습니다. 다시 시도해 주세요.'); // Display error message
+            }
+        },
+    },
+};
+</script>
+
+<!-- <script>
+import {ModalTest} from '@/components/Modal/ModalTest.vue'; // Main test component
 
 export default {
     components: {
@@ -125,7 +126,7 @@ export default {
         },
     },
 };
-</script>
+</script> -->
 
 <style scoped>
 .signup-wrapper {
