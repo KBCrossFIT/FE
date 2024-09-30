@@ -50,7 +50,7 @@ const routes = [
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
     { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts }, // Financial products page
-    { path: '/productDesc/:ProductType/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
+    { path: '/productDesc/:productNm/:id', name: 'ProductDesc', component: ProductDesc }, // Product description page
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },
