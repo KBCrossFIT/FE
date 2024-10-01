@@ -1,11 +1,11 @@
 <template>
-    <v-app>
-        <DefaultLayout>
-            <v-main>
-                <router-view />
-            </v-main>
-        </DefaultLayout>
-    </v-app>
+  <v-app>
+    <DefaultLayout>
+      <v-main>
+        <router-view />
+      </v-main>
+    </DefaultLayout>
+  </v-app>
 </template>
 
 <script>
@@ -20,10 +20,10 @@ export default {
         // Provide the cart to child components
         provide('cart', cart);
 
-        return {
-            cart,
-        };
-    },
+    return {
+      cart,
+    };
+  },
 };
 </script>
 

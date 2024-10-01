@@ -55,6 +55,19 @@ export async function fetchDepositProducts() {
     }
 }
 
+// 예금 상품 상세 조회 API (kangmin 추가)
+export async function getDepositProductDetail(productId) {
+    try {
+        const response = await savingApi.get(`/depositDetail`, {
+            params: { productId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching deposit product detail: ', error);
+        throw error;
+    }
+}
+
 // 적금 상품 조회 API
 export async function fetchSavingProducts() {
     try {
@@ -62,6 +75,19 @@ export async function fetchSavingProducts() {
         return response.data;
     } catch (error) {
         console.error('Error fetching saving products:', error);
+        throw error;
+    }
+}
+
+// 적금 상품 상세 조회 API ( kangmin 추가)
+export async function getSavingProductDetail(productId) {
+    try {
+        const response = await savingApi.get(`/savingDetail`, {
+            params: { productId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching saving product detail: ', error);
         throw error;
     }
 }
@@ -103,22 +129,26 @@ export async function searchBondProduct(keyword) {
     }
 }
 
+// 예금 상품 검색 API
 export async function searchDepositProduct(keyword) {
     try {
         const response = await savingApi.get(`/depositSearch`, {
             params: { keyword },
         });
+        return response.data;
     } catch (error) {
         console.error('Error searching deposit product: ', error);
         throw error;
     }
 }
 
+// 적금 상품 검색 API
 export async function searchSavingProduct(keyword) {
     try {
         const response = await savingApi.get(`/savingSearch`, {
             params: { keyword },
         });
+        return response.data;
     } catch (error) {
         console.error('Error searching saving product: ', error);
         throw error;

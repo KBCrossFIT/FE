@@ -40,7 +40,7 @@ export default {
     flex-direction: column; /* 세로 정렬 */
     align-items: flex-start; /* 좌측 정렬 */
     justify-content: space-between; /* 상단과 하단 요소 배치 */
-    /* height: 100vh;  */
+    height: 100vh; /* 전체 화면 높이 */
     padding: 20px; /* 좌우 여백 */
 }
 

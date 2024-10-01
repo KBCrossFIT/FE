@@ -66,7 +66,7 @@
                                 :key="product.productId"
                             >
                                 <td
-                                    @click="gotoDetail(product.productId, product.fin_prdt_cd)"
+                                    @click="gotoDetail(product.productId, product.productType)"
                                     class="Detail-Link"
                                 >
                                     {{ product.finPrdtNm }}
@@ -113,7 +113,7 @@
                         <template v-if="selectedTab === '채권'">
                             <tr v-for="product in displayedProducts" :key="product.id">
                                 <td
-                                    @click="gotoDetail(product.productId, product.fin_prdt_cd)"
+                                    @click="gotoDetail(product.productId, product.productType)"
                                     class="Detail-Link"
                                 >
                                     {{ product.isinCdNm }}
@@ -141,7 +141,7 @@
                         <template v-if="selectedTab === '펀드'">
                             <tr v-for="product in displayedProducts" :key="product.id">
                                 <td
-                                    @click="gotoDetail(product.productId, product.fin_prdt_cd)"
+                                    @click="gotoDetail(product.productId, product.productType)"
                                     class="Detail-Link"
                                 >
                                     {{ product.productNm }}
@@ -223,9 +223,13 @@ export default {
             return []; // 다른 탭은 빈 배열 반환
         },
         ...mapGetters('bond', ['getBondList', 'getSearchBondList', 'getBondProductDetail']),
-        ...mapGetters('deposit', ['getDepositList', 'getSearchDepositList']),
-        ...mapGetters('saving', ['getSavingList', 'getSearchSavingList']),
-        ...mapGetters('fund', ['getFundList', 'getSearchFundList']),
+        ...mapGetters('deposit', [
+            'getDepositList',
+            'getSearchDepositList',
+            'getDepositProductDetail',
+        ]),
+        ...mapGetters('saving', ['getSavingList', 'getSearchSavingList', 'getSavingProductDetail']),
+        ...mapGetters('fund', ['getFundList', 'getSearchFundList', 'getFunddProductDetail']),
     },
     methods: {
         selectTab(tab) {
@@ -251,6 +255,9 @@ export default {
             }
         },
         searchProducts() {
+            console.log('현재 선택된 탭:', this.selectedTab);
+            console.log('displayedProducts:', this.displayedProducts);
+
             if (this.searchQuery.trim().length < 2) {
                 alert('검색어는 2자 이상 입력해야 합니다.');
                 return;
@@ -268,9 +275,9 @@ export default {
             }
         },
 
-        gotoDetail(productId, finPrdtCd) {
+        gotoDetail(productId, productType) {
             // URL 동적 생성
-            this.$router.push({ path: `/productDesc/${finPrdtCd}/${productId}` });
+            this.$router.push({ path: `/productDesc/${productType}/${productId}` });
         },
 
         ...mapActions('bond', ['fetchBondList', 'searchBondList', 'bondProductDeatil']),

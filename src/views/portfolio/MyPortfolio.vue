@@ -131,7 +131,6 @@ export default {
             console.log(`포트폴리오 세부 정보 페이지로 이동: ${id}`);
             router.push(`/portfolio/${id}`);
         };
-
         return {
             selected,
             allSelected,
