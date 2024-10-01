@@ -67,7 +67,7 @@
                             >
                                 <td
                                     @click="gotoDetail(product.productId, product.fin_prdt_cd)"
-                                    style="cursor: pointer; color: blue"
+                                    class="Detail-Link"
                                 >
                                     {{ product.finPrdtNm }}
                                 </td>
@@ -112,7 +112,12 @@
                         <!-- 채권 리스트 -->
                         <template v-if="selectedTab === '채권'">
                             <tr v-for="product in displayedProducts" :key="product.id">
-                                <td>{{ product.isinCdNm }}</td>
+                                <td
+                                    @click="gotoDetail(product.productId, product.fin_prdt_cd)"
+                                    class="Detail-Link"
+                                >
+                                    {{ product.isinCdNm }}
+                                </td>
                                 <td>{{ product.bondIssuDt }}</td>
                                 <td>{{ product.bondSrfcInrt }}</td>
                                 <td>
@@ -135,7 +140,12 @@
                         <!-- 펀드 리스트 -->
                         <template v-if="selectedTab === '펀드'">
                             <tr v-for="product in displayedProducts" :key="product.id">
-                                <td>{{ product.productNm }}</td>
+                                <td
+                                    @click="gotoDetail(product.productId, product.fin_prdt_cd)"
+                                    class="Detail-Link"
+                                >
+                                    {{ product.productNm }}
+                                </td>
                                 <td>{{ product.companyNm }}</td>
                                 <td>{{ product.fundType }}</td>
                                 <td>{{ product.riskLevel }}</td>
