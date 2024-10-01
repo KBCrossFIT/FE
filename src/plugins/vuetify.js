@@ -6,14 +6,14 @@ import * as directives from 'vuetify/directives'; // Import all Vuetify directiv
 
 // Create Vuetify instance
 const vuetify = createVuetify({
-    icons: {
-        defaultSet: 'mdi',
-    },
-    components, // Register all Vuetify components
-    directives, // Register all Vuetify directives
-    theme: {
-        defaultTheme: 'light', // or 'dark'
-    },
+  icons: {
+    defaultSet: 'mdi',
+  },
+  components, // Register all Vuetify components
+  directives, // Register all Vuetify directives
+  theme: {
+    defaultTheme: 'light', // or 'dark'
+  },
 });
 
 // Export the Vuetify instance
