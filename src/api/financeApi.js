@@ -77,3 +77,38 @@ export async function searchFundProduct(keyword) {
         throw error;
     }
 }
+
+// 채권 상품 검색 API
+export async function searchBondProduct(keyword) {
+    try {
+        const response = await bondApi.get(`/search`, {
+            params: { keyword },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error searching bond product: ", error);
+        throw error;
+    }
+}
+
+export async function searchDepositProduct(keyword) {
+    try {
+        const response = await savingApi.get(`/depositSearch`, {
+            params: { keyword },
+        });
+    } catch (error) {
+        console.error("Error searching deposit product: ", error);
+        throw error;
+    }
+}
+
+export async function searchSavingProduct(keyword) {
+    try {
+        const response = await savingApi.get(`/savingSearch`, {
+            params: { keyword },
+        });
+    } catch (error) {
+        console.error("Error searching saving product: ", error);
+        throw error;
+    }
+}

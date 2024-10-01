@@ -8,20 +8,22 @@
                 item-value="PortfolioName"
                 show-select
                 :headers="headers"
+                item-key="id"
             >
-                <!-- 데이터 레이블이 있는 전체 선택 체크박스 행 -->
-                <!-- 레이블 표시 안됨 -->
-                <template #column.header="{ column }">
+                <!-- 전체 선택 체크박스 -->
+                <template v-slot:header>
                     <tr>
                         <th>
-                            <!-- 전체 선택 체크박스 -->
+                            <v-checkbox v-model="allSelected" @change="toggleSelectAll" />
                         </th>
-                        <th>포트폴리오 이름</th>
-                        <th>예상 수익률</th>    
-                        <th>위험도</th>
+                        <th v-for="header in headers" :key="header.value" :align="header.align">
+                            {{ header.text }}
+                        </th>
                     </tr>
                 </template>
-                <template #item="{ item }">
+
+                <!-- 데이터 항목 -->
+                <template v-slot:item="{ item }">
                     <tr>
                         <td>
                             <v-checkbox v-model="selected" :value="item.PortfolioName" />
@@ -90,7 +92,7 @@ export default {
         });
 
         const headers = [
-            { text: '', value: 'checkbox', align: 'start' }, // 전체 선택 체크박스 자리
+            { text: '', value: 'checkbox', align: 'start' },
             { text: '포트폴리오 이름', value: 'PortfolioName' },
             { text: '예상 수익률', value: 'ExpectedReturn' },
             { text: '위험도', value: 'RiskLevel' },

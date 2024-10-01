@@ -1,6 +1,5 @@
 <template>
     <div class="influencer-list">
-        <h2 class="title">인플루언서 게시글</h2>
         <v-container>
             <v-row>
                 <v-col v-for="(post, index) in paginatedPosts" :key="index" cols="12" md="4">

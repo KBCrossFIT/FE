@@ -2,43 +2,42 @@
   <div class="carousel">
     <!-- Left Arrow -->
     <div class="carousel-arrow left" @click="prevImage">
-      &#10094;
-      <!-- Unicode left arrow -->
+      &#10094; <!-- Unicode left arrow -->
     </div>
 
     <!-- Images -->
     <div class="carousel-images">
-      <img :src="images[currentImage]" alt="img" />
+      <img :src="images[currentImage]" alt="Carousel Image" />
     </div>
 
     <!-- Right Arrow -->
     <div class="carousel-arrow right" @click="nextImage">
-      &#10095;
-      <!-- Unicode right arrow -->
+      &#10095; <!-- Unicode right arrow -->
     </div>
 
     <!-- Dots for navigation -->
     <div class="carousel-nav">
-      <span
-        class="dot"
-        v-for="(image, index) in images"
-        :key="index"
-        :class="{ active: currentImage === index }"
-        @click="changeImage(index)"
-      >
+      <span 
+        class="dot" 
+        v-for="(image, index) in images" 
+        :key="index" 
+        :class="{ active: currentImage === index }" 
+        @click="changeImage(index)">
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import image1 from '@/assets/img/first.jpg';
+import image1 from '@/assets/img/shinhanInvestChart.jpg';
 
 export default {
   data() {
     return {
       currentImage: 0,
-      images: [image1],
+      images: [
+        image1,
+      ]
     };
   },
   methods: {
@@ -49,23 +48,23 @@ export default {
       this.currentImage = (this.currentImage + 1) % this.images.length;
     },
     prevImage() {
-      this.currentImage =
-        (this.currentImage - 1 + this.images.length) % this.images.length;
-    },
+      this.currentImage = (this.currentImage - 1 + this.images.length) % this.images.length;
+    }
   },
   mounted() {
     // Automatically swap images every 10 seconds
     setInterval(() => {
       this.nextImage();
     }, 10000);
-  },
+  }
 };
 </script>
+
 
 <style scoped>
 .carousel {
   position: relative;
-  height: 450px; /* Adjust this to make the carousel smaller */
+  height: 400px; /* Adjust this to make the carousel smaller */
   overflow: hidden;
 }
 
