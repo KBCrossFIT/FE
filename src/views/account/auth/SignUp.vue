@@ -3,6 +3,7 @@
         <div class="signup-container">
             <div class="signup-box">
                 <form @submit.prevent="handleSubmit" class="signup-form">
+                    <h2>회원가입</h2>
                     <div class="form-group">
                         <label for="username">아이디</label>
                         <input
@@ -132,13 +133,13 @@ export default {
     },
     data() {
         return {
-            memberID: '', // Changed to match DTO field
-            memberName: '', // Changed to match DTO field
+            memberID: '',
+            memberName: '',
             password: '',
             reEnteredPassword: '',
             email: '',
-            birth: null, // Changed to match DTO field
-            gender: '남', // Default value set to '남'
+            birth: null,
+            gender: '남',
             isModalOpen: false,
             currentComponent: markRaw(ModalTestStart),
             InvestMentTest: false,
@@ -148,39 +149,41 @@ export default {
     methods: {
         async handleSubmit() {
             if (this.password !== this.reEnteredPassword) {
-                alert('비밀번호가 일치하지 않습니다.'); // Password mismatch alert
+                alert('비밀번호가 일치하지 않습니다.');
                 return;
             }
 
             const userData = {
-                memberID: this.memberID, // Updated field names
+                memberID: this.memberID,
                 email: this.email,
-                memberName: this.memberName, // Updated field names
+                memberName: this.memberName,
                 password: this.password,
-                reEnteredPassword: this.reEnteredPassword, // Updated field names
-                birth: this.birth, // Updated field names
-                gender: this.gender, // Updated field names
+                reEnteredPassword: this.reEnteredPassword,
+                birth: this.birth,
+                gender: this.gender,
                 InvestMentTest: this.InvestMentTest,
             };
 
             try {
-                const result = await registerUser(userData); // Call the registerUser API
+                const result = await registerUser(userData);
                 console.log('회원가입 성공:', result);
-                // Redirect to the main page after successful sign-up
-                this.$router.push('/'); // Change the path to your main page
+                this.$router.push('/');
             } catch (error) {
                 console.error('회원가입 실패:', error);
+                if (error.response) {
+                    alert(`회원가입에 실패했습니다: ${error.response.data.message || '알 수 없는 오류'}`);
+                } else {
+                    alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                }
             }
         },
         openModal() {
-            console.log('모달테스트 시작 창 열기');
             this.isModalOpen = true;
             this.currentComponent = markRaw(ModalTestStart);
         },
 
         handleClose() {
             this.isModalOpen = false;
-            console.log('모달이 닫혔습니다.', this.isModalOpen);
         },
         nextStep() {
             if (this.currentComponent.__file.includes('ModalTestStart.vue')) {
@@ -202,18 +205,19 @@ export default {
 </script>
 
 <style scoped>
+body {
+    font-family: 'Arial', sans-serif; /* Modern font */
+    background-color: #f0f4f8; /* Light background color */
+}
+
 .signup-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 800px; /* Fixed width */
-    height: 600px; /* Fixed height */
+    width: 100%; /* Full width */
+    min-height: 100vh; /* Full height */
     background: linear-gradient(to bottom, #a0e0d2, #ffffff);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Center the box */
 }
 
 .signup-container {
@@ -224,30 +228,41 @@ export default {
 
 .signup-box {
     background-color: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px; /* Increased padding */
+    border-radius: 15px; /* More rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow */
     width: 400px; /* Fixed width */
     text-align: center;
 }
 
+h2 {
+    margin-bottom: 20px; /* Spacing below the title */
+    color: #4db6ac; /* Title color */
+}
+
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px; /* Increased margin */
     text-align: left;
 }
 
 label {
     display: block;
-    font-size: 14px;
+    font-size: 16px; /* Larger font size */
     margin-bottom: 5px;
-    color: #666;
+    color: #333; /* Darker label color */
 }
 
 input {
     width: 100%; /* Fill the width of the container */
-    padding: 10px;
+    padding: 12px; /* Increased padding */
     border: 1px solid #ddd;
     border-radius: 5px;
+    transition: border-color 0.3s; /* Smooth border transition */
+}
+
+input:focus {
+    border-color: #4db6ac; /* Highlighted border color on focus */
+    outline: none; /* Remove default outline */
 }
 
 .gender-radio {
@@ -259,30 +274,32 @@ input {
 
 .create-btn {
     width: 100%;
-    padding: 10px;
+    padding: 12px; /* Increased padding */
     background-color: #4db6ac;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    transition: background-color 0.3s; /* Smooth transition */
 }
 
 .create-btn:hover {
-    background-color: #399d91;
+    background-color: #399d91; /* Darker button on hover */
 }
 
 .login-link {
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .login-link a {
     color: #4db6ac;
     text-decoration: none;
+    transition: color 0.3s; /* Smooth color transition */
 }
 
 .login-link a:hover {
-    text-decoration: underline;
+    color: #2e8b83; /* Darker link color on hover */
 }
 
 .dob-container {
