@@ -17,7 +17,7 @@
           />
         </div>
 
-        <button class="deleteAccount-btn" type="submit">탈퇴</button>
+        <button class="deleteAccount-btn" type="submit">탈퇴git</button>
         <v-btn color="teal" block @click="navigateTo('/mypage')">취소</v-btn>
       </form>
     </div>
