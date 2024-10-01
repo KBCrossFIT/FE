@@ -1,4 +1,4 @@
-import { fetchBondProducts, searchBondProduct } from "@/api/financeApi";
+import { fetchBondProducts, searchBondProduct, getBondProductDetail } from '@/api/financeApi';
 
 const bondModule = {
     namespaced: true,
@@ -6,6 +6,7 @@ const bondModule = {
         bondList: [],
         bondListLoaded: false,
         searchBondProducts: [],
+        bondProductDetail: [],
     }),
 
     mutations: {
@@ -16,6 +17,10 @@ const bondModule = {
 
         setSearchBondList(state, searchResults) {
             state.searchBondProducts = searchResults;
+        },
+
+        setBondProductDetail(state, getDetail) {
+            state.bondProductDetail = getDetail;
         },
     },
 
@@ -39,6 +44,15 @@ const bondModule = {
                 console.error('Error searching bond list: ', error);
             }
         },
+
+        async bondProductDetail({ commit }, productId) {
+            try {
+                const getDetail = await getBondProductDetail(productId);
+                commit('setBondProductDetail', getDetail);
+            } catch (error) {
+                console.error('Error fetching bond product detail: ', error);
+            }
+        },
     },
     getters: {
         getBondList(state) {
@@ -46,6 +60,9 @@ const bondModule = {
         },
         getSearchBondList(state) {
             return state.searchBondProducts;
+        },
+        getProductDetail(state) {
+            return state.bondProductDetail;
         },
     },
 };
