@@ -33,3 +33,13 @@ a,
     padding: 0 2rem;
   }
 } */
+
+@font-face {
+  font-family: 'RixXladywatermelonR';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-4@1.0/RixXladywatermelonR.woff2')
+    format('woff2');
+}
+
+* {
+  font-family: 'RixXladywatermelonR', sans-serif;
+}

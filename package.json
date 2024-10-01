@@ -15,7 +15,6 @@
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@mdi/font": "^7.4.47",
     "@popperjs/core": "^2.11.8",
-    "@vitejs/plugin-vue-jsx": "^4.0.1",
     "@vue/tsconfig": "^0.5.1",
     "apexcharts": "^3.53.0",
     "axios": "^1.7.7",
@@ -32,6 +31,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vitejs/plugin-vue-jsx": "^4.0.1",
     "vite": "^5.4.8",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.2"
