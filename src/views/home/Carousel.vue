@@ -2,7 +2,8 @@
   <div class="carousel">
     <!-- Left Arrow -->
     <div class="carousel-arrow left" @click="prevImage">
-      &#10094; <!-- Unicode left arrow -->
+      &#10094;
+      <!-- Unicode left arrow -->
     </div>
 
     <!-- Images -->
@@ -12,32 +13,34 @@
 
     <!-- Right Arrow -->
     <div class="carousel-arrow right" @click="nextImage">
-      &#10095; <!-- Unicode right arrow -->
+      &#10095;
+      <!-- Unicode right arrow -->
     </div>
 
     <!-- Dots for navigation -->
     <div class="carousel-nav">
-      <span 
-        class="dot" 
-        v-for="(image, index) in images" 
-        :key="index" 
-        :class="{ active: currentImage === index }" 
-        @click="changeImage(index)">
+      <span
+        class="dot"
+        v-for="(image, index) in images"
+        :key="index"
+        :class="{ active: currentImage === index }"
+        @click="changeImage(index)"
+      >
       </span>
     </div>
   </div>
 </template>
 
 <script>
-import image1 from '@/assets/img/shinhanInvestChart.jpg';
+import image1 from '@/assets/img/third.png';
+import image2 from '@/assets/img/first.jpg';
+import image3 from '@/assets/img/second.jpg';
 
 export default {
   data() {
     return {
       currentImage: 0,
-      images: [
-        image1,
-      ]
+      images: [image1, image2, image3],
     };
   },
   methods: {
@@ -48,18 +51,18 @@ export default {
       this.currentImage = (this.currentImage + 1) % this.images.length;
     },
     prevImage() {
-      this.currentImage = (this.currentImage - 1 + this.images.length) % this.images.length;
-    }
+      this.currentImage =
+        (this.currentImage - 1 + this.images.length) % this.images.length;
+    },
   },
   mounted() {
     // Automatically swap images every 10 seconds
     setInterval(() => {
       this.nextImage();
     }, 10000);
-  }
+  },
 };
 </script>
-
 
 <style scoped>
 .carousel {
