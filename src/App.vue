@@ -1,7 +1,8 @@
 <template>
   <v-app>
     <DefaultLayout>
-      <v-main>
+      <v-main
+        >ㅋㅋ
         <router-view />
       </v-main>
     </DefaultLayout>
