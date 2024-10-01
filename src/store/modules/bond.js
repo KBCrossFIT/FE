@@ -45,7 +45,7 @@ const bondModule = {
             }
         },
 
-        async bondProductDetail({ commit }, productId) {
+        async fetchBondProductDetail({ commit }, productId) {
             try {
                 const getDetail = await getBondProductDetail(productId);
                 commit('setBondProductDetail', getDetail);

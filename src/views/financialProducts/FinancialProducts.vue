@@ -66,7 +66,7 @@
                                 :key="product.productId"
                             >
                                 <td
-                                    @click="gotoDetail(product.productId, product.productType)"
+                                    @click="onProductClick(product.productId, tab)"
                                     class="Detail-Link"
                                 >
                                     {{ product.finPrdtNm }}
@@ -112,10 +112,7 @@
                         <!-- 채권 리스트 -->
                         <template v-if="selectedTab === '채권'">
                             <tr v-for="product in displayedProducts" :key="product.id">
-                                <td
-                                    @click="gotoDetail(product.productId, product.productType)"
-                                    class="Detail-Link"
-                                >
+                                <td @click="gotoDetail(product.productId, tab)" class="Detail-Link">
                                     {{ product.isinCdNm }}
                                 </td>
                                 <td>{{ product.bondIssuDt }}</td>
@@ -140,10 +137,7 @@
                         <!-- 펀드 리스트 -->
                         <template v-if="selectedTab === '펀드'">
                             <tr v-for="product in displayedProducts" :key="product.id">
-                                <td
-                                    @click="gotoDetail(product.productId, product.productType)"
-                                    class="Detail-Link"
-                                >
+                                <td @click="gotoDetail(product.productId, tab)" class="Detail-Link">
                                     {{ product.productNm }}
                                 </td>
                                 <td>{{ product.companyNm }}</td>
@@ -192,8 +186,15 @@ export default {
                 color: 'white',
             },
             cart: [], // 장바구니
+            productType: 'D',
         };
     },
+    watch: {
+        selectedTab(newTab) {
+            this.setProductType(newTab);
+        },
+    },
+
     computed: {
         // 선택된 탭과 검색 상태에 따라 필터링된 상품을 반환
         displayedProducts() {
@@ -235,6 +236,7 @@ export default {
         selectTab(tab) {
             this.selectedTab = tab;
             this.searchMode = false; // 탭을 선택하면 검색 모드 해제
+            this.setProductType(tab);
 
             if (tab === '채권') {
                 this.fetchBondList();
@@ -275,9 +277,36 @@ export default {
             }
         },
 
-        gotoDetail(productId, productType) {
-            // URL 동적 생성
-            this.$router.push({ path: `/productDesc/${productType}/${productId}` });
+        onProductClick(productId, tab) {
+            console.log('onProductClick 이벤트 발생', productId, 'Tab:', tab);
+            this.setProductType(tab);
+            this.gotoDetail(productId, tab);
+        },
+
+        setProductType(tab) {
+            if (tab === '예금') {
+                this.productType = 'D';
+            } else if (tab === '적금') {
+                this.productType = 'S';
+            } else if (tab === '펀드') {
+                this.productType = 'F';
+            } else if (tab === '채권') {
+                this.productType = 'B';
+            }
+
+            console.log('Setting productType to:', this.productType);
+        },
+
+        gotoDetail(productId) {
+            console.log('productId:', productId);
+            console.log('productType:', this.productType); // 올바른 productType 출력
+            if (!this.productType) {
+                console.error('productType이 설정되지 않았습니다.');
+                return; // productType이 설정되지 않았다면 함수 종료
+            }
+            console.log('Navigating to:', `/productDesc/${this.productType}/${productId}`); // 최종 URL 로그
+
+            this.$router.push({ path: `/productDesc/${this.productType}/${productId}` });
         },
 
         ...mapActions('bond', ['fetchBondList', 'searchBondList', 'bondProductDeatil']),

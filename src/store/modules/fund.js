@@ -1,3 +1,4 @@
+// store/modules/fund.js
 import { fetchFundProducts, searchFundProduct } from '@/api/financeApi';
 
 const fundModule = {
@@ -47,6 +48,10 @@ const fundModule = {
         },
         getSearchFundList(state) {
             return state.searchFundProducts;
+        },
+        getFundProductDetail: (state) => (productId) => {
+            // 상품 ID로 세부 정보 필터링
+            return state.fundProducts.find((product) => product.productID === productId) || null;
         },
     },
 };

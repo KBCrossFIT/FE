@@ -1,8 +1,7 @@
 <template>
     <div class="product-desc-wrapper">
         <div class="product-desc-container">
-            <h1>{{ productDetails.productID }}</h1>
-            <p>상품 종류: {{ productDetails.productType }}</p>
+            <h1>{{ productDetails ? productDetails.product : 'Loading...' }}</h1>
 
             <!-- 채권에 대한 세부 정보 -->
             <div v-if="isBond">
@@ -88,50 +87,69 @@ export default {
         };
     },
     computed: {
-        ...mapGetters('bond', ['getBondProductDetail']),
+        ...mapGetters('bond', ['getProductDetail']),
         ...mapGetters('deposit', ['getDepositProductDetail']),
         ...mapGetters('saving', ['getSavingProductDetail']),
         ...mapGetters('fund', ['getFundProductDetail']),
-        ...mapGetters('savingRates', ['getSavingProductRatesDetail']), // 추가된 부분
+        ...mapGetters('savingRates', ['getSavingProductRatesDetail']),
 
         productDetails() {
             // 상품 종류에 따라 적절한 정보를 가져옴
-            if (this.productType === '채권') {
-                return this.getBondProductDetail(this.productId);
-            } else if (this.productType === '예금') {
-                return this.getDepositProductDetail(this.productId);
-            } else if (this.productType === '적금') {
-                return this.getSavingProductDetail(this.productId);
-            } else if (this.productType === '펀드') {
-                return this.getFundProductDetail(this.productId);
+            if (this.productType === 'B') {
+                return this.getProductDetail; // Accessing as property
+            } else if (this.productType === 'D') {
+                return this.getDepositProductDetail; // Accessing as property
+            } else if (this.productType === 'S') {
+                return this.getSavingProductDetail; // Accessing as property
+            } else if (this.productType === 'F') {
+                return this.getFundProductDetail; // Accessing as property
             }
             return null; // 정보가 없을 경우 null 반환
         },
 
         productRates() {
-            return this.getSavingProductRatesDetail(this.productId); // 수정된 부분
+            return this.getSavingProductRatesDetail(this.productId);
         },
 
         isDepositOrSaving() {
             return (
-                this.productDetails.productType === '예금' ||
-                this.productDetails.productType === '적금'
+                this.productDetails && // Check if productDetails is not null
+                (this.productDetails.productType === 'D' || this.productDetails.productType === 'S')
             );
         },
 
         isBond() {
-            return this.productDetails.productType === '채권';
+            return this.productDetails && this.productDetails.productType === 'B'; // Add null check
         },
 
         isFund() {
-            return this.productDetails.productType === '펀드';
+            return this.productDetails && this.productDetails.productType === 'F'; // Add null check
         },
 
         isSaving() {
-            return this.productDetails.productType === '적금';
+            return this.productDetails && this.productDetails.productType === 'S'; // Add null check
         },
     },
     methods: {
+        ...mapActions('bond', ['fetchBondProductDetail']),
+        ...mapActions('deposit', ['fetchDepositProductDetail']),
+        ...mapActions('saving', ['fetchSavingProductDetail']),
+        ...mapActions('fund', ['fetchFundProductDetail']),
+        ...mapActions('savingRates', ['fetchSavingProductRatesDetail']),
+
+        async fetchProductDetails(productId, productType) {
+            // 각 상품 종류에 맞는 세부 정보 가져오기
+            if (productType === 'B') {
+                await this.fetchBondProductDetail(productId);
+            } else if (productType === 'D') {
+                await this.fetchDepositProductDetail(productId);
+            } else if (productType === 'S') {
+                await this.fetchSavingProductDetail(productId);
+            } else if (productType === 'F') {
+                await this.fetchFundProductDetail(productId);
+            }
+        },
+
         addToCart(productId) {
             this.$store.dispatch('cart/addToCart', productId); // 장바구니에 추가
         },
@@ -142,25 +160,6 @@ export default {
     created() {
         // 컴포넌트 생성 시 상품 세부 정보 가져오기
         this.fetchProductDetails(this.productId, this.productType);
-    },
-    methods: {
-        ...mapActions('bond', ['fetchBondProductDetail']),
-        ...mapActions('deposit', ['fetchDepositProductDetail']),
-        ...mapActions('saving', ['fetchSavingProductDetail']),
-        ...mapActions('fund', ['fetchFundProductDetail']),
-        ...mapActions('savingRates', ['fetchSavingProductRatesDetail']), // 추가된 부분
-        fetchProductDetails(productId, productType) {
-            // 각 상품 종류에 맞는 세부 정보 가져오기
-            if (productType === '채권') {
-                this.fetchBondProductDetail(productId);
-            } else if (productType === '예금') {
-                this.fetchDepositProductDetail(productId);
-            } else if (productType === '적금') {
-                this.fetchSavingProductDetail(productId);
-            } else if (productType === '펀드') {
-                this.fetchFundProductDetail(productId);
-            }
-        },
     },
 };
 </script>
