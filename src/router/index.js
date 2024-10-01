@@ -39,6 +39,8 @@ import FundListView from '@/views/financialProducts/FundListView.vue';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
 import CartItem from '@/views/cart/CartItem.vue';
+import recentViewed from "@/views/recentView/recentView.vue";
+import recentView from "@/views/recentView/recentView.vue";
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -71,7 +73,8 @@ const routes = [
     { path: '/funds', name: 'FundListView', component: FundListView },
     { path: '/stocks', name: 'StockListView', component: StockList },
     { path: '/stock-search', name: 'StockSearch', component: StockSearch },
-    { path: '/cartItem', name: 'CartItem', component: CartItem },
+    { path: '/cart-item', name: 'CartItem', component: CartItem },
+    { path: '/recent-view', name: 'RecentView', component: recentView },
 ];
 
 const router = createRouter({
