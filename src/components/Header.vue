@@ -113,11 +113,7 @@
     <div class="user-controls">
       <template v-if="isLoggedIn">
         <div class="profile-info" @click="navigateToProfile">
-          <img
-            :src="userProfile.picture"
-            alt="Profile Picture"
-            class="profile-picture"
-          />
+          <i class="fa-solid fa-user-tie"></i>
           <span class="username">{{ userProfile.username }}</span>
           <button @click.stop="handleLogout">로그아웃</button>
         </div>
@@ -137,8 +133,7 @@ export default {
     return {
       isLoggedIn: false,
       userProfile: {
-        username: '',
-        picture: 'path/to/default/profile/pic.png',
+        username: ''
       },
       showDropdown: false, // 드롭다운 표시 제어
     };
