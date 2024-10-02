@@ -1,49 +1,22 @@
 <template>
-  <div class="background-container"> <!-- New div for background gradient -->
-    <div class="login-container">
-      <h2>로그인</h2>
-      <form @submit.prevent="handleLogin">
-        <div class="form-group">
-          <div class="input-container">
-            <input
-              size="1"
-              type="text"
-              id="input-memberID"
-              aria-describedby="memberID-messages"
-              class="v-field__input"
-              v-model="memberID"
-              @focus="isMemberIDFocused = true"
-              @blur="checkMemberID"
-              required
-            />
-            <label for="input-memberID" :class="{ active: isMemberIDFocused || memberID.length > 0 }">아이디</label>
-          </div>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form @submit.prevent="handleLogin">
+      <div class="form-group">
+        <div class="input-container">
+          <input type="text" v-model="memberID" id="memberID" required />
+          <label for="memberID" :class="{ active: memberID }">아이디</label>
         </div>
-        <div class="form-group">
-          <div class="input-container">
-            <input
-              size="1"
-              type="password"
-              id="input-password"
-              aria-describedby="password-messages"
-              class="v-field__input"
-              v-model="password"
-              @focus="isPasswordFocused = true"
-              @blur="checkPassword"
-              required
-            />
-            <label for="input-password" :class="{ active: isPasswordFocused || password.length > 0 }">비밀번호</label>
-          </div>
+      </div>
+      <div class="form-group">
+        <div class="input-container">
+          <input type="password" v-model="password" id="password" required />
+          <label for="password" :class="{ active: password }">비밀번호</label>
         </div>
-        <div class="button-container">
-          <v-btn type="submit" class="login-btn">로그인</v-btn> <!-- Custom class for better design -->
-        </div>
-        <div class="link-container">
-          <router-link to="/Find" class="link">ID/PW 찾기</router-link>
-        </div>
-        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
-      </form>
-    </div>
+      </div>
+      <button type="submit">Login</button>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </form>
   </div>
 </template>
 
@@ -80,6 +53,7 @@ export default {
 
         console.log('Login successful:', response.data);
 
+        // Assuming your response contains the user data
         const user = {
           username: response.data.username,
           picture: response.data.picture,
@@ -98,6 +72,7 @@ export default {
           throw new Error('Missing authorization or refresh token');
         }
       } catch (error) {
+        // Set error message for display on the UI
         if (error.response) {
           this.errorMessage = '아이디 혹은 비밀번호가 틀렸습니다.'; // Error message in Korean
           console.error('Error logging in user:', error.response.data);
@@ -142,6 +117,7 @@ h2 {
 
 .input-container {
   position: relative;
+  margin-top: 10px;
 }
 
 .v-field__input {
