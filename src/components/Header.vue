@@ -1,7 +1,14 @@
 <template>
   <header class="header">
     <div class="logoBox" @click="navigateToHome">
-      <div class="logo">ProPortFolio</div>
+      <!-- 로고 -->
+      <div class="logo">
+        <img
+          src="@/assets/img/LogoMVP.png"
+          style="width: 170px; height: 120px"
+          alt="ProPortFolio Logo"
+        />
+      </div>
     </div>
 
     <nav>
@@ -233,7 +240,8 @@ nav {
   padding: 10px;
   cursor: pointer;
   display: flex;
-  gap: 50px;
+  gap: 70px;
+  margin-top: 10px;
 }
 
 .menu-item {
@@ -329,6 +337,7 @@ nav {
   background-color: transparent;
   color: rgb(8, 1, 1);
   border: 1px solid white;
+  margin-right: 9px;
 }
 
 .in {

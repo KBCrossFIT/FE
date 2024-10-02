@@ -49,14 +49,13 @@ export default {
 }
 
 .carousel {
-  margin-bottom: 20px;
+  margin-bottom: 1px;
 }
 
 .comparison-section {
-  margin-bottom: 20px;
+  margin-bottom: 1px;
 }
-
-.product-list-section {
+. .product-list-section {
   margin-bottom: 20px;
 }
 

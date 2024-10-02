@@ -46,7 +46,9 @@
     <div v-if="totalPages > 1" class="pagination">
       <button @click="prevPage" :disabled="currentPage === 1">이전</button>
       <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">
+        다음
+      </button>
     </div>
   </div>
 </template>
@@ -72,14 +74,14 @@ export default {
   methods: {
     // 주식 데이터를 가져오는 메서드
     fetchStocks() {
-      fetch("/api/stock/all") // 백엔드 API 요청
+      fetch('/api/stock/all') // 백엔드 API 요청
         .then((response) => response.json())
         .then((data) => {
           this.stocks = data;
           this.totalPages = Math.ceil(this.stocks.length / this.pageSize);
         })
         .catch((error) => {
-          console.error("Error fetching data:", error);
+          console.error('Error fetching data:', error);
         });
     },
     // 이전 페이지로 이동
