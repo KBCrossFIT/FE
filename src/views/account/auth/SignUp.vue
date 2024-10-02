@@ -62,39 +62,42 @@
                     <div class="form-group">
                         <label for="dob">생년월일</label>
                         <div class="dob-container">
-                            <input type="date" id="dob" v-model="birth" required />
-                            <v-btn @click="openDatePicker">📅</v-btn>
+                            <v-select v-model="selectedYear" :items="years" label="년"></v-select>
+
+                            <v-select v-model="selectedMonth" :items="months" label="월"></v-select>
+
+                            <v-select v-model="selectedDay" :items="days" label="일"></v-select>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>성별</label>
                         <v-radio-group v-model="gender" row>
-                            <v-radio label="남" value="남" color="teal" class="gender-radio"></v-radio>
-                            <v-radio label="여" value="여" color="teal" class="gender-radio"></v-radio>
+                            <v-radio
+                                label="남"
+                                value="남"
+                                color="teal"
+                                class="gender-radio"
+                            ></v-radio>
+                            <v-radio
+                                label="여"
+                                value="여"
+                                color="teal"
+                                class="gender-radio"
+                            ></v-radio>
                         </v-radio-group>
                     </div>
 
                     <div class="form-group">
                         <label>성향분석 하기</label>
-                        <v-btn
-                            @click="openModal"
-                            color="teal"
-                            large
-                            rounded
-                            elevation="8"
-                        >
+                        <v-btn @click="openModal" color="teal" large rounded elevation="8">
                             <v-icon left>mdi-star</v-icon> 테스트 시작
                         </v-btn>
                         <span v-if="!InvestMentTest" class="red-mark">❌</span>
                         <span v-else class="green-mark">✅</span>
                     </div>
 
-                    <button
-                        class="create-btn"
-                        type="submit"
-                        :disabled="!InvestMentTest"
-                    >
+                    <button class="create-btn" type="submit" :disabled="!InvestMentTest">
                         회원가입
                     </button>
                 </form>
@@ -144,6 +147,13 @@ export default {
             currentComponent: markRaw(ModalTestStart),
             InvestMentTest: false,
             showPassword: false,
+            // 날짜 선택
+            selectedYear: null,
+            selectedMonth: null,
+            selectedDay: null,
+            years: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i),
+            months: Array.from({ length: 12 }, (_, i) => i + 1),
+            days: Array.from({ length: 31 }, (_, i) => i + 1),
         };
     },
     methods: {
@@ -153,13 +163,18 @@ export default {
                 return;
             }
 
+            const birthDate = `${this.selectedYear}-${String(this.selectedMonth).padStart(
+                2,
+                '0'
+            )}-${String(this.selectedDay).padStart(2, '0')}`;
+
             const userData = {
                 memberID: this.memberID,
                 email: this.email,
                 memberName: this.memberName,
                 password: this.password,
                 reEnteredPassword: this.reEnteredPassword,
-                birth: this.birth,
+                birth: birthDate,
                 gender: this.gender,
                 InvestMentTest: this.InvestMentTest,
             };
@@ -171,7 +186,11 @@ export default {
             } catch (error) {
                 console.error('회원가입 실패:', error);
                 if (error.response) {
-                    alert(`회원가입에 실패했습니다: ${error.response.data.message || '알 수 없는 오류'}`);
+                    alert(
+                        `회원가입에 실패했습니다: ${
+                            error.response.data.message || '알 수 없는 오류'
+                        }`
+                    );
                 } else {
                     alert('회원가입에 실패했습니다. 다시 시도해주세요.');
                 }

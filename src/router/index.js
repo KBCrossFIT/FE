@@ -9,8 +9,8 @@ import MyPage from '@/views/account/profile/MyPage.vue';
 import MyPageEdit from '@/views/account/profile/MyPageEdit.vue';
 import ChangePW from '@/views/account/profile/ChangePW.vue';
 import DeleteAccount from '@/views/account/profile/DeleteAccount.vue';
-import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue';
-import ProductDesc from '@/views/financialProducts/ProductDesc.vue';
+import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue'; // 금융 상품 페이지
+import ProductDesc from '@/views/financialProducts/ProductDesc.vue'; // 개별 상품 상세 페이지
 import Cart from '@/views/financialProducts/Cart.vue';
 import RecentlyViewed from '@/views/financialProducts/RecentlyViewed.vue';
 
@@ -43,6 +43,7 @@ import recentViewed from "@/views/recentView/recentView.vue";
 import recentView from "@/views/recentView/recentView.vue";
 import portfolioData from "@/views/portfolio/PortfolioData.vue";
 
+
 const routes = [
     { path: '/', name: 'Home', component: Home },
     { path: '/find', name: 'Find', component: FindId },
@@ -52,8 +53,16 @@ const routes = [
     { path: '/mypageEdit', name: 'MyPageEdit', component: MyPageEdit },
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
-    { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts },
-    { path: '/productDesc/:productType/:productId', name: 'ProductDesc', component: ProductDesc },
+    {
+        path: '/financial-products/:productType/:pageNumber?',
+        name: 'FinancialProducts',
+        component: FinancialProducts,
+    },
+    {
+        path: '/list/:id',
+        name: 'ProductDetail',
+        component: ProductDesc,
+    },
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },
