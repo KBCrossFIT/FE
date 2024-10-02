@@ -57,7 +57,7 @@ export default {
           .then((response) => {
             // 응답이 JSON 형식인지 확인
             if (!response.ok) {
-              throw new Error("Network response was not ok");
+              throw new Error("네트워크 에러");
             }
             // 응답이 비어 있지 않으면 JSON 파싱
             return response.text().then((text) => (text ? JSON.parse(text) : {}));
@@ -67,7 +67,7 @@ export default {
             this.fetchRecentView();
           })
           .catch((error) => {
-            console.error("Error adding cart item:", error);
+            console.error(error);
           });
     },
 
