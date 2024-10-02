@@ -75,7 +75,7 @@
                                 <td>
                                     {{
                                         getRateByTerm(
-                                            displayedProducts.rates,
+                                            displayedProducts.rates || [],
                                             product.productId,
                                             12
                                         )?.intrRate
@@ -84,7 +84,7 @@
                                 <td>
                                     {{
                                         getRateByTerm(
-                                            displayedProducts.rates,
+                                            displayedProducts.rates || [],
                                             product.productId,
                                             12
                                         )?.intrRate2
@@ -109,7 +109,7 @@
 
                         <!-- 채권 리스트 -->
                         <template v-else-if="selectedTab === '채권'">
-                            <tr v-for="product in displayedProducts" :key="product.id">
+                            <tr v-for="product in displayedProducts" :key="product.productId">
                                 <td
                                     @click="onProductClick(product.productId, selectedTab)"
                                     class="Detail-Link"
@@ -121,10 +121,10 @@
                                 <td>
                                     <v-btn
                                         icon
-                                        :class="{ 'in-cart': cart.includes(product.id) }"
-                                        @click="toggleCart(product.id)"
+                                        :class="{ 'in-cart': cart.includes(product.productId) }"
+                                        @click="toggleCart(product.productId)"
                                         :style="
-                                            cart.includes(product.id)
+                                            cart.includes(product.productId)
                                                 ? 'background-color: #4caf50; color: white;'
                                                 : ''
                                         "
@@ -137,7 +137,7 @@
 
                         <!-- 펀드 리스트 -->
                         <template v-else-if="selectedTab === '펀드'">
-                            <tr v-for="product in displayedProducts" :key="product.id">
+                            <tr v-for="product in displayedProducts" :key="product.productId">
                                 <td
                                     @click="onProductClick(product.productId, selectedTab)"
                                     class="Detail-Link"
@@ -151,10 +151,10 @@
                                 <td>
                                     <v-btn
                                         icon
-                                        :class="{ 'in-cart': cart.includes(product.id) }"
-                                        @click="toggleCart(product.id)"
+                                        :class="{ 'in-cart': cart.includes(product.productId) }"
+                                        @click="toggleCart(product.productId)"
                                         :style="
-                                            cart.includes(product.id)
+                                            cart.includes(product.productId)
                                                 ? 'background-color: #4caf50; color: white;'
                                                 : ''
                                         "
@@ -211,7 +211,7 @@ export default {
                 color: 'white',
             },
             cart: [],
-            productType: 'D',
+            productType: '', // 상품 유형을 저장
             page: 1, // 현재 페이지 번호
             totalPages: 1, // 총 페이지 수
             itemsPerPage: 10, // 페이지당 보여줄 아이템 수
@@ -245,31 +245,29 @@ export default {
             let data = {};
             if (this.searchMode) {
                 if (this.selectedTab === '예금') {
-                    data = this.getSearchDepositList;
+                    data = this.getSearchDepositList || {};
                 } else if (this.selectedTab === '적금') {
-                    data = this.getSearchSavingList;
+                    data = this.getSearchSavingList || {};
                 } else if (this.selectedTab === '채권') {
-                    data = this.getSearchBondList;
+                    data = this.getSearchBondList || [];
                 } else if (this.selectedTab === '펀드') {
-                    data = this.getSearchFundList;
+                    data = this.getSearchFundList || [];
                 }
             } else {
                 if (this.selectedTab === '예금') {
-                    data = this.getDepositList;
+                    data = this.getDepositList || {};
                 } else if (this.selectedTab === '적금') {
-                    data = this.getSavingList;
+                    data = this.getSavingList || {};
                 } else if (this.selectedTab === '채권') {
-                    data = this.getBondList;
+                    data = this.getBondList || [];
                 } else if (this.selectedTab === '펀드') {
-                    data = this.getFundList;
+                    data = this.getFundList || [];
                 }
             }
 
             let products = [];
             if (this.selectedTab === '예금' || this.selectedTab === '적금') {
-                if (data && data.products) {
-                    products = data.products;
-                }
+                products = data.products || [];
             } else {
                 products = data || [];
             }
@@ -278,22 +276,26 @@ export default {
             this.totalPages = Math.ceil(products.length / this.itemsPerPage);
 
             // 현재 페이지에 해당하는 상품들만 반환
+            let displayedProducts;
             if (this.selectedTab === '예금' || this.selectedTab === '적금') {
-                // 예금과 적금은 객체 형태로 반환
-                return {
+                displayedProducts = {
                     products: products.slice(
                         (this.page - 1) * this.itemsPerPage,
                         this.page * this.itemsPerPage
                     ),
-                    rates: data.rates, // rates는 전체를 그대로 전달
+                    rates: data.rates || [], // rates가 undefined인 경우 빈 배열로 대체
                 };
             } else {
-                // 채권과 펀드는 배열만 반환
-                return products.slice(
+                displayedProducts = products.slice(
                     (this.page - 1) * this.itemsPerPage,
                     this.page * this.itemsPerPage
                 );
             }
+
+            // 디버깅을 위한 로그 출력
+            console.log('displayedProducts:', displayedProducts);
+
+            return displayedProducts;
         },
         ...mapGetters('bond', ['getBondList', 'getSearchBondList', 'getBondProductDetail']),
         ...mapGetters('deposit', [
@@ -386,29 +388,37 @@ export default {
         },
 
         setProductType(tab) {
-            if (tab === '예금') {
-                this.productType = 'D';
-            } else if (tab === '적금') {
-                this.productType = 'S';
-            } else if (tab === '펀드') {
-                this.productType = 'F';
-            } else if (tab === '채권') {
-                this.productType = 'B';
-            }
-
+            this.productType = this.getProductTypeFromTab(tab);
             console.log('Setting productType to:', this.productType);
         },
 
         gotoDetail(productId) {
-            console.log('productId:', productId);
-            console.log('productType:', this.productType);
-            if (!this.productType) {
-                console.error('productType이 설정되지 않았습니다.');
+            // selectedTab을 사용하여 productType 결정
+            const productTypeMap = {
+                예금: 'deposit',
+                적금: 'saving',
+                채권: 'bond',
+                펀드: 'fund',
+            };
+
+            const productType = productTypeMap[this.selectedTab];
+
+            if (!productType) {
+                console.error('productType을 결정할 수 없습니다.');
                 return;
             }
-            console.log('Navigating to:', `/List/${productId}`);
 
-            this.$router.push({ path: `/List/${productId}` });
+            console.log('productId:', productId);
+            console.log('productType:', productType);
+
+            console.log('Navigating to:', `/list/${productId}?productType=${productType}`);
+
+            // 라우터 네임을 사용하고, params와 query를 전달합니다.
+            this.$router.push({
+                name: 'ProductDetail',
+                params: { id: productId },
+                query: { productType },
+            });
         },
 
         updateRoute() {
@@ -456,8 +466,7 @@ export default {
         ...mapActions('deposit', ['fetchDepositList', 'searchDepositList']),
         ...mapActions('saving', ['fetchSavingList', 'searchSavingList']),
         ...mapActions('fund', ['fetchFundList', 'searchFundList']),
-        getRateByTerm(rates, productId, saveTrm) {
-            if (!rates) return null;
+        getRateByTerm(rates = [], productId, saveTrm) {
             return rates.find((rate) => rate.productId === productId && rate.saveTrm === saveTrm);
         },
     },

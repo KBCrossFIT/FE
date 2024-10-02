@@ -32,15 +32,15 @@ export async function fetchBondProducts() {
     }
 }
 
+// financeApi.js
+
 // 채권 상품 상세 조회 API
 export async function getBondProductDetail(productId) {
     try {
-        const response = await bondApi.get(`/list`, {
-            params: { productId },
-        });
+        const response = await bondApi.get(`/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching bond product detail: ', error);
+        console.error('Error fetching bond product detail:', error);
         throw error;
     }
 }
@@ -64,7 +64,7 @@ export async function getDepositProductDetail(productId) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching deposit product detail: ', error);
+        console.error('Error fetching deposit product detail:', error);
         throw error;
     }
 }
@@ -88,7 +88,7 @@ export async function getSavingProductDetail(productId) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching saving product detail: ', error);
+        console.error('Error fetching saving product detail:', error);
         throw error;
     }
 }
@@ -99,20 +99,18 @@ export async function fetchFundProducts() {
         const response = await fundApi.get('/list');
         return response.data;
     } catch (error) {
-        console.error('Error fetching fund products: ', error);
+        console.error('Error fetching fund product: ', error);
         throw error;
     }
 }
 
-// 펀드 상품 상세 조회 API (추가된 부분)
+// 펀드 상품 상세 조회 API
 export async function getFundProductDetail(productId) {
     try {
-        const response = await fundApi.get(`/list`, {
-            params: { productId },
-        });
+        const response = await fundApi.get(`/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching fund product detail: ', error);
+        console.error('Error fetching fund product detail:', error);
         throw error;
     }
 }

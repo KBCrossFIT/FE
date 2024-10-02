@@ -9,8 +9,8 @@ import MyPage from '@/views/account/profile/MyPage.vue';
 import MyPageEdit from '@/views/account/profile/MyPageEdit.vue';
 import ChangePW from '@/views/account/profile/ChangePW.vue';
 import DeleteAccount from '@/views/account/profile/DeleteAccount.vue';
-import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue'; // Your financial products page
-import ProductDesc from '@/views/financialProducts/ProductDesc.vue'; // Individual product description page
+import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue'; // 금융 상품 페이지
+import ProductDesc from '@/views/financialProducts/ProductDesc.vue'; // 개별 상품 상세 페이지
 import Cart from '@/views/financialProducts/Cart.vue';
 import RecentlyViewed from '@/views/financialProducts/RecentlyViewed.vue';
 
@@ -55,8 +55,8 @@ const routes = [
         component: FinancialProducts,
     },
     {
-        path: '/productDesc/:ProductId',
-        name: 'ProductDesc',
+        path: '/list/:id',
+        name: 'ProductDetail',
         component: ProductDesc,
     },
     { path: '/cart', name: 'Cart', component: Cart },
@@ -88,7 +88,3 @@ const router = createRouter({
 });
 
 export default router;
-({
-    history: createWebHistory(),
-    routes,
-});
