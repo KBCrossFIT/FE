@@ -1,132 +1,108 @@
 <template>
-    <div class="login-container">
-        <div class="login-box">
-            <h1>Login</h1>
-            <form @submit.prevent="handleLogin">
-                <div class="form-group">
-                    <label for="username">아이디</label>
-                    <input type="text" id="username" v-model="username" required />
-                </div>
-                <div class="form-group">
-                    <label for="password">비밀번호</label>
-                    <input type="password" id="password" v-model="password" required />
-                </div>
-                <button type="submit" class="login-button">LOGIN</button>
-            </form>
-            <div class="footer-links">
-                <div class="link-container">
-                    <a href="/find" class="find-link">ID/PW 찾기</a>
-                    <router-link to="/signup" class="signup-link">회원가입</router-link>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form @submit.prevent="handleLogin">
+      <div class="form-group">
+        <label for="memberID">Member ID</label>
+        <input type="text" v-model="memberID" id="memberID" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" v-model="password" id="password" required />
+      </div>
+      <button type="submit">Login</button>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+    </form>
+  </div>
 </template>
 
 <script>
-export default {
-    data() {
-        return {
-            username: '',
-            password: '',
-        };
-    },
-    methods: {
-        handleLogin() {
-            // Check for the user in local storage
-            const storedUser = JSON.parse(localStorage.getItem('user'));
+import axios from 'axios';
 
-            if (storedUser && storedUser.username === this.username && storedUser.password === this.password) {
-                // If login is successful, save user info in local storage
-                localStorage.setItem(
-                    'user',
-                    JSON.stringify({
-                        username: storedUser.username,
-                        picture: 'path/to/profile/pic.png', // Update with actual path
-                    })
-                );
-                this.$router.push('/'); // Redirect to homepage
-            } else {
-                alert('아이디 또는 비밀번호가 잘못되었습니다.');
-            }
-        },
+export default {
+  data() {
+    return {
+      memberID: '', // Updated variable name to match DTO
+      password: '',
+      errorMessage: '', // Added property to hold error message
+    };
+  },
+  methods: {
+    async handleLogin() {
+      try {
+        const response = await axios.post('http://localhost:8080/api/member/login', {
+          memberID: this.memberID,
+          password: this.password,
+        });
+        console.log('Login successful:', response.data);
+
+        // Assuming your response contains the user data
+        const user = {
+          username: response.data.username, // Update this according to your API response
+          picture: response.data.picture, // Update this according to your API response
+        };
+
+        // Save user data to localStorage
+        localStorage.setItem('authToken', response.data.token); // Store token
+        localStorage.setItem('user', JSON.stringify(user)); // Store user data
+
+        // Emit an event with user data to update App.vue
+        this.$emit('login', user);
+
+        // Redirect to the home page after successful login
+        this.$router.push('/');
+      } catch (error) {
+        // Set error message for display on the UI
+        if (error.response) {
+          this.errorMessage = '아이디 혹은 비밀번호가 틀렸습니다.'; // Display a custom error message
+          console.error('Error logging in user:', error.response.data);
+        } else {
+          this.errorMessage = 'Error during login: ' + error.message;
+          console.error('Error during login:', error.message);
+        }
+      }
     },
+  },
 };
 </script>
 
 <style scoped>
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(to bottom, #e0f2f1, #ffffff);
-}
-
-.login-box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    text-align: center;
-}
-
-h1 {
-    margin-bottom: 20px;
-    color: #4db6ac;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  text-align: center;
 }
 
 .form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #666;
+  margin-bottom: 15px;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
-.login-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4db6ac;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
-.login-button:hover {
-    background-color: #399d91;
+button:hover {
+  background-color: #45a049;
 }
 
-.footer-links {
-    margin-top: 10px;
-}
-
-.link-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-.signup-link,
-.find-link {
-    color: #4db6ac;
-    text-decoration: none;
-}
-
-.signup-link:hover,
-.find-link:hover {
-    text-decoration: underline;
+.error-message {
+  color: red;
+  margin-top: 1rem;
 }
 </style>
