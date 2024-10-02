@@ -41,6 +41,7 @@ import StockSearch from '@/views/stock/StockSearch.vue';
 import CartItem from '@/views/cart/CartItem.vue';
 import recentViewed from "@/views/recentView/recentView.vue";
 import recentView from "@/views/recentView/recentView.vue";
+import portfolioData from "@/views/portfolio/PortfolioData.vue";
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -75,6 +76,7 @@ const routes = [
     { path: '/stock-search', name: 'StockSearch', component: StockSearch },
     { path: '/cart-item', name: 'CartItem', component: CartItem },
     { path: '/recent-view', name: 'RecentView', component: recentView },
+    { path: '/portfolio-data', name: 'portfolioData', component: portfolioData },
 ];
 
 const router = createRouter({
