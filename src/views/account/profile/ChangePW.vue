@@ -1,7 +1,7 @@
 <template>
     <div class="changePW-container">
         <div class="changePW-header">
-            <h1>회원가입</h1>
+            <h1>비밀번호 변경</h1>
         </div>
         <div class="changePW-box">
             <form @submit.prevent="handleSubmit" class="changePW-form">

@@ -27,6 +27,7 @@
     "vue": "^3.4.29",
     "vue-router": "^4.4.3",
     "vue3-apexcharts": "^1.6.0",
+    "vue3-cookies": "^1.0.6",
     "vuex": "^4.0.2",
     "webfontloader": "^1.6.28"
   },
