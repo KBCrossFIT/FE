@@ -2,7 +2,7 @@
     <div class="products-wrapper">
         <div class="products-container">
             <div class="products-box">
-                <!-- Search bar -->
+                <!-- 검색 바 -->
                 <v-text-field
                     v-model="searchQuery"
                     label="금융 상품을 검색하세요"
@@ -12,6 +12,7 @@
                 ></v-text-field>
                 <v-btn @click="searchProducts">검색</v-btn>
 
+                <!-- 탭 버튼 -->
                 <div class="tabs">
                     <v-btn
                         v-for="tab in tabs"
@@ -25,33 +26,33 @@
                     </v-btn>
                 </div>
 
-                <!-- Combined table with headers and items -->
+                <!-- 상품 테이블 -->
                 <table class="products-table">
                     <thead>
                         <tr>
-                            <!-- 예금과 적금은 상품명, 상품종류, 기본금리, 최고금리, 장바구니 -->
-                            <th v-if="selectedTab === '예금' || selectedTab === '적금'">상품명</th>
-                            <th v-if="selectedTab === '예금' || selectedTab === '적금'">
-                                금융회사명
-                            </th>
-                            <th v-if="selectedTab === '예금' || selectedTab === '적금'">
-                                기본금리
-                            </th>
-                            <th v-if="selectedTab === '예금' || selectedTab === '적금'">
-                                최고금리
-                            </th>
+                            <!-- 예금과 적금 헤더 -->
+                            <template v-if="selectedTab === '예금' || selectedTab === '적금'">
+                                <th>상품명</th>
+                                <th>금융회사명</th>
+                                <th>기본금리</th>
+                                <th>최고금리</th>
+                            </template>
 
-                            <!-- 채권은 ISIN 코드명, 채권발행일자, 채권금리, 장바구니 -->
-                            <th v-if="selectedTab === '채권'">ISIN 코드명</th>
-                            <th v-if="selectedTab === '채권'">채권발행일자</th>
-                            <th v-if="selectedTab === '채권'">채권금리</th>
+                            <!-- 채권 헤더 -->
+                            <template v-else-if="selectedTab === '채권'">
+                                <th>ISIN 코드명</th>
+                                <th>채권발행일자</th>
+                                <th>채권금리</th>
+                            </template>
 
-                            <!-- 펀드는 상품명, 회사명, 펀드유형, 위험도, 1개월 수익률 -->
-                            <th v-if="selectedTab === '펀드'">상품명</th>
-                            <th v-if="selectedTab === '펀드'">회사명</th>
-                            <th v-if="selectedTab === '펀드'">펀드유형</th>
-                            <th v-if="selectedTab === '펀드'">위험도</th>
-                            <th v-if="selectedTab === '펀드'">1개월 수익률</th>
+                            <!-- 펀드 헤더 -->
+                            <template v-else-if="selectedTab === '펀드'">
+                                <th>상품명</th>
+                                <th>회사명</th>
+                                <th>펀드유형</th>
+                                <th>위험도</th>
+                                <th>1개월 수익률</th>
+                            </template>
 
                             <th>장바구니</th>
                         </tr>
@@ -59,19 +60,16 @@
                     <tbody>
                         <!-- 예금과 적금 리스트 -->
                         <template v-if="selectedTab === '예금' || selectedTab === '적금'">
-                            <!-- Check if displayedProducts and products exist before iterating -->
                             <tr
-                                v-if="displayedProducts && displayedProducts.products"
                                 v-for="product in displayedProducts.products"
                                 :key="product.productId"
                             >
                                 <td
-                                    @click="onProductClick(product.productId, tab)"
+                                    @click="onProductClick(product.productId, selectedTab)"
                                     class="Detail-Link"
                                 >
                                     {{ product.finPrdtNm }}
                                 </td>
-
                                 <td>{{ product.korCoNm }}</td>
                                 <!-- 기본금리와 최고금리 출력 (저축 기간 12개월 기준) -->
                                 <td>
@@ -110,9 +108,12 @@
                         </template>
 
                         <!-- 채권 리스트 -->
-                        <template v-if="selectedTab === '채권'">
+                        <template v-else-if="selectedTab === '채권'">
                             <tr v-for="product in displayedProducts" :key="product.id">
-                                <td @click="gotoDetail(product.productId, tab)" class="Detail-Link">
+                                <td
+                                    @click="onProductClick(product.productId, selectedTab)"
+                                    class="Detail-Link"
+                                >
                                     {{ product.isinCdNm }}
                                 </td>
                                 <td>{{ product.bondIssuDt }}</td>
@@ -135,9 +136,12 @@
                         </template>
 
                         <!-- 펀드 리스트 -->
-                        <template v-if="selectedTab === '펀드'">
+                        <template v-else-if="selectedTab === '펀드'">
                             <tr v-for="product in displayedProducts" :key="product.id">
-                                <td @click="gotoDetail(product.productId, tab)" class="Detail-Link">
+                                <td
+                                    @click="onProductClick(product.productId, selectedTab)"
+                                    class="Detail-Link"
+                                >
                                     {{ product.productNm }}
                                 </td>
                                 <td>{{ product.companyNm }}</td>
@@ -163,7 +167,28 @@
                     </tbody>
                 </table>
 
-                <div v-if="displayedProducts.length === 0" class="no-products">
+                <!-- 페이지네이션 컴포넌트 -->
+                <div id="Pagination">
+                    <v-container>
+                        <v-pagination
+                            v-model="page"
+                            :length="totalPages"
+                            @input="onPageChange"
+                        ></v-pagination>
+                    </v-container>
+                </div>
+
+                <!-- 상품이 없을 때 메시지 -->
+                <div
+                    v-if="
+                        (selectedTab === '예금' || selectedTab === '적금') &&
+                        displayedProducts.products.length === 0
+                    "
+                    class="no-products"
+                >
+                    상품이 없습니다.
+                </div>
+                <div v-else-if="displayedProducts.length === 0" class="no-products">
                     상품이 없습니다.
                 </div>
             </div>
@@ -177,51 +202,98 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
     data() {
         return {
-            selectedTab: '예금', // 기본 탭은 '예금'
-            searchQuery: '', // 검색어
-            searchMode: false, // 검색 모드
-            tabs: ['예금', '적금', '펀드', '채권'], // 탭 항목
+            selectedTab: '예금',
+            searchQuery: '',
+            searchMode: false,
+            tabs: ['예금', '적금', '펀드', '채권'],
             activeButtonStyle: {
                 backgroundColor: '#4db6ac',
                 color: 'white',
             },
-            cart: [], // 장바구니
+            cart: [],
             productType: 'D',
+            page: 1, // 현재 페이지 번호
+            totalPages: 1, // 총 페이지 수
+            itemsPerPage: 10, // 페이지당 보여줄 아이템 수
         };
     },
     watch: {
+        page(newPage) {
+            this.updateRoute();
+        },
         selectedTab(newTab) {
             this.setProductType(newTab);
+            this.fetchProductsForTab();
+            this.page = 1; // 페이지 번호 초기화
+            this.updateRoute();
+        },
+        '$route.params.pageNumber'(newPageNumber) {
+            this.page = parseInt(newPageNumber) || 1;
+        },
+        '$route.params.productType'(newProductType) {
+            const tab = this.getTabFromProductType(newProductType);
+            if (tab) {
+                this.selectedTab = tab;
+                this.setProductType(this.selectedTab);
+                this.fetchProductsForTab();
+            }
         },
     },
 
     computed: {
-        // 선택된 탭과 검색 상태에 따라 필터링된 상품을 반환
         displayedProducts() {
+            let data = {};
             if (this.searchMode) {
-                if (this.selectedTab === '채권') {
-                    return this.getSearchBondList;
-                } else if (this.selectedTab === '예금') {
-                    return this.getSearchDepositList;
+                if (this.selectedTab === '예금') {
+                    data = this.getSearchDepositList;
                 } else if (this.selectedTab === '적금') {
-                    return this.getSearchSavingList;
+                    data = this.getSearchSavingList;
+                } else if (this.selectedTab === '채권') {
+                    data = this.getSearchBondList;
                 } else if (this.selectedTab === '펀드') {
-                    return this.getSearchFundList;
+                    data = this.getSearchFundList;
+                }
+            } else {
+                if (this.selectedTab === '예금') {
+                    data = this.getDepositList;
+                } else if (this.selectedTab === '적금') {
+                    data = this.getSavingList;
+                } else if (this.selectedTab === '채권') {
+                    data = this.getBondList;
+                } else if (this.selectedTab === '펀드') {
+                    data = this.getFundList;
                 }
             }
 
-            // 검색 모드가 아닐 때는 기본 리스트를 반환
-            if (this.selectedTab === '채권') {
-                return this.getBondList;
-            } else if (this.selectedTab === '예금') {
-                return this.getDepositList;
-            } else if (this.selectedTab === '적금') {
-                return this.getSavingList;
-            } else if (this.selectedTab === '펀드') {
-                return this.getFundList;
+            let products = [];
+            if (this.selectedTab === '예금' || this.selectedTab === '적금') {
+                if (data && data.products) {
+                    products = data.products;
+                }
+            } else {
+                products = data || [];
             }
 
-            return []; // 다른 탭은 빈 배열 반환
+            // 총 페이지 수 계산
+            this.totalPages = Math.ceil(products.length / this.itemsPerPage);
+
+            // 현재 페이지에 해당하는 상품들만 반환
+            if (this.selectedTab === '예금' || this.selectedTab === '적금') {
+                // 예금과 적금은 객체 형태로 반환
+                return {
+                    products: products.slice(
+                        (this.page - 1) * this.itemsPerPage,
+                        this.page * this.itemsPerPage
+                    ),
+                    rates: data.rates, // rates는 전체를 그대로 전달
+                };
+            } else {
+                // 채권과 펀드는 배열만 반환
+                return products.slice(
+                    (this.page - 1) * this.itemsPerPage,
+                    this.page * this.itemsPerPage
+                );
+            }
         },
         ...mapGetters('bond', ['getBondList', 'getSearchBondList', 'getBondProductDetail']),
         ...mapGetters('deposit', [
@@ -230,24 +302,51 @@ export default {
             'getDepositProductDetail',
         ]),
         ...mapGetters('saving', ['getSavingList', 'getSearchSavingList', 'getSavingProductDetail']),
-        ...mapGetters('fund', ['getFundList', 'getSearchFundList', 'getFunddProductDetail']),
+        ...mapGetters('fund', ['getFundList', 'getSearchFundList', 'getFundProductDetail']),
     },
     methods: {
-        selectTab(tab) {
-            this.selectedTab = tab;
-            this.searchMode = false; // 탭을 선택하면 검색 모드 해제
-            this.setProductType(tab);
+        onPageChange(newPage) {
+            this.page = newPage;
+            // displayedProducts는 computed 속성이므로 자동으로 업데이트됩니다.
+            this.updateRoute();
+        },
 
-            if (tab === '채권') {
-                this.fetchBondList();
-            } else if (tab === '예금') {
+        fetchProductsForTab() {
+            if (this.selectedTab === '예금') {
                 this.fetchDepositList();
-            } else if (tab === '적금') {
+            } else if (this.selectedTab === '적금') {
                 this.fetchSavingList();
-            } else if (tab === '펀드') {
+            } else if (this.selectedTab === '펀드') {
                 this.fetchFundList();
+            } else if (this.selectedTab === '채권') {
+                this.fetchBondList();
             }
         },
+
+        fetchDepositList() {
+            this.$store.dispatch('deposit/fetchDepositList');
+        },
+
+        fetchSavingList() {
+            this.$store.dispatch('saving/fetchSavingList');
+        },
+
+        fetchFundList() {
+            this.$store.dispatch('fund/fetchFundList');
+        },
+
+        fetchBondList() {
+            this.$store.dispatch('bond/fetchBondList');
+        },
+
+        selectTab(tab) {
+            this.selectedTab = tab;
+            this.setProductType(tab);
+            this.fetchProductsForTab();
+            this.page = 1; // 페이지 번호 초기화
+            this.updateRoute();
+        },
+
         toggleCart(productId) {
             const index = this.cart.indexOf(productId);
             if (index === -1) {
@@ -256,6 +355,7 @@ export default {
                 this.cart.splice(index, 1); // 장바구니에서 제거
             }
         },
+
         searchProducts() {
             console.log('현재 선택된 탭:', this.selectedTab);
             console.log('displayedProducts:', this.displayedProducts);
@@ -266,6 +366,7 @@ export default {
             }
 
             this.searchMode = true; // 검색 모드를 활성화
+            this.page = 1; // 페이지 번호 초기화
             if (this.selectedTab === '채권') {
                 this.searchBondList(this.searchQuery);
             } else if (this.selectedTab === '예금') {
@@ -275,12 +376,13 @@ export default {
             } else if (this.selectedTab === '펀드') {
                 this.searchFundList(this.searchQuery);
             }
+            this.updateRoute();
         },
 
         onProductClick(productId, tab) {
             console.log('onProductClick 이벤트 발생', productId, 'Tab:', tab);
             this.setProductType(tab);
-            this.gotoDetail(productId, tab);
+            this.gotoDetail(productId);
         },
 
         setProductType(tab) {
@@ -299,29 +401,77 @@ export default {
 
         gotoDetail(productId) {
             console.log('productId:', productId);
-            console.log('productType:', this.productType); // 올바른 productType 출력
+            console.log('productType:', this.productType);
             if (!this.productType) {
                 console.error('productType이 설정되지 않았습니다.');
-                return; // productType이 설정되지 않았다면 함수 종료
+                return;
             }
-            console.log('Navigating to:', `/productDesc/${this.productType}/${productId}`); // 최종 URL 로그
+            console.log('Navigating to:', `/List/${productId}`);
 
-            this.$router.push({ path: `/productDesc/${this.productType}/${productId}` });
+            this.$router.push({ path: `/List/${productId}` });
         },
 
-        ...mapActions('bond', ['fetchBondList', 'searchBondList', 'bondProductDeatil']),
+        updateRoute() {
+            const productType = this.getProductTypeFromTab(this.selectedTab);
+            this.$router.push({
+                name: 'FinancialProducts',
+                params: {
+                    productType: productType,
+                    pageNumber: this.page,
+                },
+            });
+        },
+
+        getProductTypeFromTab(tab) {
+            switch (tab) {
+                case '예금':
+                    return 'deposit';
+                case '적금':
+                    return 'saving';
+                case '펀드':
+                    return 'fund';
+                case '채권':
+                    return 'bond';
+                default:
+                    return '';
+            }
+        },
+
+        getTabFromProductType(productType) {
+            switch (productType) {
+                case 'deposit':
+                    return '예금';
+                case 'saving':
+                    return '적금';
+                case 'fund':
+                    return '펀드';
+                case 'bond':
+                    return '채권';
+                default:
+                    return '';
+            }
+        },
+
+        ...mapActions('bond', ['fetchBondList', 'searchBondList', 'bondProductDetail']),
         ...mapActions('deposit', ['fetchDepositList', 'searchDepositList']),
         ...mapActions('saving', ['fetchSavingList', 'searchSavingList']),
         ...mapActions('fund', ['fetchFundList', 'searchFundList']),
         getRateByTerm(rates, productId, saveTrm) {
-            // rates 배열에서 productId와 saveTrm이 일치하는 항목을 찾음
+            if (!rates) return null;
             return rates.find((rate) => rate.productId === productId && rate.saveTrm === saveTrm);
         },
     },
 
     created() {
-        // 금융 상품 페이지에 처음 들어오면 예금 데이터를 기본적으로 불러옴
-        this.fetchDepositList();
+        const productTypeParam = this.$route.params.productType;
+        const pageNumberParam = this.$route.params.pageNumber;
+
+        this.selectedTab = this.getTabFromProductType(productTypeParam) || '예금';
+        this.setProductType(this.selectedTab);
+
+        this.page = parseInt(pageNumberParam) || 1;
+
+        this.fetchProductsForTab();
     },
 };
 </script>

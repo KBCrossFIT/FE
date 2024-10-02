@@ -49,9 +49,13 @@ const routes = [
     { path: '/mypageEdit', name: 'MyPageEdit', component: MyPageEdit },
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
-    { path: '/financial-products', name: 'FinancialProducts', component: FinancialProducts }, // Financial products page
     {
-        path: '/productDesc/:productType/:ProductId',
+        path: '/financial-products/:productType/:pageNumber?',
+        name: 'FinancialProducts',
+        component: FinancialProducts,
+    },
+    {
+        path: '/productDesc/:ProductId',
         name: 'ProductDesc',
         component: ProductDesc,
     },
