@@ -3,18 +3,21 @@
     <!-- Left Arrow -->
     <div class="carousel-arrow left" @click="prevImage">
       &#10094;
-      <!-- Unicode left arrow -->
     </div>
 
     <!-- Images -->
     <div class="carousel-images">
-      <img :src="images[currentImage]" alt="Carousel Image" />
+      <div
+        class="image-container"
+        :style="{ transform: `translateX(-${currentImage * 100}%)` }"
+      >
+        <img v-for="(image, index) in images" :src="image" :key="index" alt="Carousel Image" />
+      </div>
     </div>
 
     <!-- Right Arrow -->
     <div class="carousel-arrow right" @click="nextImage">
       &#10095;
-      <!-- Unicode right arrow -->
     </div>
 
     <!-- Dots for navigation -->
@@ -25,8 +28,7 @@
         :key="index"
         :class="{ active: currentImage === index }"
         @click="changeImage(index)"
-      >
-      </span>
+      ></span>
     </div>
   </div>
 </template>
@@ -67,14 +69,28 @@ export default {
 <style scoped>
 .carousel {
   position: relative;
-  height: 400px; /* Adjust this to make the carousel smaller */
+  height: 400px;
   overflow: hidden;
+}
+
+.carousel-images {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-container {
+  display: flex;
+  transition: transform 0.5s ease-in-out; /* Smooth slide effect */
+  height: 100%;
 }
 
 .carousel-images img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  flex-shrink: 0; /* Prevent the images from shrinking */
 }
 
 .carousel-arrow {
@@ -88,6 +104,7 @@ export default {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   user-select: none;
+  z-index: 10;
 }
 
 .carousel-arrow.left {

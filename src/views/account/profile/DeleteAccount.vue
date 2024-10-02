@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { dummyUsers } from '@/dummydata.js';
 
 export default {
     name: 'deleteAccount',

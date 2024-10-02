@@ -67,7 +67,6 @@
 
 <script>
 import { ref, computed, defineComponent, watch } from 'vue';
-import { questions } from '@/dummyQuestion.js'; // Assuming this holds the questions
 
 export default defineComponent({
     props: {
