@@ -18,6 +18,10 @@ const depositModule = {
         setSearchDepositList(state, searchResults) {
             state.searchDepositProducts = searchResults;
         },
+
+        SET_DEPOSIT_PRODUCTS(state, products) {
+            state.depositProducts = products; // Set it to the array
+        },
     },
 
     actions: {
@@ -25,7 +29,6 @@ const depositModule = {
             if (!state.depositListLoaded) {
                 try {
                     const deposits = await fetchDepositProducts();
-                    console.log('Fetched deposits:', deposits); // 로그 추가
                     commit('setDepositList', deposits);
                 } catch (error) {
                     console.error('Error fetching deposit list:', error);
@@ -42,11 +45,28 @@ const depositModule = {
         },
 
         async fetchDepositProductDetail({ state }, productId) {
-            if (!Array.isArray(state.depositProducts)) {
-                console.error('depositProducts가 배열이 아닙니다:', state.depositProducts);
+            console.log('배열 확인', state.depositProducts);
+
+            // Check if products is an array
+            const productsArray = state.depositProducts.products;
+
+            if (!Array.isArray(productsArray)) {
+                console.error('depositProducts.products가 배열이 아닙니다:', productsArray);
                 return null; // 또는 적절한 에러 처리를 합니다.
             }
-            return state.depositProducts.find((product) => product.productID === productId) || null;
+
+            // Find the product by ID
+            return productsArray.find((product) => product.productID === productId) || null;
+        },
+        async fetchDepositProducts({ commit }) {
+            const response = await api.getDepositProducts(); // Adjust according to your API call
+            const data = response.data; // Assuming this contains { rates: ..., products: ... }
+
+            if (Array.isArray(data.products)) {
+                commit('SET_DEPOSIT_PRODUCTS', data.products); // Ensure you're committing the array
+            } else {
+                console.error('depositProducts가 배열이 아닙니다:', data);
+            }
         },
     },
 

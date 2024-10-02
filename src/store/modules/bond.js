@@ -3,10 +3,10 @@ import { fetchBondProducts, searchBondProduct, getBondProductDetail } from '@/ap
 const bondModule = {
     namespaced: true,
     state: () => ({
-        bondList: [],
+        bondList: [], // This will hold the list of bonds
         bondListLoaded: false,
-        searchBondProducts: [],
-        bondProductDetail: [],
+        searchBondProducts: [], // This will hold the search results
+        bondProductDetail: {}, // Change this to an object to hold detailed info
     }),
 
     mutations: {
@@ -20,7 +20,7 @@ const bondModule = {
         },
 
         setBondProductDetail(state, getDetail) {
-            state.bondProductDetail = getDetail;
+            state.bondProductDetail = getDetail; // Keep as an object
         },
     },
 
@@ -31,7 +31,7 @@ const bondModule = {
                     const bonds = await fetchBondProducts();
                     commit('setBondList', bonds);
                 } catch (error) {
-                    console.error('Error fetching bond list : ', error);
+                    console.error('Error fetching bond list: ', error);
                 }
             }
         },
@@ -47,8 +47,9 @@ const bondModule = {
 
         async fetchBondProductDetail({ commit }, productId) {
             try {
-                const getDetail = await getBondProductDetail(productId);
-                commit('setBondProductDetail', getDetail);
+                const response = await getBondProductDetail(productId);
+                // Assuming response contains an object with details and an array of bonds
+                commit('setBondProductDetail', response); // response should be an object
             } catch (error) {
                 console.error('Error fetching bond product detail: ', error);
             }
@@ -62,7 +63,7 @@ const bondModule = {
             return state.searchBondProducts;
         },
         getProductDetail(state) {
-            return state.bondProductDetail;
+            return state.bondProductDetail; // This will return the object with bond details
         },
     },
 };

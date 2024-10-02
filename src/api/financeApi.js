@@ -32,6 +32,7 @@ export async function fetchBondProducts() {
     }
 }
 
+// 채권 상품 상세 조회 API
 export async function getBondProductDetail(productId) {
     try {
         const response = await bondApi.get(`/list`, {
@@ -39,7 +40,7 @@ export async function getBondProductDetail(productId) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching bond product Detail: ', error);
+        console.error('Error fetching bond product detail: ', error);
         throw error;
     }
 }
@@ -55,7 +56,7 @@ export async function fetchDepositProducts() {
     }
 }
 
-// 예금 상품 상세 조회 API (kangmin 추가)
+// 예금 상품 상세 조회 API
 export async function getDepositProductDetail(productId) {
     try {
         const response = await savingApi.get(`/depositDetail`, {
@@ -79,7 +80,7 @@ export async function fetchSavingProducts() {
     }
 }
 
-// 적금 상품 상세 조회 API ( kangmin 추가)
+// 적금 상품 상세 조회 API
 export async function getSavingProductDetail(productId) {
     try {
         const response = await savingApi.get(`/savingDetail`, {
@@ -98,7 +99,20 @@ export async function fetchFundProducts() {
         const response = await fundApi.get('/list');
         return response.data;
     } catch (error) {
-        console.error('Error fetching fund product: ', error);
+        console.error('Error fetching fund products: ', error);
+        throw error;
+    }
+}
+
+// 펀드 상품 상세 조회 API (추가된 부분)
+export async function getFundProductDetail(productId) {
+    try {
+        const response = await fundApi.get(`/list`, {
+            params: { productId },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching fund product detail: ', error);
         throw error;
     }
 }

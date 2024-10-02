@@ -3,12 +3,16 @@
     <h2>Login</h2>
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <label for="memberID">Member ID</label>
-        <input type="text" v-model="memberID" id="memberID" required />
+        <div class="input-container">
+          <input type="text" v-model="memberID" id="memberID" required />
+          <label for="memberID" :class="{ active: memberID }">아이디</label>
+        </div>
       </div>
       <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" v-model="password" id="password" required />
+        <div class="input-container">
+          <input type="password" v-model="password" id="password" required />
+          <label for="password" :class="{ active: password }">비밀번호</label>
+        </div>
       </div>
       <button type="submit">Login</button>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -43,7 +47,8 @@ export default {
         };
 
         // Save user data to localStorage
-        localStorage.setItem('authToken', response.data.token); // Store token
+        localStorage.setItem('Authorization', response.headers.getAuthorization); 
+        localStorage.setItem('Refresh-Token', response.headers.get('Refresh-Token')); // Store token
         localStorage.setItem('user', JSON.stringify(user)); // Store user data
 
         // Emit an event with user data to update App.vue
@@ -80,12 +85,43 @@ export default {
   margin-bottom: 15px;
 }
 
+.input-container {
+  position: relative;
+  margin-top: 10px;
+}
+
 input {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 10px 8px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+  transition: 0.3s ease all;
+}
+
+input:focus + label,
+.active + label {
+  top: -10px;
+  left: 5px;
+  font-size: 12px;
+  color: #4caf50;
+  background-color: #f5f5f5;
+  padding: 0 5px;
 }
 
 button {

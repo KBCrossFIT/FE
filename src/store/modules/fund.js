@@ -1,12 +1,13 @@
 // store/modules/fund.js
-import { fetchFundProducts, searchFundProduct } from '@/api/financeApi';
+import { fetchFundProducts, searchFundProduct, getFundProductDetail } from '@/api/financeApi';
 
 const fundModule = {
     namespaced: true,
     state: () => ({
-        fundProducts: [],
+        fundProducts: [], // This will hold the list of fund products
         fundListLoaded: false,
-        searchFundProducts: [],
+        searchFundProducts: [], // This will hold the search results
+        fundProductDetail: {}, // Change this to an object to hold detailed info
     }),
 
     mutations: {
@@ -16,7 +17,11 @@ const fundModule = {
         },
 
         setSearchFundList(state, searchResults) {
-            state.searchFundProducts = searchResults; // 검색 결과 저장
+            state.searchFundProducts = searchResults; // Store search results
+        },
+
+        setFundProductDetail(state, getDetail) {
+            state.fundProductDetail = getDetail; // Keep as an object
         },
     },
 
@@ -40,6 +45,16 @@ const fundModule = {
                 console.error('Error searching fund list: ', error);
             }
         },
+
+        async fetchFundProductDetail({ commit }, productId) {
+            try {
+                const response = await getFundProductDetail(productId);
+                // Assuming response contains an object with details about the fund
+                commit('setFundProductDetail', response); // response should be an object
+            } catch (error) {
+                console.error('Error fetching fund product detail: ', error);
+            }
+        },
     },
 
     getters: {
@@ -49,9 +64,8 @@ const fundModule = {
         getSearchFundList(state) {
             return state.searchFundProducts;
         },
-        getFundProductDetail: (state) => (productId) => {
-            // 상품 ID로 세부 정보 필터링
-            return state.fundProducts.find((product) => product.productID === productId) || null;
+        getFundProductDetail(state) {
+            return state.fundProductDetail; // This will return the object with fund details
         },
     },
 };
