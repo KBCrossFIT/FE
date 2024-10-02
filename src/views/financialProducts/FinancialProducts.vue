@@ -61,7 +61,7 @@
                         <template v-if="selectedTab === '예금' || selectedTab === '적금'">
                             <!-- Check if displayedProducts and products exist before iterating -->
                             <tr
-                                v-if="displayedProducts && displayedProducts.products"
+            
                                 v-for="product in displayedProducts.products"
                                 :key="product.productId"
                             >

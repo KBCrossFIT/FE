@@ -127,6 +127,8 @@
 </template>
 
 <script>
+import { useCookies } from 'vue3-cookies';
+
 export default {
   name: 'Header',
   data() {
@@ -151,10 +153,17 @@ export default {
     navigateToProfile() {
       this.$router.push('/myPage');
     },
-    handleLogout() {
+    async handleLogout() {
+      const { cookies } = useCookies();
+      
+      // Clear cookies and local storage
+      cookies.remove('Authorization');
+      cookies.remove('Refresh-Token');
       localStorage.removeItem('user');
-      this.updateUserProfile();
-      this.navigateToHome();
+
+      // Update user profile state
+      await this.updateUserProfile(); // Update the state
+      this.navigateToHome(); // Redirect to home
     },
     updateUserProfile() {
       const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -313,41 +322,16 @@ nav {
 
 .user-controls button {
   border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
+  padding: 10px;
+  margin-left: 10px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  background-color: #3961e4;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.2s;
 }
 
-.user-controls .login-btn,
-.user-controls .signup-btn {
-  background-color: transparent;
-  color: rgb(8, 1, 1);
-  border: 1px solid white;
-}
-
-.in {
-  font-size: 11px; /* 수정: 공백 제거 */
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column; /* 세로로 정렬 */
-    align-items: flex-start; /* 왼쪽 정렬 */
-  }
-
-  .menu {
-    flex-direction: column; /* 메뉴 세로 정렬 */
-    gap: 20px; /* 간격 조정 */
-  }
-
-  .dropdown {
-    width: 90%; /* 드롭다운 너비 조정 */
-  }
-
-  .logo {
-    font-size: 20px; /* 로고 폰트 크기 조정 */
-  }
+.user-controls button:hover {
+  background-color: #4d85ff;
 }
 </style>
