@@ -17,7 +17,7 @@
     <h1>내 포트폴리오 구성 상품</h1>
     <ul>
       {{portfolioDetail}}
-<!--      <li v-for="item in portfolioDetail.portfolioItems" :key="item.productId">-->
+<!--      <li v-for="item in portfolioDetail.portfolioItems" :key="item.prnpmoductId">-->
 <!--        {{ item.portfolioItemId }}-->
 <!--        {{ item.portfolioId }}-->
 <!--        {{ item.productId }}-->

@@ -158,7 +158,7 @@ export default {
     },
 
     fetchPortfolio() {
-      fetch("/api/portfolio/1")
+      fetch("/api/portfolio/details/1")
         .then((response) => response.json())
         .then((data) => {
           this.portfolio = data;

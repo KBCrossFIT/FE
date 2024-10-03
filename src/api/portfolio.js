@@ -1,4 +1,3 @@
-import axios from "axios";
 import instance from "@/api/index.js";
 
 // const portfolioApi = axios.create({
