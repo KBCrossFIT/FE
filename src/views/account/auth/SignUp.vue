@@ -62,39 +62,57 @@
                     <div class="form-group">
                         <label for="dob">생년월일</label>
                         <div class="dob-container">
-                            <input type="date" id="dob" v-model="birth" required />
-                            <v-btn @click="openDatePicker">📅</v-btn>
+                            <v-select
+                                v-model="selectedYear"
+                                :items="years"
+                                label="년"
+                                :rules="[v => !!v || '년을 선택하세요.']"
+                            ></v-select>
+
+                            <v-select
+                                v-model="selectedMonth"
+                                :items="months"
+                                label="월"
+                                :rules="[v => !!v || '월을 선택하세요.']"
+                            ></v-select>
+
+                            <v-select
+                                v-model="selectedDay"
+                                :items="filteredDays"
+                                label="일"
+                                :rules="[v => !!v || '일을 선택하세요.']"
+                            ></v-select>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>성별</label>
                         <v-radio-group v-model="gender" row>
-                            <v-radio label="남" value="남" color="teal" class="gender-radio"></v-radio>
-                            <v-radio label="여" value="여" color="teal" class="gender-radio"></v-radio>
+                            <v-radio
+                                label="남"
+                                value="남"
+                                color="teal"
+                                class="gender-radio"
+                            ></v-radio>
+                            <v-radio
+                                label="여"
+                                value="여"
+                                color="teal"
+                                class="gender-radio"
+                            ></v-radio>
                         </v-radio-group>
                     </div>
 
                     <div class="form-group">
                         <label>성향분석 하기</label>
-                        <v-btn
-                            @click="markTestAsFinished"
-                            color="teal"
-                            large
-                            rounded
-                            elevation="8"
-                        >
+                        <v-btn @click="markTestAsFinished" color="teal" large rounded elevation="8">
                             <v-icon left>mdi-star</v-icon> 테스트 시작
                         </v-btn>
                         <span v-if="!InvestMentTest" class="red-mark">❌</span>
                         <span v-else class="green-mark">✅</span>
                     </div>
 
-                    <button
-                        class="create-btn"
-                        type="submit"
-                        :disabled="!InvestMentTest"
-                    >
+                    <button class="create-btn" type="submit" :disabled="!InvestMentTest">
                         회원가입
                     </button>
                 </form>
@@ -118,11 +136,29 @@ export default {
             password: '',
             reEnteredPassword: '',
             email: '',
-            birth: null,
             gender: '남',
             InvestMentTest: false,
-            showPassword: false,
+            selectedYear: null,
+            selectedMonth: null,
+            selectedDay: null,
+            years: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i),
+            months: Array.from({ length: 12 }, (_, i) => i + 1),
+            days: Array.from({ length: 31 }, (_, i) => i + 1),
         };
+    },
+    computed: {
+        filteredDays() {
+            const month = this.selectedMonth;
+            const year = this.selectedYear;
+
+            if (!month || !year) {
+                return [];
+            }
+
+            // Determine the number of days in the selected month and year
+            const daysInMonth = new Date(year, month, 0).getDate();
+            return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+        }
     },
     methods: {
         async handleSubmit() {
@@ -131,13 +167,16 @@ export default {
                 return;
             }
 
+            // Create a birth date string in the format YYYY-MM-DD
+            const birthDate = `${this.selectedYear}-${String(this.selectedMonth).padStart(2, '0')}-${String(this.selectedDay).padStart(2, '0')}`;
+
             const userData = {
                 memberID: this.memberID,
                 email: this.email,
                 memberName: this.memberName,
                 password: this.password,
                 reEnteredPassword: this.reEnteredPassword,
-                birth: this.birth,
+                birth: birthDate,
                 gender: this.gender,
                 InvestMentTest: this.InvestMentTest,
             };
@@ -157,9 +196,6 @@ export default {
         },
         markTestAsFinished() {
             this.InvestMentTest = true;
-        },
-        openDatePicker() {
-            console.log('Open date picker');
         },
     },
 };
@@ -265,11 +301,7 @@ input:focus {
 
 .dob-container {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-}
-
-.dob-container input {
-    width: calc(100% - 50px); /* Adjust width for the button */
-    margin-right: 5px;
 }
 </style>
