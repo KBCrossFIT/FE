@@ -120,11 +120,7 @@
     <div class="user-controls">
       <template v-if="isLoggedIn">
         <div class="profile-info" @click="navigateToProfile">
-          <img
-            :src="userProfile.picture"
-            alt="Profile Picture"
-            class="profile-picture"
-          />
+          <i class="fa-solid fa-user-tie"></i>
           <span class="username">{{ userProfile.username }}</span>
           <button @click.stop="handleLogout">로그아웃</button>
         </div>
@@ -138,6 +134,8 @@
 </template>
 
 <script>
+import { useCookies } from 'vue3-cookies';
+
 export default {
   name: 'Header',
   data() {
@@ -145,7 +143,6 @@ export default {
       isLoggedIn: false,
       userProfile: {
         username: '',
-        picture: 'path/to/default/profile/pic.png',
       },
       showDropdown: false, // 드롭다운 표시 제어
     };
@@ -163,10 +160,17 @@ export default {
     navigateToProfile() {
       this.$router.push('/myPage');
     },
-    handleLogout() {
+    async handleLogout() {
+      const { cookies } = useCookies();
+
+      // Clear cookies and local storage
+      cookies.remove('Authorization');
+      cookies.remove('Refresh-Token');
       localStorage.removeItem('user');
-      this.updateUserProfile();
-      this.navigateToHome();
+
+      // Update user profile state
+      await this.updateUserProfile(); // Update the state
+      this.navigateToHome(); // Redirect to home
     },
     updateUserProfile() {
       const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -326,10 +330,13 @@ nav {
 
 .user-controls button {
   border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
+  padding: 10px;
+  margin-left: 10px;
   cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
+  background-color: #3961e4;
+  color: white;
+  border-radius: 5px;
+  transition: background-color 0.2s;
 }
 
 .user-controls .login-btn,

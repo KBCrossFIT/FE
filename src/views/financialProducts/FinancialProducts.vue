@@ -63,11 +63,16 @@
             <template v-if="selectedTab === '예금' || selectedTab === '적금'">
               <!-- Check if displayedProducts and products exist before iterating -->
               <tr
-                v-if="displayedProducts && displayedProducts.products"
                 v-for="product in displayedProducts.products"
                 :key="product.productId"
               >
-                <td>{{ product.finPrdtNm }}</td>
+                <td
+                  @click="gotoDetail(product.productId, product.productType)"
+                  class="Detail-Link"
+                >
+                  {{ product.finPrdtNm }}
+                </td>
+
                 <td>{{ product.korCoNm }}</td>
                 <!-- 기본금리와 최고금리 출력 (저축 기간 12개월 기준) -->
                 <td>
@@ -108,7 +113,12 @@
             <!-- 채권 리스트 -->
             <template v-if="selectedTab === '채권'">
               <tr v-for="product in displayedProducts" :key="product.id">
-                <td>{{ product.isinCdNm }}</td>
+                <td
+                  @click="gotoDetail(product.productId, product.productType)"
+                  class="Detail-Link"
+                >
+                  {{ product.isinCdNm }}
+                </td>
                 <td>{{ product.bondIssuDt }}</td>
                 <td>{{ product.bondSrfcInrt }}</td>
                 <td>
@@ -131,7 +141,12 @@
             <!-- 펀드 리스트 -->
             <template v-if="selectedTab === '펀드'">
               <tr v-for="product in displayedProducts" :key="product.id">
-                <td>{{ product.productNm }}</td>
+                <td
+                  @click="gotoDetail(product.productId, product.productType)"
+                  class="Detail-Link"
+                >
+                  {{ product.productNm }}
+                </td>
                 <td>{{ product.companyNm }}</td>
                 <td>{{ product.fundType }}</td>
                 <td>{{ product.riskLevel }}</td>
@@ -208,10 +223,26 @@ export default {
 
       return []; // 다른 탭은 빈 배열 반환
     },
-    ...mapGetters('bond', ['getBondList', 'getSearchBondList']),
-    ...mapGetters('deposit', ['getDepositList', 'getSearchDepositList']),
-    ...mapGetters('saving', ['getSavingList', 'getSearchSavingList']),
-    ...mapGetters('fund', ['getFundList', 'getSearchFundList']),
+    ...mapGetters('bond', [
+      'getBondList',
+      'getSearchBondList',
+      'getBondProductDetail',
+    ]),
+    ...mapGetters('deposit', [
+      'getDepositList',
+      'getSearchDepositList',
+      'getDepositProductDetail',
+    ]),
+    ...mapGetters('saving', [
+      'getSavingList',
+      'getSearchSavingList',
+      'getSavingProductDetail',
+    ]),
+    ...mapGetters('fund', [
+      'getFundList',
+      'getSearchFundList',
+      'getFunddProductDetail',
+    ]),
   },
   methods: {
     selectTab(tab) {
@@ -237,6 +268,9 @@ export default {
       }
     },
     searchProducts() {
+      console.log('현재 선택된 탭:', this.selectedTab);
+      console.log('displayedProducts:', this.displayedProducts);
+
       if (this.searchQuery.trim().length < 2) {
         alert('검색어는 2자 이상 입력해야 합니다.');
         return;
@@ -253,7 +287,17 @@ export default {
         this.searchFundList(this.searchQuery);
       }
     },
-    ...mapActions('bond', ['fetchBondList', 'searchBondList']),
+
+    gotoDetail(productId, productType) {
+      // URL 동적 생성
+      this.$router.push({ path: `/productDesc/${productType}/${productId}` });
+    },
+
+    ...mapActions('bond', [
+      'fetchBondList',
+      'searchBondList',
+      'bondProductDeatil',
+    ]),
     ...mapActions('deposit', ['fetchDepositList', 'searchDepositList']),
     ...mapActions('saving', ['fetchSavingList', 'searchSavingList']),
     ...mapActions('fund', ['fetchFundList', 'searchFundList']),
@@ -264,6 +308,7 @@ export default {
       );
     },
   },
+
   created() {
     // 금융 상품 페이지에 처음 들어오면 예금 데이터를 기본적으로 불러옴
     this.fetchDepositList();
@@ -293,7 +338,7 @@ export default {
 
 .search-bar {
   width: 100%;
-  /* margin-bottom: 20px; */
+  margin-bottom: 20px;
 }
 
 .products-box {
@@ -337,5 +382,11 @@ export default {
 .in-cart {
   background-color: #4caf50;
   color: white;
+}
+
+.Detail-Link:hover {
+  cursor: pointer;
+  color: blue;
+  text-decoration: underline;
 }
 </style>

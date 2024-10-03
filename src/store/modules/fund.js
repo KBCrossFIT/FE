@@ -1,8 +1,8 @@
-import { fetchFundProducts, searchFundProduct } from "@/api/financeApi";
+import { fetchFundProducts, searchFundProduct } from '@/api/financeApi';
 
 const fundModule = {
     namespaced: true,
-    state : () => ({
+    state: () => ({
         fundProducts: [],
         fundListLoaded: false,
         searchFundProducts: [],
@@ -40,14 +40,14 @@ const fundModule = {
             }
         },
     },
-    
+
     getters: {
         getFundList(state) {
             return state.fundProducts;
         },
         getSearchFundList(state) {
             return state.searchFundProducts;
-        }
+        },
     },
 };
 
