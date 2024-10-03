@@ -39,10 +39,9 @@ import FundListView from '@/views/financialProducts/FundListView.vue';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
 import CartItem from '@/views/cart/CartItem.vue';
-import recentViewed from "@/views/recentView/recentView.vue";
-import recentView from "@/views/recentView/recentView.vue";
-import portfolioData from "@/views/portfolio/PortfolioData.vue";
-
+import recentViewed from '@/views/recentView/recentView.vue';
+import recentView from '@/views/recentView/recentView.vue';
+import portfolioData from '@/views/portfolio/PortfolioData.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -62,6 +61,7 @@ const routes = [
         path: '/list/:id',
         name: 'ProductDetail',
         component: ProductDesc,
+        props: true,
     },
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },

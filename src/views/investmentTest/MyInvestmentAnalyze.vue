@@ -9,9 +9,9 @@
                 <v-btn class="DevBtn-btn" @click="DevSetScore(41)"> 위험중립형 </v-btn>
                 <v-btn class="DevBtn-btn" @click="DevSetScore(21)"> 안정추구형 </v-btn>
                 <v-btn class="DevBtn-btn" @click="DevSetScore(1)"> 안정형 </v-btn>
-                테스트 체크용 버튼(추후삭제)
             </div>
         </div>
+
         <div class="MyInvestment-body">
             <div class="body-content">
                 <div class="top-left">
@@ -32,12 +32,26 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="bottom-left">
                     투자성향별 적합금융상품 분류표
                     <img :src="shinhanInvestChart" class="investment-chart" />
                 </div>
+
                 <div class="bottom-right">
-                    <div class="recommendation-square">추천 구성 비율</div>
+                    <div class="recommendation-square">
+                        <div class="ProportionChart">
+                            {{ preference_name }} 추천 투자 비율
+                            <div id="chart">
+                                <apexchart
+                                    type="pie"
+                                    width="380"
+                                    :options="chartOptions"
+                                    :series="series"
+                                ></apexchart>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,9 +69,13 @@
 
 <script>
 import shinhanInvestChart from '@/assets/img/shinhanInvestChart.jpg';
+import VueApexCharts from 'vue3-apexcharts'; // apexcharts 파이 차트 사용.
 
 export default {
     name: 'MyInvestmentAnalyze',
+    components: {
+        apexchart: VueApexCharts,
+    },
     data() {
         return {
             user_preference: '80',
@@ -69,6 +87,27 @@ export default {
                 { name: 'Influencer 2', info: 'Influencer 2 정보' },
                 { name: 'Influencer 3', info: 'Influencer 3 정보' },
             ],
+            // 추가: 파이 차트 데이터 및 옵션
+            series: [], // 예시 데이터: 비율
+            chartOptions: {
+                chart: {
+                    type: 'pie',
+                },
+                labels: ['예/적금', '펀드', '채권', '주식'], // 각 섹션의 레이블
+                responsive: [
+                    {
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 200,
+                            },
+                            legend: {
+                                position: 'bottom',
+                            },
+                        },
+                    },
+                ],
+            },
         };
     },
 
@@ -91,22 +130,27 @@ export default {
                 this.preference_name = '공격투자형';
                 this.preference_text =
                     '고객님께서는 공격투자형 성향을 보이십니다. 공격투자형은 높은 수익을 추구하는 대신, 위험을 감수할 준비가 되어 있는 투자자입니다. 투자자금의 상당 부분을 주식, 고위험 펀드, 또는 기타 고수익 자산에 투자하며, 장기적인 성장 가능성을 최우선으로 생각하는 경향이 있습니다.';
+                this.series = [20, 10, 60, 10];
             } else if (user_preference >= 60) {
                 this.preference_name = '적극투자형';
                 this.preference_text =
                     '고객님께서는 적극투자형 성향을 보이십니다. 적극투자형은 수익을 추구하면서도 위험을 일부 감수하는 투자자입니다. 대부분의 자산을 주식이나 주식형 펀드에 투자하지만, 일부는 채권이나 안정적인 자산으로 분산하여 리스크를 관리하려는 성향이 있습니다.';
+                this.series = [30, 20, 40, 10];
             } else if (user_preference >= 40) {
                 this.preference_name = '위험중립형';
                 this.preference_text =
                     '고객님께서는 위험중립형 성향을 보이십니다. 위험중립형은 안정성과 수익성의 균형을 중요시하는 투자자입니다. 주식과 채권, 그리고 현금성 자산에 고루 투자하며, 장기적인 안정적인 수익을 추구하는 동시에, 시장 변동에 대한 리스크를 적당히 수용하는 성향을 가지고 있습니다.';
+                this.series = [25, 25, 25, 25];
             } else if (user_preference >= 20) {
                 this.preference_name = '안정추구형';
                 this.preference_text =
                     '고객님께서는 안정추구형 성향을 보이십니다. 안정추구형은 원금 손실을 최소화하면서 적당한 수익을 기대하는 투자자입니다. 자산의 대부분을 채권이나 저위험 펀드에 투자하며, 수익보다는 자산의 안전성을 우선시하는 성향입니다.';
+                this.series = [10, 50, 20, 20];
             } else {
                 this.preference_name = '안정형';
                 this.preference_text =
                     '고객님께서는 안정형 성향을 보이십니다. 안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다. 현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.';
+                this.series = [0, 70, 10, 20];
             }
         },
 
@@ -125,9 +169,8 @@ export default {
     flex-direction: column; /* 세로 정렬 */
     align-items: flex-start; /* 좌측 정렬 */
     justify-content: space-between; /* 상단과 하단 요소 배치 */
-    height: 100vh; /* 전체 화면 높이 */
+    height: 100%; /* 전체 화면 높이 */
     padding: 20px; /* 좌우 여백 */
-    /* overflow-y: auto; */
 }
 
 .MyInvestment-body {
@@ -169,44 +212,6 @@ export default {
     grid-row: 2;
 }
 
-.recommendation-square {
-    width: 100%; /* 가로 길이 전체 차지 */
-    height: 150px; /* 세로 길이 */
-    background-color: #d0e4f4; /* 추천 구성 비율 영역 배경색 */
-    display: flex;
-    align-items: center; /* 가운데 정렬 */
-    justify-content: center; /* 가운데 정렬 */
-    border-radius: 8px; /* 모서리 둥글게 */
-}
-
-.investment-chart {
-    width: 100%; /* 이미지 가로 길이 전체 차지 */
-    height: auto; /* 비율 유지 */
-}
-
-.MyInvestment-btn-set {
-    display: flex;
-    justify-content: flex-end; /* 우측 정렬 */
-    width: 100%; /* 가로 길이 전체 차지 */
-    /* margin-top: auto; 남는 공간을 채우고 버튼을 아래로 */
-}
-
-.MyInvestment-btn {
-    width: 180px;
-    padding: 10px;
-    background-color: #4db6ac;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-left: 20px;
-}
-
-.MyInvestment-btn:hover {
-    background-color: #399d91;
-}
-
 .influencer-cards {
     display: flex;
     justify-content: space-between; /* 카드 간의 간격 */
@@ -238,5 +243,31 @@ export default {
 .influencer-card p {
     font-size: 14px;
     color: #666;
+}
+
+.recommendation-square {
+    padding: 20px; /* 내부 여백 */
+    border: 1px solid #ccc; /* 테두리 색상 */
+    border-radius: 4px; /* 모서리 둥글게 */
+    background-color: white; /* 배경색 */
+}
+
+.investment-chart {
+    width: 700px;
+    height: auto;
+}
+
+.ProportionChart {
+    text-align: center; /* 가운데 정렬 */
+}
+
+.MyInvestment-btn-set {
+    display: flex;
+    justify-content: space-around; /* 버튼 사이 간격 설정 */
+    margin-top: 20px; /* 상단 여백 */
+}
+
+.MyInvestment-btn {
+    width: 200px; /* 버튼 너비 설정 */
 }
 </style>

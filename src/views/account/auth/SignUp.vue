@@ -63,29 +63,29 @@
                         <label for="dob">생년월일</label>
                         <div class="dob-container">
                             <v-select v-model="selectedYear" :items="years" label="년"></v-select>
-
                             <v-select v-model="selectedMonth" :items="months" label="월"></v-select>
-
                             <v-select v-model="selectedDay" :items="days" label="일"></v-select>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>성별</label>
-                        <v-radio-group v-model="gender" row>
-                            <v-radio
-                                label="남"
-                                value="남"
-                                color="teal"
-                                class="gender-radio"
-                            ></v-radio>
-                            <v-radio
-                                label="여"
-                                value="여"
-                                color="teal"
-                                class="gender-radio"
-                            ></v-radio>
-                        </v-radio-group>
+                        <div class="gender-container">
+                            <v-radio-group v-model="gender" class="gender-radio-group" row>
+                                <v-radio
+                                    class="gender-radio"
+                                    label="남"
+                                    value="남"
+                                    color="teal"
+                                ></v-radio>
+                                <v-radio
+                                    class="gender-radio"
+                                    label="여"
+                                    value="여"
+                                    color="teal"
+                                ></v-radio>
+                            </v-radio-group>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -274,60 +274,64 @@ label {
 input {
     width: 100%; /* Fill the width of the container */
     padding: 12px; /* Increased padding */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    transition: border-color 0.3s; /* Smooth border transition */
-}
-
-input:focus {
-    border-color: #4db6ac; /* Highlighted border color on focus */
-    outline: none; /* Remove default outline */
-}
-
-.gender-radio {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.create-btn {
-    width: 100%;
-    padding: 12px; /* Increased padding */
-    background-color: #4db6ac;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s; /* Smooth transition */
-}
-
-.create-btn:hover {
-    background-color: #399d91; /* Darker button on hover */
-}
-
-.login-link {
-    margin-top: 15px;
-}
-
-.login-link a {
-    color: #4db6ac;
-    text-decoration: none;
-    transition: color 0.3s; /* Smooth color transition */
-}
-
-.login-link a:hover {
-    color: #2e8b83; /* Darker link color on hover */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #ccc; /* Light border */
 }
 
 .dob-container {
-    display: flex;
-    align-items: center;
+    display: flex; /* Flex container for date selects */
+    justify-content: space-between; /* Space between selects */
 }
 
-.dob-container input {
-    width: calc(100% - 50px); /* Adjust width for the button */
-    margin-right: 5px;
+.gender-container {
+    margin-top: 10px; /* Top margin */
+}
+
+.gender-radio-group {
+    display: flex;
+    justify-content: space-between; /* Equally distribute space between buttons */
+    margin-top: 10px; /* Top margin */
+}
+
+.gender-radio {
+    flex: 1; /* Allow radio buttons to share equal space */
+    margin-right: 15px; /* Margin between radio buttons */
+}
+
+.gender-radio:last-child {
+    margin-right: 0; /* Remove right margin for the last button */
+}
+
+.create-btn {
+    background-color: #4db6ac; /* Button color */
+    color: white; /* Button text color */
+    padding: 12px 20px; /* Button padding */
+    border: none; /* Remove border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 16px; /* Button text size */
+}
+
+.create-btn:disabled {
+    background-color: #ccc; /* Disabled button color */
+}
+
+.login-link {
+    margin-top: 15px; /* Spacing above login link */
+    color: #666; /* Link color */
+}
+
+.red-mark {
+    color: red; /* Red mark color */
+    font-size: 24px; /* Font size for marks */
+}
+
+.green-mark {
+    color: green; /* Green mark color */
+    font-size: 24px; /* Font size for marks */
+}
+
+.signup-form {
+    /* Additional styles for the signup form */
 }
 </style>
