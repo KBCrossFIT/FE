@@ -3,6 +3,7 @@ import bondModule from "./modules/bond";
 import fundModule from "./modules/fund";
 import savingModule from "./modules/saving";
 import depositModule from "./modules/deposit";
+import portfolioModule from "./modules/portfolio";
 
 const store = createStore({
   modules: {
@@ -10,6 +11,7 @@ const store = createStore({
     fund: fundModule,
     saving: savingModule,
     deposit: depositModule,
+    portfolio: portfolioModule,
   },
 });
 

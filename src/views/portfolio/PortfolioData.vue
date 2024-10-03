@@ -1,4 +1,4 @@
-<template>
+<template> <!-- 포트폴리오 단일 페이지 -->
   <div>
     <h1>내 포트폴리오</h1>
     <ul>
@@ -9,8 +9,8 @@
         {{ portfolio.portfolioName }}
         <!-- 생성 일자(날짜, 시간) 데이터 타입을 숫자로 날라오면 날짜 시간으로 처리 -->
         {{ portfolio.creationDate }}
-        <!-- 포트폴리오 투자총액 
-         /총액에 * 기대 수익률을 한다면 투자손익 
+        <!-- 포트폴리오 투자총액
+         /총액에 * 기대 수익률을 한다면 투자손익
          /투자금액 + 투자손익 = 총 평가금액 -->
         {{ portfolio.total }}
         <!-- 포트폴리오 기대 수익률 -->
@@ -147,7 +147,7 @@ export default {
   },
   methods: {
     fetchPortfolioList() {
-      fetch('/api/portfolio')
+      fetch("/api/portfolio/list")
         .then((response) => response.json())
         .then((data) => {
           this.portfolioList = data;
@@ -158,7 +158,7 @@ export default {
     },
 
     fetchPortfolio() {
-      fetch('/api/portfolio/1')
+      fetch("/api/portfolio/1")
         .then((response) => response.json())
         .then((data) => {
           this.portfolio = data;
