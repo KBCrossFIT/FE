@@ -1,14 +1,7 @@
 <template>
   <header class="header">
     <div class="logoBox" @click="navigateToHome">
-      <!-- 로고 -->
-      <div class="logo">
-        <img
-          src="@/assets/img/LogoMVP.png"
-          style="width: 170px; height: 120px"
-          alt="ProPortFolio Logo"
-        />
-      </div>
+      <div class="logo">ProPortFolio</div>
     </div>
 
     <nav>
@@ -48,7 +41,7 @@
               <li
                 class="in"
                 :class="{ active: isActive('/financial-products') }"
-                @click="$router.push('/financial-products')"
+                @click="$router.push('/financial-products/deposit/1')"
               >
                 상품 리스트
               </li>
@@ -244,8 +237,7 @@ nav {
   padding: 10px;
   cursor: pointer;
   display: flex;
-  gap: 70px;
-  margin-top: 10px;
+  gap: 50px;
 }
 
 .menu-item {
@@ -339,36 +331,7 @@ nav {
   transition: background-color 0.2s;
 }
 
-.user-controls .login-btn,
-.user-controls .signup-btn {
-  background-color: transparent;
-  color: rgb(8, 1, 1);
-  border: 1px solid white;
-  margin-right: 9px;
-}
-
-.in {
-  font-size: 11px; /* 수정: 공백 제거 */
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column; /* 세로로 정렬 */
-    align-items: flex-start; /* 왼쪽 정렬 */
-  }
-
-  .menu {
-    flex-direction: column; /* 메뉴 세로 정렬 */
-    gap: 20px; /* 간격 조정 */
-  }
-
-  .dropdown {
-    width: 90%; /* 드롭다운 너비 조정 */
-  }
-
-  .logo {
-    font-size: 20px; /* 로고 폰트 크기 조정 */
-  }
+.user-controls button:hover {
+  background-color: #4d85ff;
 }
 </style>

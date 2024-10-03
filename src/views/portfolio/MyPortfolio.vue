@@ -1,11 +1,10 @@
-portfolios
 <template>
   <div class="MyPortfolio-container">
     <h1>내 포트폴리오 리스트 페이지</h1>
     <div class="MyPortfolio-DataTable">
       <v-data-table
         v-model="selected"
-        :items="portfolioList"
+        :items="filteredPortfolios"
         item-value="PortfolioName"
         show-select
         :headers="headers"
@@ -34,10 +33,10 @@ portfolios
               <v-checkbox v-model="selected" :value="item.PortfolioName" />
             </td>
             <td class="NameCursor" @click="goToPortfolioDetail(item.id)">
-              {{ item.portfolioName }}
+              {{ item.PortfolioName }}
             </td>
-            <td>{{ item.expectedReturn }}%</td>
-            <td>{{ item.riskLevel }}</td>
+            <td>{{ item.ExpectedReturn }}%</td>
+            <td>{{ item.RiskLevel }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -57,7 +56,33 @@ export default {
   name: 'MyPortfolio',
   setup() {
     const portfolios = ref([
-      // 포트폴리오 내용
+      {
+        id: 1,
+        CreationDate: '2024-09-23',
+        Total: 1000000,
+        ExpectedReturn: 8.5,
+        RiskLevel: '중간',
+        PortfolioName: '포트폴리오 1',
+        Username: 'user123',
+      },
+      {
+        id: 2,
+        CreationDate: '2024-09-10',
+        Total: 2000000,
+        ExpectedReturn: 12.5,
+        RiskLevel: '높음',
+        PortfolioName: '포트폴리오 2',
+        Username: 'user123',
+      },
+      {
+        id: 3,
+        CreationDate: '2024-08-20',
+        Total: 500000,
+        ExpectedReturn: 4.2,
+        RiskLevel: '낮음',
+        PortfolioName: '포트폴리오 3',
+        Username: 'user456',
+      },
     ]);
 
     const currentUsername = 'user123'; // 현재 사용자의 고유번호 (동적으로 설정 가능)
@@ -65,12 +90,12 @@ export default {
     const selected = ref([]);
     const allSelected = ref(false);
 
-    // // 현재 사용자 고유번호에 해당하는 포트폴리오만 필터링
-    // const filteredPortfolios = computed(() => {
-    //   return portfolios.value.filter(
-    //     (portfolio) => portfolio.Username === currentUsername
-    //   );
-    // });
+    // 현재 사용자 고유번호에 해당하는 포트폴리오만 필터링
+    const filteredPortfolios = computed(() => {
+      return portfolios.value.filter(
+        (portfolio) => portfolio.Username === currentUsername
+      );
+    });
 
     const headers = [
       { text: '', value: 'checkbox', align: 'start' },
@@ -117,76 +142,13 @@ export default {
     return {
       selected,
       allSelected,
+      filteredPortfolios,
       headers,
       toggleSelectAll,
       goToCreatePortfolio,
       deleteSelectedPortfolios,
       goToPortfolioDetail,
     };
-  },
-  data() {
-    return {
-      portfolioList: [], // 장바구니 리스트
-    };
-  },
-  methods: {
-    // 장바구니 리스트 가져오기
-    fetchPortfolio() {
-      fetch('/api/portfolio')
-        .then((response) => response.json())
-        .then((data) => {
-          this.portfolioList = data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    },
-
-    // 장바구니에 상품 추가 (POST 요청)
-    addCartItem() {
-      fetch('/api/cart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.newProduct), // 새로운 상품 정보 전송
-      })
-        .then((response) => {
-          // 응답이 JSON 형식인지 확인
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          // 응답이 비어 있지 않으면 JSON 파싱
-          return response.text().then((text) => (text ? JSON.parse(text) : {}));
-        })
-        .then((data) => {
-          this.clearNewProduct(); // 입력 필드 초기화
-        })
-        .catch((error) => {
-          console.error('Error adding cart item:', error);
-        });
-    },
-
-    // 입력 필드 초기화
-
-    // 장바구니에서 상품 삭제 (DELETE 요청)
-    deleteCartItem(cartId) {
-      fetch(`/api/cart/${cartId}`, {
-        method: 'DELETE',
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          this.fetchCart();
-        })
-        .catch((error) => {
-          console.error('Error deleting cart item:', error);
-        });
-    },
-  },
-  created() {
-    this.fetchPortfolio(); // 컴포넌트 생성 시 장바구니 데이터 가져오기
   },
 };
 </script>

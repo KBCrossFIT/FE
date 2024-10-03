@@ -32,14 +32,15 @@ export async function fetchBondProducts() {
     }
 }
 
+// financeApi.js
+
+// 채권 상품 상세 조회 API
 export async function getBondProductDetail(productId) {
     try {
-        const response = await bondApi.get(`/list`, {
-            params: { productId },
-        });
+        const response = await bondApi.get(`/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching bond product Detail: ', error);
+        console.error('Error fetching bond product detail:', error);
         throw error;
     }
 }
@@ -55,7 +56,7 @@ export async function fetchDepositProducts() {
     }
 }
 
-// 예금 상품 상세 조회 API (kangmin 추가)
+// 예금 상품 상세 조회 API
 export async function getDepositProductDetail(productId) {
     try {
         const response = await savingApi.get(`/depositDetail`, {
@@ -63,7 +64,7 @@ export async function getDepositProductDetail(productId) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching deposit product detail: ', error);
+        console.error('Error fetching deposit product detail:', error);
         throw error;
     }
 }
@@ -79,7 +80,7 @@ export async function fetchSavingProducts() {
     }
 }
 
-// 적금 상품 상세 조회 API ( kangmin 추가)
+// 적금 상품 상세 조회 API
 export async function getSavingProductDetail(productId) {
     try {
         const response = await savingApi.get(`/savingDetail`, {
@@ -87,7 +88,7 @@ export async function getSavingProductDetail(productId) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching saving product detail: ', error);
+        console.error('Error fetching saving product detail:', error);
         throw error;
     }
 }
@@ -99,6 +100,17 @@ export async function fetchFundProducts() {
         return response.data;
     } catch (error) {
         console.error('Error fetching fund product: ', error);
+        throw error;
+    }
+}
+
+// 펀드 상품 상세 조회 API
+export async function getFundProductDetail(productId) {
+    try {
+        const response = await fundApi.get(`/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching fund product detail:', error);
         throw error;
     }
 }

@@ -62,8 +62,23 @@
           <div class="form-group">
             <label for="dob">생년월일</label>
             <div class="dob-container">
-              <input type="date" id="dob" v-model="birth" required />
-              <v-btn @click="openDatePicker">📅</v-btn>
+              <v-select
+                v-model="selectedYear"
+                :items="years"
+                label="년"
+              ></v-select>
+
+              <v-select
+                v-model="selectedMonth"
+                :items="months"
+                label="월"
+              ></v-select>
+
+              <v-select
+                v-model="selectedDay"
+                :items="days"
+                label="일"
+              ></v-select>
             </div>
           </div>
 
@@ -144,6 +159,16 @@ export default {
       currentComponent: markRaw(ModalTestStart),
       InvestMentTest: false,
       showPassword: false,
+      // 날짜 선택
+      selectedYear: null,
+      selectedMonth: null,
+      selectedDay: null,
+      years: Array.from(
+        { length: 100 },
+        (_, i) => new Date().getFullYear() - i
+      ),
+      months: Array.from({ length: 12 }, (_, i) => i + 1),
+      days: Array.from({ length: 31 }, (_, i) => i + 1),
     };
   },
   methods: {
@@ -153,13 +178,17 @@ export default {
         return;
       }
 
+      const birthDate = `${this.selectedYear}-${String(
+        this.selectedMonth
+      ).padStart(2, '0')}-${String(this.selectedDay).padStart(2, '0')}`;
+
       const userData = {
         memberID: this.memberID,
         email: this.email,
         memberName: this.memberName,
         password: this.password,
         reEnteredPassword: this.reEnteredPassword,
-        birth: this.birth,
+        birth: birthDate,
         gender: this.gender,
         InvestMentTest: this.InvestMentTest,
       };
