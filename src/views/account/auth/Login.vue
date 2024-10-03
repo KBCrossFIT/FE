@@ -49,6 +49,7 @@ export default {
     async handleLogin() {
       const { cookies } = useCookies();
       this.errorMessage = ''; // Reset error message
+
       try {
         const response = await axios.post(
           'http://localhost:8080/api/member/login',
@@ -57,17 +58,21 @@ export default {
             password: this.password,
           }
         );
+
         console.log('Login successful:', response.data);
+
         const user = {
           username: response.data.responseData.data.name,
           picture: response.data.responseData.data.picture, // Assuming your response has a picture field
         };
+
         const authHeader =
           response.headers['authorization'] ||
           response.headers['Authorization'];
         const refreshToken =
           response.headers['refresh-token'] ||
           response.headers['Refresh-Token'];
+
         if (authHeader && refreshToken) {
           cookies.set('Authorization', authHeader, {
             secure: true,
@@ -129,6 +134,7 @@ h2 {
   position: relative;
   margin-top: 10px;
 }
+
 input[type='text'],
 input[type='password'] {
   width: 100%;
@@ -139,6 +145,7 @@ input[type='password'] {
   box-sizing: border-box;
   transition: border-color 0.3s; /* Smooth transition on focus */
 }
+
 input[type='text']:focus,
 input[type='password']:focus {
   outline: none;
@@ -153,6 +160,7 @@ label {
   pointer-events: none;
   transition: 0.3s ease all;
 }
+
 input[type='text']:focus + label,
 input[type='password']:focus + label,
 label.active {
