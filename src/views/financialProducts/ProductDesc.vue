@@ -46,7 +46,8 @@ export default {
         };
     },
     created() {
-        const productIdParam = this.$route.params.id;
+        // URL에서 productId와 productType 가져오기
+        const productIdParam = this.$route.params.productId; // 'productId'로 수정
         const productTypeParam = this.$route.query.productType;
 
         this.productId = productIdParam;
@@ -64,6 +65,7 @@ export default {
             this.isLoading = true;
             try {
                 let data = null;
+                // 각 상품 유형에 따라 올바른 API 호출
                 if (this.productType === 'deposit') {
                     data = await getDepositProductDetail(this.productId);
                 } else if (this.productType === 'saving') {
