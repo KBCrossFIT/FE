@@ -118,26 +118,12 @@ export default {
         };
 
         const gotoProductDesc = (productType, id) => {
-            const source = 'cart'; // Indicate that the source is the cart
-            switch (productType) {
-                case 'a': // 예금
-                    router.push(`/productDesc/a/${id}?source=${source}`);
-                    break;
-                case 'b': // 적금
-                    router.push(`/productDesc/b/${id}?source=${source}`);
-                    break;
-                case 'c': // 펀드
-                    router.push(`/productDesc/c/${id}?source=${source}`);
-                    break;
-                case 'd': // 채권
-                    router.push(`/productDesc/d/${id}?source=${source}`);
-                    break;
-                case 'e': // 주식 (페이지 연결 없음)
-                    console.log('주식 상품에 대한 상세 페이지가 없습니다.');
-                    break;
-                default:
-                    console.log('해당 상품 유형에 대한 페이지가 없습니다.');
-            }
+            // 상품 상세 페이지로 이동
+            router.push({
+                name: 'ProductDetail', // 라우터 이름 사용
+                params: { id: id },
+                query: { productType: productType },
+            });
         };
 
         const goToCompare = () => {

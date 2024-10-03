@@ -37,7 +37,7 @@ const savingModule = {
 
         async searchSavingList({ commit }, keyword) {
             try {
-                const saving = await fetchDepositProducts();
+                // const saving = await fetchDepositProducts();
                 const searchResults = await searchSavingProduct(keyword);
                 commit('setSearchSavingList', searchResults);
             } catch (error) {
