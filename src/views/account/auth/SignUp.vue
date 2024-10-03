@@ -78,7 +78,7 @@
                     <div class="form-group">
                         <label>성향분석 하기</label>
                         <v-btn
-                            @click="openModal"
+                            @click="markTestAsFinished"
                             color="teal"
                             large
                             rounded
@@ -99,15 +99,6 @@
                     </button>
                 </form>
 
-                <ModalTest
-                    :isOpen="isModalOpen"
-                    :InvestMentTest="InvestMentTest"
-                    :currentComponent="currentComponent"
-                    @close="handleClose"
-                    @finishTest="markTestAsFinished"
-                    @next="nextStep"
-                />
-
                 <div class="login-link">
                     이미 계정이 있으신가요? <router-link to="/login">로그인</router-link>
                 </div>
@@ -117,20 +108,9 @@
 </template>
 
 <script>
-import Modal from '@/components/Modal/Modal.vue';
-import ModalTestStart from '@/components/Modal/ModalTestStart.vue';
-import ModalTest from '@/components/Modal/ModalTest.vue';
-import ModalTestEnd from '@/components/Modal/ModalTestEnd.vue';
-import { markRaw } from 'vue';
 import { registerUser } from '@/api/memberApi'; // Import your API function
 
 export default {
-    components: {
-        Modal,
-        ModalTestStart,
-        ModalTest,
-        ModalTestEnd,
-    },
     data() {
         return {
             memberID: '',
@@ -140,8 +120,6 @@ export default {
             email: '',
             birth: null,
             gender: '남',
-            isModalOpen: false,
-            currentComponent: markRaw(ModalTestStart),
             InvestMentTest: false,
             showPassword: false,
         };
@@ -177,26 +155,9 @@ export default {
                 }
             }
         },
-        openModal() {
-            this.isModalOpen = true;
-            this.currentComponent = markRaw(ModalTestStart);
-        },
-
-        handleClose() {
-            this.isModalOpen = false;
-        },
-        nextStep() {
-            if (this.currentComponent.__file.includes('ModalTestStart.vue')) {
-                this.currentComponent = markRaw(ModalTest);
-            } else if (this.currentComponent.__file.includes('ModalTest.vue')) {
-                this.currentComponent = markRaw(ModalTestEnd);
-            }
-        },
         markTestAsFinished() {
             this.InvestMentTest = true;
-            this.handleClose();
         },
-
         openDatePicker() {
             console.log('Open date picker');
         },
