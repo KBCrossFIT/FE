@@ -968,10 +968,10 @@ vue3-cookies@^1.0.6:
   dependencies:
     vue "^3.0.0"
 
-vuetify@^3.0.0, vuetify@^3.7.2:
-  version "3.7.2"
-  resolved "https://registry.npmjs.org/vuetify/-/vuetify-3.7.2.tgz"
-  integrity sha512-q0WTcRG977+a9Dqhb8TOaPm+Xmvj0oVhnBJhAdHWFSov3HhHTTxlH2nXP/GBTXZuuMHDbBeIWFuUR2/1Fx0PPw==
+vuetify@^3.0.0, vuetify@^3.7.0-beta.1:
+  version "3.7.0-beta.1"
+  resolved "https://registry.npmjs.org/vuetify/-/vuetify-3.7.0-beta.1.tgz"
+  integrity sha512-F6a+pSG7dLrU28sGlR8r4WMuBsLMprOsDpaywGopNrGk351Hs4AAhx/y88ROGUEf28yAPShSM86bPnD30xNyDw==
 
 vuex@^4.0.2:
   version "4.0.2"
