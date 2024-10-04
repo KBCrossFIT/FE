@@ -13,16 +13,7 @@
         <!-- 전체 선택 체크박스 -->
         <template v-slot:header>
           <tr>
-            <th>
-              <v-checkbox v-model="allSelected" @change="toggleSelectAll" />
-            </th>
-            <th
-              v-for="header in headers"
-              :key="header.value"
-              :align="header.align"
-            >
-              {{ header.text }}
-            </th>
+            <v-checkbox v-model="allSelected" @change="toggleSelectAll" />
           </tr>
         </template>
 
@@ -49,108 +40,81 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import axios from 'axios'; // Axios를 import합니다.
 
 export default {
-  name: 'MyPortfolio',
-  setup() {
-    const portfolios = ref([
-      {
-        id: 1,
-        CreationDate: '2024-09-23',
-        Total: 1000000,
-        ExpectedReturn: 8.5,
-        RiskLevel: '중간',
-        PortfolioName: '포트폴리오 1',
-        Username: 'user123',
-      },
-      {
-        id: 2,
-        CreationDate: '2024-09-10',
-        Total: 2000000,
-        ExpectedReturn: 12.5,
-        RiskLevel: '높음',
-        PortfolioName: '포트폴리오 2',
-        Username: 'user123',
-      },
-      {
-        id: 3,
-        CreationDate: '2024-08-20',
-        Total: 500000,
-        ExpectedReturn: 4.2,
-        RiskLevel: '낮음',
-        PortfolioName: '포트폴리오 3',
-        Username: 'user456',
-      },
-    ]);
+  data() {
+    return {
+      selected: [], // 삭제관련
+      allSelected: false, // 체크박스
+      portfolios: [
+        {
+          id: 1,
+          RiskLevel: '포트폴리오 1',
+          ExpectedReturn: 10,
+          dd: 10,
+        },
+        {
+          id: 2,
+          RiskLevel: '포트폴리오 2',
+          ExpectedReturn: 15,
+        },
+        {
+          id: 3,
+          RiskLevel: '포트폴리오 3',
+          ExpectedReturn: 20,
+        },
+      ],
+    };
+  },
+  computed: {
+    filteredPortfolios() {
+      // 필터링된 포트폴리오 데이터 (필요 시 수정 가능)
+      return this.portfolios;
+    },
+  },
+  methods: {
+    fetchPortfolio() {
+      axios
+        .get('/api/portfolio/1') // 1. '/api/portfolio/1'로 GET 요청을 보냅니다.
+        .then((response) => {
+          this.portfolio = response.data; // 2. 응답 데이터를 this.portfolio에 저장합니다.
+        })
+        .catch((error) => {
+          console.error(error); // 3. 오류를 콘솔에 출력합니다.
+        });
+    },
 
-    const currentUsername = 'user123'; // 현재 사용자의 고유번호 (동적으로 설정 가능)
-
-    const selected = ref([]);
-    const allSelected = ref(false);
-
-    // 현재 사용자 고유번호에 해당하는 포트폴리오만 필터링
-    const filteredPortfolios = computed(() => {
-      return portfolios.value.filter(
-        (portfolio) => portfolio.Username === currentUsername
-      );
-    });
-
-    const headers = [
-      { text: '', value: 'checkbox', align: 'start' },
-      { text: '포트폴리오 이름', value: 'PortfolioName' },
-      { text: '예상 수익률', value: 'ExpectedReturn' },
-      { text: '위험도', value: 'RiskLevel' },
-    ];
-
-    // 전체 선택 / 해제 기능
-    const toggleSelectAll = () => {
-      if (allSelected.value) {
-        selected.value = filteredPortfolios.value.map(
-          (item) => item.PortfolioName
+    toggleSelectAll() {
+      if (this.allSelected) {
+        // 전체 선택 체크박스가 켜져 있을 때 모두 선택
+        this.selected = this.portfolios.map(
+          (portfolio) => portfolio.PortfolioName
         );
       } else {
-        selected.value = [];
+        // 전체 선택 체크박스가 꺼져 있을 때 선택 해제
+        this.selected = [];
       }
-    };
-
-    const router = useRouter();
-
-    const goToCreatePortfolio = () => {
-      router.push('/make-portfolio');
-    };
-
-    const deleteSelectedPortfolios = () => {
-      if (selected.value.length === 0) {
-        console.log('선택된 포트폴리오가 없습니다.');
-        return;
-      }
-
-      portfolios.value = portfolios.value.filter(
-        (portfolio) => !selected.value.includes(portfolio.PortfolioName)
+    },
+    goToPortfolioDetail(id) {
+      // 포트폴리오 세부 사항으로 이동
+      this.$router.push({ name: 'PortfolioDetail', params: { id } });
+    },
+    goToCreatePortfolio() {
+      // 포트폴리오 생성 페이지로 이동
+      this.$router.push({ name: 'CreatePortfolio' });
+    },
+    deleteSelectedPortfolios() {
+      // 선택된 포트폴리오 삭제
+      this.portfolios = this.portfolios.filter(
+        (portfolio) => !this.selected.includes(portfolio.PortfolioName)
       );
-      selected.value = [];
-      console.log('선택된 포트폴리오 삭제됨');
-    };
-
-    const goToPortfolioDetail = (id) => {
-      router.push(`/portfolio/${id}`);
-    };
-
-    return {
-      selected,
-      allSelected,
-      filteredPortfolios,
-      headers,
-      toggleSelectAll,
-      goToCreatePortfolio,
-      deleteSelectedPortfolios,
-      goToPortfolioDetail,
-    };
+      this.selected = []; // 선택 초기화
+    },
   },
 };
 </script>
+
 <style scoped>
 .MyPortfolio-container {
   padding: 20px;
@@ -170,5 +134,11 @@ export default {
   cursor: pointer;
   text-decoration: underline;
   color: blue;
+}
+
+/* 헤더 텍스트 색상 */
+.header-text {
+  color: black; /* 검정색으로 설정 */
+  font-weight: bold; /* 필요에 따라 굵게 설정 */
 }
 </style>
