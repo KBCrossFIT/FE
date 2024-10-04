@@ -52,17 +52,19 @@ const routes = [
     { path: '/mypageEdit', name: 'MyPageEdit', component: MyPageEdit },
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
+
     {
-        path: '/financial-products/:productType/:pageNumber?',
-        name: 'FinancialProducts',
+        path: '/products/:category?',
+        name: 'Products', // 라우터 이름을 'Products'로 정의
         component: FinancialProducts,
+        props: true,
     },
     {
         path: '/list/:id',
         name: 'ProductDetail',
         component: ProductDesc,
-        props: true,
     },
+
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },

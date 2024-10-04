@@ -18,14 +18,14 @@
                             <li
                                 class="in"
                                 :class="{ active: isActive('/my-portfolio') }"
-                                @click="$router.push('/my-portfolio')"
+                                @click="navigateTo('/my-portfolio')"
                             >
                                 내 포트폴리오
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/make-portfolio') }"
-                                @click="$router.push('/make-portfolio')"
+                                @click="navigateTo('/make-portfolio')"
                             >
                                 포트폴리오 구성하기
                             </li>
@@ -36,22 +36,22 @@
                         <ul>
                             <li
                                 class="in"
-                                :class="{ active: isActive('/financial-products') }"
-                                @click="$router.push('/financial-products/deposit/1')"
+                                :class="{ active: isActive('/products/deposit') }"
+                                @click="navigateToProductList('deposit')"
                             >
                                 상품 리스트
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/cart') }"
-                                @click="$router.push('/cart')"
+                                @click="navigateTo('/cart')"
                             >
                                 장바구니
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/recently-viewed') }"
-                                @click="$router.push('/recently-viewed')"
+                                @click="navigateTo('/recently-viewed')"
                             >
                                 최근 본 상품
                             </li>
@@ -63,21 +63,21 @@
                             <li
                                 class="in"
                                 :class="{ active: isActive('/news') }"
-                                @click="$router.push('/news')"
+                                @click="navigateTo('/news')"
                             >
                                 뉴스
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/youtube') }"
-                                @click="$router.push('/youtube')"
+                                @click="navigateTo('/youtube')"
                             >
                                 유튜브
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/influencer') }"
-                                @click="$router.push('/influencer')"
+                                @click="navigateTo('/influencer')"
                             >
                                 인플루언서
                             </li>
@@ -89,14 +89,14 @@
                             <li
                                 class="in"
                                 :class="{ active: isActive('/my-investment-analyze') }"
-                                @click="$router.push('/my-investment-analyze')"
+                                @click="navigateTo('/my-investment-analyze')"
                             >
                                 내 투자성향 분석
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/investment-test-start') }"
-                                @click="$router.push('/investment-test-start')"
+                                @click="navigateTo('/investment-test-start')"
                             >
                                 투자성향 분석하기
                             </li>
@@ -149,6 +149,16 @@ export default {
         navigateToProfile() {
             this.$router.push('/myPage');
         },
+        navigateTo(path) {
+            this.$router.push(path);
+        },
+        navigateToProductList(category) {
+            this.$router.push({
+                name: 'Products',
+                params: { category: 'deposit' },
+                query: { page: 1, pageSize: 10 },
+            });
+        },
         async handleLogout() {
             const { cookies } = useCookies();
 
@@ -174,7 +184,7 @@ export default {
             }
         },
         isActive(route) {
-            return this.$route.path === route;
+            return this.$route.name === 'Products' && this.$route.params.category === route;
         },
     },
     watch: {
