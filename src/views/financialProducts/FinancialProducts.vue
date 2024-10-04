@@ -16,8 +16,11 @@
             </v-btn>
         </div>
 
+        <!-- 주식 리스트 -->
+        <stock-list v-if="selectedCategory === 'stocks'" />
+
         <!-- 검색 및 필터링 -->
-        <div class="search-filter mb-4">
+        <div class="search-filter mb-4" v-if="selectedCategory !== 'stocks'">
             <input
                 v-model="searchQuery"
                 type="text"
@@ -41,7 +44,7 @@
         </div>
 
         <!-- 상품 리스트 -->
-        <div v-else>
+        <div v-else v-if="selectedCategory !== 'stocks'">
             <table class="table">
                 <thead>
                     <tr>
@@ -91,7 +94,7 @@
                         >
                             <td>{{ product.korCoNm }}</td>
                             <td>{{ getRate(product.productId, 12).intrRate }}%</td>
-                            <td>{{ getRate(product.productId, 12).intrRate2 }}%</td>
+                            <td>{{ getRate(product.productId, 12).intrRate2 }}</td>
                         </template>
 
                         <!-- 채권 정보 -->
@@ -120,7 +123,7 @@
                 </tbody>
             </table>
 
-            <!-- Vuetify 페이지네이션 제거 후 직접 페이지네이션 구현 -->
+            <!-- 페이지네이션 -->
             <div id="Pagination" class="mt-4 pagination-buttons">
                 <button
                     :disabled="currentPage === 1"
@@ -130,13 +133,29 @@
                     이전
                 </button>
 
+                <button v-if="currentPage > 3" @click="changePage(1)" class="pagination-btn">
+                    1
+                </button>
+
+                <span v-if="currentPage > 4" class="pagination-ellipsis">...</span>
+
                 <button
-                    v-for="page in totalPages"
+                    v-for="page in visiblePages"
                     :key="page"
                     @click="changePage(page)"
                     :class="['pagination-btn', { active: currentPage === page }]"
                 >
                     {{ page }}
+                </button>
+
+                <span v-if="currentPage < totalPages - 3" class="pagination-ellipsis">...</span>
+
+                <button
+                    v-if="currentPage < totalPages - 2"
+                    @click="changePage(totalPages)"
+                    class="pagination-btn"
+                >
+                    {{ totalPages }}
                 </button>
 
                 <button
@@ -152,23 +171,24 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch, inject } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
 import { fetchDepositProducts, fetchSavingProducts } from '@/api/financeApi.js';
+import StockList from '@/views/stock/StockList.vue'; // StockList 컴포넌트 임포트
 
 export default {
     name: 'FinancialProducts',
+    components: {
+        StockList, // StockList 컴포넌트 등록
+    },
     setup() {
         const store = useStore();
         const searchQuery = ref('');
         const selectedCategory = ref('');
 
-        // cart는 깡통 배열로 유지 (버튼 기능만 구현)
         const cart = ref([]);
-
         const displayedProducts = ref([]);
-        const selectedProducts = ref([]);
         const currentPage = ref(1);
         const pageSize = ref(10);
         const totalPages = ref(1);
@@ -183,6 +203,7 @@ export default {
             { label: '적금', value: 'savings' },
             { label: '채권', value: 'bonds' },
             { label: '펀드', value: 'funds' },
+            { label: '주식', value: 'stocks' }, // 주식 탭 추가
         ];
 
         const activeButtonStyle = {
@@ -194,7 +215,7 @@ export default {
             if (selectedCategory.value === 'bonds') {
                 return product.isinCdNm || '상품명 없음';
             } else if (selectedCategory.value === 'funds') {
-                return product.productNm || '상품명 없음'; // Use productNm for funds
+                return product.productNm || '상품명 없음';
             } else {
                 return product.finPrdtNm || '상품명 없음';
             }
@@ -224,7 +245,7 @@ export default {
                         yield: [],
                         type: selectedCategory.value,
                     }));
-                    totalPages.value = store.getters['bond/getTotalPages'] || 1; // 채권 페이지네이션 설정
+                    totalPages.value = store.getters['bond/getTotalPages'] || 1;
                 } else if (selectedCategory.value === 'funds') {
                     await store.dispatch('fund/fetchFundList', { page, pageSize: pageSize.value });
                     const funds = store.getters['fund/getFundList'];
@@ -236,7 +257,7 @@ export default {
                         yield: [],
                         type: selectedCategory.value,
                     }));
-                    totalPages.value = store.getters['fund/getTotalPages'] || 1; // 펀드 페이지네이션 설정
+                    totalPages.value = store.getters['fund/getTotalPages'] || 1;
                 } else if (selectedCategory.value === 'deposit') {
                     const data = await fetchDepositProducts(page, pageSize.value);
                     if (data.products && data.rates) {
@@ -305,25 +326,22 @@ export default {
         };
 
         const changePage = (page) => {
-            console.log('페이지 변경 감지:', page); // 페이지 변경 로그 추가
             if (page < 1 || page > totalPages.value) return;
 
-            // 페이지 변경 시 router.push가 실행되는지 확인
             router
                 .push({
                     name: 'Products',
                     params: { category: selectedCategory.value },
-                    query: { page, pageSize: pageSize.value }, // 페이지 번호를 쿼리로 설정
+                    query: { page, pageSize: pageSize.value },
                 })
                 .then(() => {
-                    console.log('라우터 변경 완료:', router.currentRoute.value.fullPath); // 변경된 경로 확인
+                    console.log('라우터 변경 완료:', router.currentRoute.value.fullPath);
                 })
                 .catch((error) => {
                     console.error('라우터 변경 중 오류:', error);
                 });
         };
 
-        // 상품 상세 페에지로 이동 -클릭이벤트 지정
         const gotoDetail = (productId) => {
             const productTypeMap = {
                 savings: 'saving',
@@ -380,24 +398,59 @@ export default {
             });
         };
 
+        // visiblePages 계산 속성 추가
+        const visiblePages = computed(() => {
+            const pages = [];
+            const total = totalPages.value;
+            const current = currentPage.value;
+
+            if (total <= 7) {
+                // 총 페이지 수가 7 이하일 때 모든 페이지 표시
+                for (let i = 1; i <= total; i++) {
+                    pages.push(i);
+                }
+            } else {
+                // 첫 번째 페이지는 항상 표시
+                pages.push(1);
+
+                // 첫 번째 이후부터 currentPage 앞에 "..." 표시
+                if (current > 4) {
+                    pages.push('...');
+                }
+
+                // 현재 페이지를 중심으로 ±2 페이지씩 표시
+                const startPage = Math.max(2, current - 2);
+                const endPage = Math.min(total - 1, current + 2);
+
+                for (let i = startPage; i <= endPage; i++) {
+                    pages.push(i);
+                }
+
+                // 마지막 페이지 앞에 "..." 표시
+                if (current < total - 3) {
+                    pages.push('...');
+                }
+
+                // 마지막 페이지는 항상 표시
+                pages.push(total);
+            }
+
+            return pages;
+        });
+
         watch(
             () => [route.params.category, route.query.page, route.query.pageSize],
             ([newCategory, newPage, newPageSize]) => {
-                console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize); // 경로 변경 확인
+                console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
 
                 selectedCategory.value = newCategory || 'all';
                 currentPage.value = parseInt(newPage) || 1;
                 pageSize.value = parseInt(newPageSize) || 10;
 
-                loadProducts(currentPage.value); // 페이지 변경 감지 후 로드
+                loadProducts(currentPage.value);
             },
             { immediate: true }
         );
-
-        // 중복 호출 제거.
-        // onMounted(() => {
-        //     loadProducts(currentPage.value);
-        // });
 
         return {
             searchQuery,
@@ -415,9 +468,9 @@ export default {
             selectTab,
             activeButtonStyle,
             getProductName,
-            selectedProducts,
             getRate,
-            cart, // 빈 cart 노출
+            cart,
+            visiblePages, // visiblePages 추가
         };
     },
 };
