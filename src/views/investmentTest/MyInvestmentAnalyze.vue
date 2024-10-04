@@ -15,8 +15,16 @@
         <div class="MyInvestment-body">
             <div class="body-content">
                 <div class="top-left">
-                    {{ preference_name }}, {{ user_preference }}점 <br /><br />
-                    {{ preference_text }}
+                    <h2>
+                        {{ preference_name }}
+                        <i v-if="preference_name === '공격투자형'" class="fas fa-fire"></i>
+                        <i v-if="preference_name === '적극투자형'" class="fas fa-bolt"></i>
+                        <i v-if="preference_name === '위험중립형'" class="fas fa-balance-scale"></i>
+                        <i v-if="preference_name === '안정추구형'" class="fas fa-shield-alt"></i>
+                        <i v-if="preference_name === '안정형'" class="fas fa-home"></i>
+                    </h2>
+                    <p>위험 회피 성향 점수 : {{ user_preference }}점</p>
+                    <p>{{ preference_text }}</p>
                 </div>
                 <div class="top-right">
                     나와 같은 투자성향 인플루언서
@@ -195,21 +203,45 @@ export default {
 .top-left {
     grid-column: 1;
     grid-row: 1;
+    background-color: #e0f7fa; /* 부드러운 배경색 추가 */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+    color: #00796b; /* 텍스트 색상을 다크 톤의 녹색으로 변경 */
 }
 
-.top-right {
-    grid-column: 2;
-    grid-row: 1;
+.top-left h2 {
+    font-size: 24px; /* 큰 제목 폰트 크기 */
+    font-weight: bold;
+    color: #004d40; /* 더 진한 녹색 */
+    margin-bottom: 10px;
 }
 
-.bottom-left {
-    grid-column: 1;
-    grid-row: 2;
+.top-left p {
+    font-size: 18px; /* 내용의 폰트 크기를 중간 정도로 설정 */
+    color: #004d40;
+    margin-bottom: 20px;
+    line-height: 1.5; /* 텍스트 간격을 넓게 설정 */
 }
 
-.bottom-right {
-    grid-column: 2;
-    grid-row: 2;
+.top-left .preference-score {
+    font-size: 28px; /* 점수는 더 크게 표시 */
+    font-weight: bold;
+    color: #ff7043; /* 강조를 위한 밝은 주황색 */
+    margin-bottom: 10px;
+}
+
+.top-left .preference-icon {
+    font-size: 50px; /* 큰 아이콘으로 주목 */
+    color: #00796b;
+    margin-bottom: 15px;
+}
+
+/* 아이콘 스타일 추가 */
+.top-left .icon {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 .influencer-cards {
@@ -263,11 +295,28 @@ export default {
 
 .MyInvestment-btn-set {
     display: flex;
-    justify-content: space-around; /* 버튼 사이 간격 설정 */
-    margin-top: 20px; /* 상단 여백 */
+    justify-content: space-between; /* 버튼 사이 간격 설정 */
+    margin-top: 115px; /* 상단 여백 */
+    margin-left: auto; /* 왼쪽 여백을 자동으로 설정하여 오른쪽 끝으로 이동 */
+    gap: 20px; /* 버튼 사이의 간격 설정 */
 }
 
-.MyInvestment-btn {
-    width: 200px; /* 버튼 너비 설정 */
+.MyInvestment-btn-set v-btn {
+    margin: 0 10px; /* 버튼 사이에 좌우 10px 간격 추가 */
+}
+.fas.fa-fire {
+    color: red;
+}
+.fas.fa-bolt {
+    color: #ffa500;
+}
+.fas.fa-balance-scale {
+    color: gray;
+}
+.fas.fa-shield-alt {
+    color: #2196f3;
+}
+.fas.fa-home {
+    color: green;
 }
 </style>
