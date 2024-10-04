@@ -118,7 +118,6 @@ export default {
     const router = useRouter();
 
     const goToCreatePortfolio = () => {
-      console.log('포트폴리오 만들러 가기 버튼 클릭됨');
       router.push('/make-portfolio');
     };
 
@@ -136,9 +135,9 @@ export default {
     };
 
     const goToPortfolioDetail = (id) => {
-      console.log(`포트폴리오 세부 정보 페이지로 이동: ${id}`);
       router.push(`/portfolio/${id}`);
     };
+
     return {
       selected,
       allSelected,
@@ -152,7 +151,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .MyPortfolio-container {
   padding: 20px;
