@@ -49,39 +49,23 @@ export default {
     async handleLogin() {
       const { cookies } = useCookies();
       this.errorMessage = ''; // Reset error message
-
       try {
-        const response = await axios.post(
-          'http://localhost:8080/api/member/login',
-          {
-            memberID: this.memberID,
-            password: this.password,
-          }
-        );
-
+        const response = await axios.post('http://localhost:8080/api/member/login', {
+          memberID: this.memberID,
+          password: this.password,
+        });
         console.log('Login successful:', response.data);
-
         const user = {
           username: response.data.responseData.data.name,
           picture: response.data.responseData.data.picture, // Assuming your response has a picture field
         };
-
         const authHeader =
-          response.headers['authorization'] ||
-          response.headers['Authorization'];
+            response.headers['authorization'] || response.headers['Authorization'];
         const refreshToken =
-          response.headers['refresh-token'] ||
-          response.headers['Refresh-Token'];
-
+            response.headers['refresh-token'] || response.headers['Refresh-Token'];
         if (authHeader && refreshToken) {
-          cookies.set('Authorization', authHeader, {
-            secure: true,
-            sameSite: 'Lax',
-          });
-          cookies.set('Refresh-Token', refreshToken, {
-            secure: true,
-            sameSite: 'Lax',
-          });
+          cookies.set('Authorization', authHeader, { secure: true, sameSite: 'Lax' });
+          cookies.set('Refresh-Token', refreshToken, { secure: true, sameSite: 'Lax' });
           localStorage.setItem('user', JSON.stringify(user));
           this.$emit('login', user);
           this.$router.push('/');
@@ -103,11 +87,7 @@ export default {
 </script>
 <style scoped>
 .background-container {
-  background: linear-gradient(
-    to bottom right,
-    #a0e0d2,
-    #ffffff
-  ); /* Minty gradient background */
+  background: linear-gradient(to bottom right, #A0E0D2, #FFFFFF); /* Minty gradient background */
   min-height: 100vh; /* Full height for background */
   display: flex; /* Center login container vertically */
   justify-content: center; /* Center horizontally */
@@ -116,7 +96,7 @@ export default {
 .login-container {
   max-width: 400px; /* Decreased max width for a more compact box */
   padding: 40px; /* Adjusted padding */
-  background-color: #ffffff; /* Solid background for the login box */
+  background-color: #FFFFFF; /* Solid background for the login box */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Slightly larger shadow */
   text-align: center;
@@ -124,7 +104,7 @@ export default {
 }
 h2 {
   margin-bottom: 20px;
-  color: #4db6ac; /* Title color */
+  color: #4DB6AC; /* Title color */
   font-size: 28px; /* Slightly larger title */
 }
 .form-group {
@@ -134,7 +114,6 @@ h2 {
   position: relative;
   margin-top: 10px;
 }
-
 input[type='text'],
 input[type='password'] {
   width: 100%;
@@ -145,11 +124,10 @@ input[type='password'] {
   box-sizing: border-box;
   transition: border-color 0.3s; /* Smooth transition on focus */
 }
-
 input[type='text']:focus,
 input[type='password']:focus {
   outline: none;
-  border-color: #4caf50; /* Focus border color */
+  border-color: #4CAF50; /* Focus border color */
 }
 label {
   position: absolute;
@@ -160,15 +138,14 @@ label {
   pointer-events: none;
   transition: 0.3s ease all;
 }
-
 input[type='text']:focus + label,
 input[type='password']:focus + label,
 label.active {
   top: -10px;
   left: 5px;
   font-size: 12px;
-  color: #4caf50; /* Active label color */
-  background-color: #ffffff; /* Match background */
+  color: #4CAF50; /* Active label color */
+  background-color: #FFFFFF; /* Match background */
   padding: 0 5px;
 }
 .button-container {
@@ -178,7 +155,7 @@ label.active {
   margin-top: 15px;
 }
 .login-btn {
-  background-color: #4db6ac; /* Minty button background */
+  background-color: #4DB6AC; /* Minty button background */
   color: white; /* Button text color */
   border: none; /* No border */
   padding: 12px 20px; /* Adjusted button padding */
@@ -188,7 +165,7 @@ label.active {
   cursor: pointer; /* Cursor pointer for button */
 }
 .login-btn:hover {
-  background-color: #399d91; /* Darker mint color on hover */
+  background-color: #399D91; /* Darker mint color on hover */
 }
 .link-container {
   text-align: right; /* Align the link to the right */
@@ -196,11 +173,11 @@ label.active {
 }
 .link {
   font-size: 12px; /* Smaller font size for the link */
-  color: #4db6ac; /* Minty link color */
+  color: #4DB6AC; /* Minty link color */
   text-decoration: underline; /* Underline the link */
 }
 .link:hover {
-  color: #399d91; /* Darker link color on hover */
+  color: #399D91; /* Darker link color on hover */
 }
 .error-message {
   color: red;

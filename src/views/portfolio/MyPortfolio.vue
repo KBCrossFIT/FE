@@ -2,26 +2,30 @@
   <div class="MyPortfolio-container">
     <h1>내 포트폴리오 리스트 페이지</h1>
     <div class="MyPortfolio-DataTable">
-      <v-data-table
-        v-model="selected"
-        :items="filteredPortfolios"
-        item-value="PortfolioName"
-        show-select
-        :headers="headers"
-        item-key="id"
-      >
-        <!-- 전체 선택 체크박스 -->
-        <template v-slot:header>
+      <!-- 기본 HTML 테이블로 대체 -->
+      <table>
+        <thead>
           <tr>
-            <v-checkbox v-model="allSelected" @change="toggleSelectAll" />
+            <th>
+              <input
+                type="checkbox"
+                v-model="allSelected"
+                @change="toggleSelectAll"
+              />
+            </th>
+            <th>포트폴리오 이름</th>
+            <th>투자 총액</th>
+            <th>위험도</th>
           </tr>
-        </template>
-
-        <!-- 데이터 항목 -->
-        <template v-slot:item="{ item }">
-          <tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in portfolioList" :key="item.id">
             <td>
-              <v-checkbox v-model="selected" :value="item.PortfolioName" />
+              <input
+                type="checkbox"
+                v-model="selected"
+                :value="item.PortfolioName"
+              />
             </td>
             <td class="NameCursor" @click="goToPortfolioDetail(item.id)">
               {{ item.PortfolioName }}
@@ -29,88 +33,107 @@
             <td>{{ item.ExpectedReturn }}%</td>
             <td>{{ item.RiskLevel }}</td>
           </tr>
-        </template>
-      </v-data-table>
+        </tbody>
+      </table>
     </div>
     <div class="MyPortfolio-btn">
-      <v-btn @click="goToCreatePortfolio">포트폴리오 만들러 가기</v-btn>
-      <v-btn @click="deleteSelectedPortfolios">삭제하기</v-btn>
+      <button @click="goToCreatePortfolio">포트폴리오 만들러 가기</button>
+      <button @click="deleteSelectedPortfolios">삭제하기</button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'; // Axios를 import합니다.
+// API 함수들 import
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router'; // 라우터 추가
+import {
+  fetchPortfolioList,
+  getPortfolioDetail,
+  postPortfolio,
+  deletePortfolio,
+} from '@/api/portfolioApi'; // 기존 API 호출 함수
 
 export default {
-  data() {
-    return {
-      selected: [], // 삭제관련
-      allSelected: false, // 체크박스
-      portfolios: [
-        {
-          id: 1,
-          RiskLevel: '포트폴리오 1',
-          ExpectedReturn: 10,
-          dd: 10,
-        },
-        {
-          id: 2,
-          RiskLevel: '포트폴리오 2',
-          ExpectedReturn: 15,
-        },
-        {
-          id: 3,
-          RiskLevel: '포트폴리오 3',
-          ExpectedReturn: 20,
-        },
-      ],
-    };
-  },
-  computed: {
-    filteredPortfolios() {
-      // 필터링된 포트폴리오 데이터 (필요 시 수정 가능)
-      return this.portfolios;
-    },
-  },
-  methods: {
-    fetchPortfolio() {
-      axios
-        .get('/api/portfolio/1') // 1. '/api/portfolio/1'로 GET 요청을 보냅니다.
-        .then((response) => {
-          this.portfolio = response.data; // 2. 응답 데이터를 this.portfolio에 저장합니다.
-        })
-        .catch((error) => {
-          console.error(error); // 3. 오류를 콘솔에 출력합니다.
-        });
-    },
+  setup() {
+    const router = useRouter(); // useRouter로 라우터 접근
 
-    toggleSelectAll() {
-      if (this.allSelected) {
-        // 전체 선택 체크박스가 켜져 있을 때 모두 선택
-        this.selected = this.portfolios.map(
+    // 상태
+    const portfolioList = ref([]); // 포트폴리오 목록
+    const selected = ref([]); // 선택된 포트폴리오
+    const allSelected = ref(false); // 전체 선택 체크박스 상태
+
+    // 포트폴리오 데이터 가져오기 (API 호출)
+    const fetchPortfolioListData = async () => {
+      try {
+        const data = await fetchPortfolioList(); // fetchPortfolioList API 호출
+        portfolioList.value = data;
+      } catch (error) {
+        console.error('Error fetching portfolio list:', error);
+      }
+      console.log(fetchPortfolioListData);
+    };
+
+    // 포트폴리오 삭제 (API 호출)
+    const deletePortfolioData = async (portfolioId) => {
+      try {
+        await deletePortfolio(portfolioId); // deletePortfolio API 호출
+        portfolioList.value = portfolioList.value.filter(
+          (portfolio) => portfolio.id !== portfolioId
+        );
+      } catch (error) {
+        console.error('Error deleting portfolio:', error);
+      }
+    };
+
+    // 전체 선택 처리
+    const toggleSelectAll = () => {
+      if (allSelected.value) {
+        selected.value = portfolioList.value.map(
           (portfolio) => portfolio.PortfolioName
         );
       } else {
-        // 전체 선택 체크박스가 꺼져 있을 때 선택 해제
-        this.selected = [];
+        selected.value = [];
       }
-    },
-    goToPortfolioDetail(id) {
-      // 포트폴리오 세부 사항으로 이동
-      this.$router.push({ name: 'PortfolioDetail', params: { id } });
-    },
-    goToCreatePortfolio() {
-      // 포트폴리오 생성 페이지로 이동
-      this.$router.push({ name: 'CreatePortfolio' });
-    },
-    deleteSelectedPortfolios() {
-      // 선택된 포트폴리오 삭제
-      this.portfolios = this.portfolios.filter(
-        (portfolio) => !this.selected.includes(portfolio.PortfolioName)
-      );
-      this.selected = []; // 선택 초기화
-    },
+    };
+
+    // 포트폴리오 상세 페이지로 이동
+    const goToPortfolioDetail = (id) => {
+      router.push({ name: 'PortfolioDetail', params: { id } }); // this.$router 대신 router.push 사용
+    };
+
+    // 포트폴리오 생성 페이지로 이동
+    const goToCreatePortfolio = () => {
+      router.push({ name: 'CreatePortfolio' }); // this.$router 대신 router.push 사용
+    };
+
+    // 선택된 포트폴리오 삭제
+    const deleteSelectedPortfolios = () => {
+      selected.value.forEach((portfolioName) => {
+        const portfolio = portfolioList.value.find(
+          (p) => p.PortfolioName === portfolioName
+        );
+        if (portfolio) {
+          deletePortfolioData(portfolio.id); // API 호출로 삭제 처리
+        }
+      });
+      selected.value = [];
+    };
+
+    // 컴포넌트가 마운트될 때 포트폴리오 리스트를 불러옴
+    onMounted(() => {
+      fetchPortfolioListData(); // 포트폴리오 목록을 불러오는 함수 호출
+    });
+
+    return {
+      selected,
+      allSelected,
+      portfolioList,
+      toggleSelectAll,
+      goToPortfolioDetail,
+      goToCreatePortfolio,
+      deleteSelectedPortfolios,
+    };
   },
 };
 </script>
@@ -122,6 +145,20 @@ export default {
 
 .MyPortfolio-DataTable {
   margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.MyPortfolio-DataTable table {
+  width: 100%;
+  border: 1px solid #ccc;
+}
+
+.MyPortfolio-DataTable th,
+.MyPortfolio-DataTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
 }
 
 .MyPortfolio-btn {
@@ -136,9 +173,8 @@ export default {
   color: blue;
 }
 
-/* 헤더 텍스트 색상 */
 .header-text {
-  color: black; /* 검정색으로 설정 */
-  font-weight: bold; /* 필요에 따라 굵게 설정 */
+  color: black;
+  font-weight: bold;
 }
 </style>
