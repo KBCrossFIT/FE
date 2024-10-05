@@ -1,9 +1,11 @@
 <template>
-    <div id="app">
-        <DefaultLayout>
-            <router-view />
-        </DefaultLayout>
-    </div>
+  <v-app>
+    <DefaultLayout>
+      <v-main>
+        <router-view />
+      </v-main>
+    </DefaultLayout>
+  </v-app>
 </template>
 
 <script>
@@ -18,15 +20,13 @@ export default {
         // Provide the cart to child components
         provide('cart', cart);
 
-        return {
-            cart,
-        };
-    },
+    return {
+      cart,
+    };
+  },
 };
 </script>
 
 <style>
 /* Add your styles here */
 </style>
-
-<!-- 커밋 컨벤션 -->

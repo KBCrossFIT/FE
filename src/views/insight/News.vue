@@ -4,26 +4,17 @@
         <div id="left">
             <v-card class="pa-4" elevation="2" style="height: 100%">
                 <v-card-text>
-                    <v-list>
-                        <v-list-item @click="navigateTo('/Youtube')">
-                            <v-list-item-content>
-                                <v-list-item-title>금융 유튜브</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item @click="navigateTo('/Influencer')">
-                            <v-list-item-content>
-                                <v-list-item-title>인플루언서</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item @click="navigateTo('/News')">
-                            <v-list-item-content>
-                                <v-list-item-title>뉴스</v-list-item-title>
-                            </v-list-item-content>
-                        </v-list-item>
-                    </v-list>
+                    <div class="list-container">
+                        <span @click="navigateTo('/Youtube')" class="list-item"> 금융 유튜브 </span>
+                        <span @click="navigateTo('/Influencer')" class="list-item">
+                            인플루언서
+                        </span>
+                        <span @click="navigateTo('/News')" class="list-item"> 뉴스 </span>
+                    </div>
                 </v-card-text>
             </v-card>
         </div>
+
         <!-- 상품명 검색, 제목 -->
         <div id="right">
             <v-container>
@@ -40,28 +31,27 @@
                         />
                     </div>
                 </div>
-
-                <!-- 메인 -->
-                <Youtube_title />
-
-                <!-- 하단 페이지 넘기는 바  -->
+                <!-- 상품명 검색, 제목 -->
+                <div id="right">
+                    <v-container>
+                        <div id="seartext" class="search-container">
+                            <!-- 메인 -->
+                            <News_title />
+                        </div>
+                    </v-container>
+                </div>
             </v-container>
-            <div id="Pagination">
-                <v-container>
-                    <v-pagination v-model="page" :length="5" @input="onPageChange"></v-pagination>
-                </v-container>
-            </div>
         </div>
     </div>
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import News_title from './News_title.vue';
 
 export default {
-    name: 'Youtube',
+    name: 'News',
     components: {
-        Youtube_title,
+        News_title,
     },
     data() {
         return {
@@ -73,9 +63,14 @@ export default {
         navigateTo(path) {
             this.$router.push(path);
         },
-        onPageChange(newPage) {
-            this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-            console.log(`Current page: ${newPage}`);
+        methods: {
+            navigateTo(path) {
+                this.$router.push(path);
+            },
+            onPageChange(newPage) {
+                this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
+                console.log(`Current page: ${newPage}`);
+            },
         },
     },
 };
@@ -128,7 +123,7 @@ h1.sixth:after {
 }
 
 h1.sixth:after {
-    content: ' 유튜브';
+    content: ' 뉴스';
 }
 
 h1.sixth:hover:before {
@@ -137,5 +132,22 @@ h1.sixth:hover:before {
 
 h1.sixth:hover:after {
     transform: translateX(5px);
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.list-item {
+    display: block;
+    padding: 10px 0;
+    cursor: pointer;
+    color: #3f51b5; /* Vuetify 기본 색상 중 하나 */
+    font-size: 16px;
+}
+
+.list-item:hover {
+    background-color: #f0f0f0;
 }
 </style>
