@@ -136,7 +136,6 @@ import { registerUser } from '@/api/memberApi'; // Import your API function
 
 export default {
   components: {
-    Modal,
     ModalTestStart,
     ModalTest,
     ModalTestEnd,
