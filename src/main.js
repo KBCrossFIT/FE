@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
+import store from './store';
 import vuetify from './plugins/vuetify';
 import DefaultLayout from './components/DefaultLayout.vue';
 
@@ -8,15 +9,62 @@ import DefaultLayout from './components/DefaultLayout.vue';
 import '@mdi/font/css/materialdesignicons.css'; // MDI 아이콘
 import '@fortawesome/fontawesome-free/css/all.min.css'; // FontAwesome 아이콘
 
-// 앱 인스턴스 생성
+// Import vue3-cookies
+import VueCookies from 'vue3-cookies';
+
+// Import axios and create an axios instance
+import axios from 'axios';
+
+// Create an axios instance
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:8080/api', // Your API base URL
+});
+
+// Request interceptor
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = VueCookies.get('Authorization'); // Get the token from cookies
+    if (token) {
+      config.headers['Authorization'] = token; // Set the Authorization header
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Handle specific errors here, like token expiration
+    if (error.response && error.response.status === 401) {
+      // Redirect to login or handle token refresh logic
+      window.location.href = '/login'; // Or use this.$router.push('/login');
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Create the Vue app instance
 const app = createApp(App);
 
-// 글로벌 컴포넌트 등록
+// Register global components
 app.component('DefaultLayout', DefaultLayout);
 
-// Vue 라우터 및 Vuetify 플러그인 사용
+// Use Vue Router, Vuex, and Vuetify plugins
 app.use(router);
+app.use(store);
 app.use(vuetify);
 
-// 애플리케이션을 #app 엘리먼트에 마운트
+// Use vue3-cookies
+app.use(VueCookies);
+
+// Make axios instance available globally
+app.config.globalProperties.$axios = axiosInstance;
+
+// Mount the app to the #app element
 app.mount('#app');

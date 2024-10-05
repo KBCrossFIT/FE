@@ -240,6 +240,34 @@ export default {
   },
 
   computed: {
+    tableHeaders() {
+    switch (this.selectedTab) {
+      case '예금':
+      case '적금':
+        return [
+          { text: '상품명', value: 'finPrdtNm' },
+          { text: '금융회사명', value: 'korCoNm' },
+          { text: '기본금리', value: 'intrRate' },
+          { text: '최고금리', value: 'intrRate2' },
+        ];
+      case '채권':
+        return [
+          { text: 'ISIN 코드명', value: 'isinCdNm' },
+          { text: '채권발행일자', value: 'bondIssuDt' },
+          { text: '채권금리', value: 'bondSrfcInrt' },
+        ];
+      case '펀드':
+        return [
+          { text: '상품명', value: 'productNm' },
+          { text: '회사명', value: 'companyNm' },
+          { text: '펀드유형', value: 'fundType' },
+          { text: '위험도', value: 'riskLevel' },
+          { text: '1개월 수익률', value: 'yield1' },
+        ];
+      default:
+        return [];
+    }
+  },
     displayedProducts() {
       let data = {};
       if (this.searchMode) {

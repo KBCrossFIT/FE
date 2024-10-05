@@ -252,9 +252,10 @@ export default {
 
         // 비교 리스트에서 상품을 제거하는 함수
         const removeFromCompare = (index) => {
+            const removedProduct = compare.value[index]; // 제거 상품 이름 저장.
             compare.value.splice(index, 1);
-            warningMessage.value = '';
-            confirmMessage.value = `비교 목록에서 상품이 제거되었습니다.`;
+            confirmMessage.value = '';
+            warningMessage.value = `${removedProduct.name}이(가) 비교 목록에서 제거되었습니다.`;
             // 비교 리스트가 비었으면 상품 타입도 초기화
             if (compare.value.length === 0) {
                 currentProductType.value = null;

@@ -21,14 +21,16 @@
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
       <div class="link-container">
-        <a href="#" class="link">비밀번호를 잊으셨나요?</a>
+        <router-link to="/find" class="link">ID/비밀번호를 잊으셨나요?</router-link>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
+
 export default {
   data() {
     return {
@@ -60,9 +62,9 @@ export default {
           picture: response.data.responseData.data.picture, // Assuming your response has a picture field
         };
         const authHeader =
-            response.headers['authorization'] || response.headers['Authorization'];
+          response.headers['authorization'] || response.headers['Authorization'];
         const refreshToken =
-            response.headers['refresh-token'] || response.headers['Refresh-Token'];
+          response.headers['refresh-token'] || response.headers['Refresh-Token'];
         if (authHeader && refreshToken) {
           cookies.set('Authorization', authHeader, { secure: true, sameSite: 'Lax' });
           cookies.set('Refresh-Token', refreshToken, { secure: true, sameSite: 'Lax' });

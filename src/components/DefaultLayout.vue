@@ -6,28 +6,43 @@ import SideBar from './Sidebar.vue';
 
 <template>
     <div class="container">
-        <SideBar />
         <div class="main">
-            <Header />
-            <div class="content my-5 px-3">
-                <slot></slot>
+            <div class="exceptSide">
+                <Header />
+                <div class="content my-5 px-3">
+                    <slot></slot>
+                </div>
+                <Footer />
             </div>
-            <Footer />
+            <SideBar />
         </div>
     </div>
 </template>
 
 <style scoped>
-.main {
-    margin-right: 60px;
+.container {
     display: flex;
-    flex-direction: column; /* Arrange children in a column */
-    margin-right: 60px;
-    min-height: 100vh; /* Ensure it takes at least full viewport height */
+    justify-content: center; /* 가로 중앙 정렬 */
+
+    height: 100vh;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 1300px; /* 원하는 고정 너비로 설정 */
+    padding: 0px;
 }
 
 .content {
     flex: 1;
     padding: 20px;
+}
+
+#sidebar {
+}
+
+.exceptSide {
 }
 </style>

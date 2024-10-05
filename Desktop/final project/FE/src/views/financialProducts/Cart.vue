@@ -7,36 +7,29 @@
             </v-card-title>
             <v-divider></v-divider>
             <v-card-text>
-                <!-- Combined list of items -->
                 <div v-for="item in paginatedCart" :key="item.id" class="cart-item">
                     <div class="cart-row">
                         <h3 class="cart-itemId">{{ item.id }}</h3>
-                        <!-- 장바구니 상품명 클릭시 해당 상품 상세로 이동 -->
-                        <h3
-                            class="cart-itemName"
-                            @click="gotoProductDesc(item.ProductType, item.id)"
-                        >
+                        <h3 class="cart-itemName" @click="gotoProductDesc(item.productType, item.id)">
                             {{ item.name }}
                         </h3>
                         <div class="item-details">
-                            <p v-if="item.ProductType === 'a' || item.ProductType === 'b'">
+                            <p v-if="item.productType === 'a' || item.productType === 'b'">
                                 기본금리: {{ item.baseRate }} / 최고금리: {{ item.maxRate }}
                             </p>
-                            <p v-if="item.ProductType === 'c'">
+                            <p v-if="item.productType === 'c'">
                                 {{ item.fundType }} - 수익률: {{ item.yield }}
                             </p>
-                            <p v-if="item.ProductType === 'd'">
+                            <p v-if="item.productType === 'd'">
                                 기본금리: {{ item.baseRate }} / 최고금리: {{ item.maxRate }}
                             </p>
                         </div>
-                        <v-btn class="cart-trashcanBtn" @click="removeFromCart(item)" icon>
+                        <v-btn class="cart-trashcanBtn" @click="removeFromCart(item.id)" icon>
                             <v-icon>mdi-delete</v-icon>
                         </v-btn>
                     </div>
                     <v-divider></v-divider>
                 </div>
-
-                <!-- Pagination -->
                 <v-pagination
                     v-model="currentPage"
                     :length="totalPages"
@@ -46,57 +39,23 @@
 
             <div class="Cart-Btn-Set">
                 <v-btn class="cart-Btn-Gotocompare" @click="goToCompare">상품 비교해보기</v-btn>
-                <v-btn class="cart-Btn-GotoPortfolio" @click="goToMakePortfolio"
-                    >포트폴리오 구성하기</v-btn
-                >
+                <v-btn class="cart-Btn-GotoPortfolio" @click="goToMakePortfolio">포트폴리오 구성하기</v-btn>
             </div>
         </v-card>
     </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router'; // Import useRouter
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import CartService from '@/views/cart/CartItem.vue'; // Import the service
 
 export default {
     name: 'Cart',
     setup() {
-        const router = useRouter(); // Initialize the router
-        const cart = ref([
-            {
-                id: 1,
-                ProductType: 'a',
-                bank: '우리은행',
-                name: '정기예금 A',
-                baseRate: '2.5%',
-                maxRate: '3.0%',
-            },
-            {
-                id: 2,
-                ProductType: 'b',
-                bank: '신한은행',
-                name: '정기적금 B',
-                baseRate: '3.0%',
-                maxRate: '3.5%',
-            },
-            {
-                id: 3,
-                ProductType: 'c',
-                fundType: '주식형',
-                name: '펀드 C',
-                yield: '5.0%',
-            },
-            {
-                id: 5,
-                ProductType: 'd',
-                bank: 'NH농협은행',
-                name: '채권 E',
-                baseRate: '6.0%',
-                maxRate: '7.0%',
-            },
-        ]);
-        const selectedItems = ref([]);
-        const itemsPerPage = 5; // Set the number of items per page
+        const router = useRouter();
+        const cart = ref([]);
+        const itemsPerPage = 5;
         const currentPage = ref(1);
 
         const totalPages = computed(() => Math.ceil(cart.value.length / itemsPerPage));
@@ -106,10 +65,22 @@ export default {
             return cart.value.slice(start, start + itemsPerPage);
         });
 
-        const removeFromCart = (item) => {
-            const index = cart.value.indexOf(item);
-            if (index > -1) {
-                cart.value.splice(index, 1);
+        const fetchCartItems = async () => {
+            try {
+                const response = await CartService.getCartItems();
+                cart.value = response.data; // Assuming response.data contains the cart items
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            }
+        };
+
+        const removeFromCart = async (itemId) => {
+            try {
+                await CartService.removeCartItem(itemId);
+                // Re-fetch the cart items after removing
+                await fetchCartItems();
+            } catch (error) {
+                console.error('Error removing item from cart:', error);
             }
         };
 
@@ -118,9 +89,8 @@ export default {
         };
 
         const gotoProductDesc = (productType, id) => {
-            // 상품 상세 페이지로 이동
             router.push({
-                name: 'ProductDetail', // 라우터 이름 사용
+                name: 'ProductDetail',
                 params: { id: id },
                 query: { productType: productType },
             });
@@ -134,10 +104,12 @@ export default {
             router.push('/make-portfolio');
         };
 
+        // Fetch cart items when the component is mounted
+        onMounted(fetchCartItems);
+
         return {
             cart,
             removeFromCart,
-            selectedItems,
             currentPage,
             totalPages,
             paginatedCart,
@@ -151,68 +123,5 @@ export default {
 </script>
 
 <style scoped>
-.Cart-container {
-    padding: 20px;
-}
-
-.empty-cart {
-    text-align: center;
-    margin: 20px 0;
-    color: #ff5722;
-    font-weight: bold;
-}
-
-.cart-item {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-}
-
-.cart-row {
-    display: flex;
-    justify-content: space-between; /* Spread items across the width */
-    align-items: center;
-    width: 100%;
-}
-
-.cart-itemId {
-    flex: 0 0 auto; /* Fixed size for ID */
-    width: 60px; /* Set width for ID */
-    text-align: left; /* Align ID to the left */
-}
-
-.cart-itemName {
-    flex: 1; /* Allow item name to take up available space */
-    text-align: left; /* Align name to the left */
-}
-
-.cart-itemName:hover {
-    cursor: pointer;
-    text-decoration: underline;
-    color: blue;
-}
-
-.item-details {
-    flex: 2; /* Allow details to take more space */
-    margin-left: 20px; /* Adjust spacing between name and details */
-}
-
-.cart-trashcanBtn {
-    flex: 0 0 auto; /* Fixed size for delete button */
-    margin-left: auto; /* Push the button to the right */
-}
-
-.cart-checkBox {
-    display: flex;
-    align-items: center;
-}
-
-.cart-removeBtn {
-    width: 100px;
-    height: 68px;
-    background-color: #17de74;
-    color: azure;
-}
-
-/* Pagination styling can go here if needed */
+/* Your existing styles */
 </style>

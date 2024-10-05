@@ -9,13 +9,14 @@ import MyPage from '@/views/account/profile/MyPage.vue';
 import MyPageEdit from '@/views/account/profile/MyPageEdit.vue';
 import ChangePW from '@/views/account/profile/ChangePW.vue';
 import DeleteAccount from '@/views/account/profile/DeleteAccount.vue';
-import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue'; // 금융 상품 페이지
-import ProductDesc from '@/views/financialProducts/ProductDesc.vue'; // 개별 상품 상세 페이지
+import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue';
+import ProductDesc from '@/views/financialProducts/ProductDesc.vue';
 import Cart from '@/views/financialProducts/Cart.vue';
 import RecentlyViewed from '@/views/financialProducts/RecentlyViewed.vue';
 
 // insight
 import Influencer from '@/views/insight/Influencer.vue';
+import InfluencerDesc from '@/views/insight/InfluencerDesc.vue'; // Import the InfluencerDesc component
 import News from '@/views/insight/News.vue';
 import Youtube from '@/views/insight/Youtube.vue';
 
@@ -40,10 +41,8 @@ import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
 import CartItem from '@/views/cart/CartItem.vue';
 import recentViewed from "@/views/recentView/recentView.vue";
-import recentView from "@/views/recentView/recentView.vue";
 import portfolioData from "@/views/portfolio/PortfolioData.vue";
 import portfolioEx from "@/views/portfolio/PortfolioEx.vue";
-
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -67,6 +66,11 @@ const routes = [
     { path: '/cart', name: 'Cart', component: Cart },
     { path: '/recently-viewed', name: 'RecentlyViewed', component: RecentlyViewed },
     { path: '/influencer', name: 'Influencer', component: Influencer },
+    {
+        path: '/influencer/:name', // Updated route for InfluencerDesc
+        name: 'InfluencerDesc',
+        component: InfluencerDesc,
+    },
     { path: '/news', name: 'News', component: News },
     { path: '/youtube', name: 'Youtube', component: Youtube },
     { path: '/investment-test', name: 'InvestmentTest', component: InvestmentTest },
@@ -85,7 +89,7 @@ const routes = [
     { path: '/stocks', name: 'StockListView', component: StockList },
     { path: '/stock-search', name: 'StockSearch', component: StockSearch },
     { path: '/cart-item', name: 'CartItem', component: CartItem },
-    { path: '/recent-view', name: 'RecentView', component: recentView },
+    { path: '/recent-view', name: 'RecentView', component: recentViewed },
     { path: '/portfolio-data', name: 'portfolioData', component: portfolioData },
     { path: '/portfolio-ex', name: 'portfolioEx', component: portfolioEx },
 ];

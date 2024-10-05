@@ -3,7 +3,7 @@
         <v-container>
             <v-row>
                 <v-col v-for="(post, index) in paginatedPosts" :key="index" cols="12" md="4">
-                    <v-card class="influencer-card my-3">
+                    <v-card class="influencer-card my-3" @click="navigateToInfluencerDesc(post.name)">
                         <v-img :src="post.image" aspect-ratio="1.5" class="image-box"></v-img>
                         <v-card-title class="card-title">
                             <h3 class="post-name">{{ post.name }}</h3>
@@ -33,12 +33,15 @@
 
 <script>
 import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router'; // Import useRouter
 
 export default {
     name: 'Influencer_title',
     setup() {
         const page = ref(1);
         const pageSize = 9;
+
+        const router = useRouter(); // Use Vue Router instance
 
         // posts 데이터 정의
         const posts = ref([
@@ -51,77 +54,14 @@ export default {
             },
             {
                 image: '', // 이미지 경로 비워둠
-                name: '김영32432432희',
+                name: '김영희',
                 field: '주식 투자자',
                 summary: '주식 투자에서의 성공 노하우를 공유합니다.',
                 date: '2024-09-27',
             },
             {
                 image: '', // 이미지 경로 비워둠
-                name: '이철435수',
-                field: '금융 분석가',
-                summary: '금융 시장의 최근 동향을 분석합니다.',
-                date: '2024-09-26',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '홍32432길동',
-                field: '재테크 전문가',
-                summary: '최신 재테크 트렌드를 소개합니다.',
-                date: '2024-09-28',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '김영12희',
-                field: '주식 투자자',
-                summary: '주식 투자에서의 성공 노하우를 공유합니다.',
-                date: '2024-09-27',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '이철33344수',
-                field: '금융 분석가',
-                summary: '금융 시장의 최근 동향을 분석합니다.',
-                date: '2024-09-26',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '홍길1234동',
-                field: '재테크 전문가',
-                summary: '최신 재테크 트렌드를 소개합니다.',
-                date: '2024-09-28',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '김21영희',
-                field: '주식 투자자',
-                summary: '주식 투자에서의 성공 노하우를 공유합니다.',
-                date: '2024-09-27',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '이철23수',
-                field: '금융 분석가',
-                summary: '금융 시장의 최근 동향을 분석합니다.',
-                date: '2024-09-26',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '홍길동3',
-                field: '재테크 전문가',
-                summary: '최신 재테크 트렌드를 소개합니다.',
-                date: '2024-09-28',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '김영희2',
-                field: '주식 투자자',
-                summary: '주식 투자에서의 성공 노하우를 공유합니다.',
-                date: '2024-09-27',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '이철421수',
+                name: '이철수',
                 field: '금융 분석가',
                 summary: '금융 시장의 최근 동향을 분석합니다.',
                 date: '2024-09-26',
@@ -146,7 +86,19 @@ export default {
             page.value = newPage;
         };
 
-        return { paginatedPosts, totalPages, page, onPageChange };
+        // Method to navigate to Influencer Description page
+        const navigateToInfluencerDesc = (influencerName) => {
+            // Navigates to '/influencer/:name'
+            router.push({ name: 'InfluencerDesc', params: { name: influencerName } });
+        };
+
+        return {
+            paginatedPosts,
+            totalPages,
+            page,
+            onPageChange,
+            navigateToInfluencerDesc,
+        };
     },
 };
 </script>
