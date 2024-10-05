@@ -139,7 +139,6 @@
 <script>
 import { ref, computed } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
 
 export default {
     name: 'ProductComparison',

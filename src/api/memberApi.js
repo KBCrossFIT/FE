@@ -46,3 +46,14 @@ export async function loginUser(credentials) {
     throw error; // Maintain error throwing for further handling
   }
 }
+
+// 비밀번호 변경 API
+export async function updatePassword(userId, newPassword) {
+    try {
+        const response = await userApi.put(`/password/update`, { userId, newPassword });
+        return response.data; // Return response data upon successful password update
+    } catch (error) {
+        console.error('Error updating password:', error);
+        throw error; // Throw error for further handling
+    }
+}
