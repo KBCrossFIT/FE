@@ -3,7 +3,7 @@
  *
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
-// dddddd
+// ddddddddd
 // Plugins
 import { registerPlugins } from "@/plugins";
 
