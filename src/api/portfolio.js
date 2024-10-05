@@ -27,9 +27,9 @@ export async function getPortfolioDetail(portfolioId) {
     }
 }
 
-export async function postPortfolio(portfolioReqDto) {
+export async function postPortfolio(portfolio) {
     try {
-        const response = await instance.post('/portfolio', portfolioReqDto);
+        const response = await instance.post('/portfolio', portfolio);
         return response.data;
     } catch (error) {
         console.error('Error posting portfolio:', error);

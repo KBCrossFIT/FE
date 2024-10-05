@@ -38,11 +38,10 @@ import SavingListView from '@/views/financialProducts/SavingListView.vue';
 import FundListView from '@/views/financialProducts/FundListView.vue';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
-import CartItem from '@/views/cart/CartItem.vue';
-import recentViewed from "@/views/recentView/recentView.vue";
 import recentView from "@/views/recentView/recentView.vue";
 import portfolioData from "@/views/portfolio/PortfolioData.vue";
 import portfolioEx from "@/views/portfolio/PortfolioEx.vue";
+import cartEx from "@/views/cart/CartEx.vue";
 
 
 const routes = [
@@ -84,10 +83,10 @@ const routes = [
     { path: '/funds', name: 'FundListView', component: FundListView },
     { path: '/stocks', name: 'StockListView', component: StockList },
     { path: '/stock-search', name: 'StockSearch', component: StockSearch },
-    { path: '/cart-item', name: 'CartItem', component: CartItem },
     { path: '/recent-view', name: 'RecentView', component: recentView },
-    { path: '/portfolio-data', name: 'portfolioData', component: portfolioData },
-    { path: '/portfolio-ex', name: 'portfolioEx', component: portfolioEx },
+    { path: '/portfolio-data', name: 'PortfolioData', component: portfolioData },
+    { path: '/portfolio-ex', name: 'PortfolioEx', component: portfolioEx },
+    { path: '/cart-ex', name: 'CartEx', component: cartEx },
 ];
 
 const router = createRouter({

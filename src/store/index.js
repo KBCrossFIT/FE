@@ -4,6 +4,8 @@ import fundModule from "./modules/fund";
 import savingModule from "./modules/saving";
 import depositModule from "./modules/deposit";
 import portfolioModule from "./modules/portfolio";
+import cartModule from "./modules/cart";
+import recentViewModule from "@/store/modules/recentView.js";
 import personaModule from "./modules/persona";
 
 const store = createStore({
@@ -13,6 +15,8 @@ const store = createStore({
     saving: savingModule,
     deposit: depositModule,
     portfolio: portfolioModule,
+    cart: cartModule,
+    recentView: recentViewModule,
     persona: personaModule,
   },
 });

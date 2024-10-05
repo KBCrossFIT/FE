@@ -29,6 +29,7 @@
 <script>
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
+import {fetchCartList} from "@/api/cartApi.js";
 export default {
   data() {
     return {
@@ -69,6 +70,8 @@ export default {
           localStorage.setItem('user', JSON.stringify(user));
           this.$emit('login', user);
           this.$router.push('/');
+
+          await fetchCartList();
         } else {
           throw new Error('Missing authorization or refresh token');
         }
