@@ -42,6 +42,7 @@ import CartItem from '@/views/cart/CartItem.vue';
 import recentViewed from "@/views/recentView/recentView.vue";
 import recentView from "@/views/recentView/recentView.vue";
 import portfolioData from "@/views/portfolio/PortfolioData.vue";
+import portfolioEx from "@/views/portfolio/PortfolioEx.vue";
 
 
 const routes = [
@@ -86,6 +87,7 @@ const routes = [
     { path: '/cart-item', name: 'CartItem', component: CartItem },
     { path: '/recent-view', name: 'RecentView', component: recentView },
     { path: '/portfolio-data', name: 'portfolioData', component: portfolioData },
+    { path: '/portfolio-ex', name: 'portfolioEx', component: portfolioEx },
 ];
 
 const router = createRouter({

@@ -34,9 +34,9 @@
 </template>
 
 <script>
-import image1 from '@/assets/img/third.png';
-import image2 from '@/assets/img/first.jpg';
-import image3 from '@/assets/img/second.jpg';
+import image1 from '@/assets/img/1third_2.png';
+import image2 from '@/assets/img/1first.jpg';
+import image3 from '@/assets/img/1second.jpg';
 
 export default {
   data() {
@@ -71,6 +71,8 @@ export default {
   position: relative;
   height: 400px;
   overflow: hidden;
+  margin-bottom: 0px;
+  border-radius: 15px; /* 원하는 둥근 정도를 설정 */
 }
 
 .carousel-images {
@@ -95,24 +97,26 @@ export default {
 
 .carousel-arrow {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0; /* 위쪽에 고정 */
+  bottom: 0; /* 아래쪽에 고정 */
+  width: 300px; /* 필요에 따라 너비를 조정 */
   font-size: 30px;
-  color: white;
+  color: transparent;
   cursor: pointer;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
+  display: flex;
+  align-items: center; /* 수직으로 중앙 정렬 */
+  justify-content: center; /* 수평으로 중앙 정렬 */
   user-select: none;
   z-index: 10;
 }
 
 .carousel-arrow.left {
-  left: 20px;
+  left: 0; /* 왼쪽에 고정 */
 }
 
 .carousel-arrow.right {
-  right: 20px;
+  right: 0; /* 오른쪽에 고정 */
 }
 
 .carousel-nav {
