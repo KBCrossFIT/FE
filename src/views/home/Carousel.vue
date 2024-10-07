@@ -90,7 +90,21 @@ export default {
     border-radius: 15px; /* 원하는 둥근 정도를 설정 */
 }
 
+.carousel-images {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-container {
+  display: flex;
+  transition: transform 0.5s ease-in-out; /* Smooth slide effect */
+  height: 100%;
+}
+
 .carousel-images img {
+
     width: 100%;
     height: 100%;
     object-fit: cover;

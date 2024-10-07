@@ -132,16 +132,10 @@
 </template>
 
 <script>
-import Modal from '@/components/Modal/Modal.vue';
-import ModalTestStart from '@/components/Modal/ModalTestStart.vue';
-import ModalTest from '@/components/Modal/ModalTest.vue';
-import ModalTestEnd from '@/components/Modal/ModalTestEnd.vue';
-import { markRaw } from 'vue';
 import { registerUser } from '@/api/memberApi'; // Import your API function
 
 export default {
   components: {
-    Modal,
     ModalTestStart,
     ModalTest,
     ModalTestEnd,
