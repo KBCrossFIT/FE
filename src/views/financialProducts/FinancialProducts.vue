@@ -108,7 +108,7 @@
                         <td>
                             <v-btn
                                 icon
-                                @click="addToCart(product.productId)"
+                                @click="toggleCartAndIncreaseHit(product.productId)"
                                 :style="{
                                     backgroundColor: cart.includes(product.productId)
                                         ? '#4caf50'
@@ -174,6 +174,7 @@
 import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter, useRoute } from 'vue-router';
+import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import { fetchDepositProducts, fetchSavingProducts } from '@/api/financeApi.js';
 import StockList from '@/views/stock/StockList.vue'; // StockList 컴포넌트 임포트
 
@@ -363,11 +364,33 @@ export default {
             });
         };
 
-        const addToCart = (productId) => {
-            if (!cart.value.includes(productId)) {
+        // 장바구니 기능
+        const toggleCartAndIncreaseHit = async (productId) => {
+          
+          // 장바구니 토글
+          const index = cart.value.indexOf(productId);
+          if (index === -1) {
+            cart.value.push(productId);
+          } else {
+            cart.value.splice(index, 1);
+          }
+          if (!cart.value.includes(productId)) {
                 cart.value.push(productId);
                 alert(`상품 ID ${productId}이 장바구니에 추가되었습니다.`);
-            }
+          }
+
+          // 조회수 증가 API 호출 (연령대 및 투자성향)
+          try {
+            
+            // 연령대에 따른 조회수 증가
+            await increaseAgeGroupProductHit(productId);
+
+            // 투자성향에 따른 조회수 증가
+            await increasePreferenceProductHit(productId);
+          } catch (error) {
+            console.error('조회수 증가 오류: ', error);
+            alert('조회수를 증가하는 중 오류가 발생했습니다.');
+          }
         };
 
         const filteredProducts = computed(() => {
@@ -459,7 +482,6 @@ export default {
             selectedCategory,
             tabs,
             filteredProducts,
-            addToCart,
             gotoDetail,
             currentPage,
             totalPages,
@@ -473,6 +495,7 @@ export default {
             getRate,
             cart,
             visiblePages, // visiblePages 추가
+            toggleCartAndIncreaseHit // 장바구니 추가 및 조회수 증가
         };
     },
 };
