@@ -1,175 +1,164 @@
 <template>
-    <div :class="['uiNavAside', { 'expanded': activeDropdown !== null }]" ref="sidebar">
+  <div class="layout-wrapper">
+    <!-- 사이드바 -->
+    <div class="uiNavAside" :class="{ 'expanded': isSidebarExpanded }" ref="sidebar">
       <ul class="nav-aside">
-        <li class="menu-item" @click="toggleDropdown(1)">
-          <a href="javascript:void(0)" class="sidebar-link">
-            <i class="fas fa-shopping-cart icon grey-icon"></i>
-            <span class="menu-text">장바구니</span>
-          </a>
-          <div v-if="activeDropdown === 1" class="dropdown-content">
-            <div class="cart-dropdown">
-              <h3 class="section-title">장바구니</h3>
-              <div v-if="cart.length === 0" class="empty-cart">장바구니가 비어 있습니다.</div>
-              <table v-else class="cart-table">
-                <thead>
-                  <tr>
-                    <th>상품명</th>
-                    <th>가격</th>
-                    <th>수량</th>
-                    <th>삭제</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, index) in paginatedCart" :key="index">
-                    <td class="item-name">{{ item.name }}</td>
-                    <td class="item-price">{{ item.price }}원</td>
-                    <td class="item-quantity">{{ item.quantity }}</td>
-                    <td>
-                      <button class="cart-trashcanBtn" @click="removeFromCart(item)">삭제</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </li>
-        <!-- Add other sidebar sections similarly -->
+        <div class="button-container">
+          <SidebarMenu1
+            :activeDropdown="activeDropdown"
+            :portfolios="portfolios"
+            @toggleDropdown="toggleDropdown"
+            @goToCreatePortfolio="goToCreatePortfolio"
+          />
+          <SidebarMenu2 :activeDropdown="activeDropdown" @toggleDropdown="toggleDropdown" />
+          <SidebarMenu3 :activeDropdown="activeDropdown" @toggleDropdown="toggleDropdown" />
+        </div>
       </ul>
     </div>
-  </template>
-  
-  <script>
-  import { ref, computed } from 'vue';
-  
-  export default {
-    name: 'Sidebar',
-    setup() {
-      const activeDropdown = ref(null);
-      const cart = ref([]); // Initialize your cart here or fetch from props or API
-  
-      const toggleDropdown = (menuNumber) => {
-        activeDropdown.value = activeDropdown.value === menuNumber ? null : menuNumber;
-      };
-  
-      const removeFromCart = (item) => {
-        const index = cart.value.indexOf(item);
-        if (index > -1) {
-          cart.value.splice(index, 1);
-        }
-      };
-  
-      const paginatedCart = computed(() => {
-        // Logic for paginating the cart items
-        return cart.value; // Placeholder, implement your pagination logic
-      });
-  
-      return {
-        activeDropdown,
-        cart,
-        toggleDropdown,
-        removeFromCart,
-        paginatedCart,
-      };
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .uiNavAside {
-    position: fixed;
-    right: 0;
-    top: 50px; /* Adjust if you have a header */
-    height: calc(100vh - 50px);
-    width: 60px; /* Slim width */
-    background-color: #e5e8eb;
-    border-left: 1px solid #d1d1d1;
-    transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out; /* Transition for margin-left */
-    z-index: 9999;
-  }
-  
-  .uiNavAside.expanded {
-    width: 200px; /* Expanded width */
-    margin-left: -140px; /* Adjust margin-left to push homepage content */
-  }
-  
-  .nav-aside {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .menu-item {
-    width: 100%;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  
-  .sidebar-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 15px 0;
-    color: grey;
-    text-decoration: none;
-    width: 100%;
-    transition: background-color 0.3s ease;
-  }
-  
-  .sidebar-link:hover {
-    background-color: #d7dbde;
-  }
-  
-  .icon {
-    font-size: 24px;
-    margin-bottom: 5px;
-    color: grey;
-  }
-  
-  .menu-text {
-    font-size: 0.8rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .uiNavAside:hover .menu-text {
-    opacity: 1;
-  }
-  
-  .dropdown-content {
-    position: absolute;
-    left: -200px; /* Shift left */
-    background-color: #fff;
-    padding: 10px;
-    width: 180px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .section-title {
-    font-size: 1.4rem;
-    color: #2d6a4f;
-  }
-  
-  .empty-cart {
-    text-align: center;
-    font-size: 1.1rem;
-    color: #777;
-  }
-  
-  .cart-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-  }
-  
-  .cart-table th,
-  .cart-table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 0.9rem;
-  }
-  </style>
-  
+
+    <!-- 메인 컨텐츠 -->
+    <div class="main-content" :class="{ 'shifted': isSidebarExpanded }">
+      <router-view />
+    </div>
+  </div>
+</template>
+
+<script>
+import SidebarMenu1 from './sideBar/PortfolioSection.vue';
+import SidebarMenu2 from './sideBar/CartSection.vue';
+import SidebarMenu3 from './sideBar/RecentProductsSection.vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+export default {
+  name: 'SideBar',
+  components: {
+    SidebarMenu1,
+    SidebarMenu2,
+    SidebarMenu3,
+  },
+  setup() {
+    const portfolios = ref([
+      { name: '포트폴리오 1', returns: 10.3, risk: 8.74 },
+      { name: '포트폴리오 2', returns: -3.0, risk: 4.0 },
+      { name: '포트폴리오 3', returns: 10.3, risk: 8.74 },
+    ]);
+
+    const activeDropdown = ref(null);
+    const isSidebarExpanded = ref(false);
+    const router = useRouter();
+    const sidebar = ref(null);
+
+    const toggleDropdown = (menuNumber) => {
+      if (activeDropdown.value === menuNumber) {
+        activeDropdown.value = null;
+        isSidebarExpanded.value = false; // 사이드바가 축소될 때 메인 컨텐츠 원위치
+      } else {
+        activeDropdown.value = menuNumber;
+        isSidebarExpanded.value = true; // 사이드바 확장 시 메인 컨텐츠 이동
+      }
+    };
+
+    const goToCreatePortfolio = () => {
+      router.push('/make-portfolio');
+    };
+
+    const handleClickOutside = (event) => {
+      if (sidebar.value && !sidebar.value.contains(event.target)) {
+        activeDropdown.value = null;
+        isSidebarExpanded.value = false; // 외부 클릭 시 사이드바 축소
+      }
+    };
+
+    onMounted(() => {
+      document.addEventListener('click', handleClickOutside);
+    });
+
+    onUnmounted(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+
+    return {
+      portfolios,
+      activeDropdown,
+      isSidebarExpanded,
+      toggleDropdown,
+      goToCreatePortfolio,
+      sidebar,
+    };
+  },
+};
+</script>
+
+<style scoped>
+.layout-wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.uiNavAside {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 90px;
+  height: 100vh;
+  background-color: #f5f6fa;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  border-left: 1px solid #e0e0e0;
+  transition: width 0.3s ease;
+}
+
+.uiNavAside.expanded {
+  width: 250px; /* 확장 시 너비 */
+}
+
+.nav-aside {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-right: 90px; /* 기본 사이드바 너비 */
+  transition: margin-right 0.3s ease;
+}
+
+.main-content.shifted {
+  margin-right: 250px; /* 사이드바가 확장되었을 때 마진 조정 */
+}
+
+.nav-aside a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 15px;
+  color: #333;
+  text-decoration: none;
+  background-color: #fff;
+  border-radius: 8px;
+  margin: 5px 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.nav-aside a:hover {
+  background-color: #f0f0f0;
+}
+
+.menu-text {
+  font-size: 1rem;
+  margin-left: 10px;
+}
+</style>

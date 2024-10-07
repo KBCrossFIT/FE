@@ -75,7 +75,7 @@ export default {
     color: white;
     padding: 15px;
     text-decoration: none;
-    background-color: transparent;
+    background-color: #575757;
     border-radius: 5px;
     margin-bottom: 5px;
     width: 100%; /* Full width within the sidebar */
@@ -200,6 +200,5 @@ export default {
 .icon {
     position: relative; /* Position for item count */
     font-size: 24px; /* Adjust icon size if needed */
-    color: grey; /* Grey color for the icon */
 }
 </style>

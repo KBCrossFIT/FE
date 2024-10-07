@@ -23,7 +23,7 @@
       <input v-model="newProduct.productType" placeholder="상품 유형" />
       <input v-model="newProduct.provider" placeholder="제공자" />
       <input v-model="newProduct.productName" placeholder="상품 이름" />
-      <input v-model="newProduct.expectedReturn" placeholder="기대수익률" />
+      <input v-model="newProduct.expectedReturn" placeholder="예상 수익" />
       <input v-model="newProduct.interestRate" placeholder="이자율" />
       <button @click="addCart">장바구니에 추가</button>
     </div>

@@ -47,7 +47,7 @@ export default {
     },
     created() {
         // URL에서 productId와 productType 가져오기
-        const productIdParam = this.$route.params.productId; // 'productId'로 수정
+        const productIdParam = this.$route.params.id; // 'productId'로 수정
         const productTypeParam = this.$route.query.productType;
 
         this.productId = productIdParam;
@@ -65,15 +65,14 @@ export default {
             this.isLoading = true;
             try {
                 let data = null;
-                // 각 상품 유형에 따라 올바른 API 호출
                 if (this.productType === 'deposit') {
-                    data = await getDepositProductDetail(this.productId);
+                    data = await getDepositProductDetail(this.productId); // API 호출
                 } else if (this.productType === 'saving') {
-                    data = await getSavingProductDetail(this.productId);
+                    data = await getSavingProductDetail(this.productId); // API 호출
                 } else if (this.productType === 'bond') {
-                    data = await getBondProductDetail(this.productId);
+                    data = await getBondProductDetail(this.productId); // API 호출
                 } else if (this.productType === 'fund') {
-                    data = await getFundProductDetail(this.productId);
+                    data = await getFundProductDetail(this.productId); // API 호출
                 } else {
                     console.error('알 수 없는 상품 유형입니다.');
                 }
@@ -89,6 +88,7 @@ export default {
                 this.isLoading = false;
             }
         },
+
         goBack() {
             this.$router.go(-1); // 이전 페이지로 돌아가기
         },
