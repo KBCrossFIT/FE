@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store';
+import { createPinia } from 'pinia'; // Pinia import
 import vuetify from './plugins/vuetify';
 import DefaultLayout from './components/DefaultLayout.vue';
 
@@ -52,12 +52,15 @@ axiosInstance.interceptors.response.use(
 // Create the Vue app instance
 const app = createApp(App);
 
+// Create Pinia instance
+const pinia = createPinia();
+
 // Register global components
 app.component('DefaultLayout', DefaultLayout);
 
-// Use Vue Router, Vuex, and Vuetify plugins
+// Use Vue Router, Pinia, Vuetify plugins
 app.use(router);
-app.use(store);
+app.use(pinia); // Pinia 사용
 app.use(vuetify);
 
 // Use vue3-cookies
