@@ -1,23 +1,24 @@
 <template>
-  <div id="app">
+  <v-app>
     <DefaultLayout>
-      <router-view />
+      <v-main>
+        <router-view />
+      </v-main>
     </DefaultLayout>
-  </div>
+  </v-app>
 </template>
 
 <script>
 import { provide, reactive } from 'vue';
-import DefaultLayout from './components/DefaultLayout.vue';
 
 export default {
-  name: 'App',
-  setup() {
-    // Use reactive to make the cart reactive
-    const cart = reactive([]);
+    name: 'App',
+    setup() {
+        // Use reactive to make the cart reactive
+        const cart = reactive([]);
 
-    // Provide the cart to child components
-    provide('cart', cart);
+        // Provide the cart to child components
+        provide('cart', cart);
 
     return {
       cart,
@@ -29,5 +30,3 @@ export default {
 <style>
 /* Add your styles here */
 </style>
-
-<!-- 커밋 컨벤션 -->
