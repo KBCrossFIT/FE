@@ -38,11 +38,10 @@ import SavingListView from '@/views/financialProducts/SavingListView.vue';
 import FundListView from '@/views/financialProducts/FundListView.vue';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
-import recentView from "@/views/recentView/recentView.vue";
-import portfolioData from "@/views/portfolio/PortfolioData.vue";
-import portfolioEx from "@/views/portfolio/PortfolioEx.vue";
-import cartEx from "@/views/cart/CartEx.vue";
-
+import recentView from '@/views/recentView/recentView.vue';
+import portfolioData from '@/views/portfolio/PortfolioData.vue';
+import portfolioEx from '@/views/portfolio/PortfolioEx.vue';
+import cartEx from '@/views/cart/CartEx.vue';
 
 const routes = [
     { path: '/', name: 'Home', component: Home },
@@ -54,9 +53,10 @@ const routes = [
     { path: '/changePW', name: 'ChangePW', component: ChangePW },
     { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
     {
-        path: '/financial-products/:productType/:pageNumber?',
-        name: 'FinancialProducts',
+        path: '/products/:category?',
+        name: 'Products', // 라우터 이름을 'Products'로 정의
         component: FinancialProducts,
+        props: true,
     },
     {
         path: '/list/:id',
@@ -95,4 +95,3 @@ const router = createRouter({
 });
 
 export default router;
-
