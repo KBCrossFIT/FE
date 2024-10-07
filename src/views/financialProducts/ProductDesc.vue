@@ -16,7 +16,9 @@
                 <div class="info-section">
                     <h2>상품 기본 정보</h2>
                     <div
-                        v-for="(value, key) in productDetails.products[0]"
+                        v-for="(value, key) in getProductDetailsWithFilteredKeys(
+                            productDetails.products[0]
+                        )"
                         :key="key"
                         class="product-detail-item"
                     >
@@ -25,6 +27,7 @@
                         </p>
                     </div>
                 </div>
+
                 <div
                     class="rate-section"
                     v-if="productDetails.rates && productDetails.rates.length > 0"
@@ -57,7 +60,11 @@
             <!-- 채권 상세 정보 표시 -->
             <div v-else-if="isBond" class="product-detail-layout bond-layout">
                 <h2>채권 정보</h2>
-                <div v-for="(value, key) in productDetails" :key="key" class="product-detail-item">
+                <div
+                    v-for="(value, key) in getProductDetailsWithFilteredKeys(productDetails)"
+                    :key="key"
+                    class="product-detail-item"
+                >
                     <p>
                         <strong>{{ getLabelForBondOrFund(key) }}:</strong> {{ value }}
                     </p>
@@ -67,7 +74,11 @@
             <!-- 펀드 상세 정보 표시 -->
             <div v-else-if="isFund" class="product-detail-layout fund-layout">
                 <h2>펀드 정보</h2>
-                <div v-for="(value, key) in productDetails" :key="key" class="product-detail-item">
+                <div
+                    v-for="(value, key) in getProductDetailsWithFilteredKeys(productDetails)"
+                    :key="key"
+                    class="product-detail-item"
+                >
                     <p>
                         <strong>{{ getLabelForBondOrFund(key) }}:</strong> {{ value }}
                     </p>
@@ -173,10 +184,24 @@ export default {
             );
         },
         getLabelForDepositOrSaving(key) {
-            return productLabelMapping.deposit[key] || productLabelMapping.saving[key] || key;
+            const label = productLabelMapping.deposit[key] || productLabelMapping.saving[key];
+            return label && !label.includes('삭제') ? label : null;
         },
         getLabelForBondOrFund(key) {
-            return productLabelMapping.bond[key] || productLabelMapping.fund[key] || key;
+            const label = productLabelMapping.bond[key] || productLabelMapping.fund[key];
+            return label && !label.includes('삭제') ? label : null;
+        },
+        getProductDetailsWithFilteredKeys(productDetails) {
+            const filteredProductDetails = {};
+            Object.keys(productDetails).forEach((key) => {
+                const label = this.isDepositOrSaving
+                    ? this.getLabelForDepositOrSaving(key)
+                    : this.getLabelForBondOrFund(key);
+                if (label) {
+                    filteredProductDetails[key] = productDetails[key];
+                }
+            });
+            return filteredProductDetails;
         },
     },
 };

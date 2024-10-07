@@ -1,8 +1,8 @@
-// store/modules/fund.js
+// store/fund.js
+import { defineStore } from 'pinia';
 import { fetchFundProducts, searchFundProduct, getFundProductDetail } from '@/api/financeApi';
 
-const fundModule = {
-    namespaced: true,
+export const useFundStore = defineStore('fund', {
     state: () => ({
         fundList: [], // 펀드 리스트
         fundListLoaded: false,
@@ -11,59 +11,56 @@ const fundModule = {
         fundProductDetail: {}, // 상세 정보
     }),
 
-    mutations: {
-        setFundList(state, { items, totalPages }) {
-            // 페이지네이션 정보도 함께 저장
+    actions: {
+        setFundList({ items, totalPages }) {
             if (Array.isArray(items)) {
-                state.fundList = items.map((fund) => ({
+                this.fundList = items.map((fund) => ({
                     ...fund,
                     finPrdtNm: fund.product_nm || '상품명 없음',
                 }));
-                state.totalPages = totalPages; // 총 페이지 수 설정
+                this.totalPages = totalPages; // 총 페이지 수 설정
             } else if (typeof items === 'object' && items !== null) {
-                state.fundList = [
+                this.fundList = [
                     {
                         ...items,
                         finPrdtNm: items.product_nm || '상품명 없음',
                     },
                 ];
-                state.totalPages = 1; // 총 페이지 수가 없을 경우 기본값
+                this.totalPages = 1; // 총 페이지 수가 없을 경우 기본값
             } else {
-                state.fundList = [];
+                this.fundList = [];
             }
-            state.fundListLoaded = true;
+            this.fundListLoaded = true;
         },
 
-        setSearchFundList(state, searchResults) {
+        setSearchFundList(searchResults) {
             if (Array.isArray(searchResults)) {
-                state.searchFundProducts = searchResults.map((fund) => ({
+                this.searchFundProducts = searchResults.map((fund) => ({
                     ...fund,
                     finPrdtNm: fund.product_nm || '상품명 없음',
                 }));
             } else {
-                state.searchFundProducts = [];
+                this.searchFundProducts = [];
             }
         },
 
-        setFundProductDetail(state, detail) {
-            state.fundProductDetail = {
+        setFundProductDetail(detail) {
+            this.fundProductDetail = {
                 ...detail,
                 finPrdtNm: detail.product_nm || '상품명 없음',
             };
         },
-    },
 
-    actions: {
-        async fetchFundList({ commit, state }, { page, pageSize }) {
+        async fetchFundList(page, pageSize) {
             console.log('fetchFundList 액션 호출:', { page, pageSize });
-            if (!state.fundListLoaded || page !== 1) {
+            if (!this.fundListLoaded || page !== 1) {
                 // 다른 페이지로 이동할 때도 새로 로드
                 try {
                     const response = await fetchFundProducts(page, pageSize);
                     console.log('fetchFundList API 응답:', response);
                     if (response.items && Array.isArray(response.items)) {
                         // 총 페이지 수도 함께 전달
-                        commit('setFundList', {
+                        this.setFundList({
                             items: response.items,
                             totalPages: response.totalPages,
                         });
@@ -76,19 +73,19 @@ const fundModule = {
             }
         },
 
-        async searchFundList({ commit }, keyword) {
+        async searchFundList(keyword) {
             try {
                 const searchResults = await searchFundProduct(keyword);
-                commit('setSearchFundList', searchResults);
+                this.setSearchFundList(searchResults);
             } catch (error) {
                 console.error('Error searching fund list:', error);
             }
         },
 
-        async fetchFundProductDetail({ commit }, productId) {
+        async fetchFundProductDetail(productId) {
             try {
                 const response = await getFundProductDetail(productId);
-                commit('setFundProductDetail', response);
+                this.setFundProductDetail(response);
             } catch (error) {
                 console.error('Error fetching fund product detail:', error);
             }
@@ -96,19 +93,17 @@ const fundModule = {
     },
 
     getters: {
-        getFundList(state) {
-            return state.fundList;
+        getFundList() {
+            return this.fundList;
         },
-        getSearchFundList(state) {
-            return state.searchFundProducts;
+        getSearchFundList() {
+            return this.searchFundProducts;
         },
-        getProductDetail(state) {
-            return state.fundProductDetail;
+        getProductDetail() {
+            return this.fundProductDetail;
         },
-        getTotalPages(state) {
-            return state.totalPages; // 총 페이지 수 가져오기
+        getTotalPages() {
+            return this.totalPages; // 총 페이지 수 가져오기
         },
     },
-};
-
-export default fundModule;
+});

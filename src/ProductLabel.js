@@ -16,7 +16,7 @@ export const productLabelMapping = {
         maxLimit: '최대 한도',
         dclsStrtDay: '공시 시작일',
         dclsEndDay: '공시 종료일',
-        riskLevel: '위험도',
+        riskLevel: '위험도', // 삭제
         hit: '조회수',
     },
     saving: {
@@ -35,14 +35,14 @@ export const productLabelMapping = {
         maxLimit: '최대 한도',
         dclsStrtDay: '공시 시작일',
         dclsEndDay: '공시 종료일',
-        riskLevel: '위험도',
+        riskLevel: '위험도', // 삭제
         hit: '조회 수',
     },
     bond: {
         productId: '상품 ID',
         basDt: '기준 일자',
         crno: '법인 등록번호',
-        scrsItmsKcd: '증권 품목 코드',
+        scrsItmsKcd: '증권 품목 코드', // 삭제
         isinCd: 'ISIN 코드',
         bondIsurNm: '채권 발행자',
         isinCdNm: '채권명',
@@ -50,7 +50,7 @@ export const productLabelMapping = {
         bondIssuAmt: '발행 금액',
         bondIssuCurCd: '발행 통화',
         bondSrfcInrt: '채권 금리',
-        riskLevel: '위험도',
+        riskLevel: '위험도', // 삭제
         bondIssuCurCdNm: '채권 발행 통화 코드',
         bondExprDt: '채권 만기 일자',
         bondPymtAmt: '채권 납입 금액',
@@ -60,10 +60,11 @@ export const productLabelMapping = {
         bondIntTcdNm: '채권 이자 유형 코드명',
         intPayCyclCtt: '이자 지급 주기 내용',
         nxtmCopnDt: '차기 이표 일자',
-        rbVopnDt: '직전 이표 일자',
+        rbVopnDt: '직전 이표 일자', // 삭제
         kbpScrsItmsKcdNm: '한국 신용 평가 유가증권 종목 종류 코드명',
         niceScrsItmsKcdNm: 'NICE 평가 정보 유가증권 종목 종류 코드명',
-        fnScrsItmsKcdNm: 'FN 유가증권 종목 종류 코드명',
+        fnScrsItmsKcdNm: 'FN 유가증권 종목 종류 코드명', // 삭제
+        hit: '조회 수',
     },
     fund: {
         productId: '상품 ID',
