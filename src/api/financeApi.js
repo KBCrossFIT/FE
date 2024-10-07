@@ -1,3 +1,5 @@
+// src/api/financeApi.js
+
 import axios from 'axios';
 
 const bondApi = axios.create({
@@ -21,23 +23,23 @@ const fundApi = axios.create({
     },
 });
 
-// 채권 상품 조회 API
-export async function fetchBondProducts() {
+// 채권 상품 조회 API with pagination
+export async function fetchBondProducts(page = 1, pageSize = 10) {
     try {
-        const response = await bondApi.get('/list');
+        const response = await bondApi.get(`/list`, {
+            params: { page, pageSize },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching bond products:', error);
-        throw error; // 오류 발생 시 오류를 던져줌
+        throw error;
     }
 }
-
-// financeApi.js
 
 // 채권 상품 상세 조회 API
 export async function getBondProductDetail(productId) {
     try {
-        const response = await bondApi.get(`/${productId}`);
+        const response = await bondApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching bond product detail:', error);
@@ -45,10 +47,12 @@ export async function getBondProductDetail(productId) {
     }
 }
 
-// 예금 상품 조회 API
-export async function fetchDepositProducts() {
+// 예금 상품 조회 API with pagination
+export async function fetchDepositProducts(page = 1, pageSize = 10) {
     try {
-        const response = await savingApi.get('/deposit');
+        const response = await savingApi.get(`/deposit`, {
+            params: { page, pageSize },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching deposit products:', error);
@@ -56,12 +60,11 @@ export async function fetchDepositProducts() {
     }
 }
 
-// 예금 상품 상세 조회 API
+// 예금 상품 상세 조회 API with path parameter
 export async function getDepositProductDetail(productId) {
     try {
-        const response = await savingApi.get(`/depositDetail`, {
-            params: { productId },
-        });
+        // 엔드포인트를 수정: /list/{productId} -> /deposit/{productId}
+        const response = await savingApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching deposit product detail:', error);
@@ -69,10 +72,12 @@ export async function getDepositProductDetail(productId) {
     }
 }
 
-// 적금 상품 조회 API
-export async function fetchSavingProducts() {
+// 적금 상품 조회 API with pagination
+export async function fetchSavingProducts(page = 1, pageSize = 10) {
     try {
-        const response = await savingApi.get('/saving');
+        const response = await savingApi.get(`/saving`, {
+            params: { page, pageSize },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching saving products:', error);
@@ -80,12 +85,10 @@ export async function fetchSavingProducts() {
     }
 }
 
-// 적금 상품 상세 조회 API
+// 적금 상품 상세 조회 API with path parameter
 export async function getSavingProductDetail(productId) {
     try {
-        const response = await savingApi.get(`/savingDetail`, {
-            params: { productId },
-        });
+        const response = await savingApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching saving product detail:', error);
@@ -93,13 +96,15 @@ export async function getSavingProductDetail(productId) {
     }
 }
 
-// 펀드 상품 조회 API
-export async function fetchFundProducts() {
+// 펀드 상품 조회 API with pagination
+export async function fetchFundProducts(page = 1, pageSize = 10) {
     try {
-        const response = await fundApi.get('/list');
+        const response = await fundApi.get(`/list`, {
+            params: { page, pageSize },
+        });
         return response.data;
     } catch (error) {
-        console.error('Error fetching fund product: ', error);
+        console.error('Error fetching fund products:', error);
         throw error;
     }
 }
@@ -107,7 +112,7 @@ export async function fetchFundProducts() {
 // 펀드 상품 상세 조회 API
 export async function getFundProductDetail(productId) {
     try {
-        const response = await fundApi.get(`/${productId}`);
+        const response = await fundApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching fund product detail:', error);
@@ -123,7 +128,7 @@ export async function searchFundProduct(keyword) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error searching fund product: ', error);
+        console.error('Error searching fund product:', error);
         throw error;
     }
 }
@@ -136,7 +141,7 @@ export async function searchBondProduct(keyword) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error searching bond product: ', error);
+        console.error('Error searching bond product:', error);
         throw error;
     }
 }
@@ -149,7 +154,7 @@ export async function searchDepositProduct(keyword) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error searching deposit product: ', error);
+        console.error('Error searching deposit product:', error);
         throw error;
     }
 }
@@ -162,7 +167,7 @@ export async function searchSavingProduct(keyword) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error searching saving product: ', error);
+        console.error('Error searching saving product:', error);
         throw error;
     }
 }
