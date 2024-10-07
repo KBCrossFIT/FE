@@ -2,10 +2,10 @@
   <div>
     <h1>최근 본 상품</h1>
     <ul>
-      <li v-for="item in recentViewedItems" :key="item.productId">
-        {{item.productId }}
-        {{item.productType}}
-        {{item.productName}}
+      <li v-for="item in recentItems" :key="item.productId">
+        {{ item.productId }}
+        {{ item.productType }}
+        {{ item.productName }}
       </li>
     </ul>
 
@@ -21,10 +21,11 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
   data() {
     return {
-      recentViewedItems: [], // 최근 본 상품 리스트
       newProduct: { // 새 상품 입력을 위한 데이터 객체
         productId: "",
         productType: "",
@@ -32,43 +33,21 @@ export default {
       }
     };
   },
+  computed: {
+    ...mapGetters('recentView', ['recentItems']) // Vuex의 recentView 모듈에서 최근 본 상품 리스트 가져오기
+  },
   methods: {
-    // 장바구니 리스트 가져오기
-    fetchRecentView() {
-      fetch("/api/recentView")
-          .then((response) => response.json())
-          .then((data) => {
-            this.recentViewedItems = data;
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-    },
+    ...mapActions('recentView', ['fetchRecentItems', 'addRecentViewItem']), // Vuex의 recentView 모듈에서 액션 가져오기
 
-    // 최근 본 상품 추가 (POST 요청)
-    addRecentViewedItem() {
-      fetch("/api/recentView", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(this.newProduct) // 새로운 상품 정보 전송
-      })
-          .then((response) => {
-            // 응답이 JSON 형식인지 확인
-            if (!response.ok) {
-              throw new Error("네트워크 에러");
-            }
-            // 응답이 비어 있지 않으면 JSON 파싱
-            return response.text().then((text) => (text ? JSON.parse(text) : {}));
-          })
-          .then(() => {
-            this.clearNewProduct();
-            this.fetchRecentView();
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+    // 최근 본 상품 추가
+    async addRecentViewedItem() {
+      try {
+        await this.addRecentViewItem(this.newProduct); // 최근 본 상품 추가
+        this.clearNewProduct();
+        await this.fetchRecentItems(); // 최근 본 상품 리스트 새로고침
+      } catch (error) {
+        console.error('Error adding recent viewed item:', error);
+      }
     },
 
     // 입력 필드 초기화
@@ -82,7 +61,7 @@ export default {
   },
 
   created() {
-    this.fetchRecentView(); // 컴포넌트 생성 시 장바구니 데이터 가져오기
+    this.fetchRecentItems(); // 컴포넌트 생성 시 최근 본 상품 데이터 가져오기
   }
 };
 </script>

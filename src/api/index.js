@@ -18,12 +18,20 @@ instance.interceptors.request.use(
             return acc;
         }, {});
 
-        const token = cookies['Refresh-Token']; // 쿠키에서 'Refresh-Token' 가져오기
-        if (token) {
+        const accessToken = cookies['Authorization'];
+        const refreshToken = cookies['Refresh-Token']; // 쿠키에서 'Refresh-Token' 가져오기
+
+        if (accessToken) {
             // 토큰이 있는 경우
-            config.headers['Authorization'] = `Bearer ${token}`;
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
             console.log(config.headers.Authorization);
+        } else if(refreshToken) {
+            config.headers['Refresh-Token'] = `Bearer ${refreshToken}`;
+            console.log(config.headers['Refresh-Token']);
         }
+
+        config.withCredentials = true;
+
         return config;
     },
     (error) => {

@@ -1,57 +1,81 @@
-import instance from '@/api/index.js';
-import axios from 'axios';
+import { fetchPortfolioList, getPortfolioDetail, postPortfolio, deletePortfolio } from '@/api/portfolioApi.js';
 
-const portfolioApi = axios.create({
-  baseURL: 'http://localhost:8080/api/', // API 엔드 포인트
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const portfolioModule = {
+    namespaced: true,
+    state: () => ({
+        portfolioList: [],
+        portfolioListLoaded: false,
+        portfolioDetail: null,
+        newPortfolio: null,
+        newPortfolioItems: [],
+    }),
 
-export async function fetchPortfolioList() {
-  try {
-    const response = await instance.get('/portfolio/list');
+    actions: {
+        async fetchPortfolioList({ commit, state }) {
+            if(!state.portfolioListLoaded) {
+                try {
+                    const data = await fetchPortfolioList();
+                    commit('setPortfolioList', data);
+                } catch (error) {
+                    console.error('Error fetching portfolio list:', error);
+                }
+            }
+        },
 
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching portfolio list:', error);
-    throw error;
-  }
-}
+        async getPortfolioDetail({ commit }, portfolioId) {
+            try {
+                const data = await getPortfolioDetail(portfolioId);
+                commit('setPortfolioDetail', data);
+            } catch (error) {
+                console.error('Error fetching portfolio detail:', error);
+            }
+        },
 
-export async function getPortfolioDetail(portfolioId) {
-  try {
-    const response = await instance.get(`/portfolio/details/${portfolioId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching portfolio detail:', error);
-    throw error; // 오류 발생 시 오류를 던져줌
-  }
-}
-console.log(getPortfolioDetail);
+        async postPortfolio({ commit }, portfolio) {
+            try {
+                const data = await postPortfolio(portfolio);
+                commit('setNewPortfolio', data);
+            } catch (error) {
+                console.error('Error posting portfolio:', error);
+            }
+        },
 
-export async function postPortfolio(portfolioReqDto) {
-  try {
-    const response = await instance.post('/portfolio', portfolioReqDto);
-    return response.data;
-  } catch (error) {
-    console.error('Error posting portfolio:', error);
-    throw error; // 오류 발생 시 오류를 던져줌
-  }
-}
+        async deletePortfolio({ commit }, portfolioId) {
+            try {
+                const data = await deletePortfolio(portfolioId);
+                commit('removePortfolio', portfolioId);
+            } catch (error) {
+                console.error('Error deleting portfolio:', error);
+            }
+        },
+    },
 
-export async function deletePortfolio(portfolioId) {
-  try {
-    await instance.delete(`/portfolio/${portfolioId}`);
-  } catch (error) {
-    console.error('Error deleting portfolio:', error);
-    throw error; // 오류 발생 시 오류를 던져줌
-  }
-}
+    getters: {
+        portfolioList: (state) => state.portfolioList,
+        portfolioDetail: (state) => state.portfolioDetail,
+        newPortfolio: (state) => state.newPortfolio,
+        isPortfolioListLoaded: (state) => state.portfolioListLoaded,
+    },
 
-export default {
-  fetchPortfolioList,
-  getPortfolioDetail,
-  postPortfolio,
-  deletePortfolio,
+    mutations: {
+        setPortfolioList(state, portfolioList) {
+            state.portfolioList = portfolioList;
+            state.portfolioListLoaded = true;
+        },
+
+        setPortfolioDetail(state, portfolioDetail) {
+            state.portfolioDetail = portfolioDetail;
+        },
+
+        setNewPortfolio(state, newPortfolio) {
+            state.newPortfolio = newPortfolio;
+            state.portfolioList.push(newPortfolio); // 새로운 포트폴리오 리스트에 추가
+        },
+
+        removePortfolio(state, portfolioId) {
+            state.portfolioList = state.portfolioList.filter(
+                (portfolio) => portfolio.id !== portfolioId
+            );
+        },
+    },
 };
