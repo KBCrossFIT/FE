@@ -1,71 +1,57 @@
-// portfolio.js에서 'default export'로 변경
-import { reactive, toRefs } from 'vue';
-import {
+import instance from '@/api/index.js';
+import axios from 'axios';
+
+const portfolioApi = axios.create({
+  baseURL: 'http://localhost:8080/api/', // API 엔드 포인트
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export async function fetchPortfolioList() {
+  try {
+    const response = await instance.get('/portfolio/list');
+
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching portfolio list:', error);
+    throw error;
+  }
+}
+
+export async function getPortfolioDetail(portfolioId) {
+  try {
+    const response = await instance.get(`/portfolio/details/${portfolioId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching portfolio detail:', error);
+    throw error; // 오류 발생 시 오류를 던져줌
+  }
+}
+console.log(getPortfolioDetail);
+
+export async function postPortfolio(portfolioReqDto) {
+  try {
+    const response = await instance.post('/portfolio', portfolioReqDto);
+    return response.data;
+  } catch (error) {
+    console.error('Error posting portfolio:', error);
+    throw error; // 오류 발생 시 오류를 던져줌
+  }
+}
+
+export async function deletePortfolio(portfolioId) {
+  try {
+    await instance.delete(`/portfolio/${portfolioId}`);
+  } catch (error) {
+    console.error('Error deleting portfolio:', error);
+    throw error; // 오류 발생 시 오류를 던져줌
+  }
+}
+
+export default {
   fetchPortfolioList,
   getPortfolioDetail,
   postPortfolio,
   deletePortfolio,
-} from '@/api/portfolioApi';
-
-const usePortfolio = () => {
-  const state = reactive({
-    portfolioList: [],
-    portfolioListLoaded: false,
-    portfolioDetail: null,
-    newPortfolio: null,
-    newPortfolioItems: [],
-  });
-
-  const fetchPortfolioListAction = async () => {
-    if (!state.portfolioListLoaded) {
-      try {
-        const data = await fetchPortfolioList();
-        state.portfolioList = data;
-        state.portfolioListLoaded = true;
-      } catch (error) {
-        console.error('Error fetching portfolio list:', error);
-      }
-    }
-  };
-
-  const getPortfolioDetailAction = async (portfolioId) => {
-    try {
-      const data = await getPortfolioDetail(portfolioId);
-      state.portfolioDetail = data;
-    } catch (error) {
-      console.error('Error fetching portfolio detail:', error);
-    }
-  };
-
-  const postPortfolioAction = async (portfolio) => {
-    try {
-      const data = await postPortfolio(portfolio);
-      state.newPortfolio = data;
-      state.portfolioList.push(data);
-    } catch (error) {
-      console.error('Error posting portfolio:', error);
-    }
-  };
-
-  const deletePortfolioAction = async (portfolioId) => {
-    try {
-      await deletePortfolio(portfolioId);
-      state.portfolioList = state.portfolioList.filter(
-        (portfolio) => portfolio.id !== portfolioId
-      );
-    } catch (error) {
-      console.error('Error deleting portfolio:', error);
-    }
-  };
-
-  return {
-    ...toRefs(state),
-    fetchPortfolioListAction,
-    getPortfolioDetailAction,
-    postPortfolioAction,
-    deletePortfolioAction,
-  };
 };
-
-// 'default' export로 함수 내보내기
-export default usePortfolio;
