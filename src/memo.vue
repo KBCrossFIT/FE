@@ -18,7 +18,6 @@
             <th>위험도</th>
           </tr>
         </thead>
-
         <tbody>
           <tr v-for="item in portfolioList" :key="item.id">
             <td>
@@ -28,13 +27,10 @@
                 :value="item.PortfolioName"
               />
             </td>
-
             <td class="NameCursor" @click="goToPortfolioDetail(item.id)">
               {{ item.PortfolioName }}
             </td>
-
             <td>{{ item.ExpectedReturn }}%</td>
-
             <td>{{ item.RiskLevel }}</td>
           </tr>
         </tbody>
@@ -52,7 +48,9 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'; // 라우터 추가
 import {
-  fetchPortfolioList, // API 호출 함수
+  fetchPortfolioList,
+  getPortfolioDetail,
+  postPortfolio,
   deletePortfolio,
 } from '@/api/portfolioApi'; // 기존 API 호출 함수
 
@@ -61,7 +59,7 @@ export default {
     const router = useRouter(); // useRouter로 라우터 접근
 
     // 상태
-    const portfolioList = ref([]); // 포트폴리오 목록 데이터를 저장할 변수
+    const portfolioList = ref([]); // 포트폴리오 목록
     const selected = ref([]); // 선택된 포트폴리오
     const allSelected = ref(false); // 전체 선택 체크박스 상태
 
@@ -73,6 +71,7 @@ export default {
       } catch (error) {
         console.error('Error fetching portfolio list:', error);
       }
+      console.log(fetchPortfolioListData);
     };
 
     // 포트폴리오 삭제 (API 호출)
@@ -100,12 +99,12 @@ export default {
 
     // 포트폴리오 상세 페이지로 이동
     const goToPortfolioDetail = (id) => {
-      router.push({ name: 'PortfolioDetail', params: { id } });
+      router.push({ name: 'PortfolioDetail', params: { id } }); // this.$router 대신 router.push 사용
     };
 
     // 포트폴리오 생성 페이지로 이동
     const goToCreatePortfolio = () => {
-      router.push({ name: 'CreatePortfolio' });
+      router.push({ name: 'CreatePortfolio' }); // this.$router 대신 router.push 사용
     };
 
     // 선택된 포트폴리오 삭제
@@ -115,7 +114,7 @@ export default {
           (p) => p.PortfolioName === portfolioName
         );
         if (portfolio) {
-          deletePortfolioData(portfolio.id);
+          deletePortfolioData(portfolio.id); // API 호출로 삭제 처리
         }
       });
       selected.value = [];
@@ -129,7 +128,7 @@ export default {
     return {
       selected,
       allSelected,
-      portfolioList, // 포트폴리오 데이터를 저장한 변수
+      portfolioList,
       toggleSelectAll,
       goToPortfolioDetail,
       goToCreatePortfolio,
@@ -172,5 +171,10 @@ export default {
   cursor: pointer;
   text-decoration: underline;
   color: blue;
+}
+
+.header-text {
+  color: black;
+  font-weight: bold;
 }
 </style>

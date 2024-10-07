@@ -79,5 +79,3 @@ const portfolioModule = {
         },
     },
 };
-
-export default portfolioModule;
