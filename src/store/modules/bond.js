@@ -56,29 +56,23 @@ const bondModule = {
     },
 
     actions: {
-        async fetchBondList({ commit, state }, { page, pageSize }) {
-            console.log('fetchBondList 액션 호출:', { page, pageSize });
-            if (!state.bondListLoaded) {
-                try {
-                    const response = await fetchBondProducts(page, pageSize);
-                    console.log('fetchBondList API 응답:', response);
-                    // API 응답 구조에 따라 처리
-                    if (response.items && Array.isArray(response.items)) {
-                        commit('setBondList', response.items);
-                        commit('setTotalPages', response.totalPages || 1); // totalPages 설정
-                    } else if (response.productInfoTable) {
-                        // 예: 객체로 반환될 경우
-                        commit('setBondList', response.productInfoTable);
-                        commit('setTotalPages', response.totalPages || 1); // totalPages 설정
-                    } else {
-                        throw new Error('채권 API 응답 구조가 예상과 다릅니다.');
-                    }
-                } catch (error) {
-                    console.error('Error fetching bond list:', error);
+        async fetchBondList({ commit }, { page, pageSize }) {
+            try {
+                const response = await fetchBondProducts(page, pageSize);
+                console.log('fetchBondList API 응답:', response);
+                if (response.items && Array.isArray(response.items)) {
+                    commit('setBondList', response.items);
+                    commit('setTotalPages', response.totalPages || 1); // totalPages 설정
+                } else if (response.productInfoTable) {
+                    commit('setBondList', response.productInfoTable);
+                    commit('setTotalPages', response.totalPages || 1); // totalPages 설정
+                } else {
+                    throw new Error('채권 API 응답 구조가 예상과 다릅니다.');
                 }
+            } catch (error) {
+                console.error('Error fetching bond list:', error);
             }
         },
-
         async searchBondList({ commit }, keyword) {
             try {
                 const searchResults = await searchBondProduct(keyword);

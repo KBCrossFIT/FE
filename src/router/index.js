@@ -59,7 +59,7 @@ const routes = [
         props: true,
     },
     {
-        path: '/list/:id',
+        path: '/list/:productId',
         name: 'ProductDetail',
         component: ProductDesc,
     },

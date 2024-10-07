@@ -17,6 +17,9 @@
                 <v-btn class="InvestmentTest-btn" @click="navigateTo('/investment-test'), cancel()">
                     분석하기
                 </v-btn>
+                <v-btn class="InvestmentTest-btn" @click="navigateTo('/'), cancel()">
+                    다음에 하기
+                </v-btn>
             </div>
         </div>
     </div>

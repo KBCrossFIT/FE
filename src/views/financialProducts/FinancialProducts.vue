@@ -245,7 +245,7 @@ export default {
                         yield: [],
                         type: selectedCategory.value,
                     }));
-                    totalPages.value = store.getters['bond/getTotalPages'] || 1;
+                    totalPages.value = store.getters['bond/getTotalPages'] || 1; // API에서 전달된 totalPages 사용
                 } else if (selectedCategory.value === 'funds') {
                     await store.dispatch('fund/fetchFundList', { page, pageSize: pageSize.value });
                     const funds = store.getters['fund/getFundList'];
@@ -257,7 +257,7 @@ export default {
                         yield: [],
                         type: selectedCategory.value,
                     }));
-                    totalPages.value = store.getters['fund/getTotalPages'] || 1;
+                    totalPages.value = store.getters['fund/getTotalPages'] || 1; // API에서 전달된 totalPages 사용
                 } else if (selectedCategory.value === 'deposit') {
                     const data = await fetchDepositProducts(page, pageSize.value);
                     if (data.products && data.rates) {
@@ -283,7 +283,7 @@ export default {
                                 : [],
                             type: selectedCategory.value,
                         }));
-                        totalPages.value = data.totalPages || 1;
+                        totalPages.value = data.totalPages || 1; // API에서 전달된 totalPages 사용
                     } else {
                         throw new Error('예금 데이터를 불러오는데 문제가 있습니다.');
                     }
@@ -312,7 +312,7 @@ export default {
                                 : [],
                             type: selectedCategory.value,
                         }));
-                        totalPages.value = data.totalPages || 1;
+                        totalPages.value = data.totalPages || 1; // API에서 전달된 totalPages 사용
                     } else {
                         throw new Error('적금 데이터를 불러오는데 문제가 있습니다.');
                     }
@@ -374,7 +374,6 @@ export default {
             return displayedProducts.value.filter((product) => {
                 let productName =
                     selectedCategory.value === 'bonds' ? product.isinCdNm : product.finPrdtNm;
-
                 return productName?.toLowerCase().includes(searchQuery.value.toLowerCase());
             });
         });
@@ -389,6 +388,9 @@ export default {
         };
 
         const selectTab = (category) => {
+            // 탭 변경 시 검색어 초기화
+            searchQuery.value = '';
+
             selectedCategory.value = category;
             currentPage.value = 1;
             router.push({
