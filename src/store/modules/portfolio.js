@@ -1,4 +1,4 @@
-import { fetchPortfolioList, getPortfolioDetail, postPortfolio, deletePortfolio } from '@/api/portfolio.js';
+import { fetchPortfolioList, getPortfolioDetail, postPortfolio, deletePortfolio } from '@/api/portfolioApi.js';
 
 const portfolioModule = {
     namespaced: true,
