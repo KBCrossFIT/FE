@@ -172,7 +172,8 @@
 
 <script>
 import { ref, computed, watch } from 'vue';
-import { useStore } from 'vuex';
+import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
+import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
 import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import { fetchDepositProducts, fetchSavingProducts } from '@/api/financeApi.js';
@@ -184,7 +185,8 @@ export default {
         StockList, // StockList 컴포넌트 등록
     },
     setup() {
-        const store = useStore();
+        const bondStore = useBondStore(); // Pinia bond store 호출
+        const fundStore = useFundStore(); // Pinia fund store 호출
         const searchQuery = ref('');
         const selectedCategory = ref('');
 
@@ -236,29 +238,13 @@ export default {
             error.value = null;
             try {
                 if (selectedCategory.value === 'bonds') {
-                    await store.dispatch('bond/fetchBondList', { page, pageSize: pageSize.value });
-                    const bonds = store.getters['bond/getBondList'];
-                    if (!Array.isArray(bonds)) {
-                        throw new Error('채권 리스트가 배열이 아닙니다.');
-                    }
-                    displayedProducts.value = bonds.map((product) => ({
-                        ...product,
-                        yield: [],
-                        type: selectedCategory.value,
-                    }));
-                    totalPages.value = store.getters['bond/getTotalPages'] || 1;
+                    await bondStore.fetchBondList(page, pageSize.value);
+                    displayedProducts.value = bondStore.getBondList;
+                    totalPages.value = bondStore.getTotalPages;
                 } else if (selectedCategory.value === 'funds') {
-                    await store.dispatch('fund/fetchFundList', { page, pageSize: pageSize.value });
-                    const funds = store.getters['fund/getFundList'];
-                    if (!Array.isArray(funds)) {
-                        throw new Error('펀드 리스트가 배열이 아닙니다.');
-                    }
-                    displayedProducts.value = funds.map((product) => ({
-                        ...product,
-                        yield: [],
-                        type: selectedCategory.value,
-                    }));
-                    totalPages.value = store.getters['fund/getTotalPages'] || 1;
+                    await fundStore.fetchFundList(page, pageSize.value);
+                    displayedProducts.value = fundStore.getFundList;
+                    totalPages.value = fundStore.getTotalPages;
                 } else if (selectedCategory.value === 'deposit') {
                     const data = await fetchDepositProducts(page, pageSize.value);
                     if (data.products && data.rates) {
@@ -364,40 +350,31 @@ export default {
             });
         };
 
-        // 장바구니 기능
         const toggleCartAndIncreaseHit = async (productId) => {
-          
-          // 장바구니 토글
-          const index = cart.value.indexOf(productId);
-          if (index === -1) {
-            cart.value.push(productId);
-          } else {
-            cart.value.splice(index, 1);
-          }
-          if (!cart.value.includes(productId)) {
+            const index = cart.value.indexOf(productId);
+            if (index === -1) {
+                cart.value.push(productId);
+            } else {
+                cart.value.splice(index, 1);
+            }
+            if (!cart.value.includes(productId)) {
                 cart.value.push(productId);
                 alert(`상품 ID ${productId}이 장바구니에 추가되었습니다.`);
-          }
+            }
 
-          // 조회수 증가 API 호출 (연령대 및 투자성향)
-          try {
-            
-            // 연령대에 따른 조회수 증가
-            await increaseAgeGroupProductHit(productId);
-
-            // 투자성향에 따른 조회수 증가
-            await increasePreferenceProductHit(productId);
-          } catch (error) {
-            console.error('조회수 증가 오류: ', error);
-            alert('조회수를 증가하는 중 오류가 발생했습니다.');
-          }
+            try {
+                await increaseAgeGroupProductHit(productId);
+                await increasePreferenceProductHit(productId);
+            } catch (error) {
+                console.error('조회수 증가 오류: ', error);
+                alert('조회수를 증가하는 중 오류가 발생했습니다.');
+            }
         };
 
         const filteredProducts = computed(() => {
             return displayedProducts.value.filter((product) => {
                 let productName =
                     selectedCategory.value === 'bonds' ? product.isinCdNm : product.finPrdtNm;
-
                 return productName?.toLowerCase().includes(searchQuery.value.toLowerCase());
             });
         });
@@ -412,6 +389,7 @@ export default {
         };
 
         const selectTab = (category) => {
+            searchQuery.value = '';
             selectedCategory.value = category;
             currentPage.value = 1;
             router.push({
@@ -421,27 +399,18 @@ export default {
             });
         };
 
-        // visiblePages 계산 속성 추가
         const visiblePages = computed(() => {
             const pages = [];
             const total = totalPages.value;
             const current = currentPage.value;
 
             if (total <= 7) {
-                // 총 페이지 수가 7 이하일 때 모든 페이지 표시
                 for (let i = 1; i <= total; i++) {
                     pages.push(i);
                 }
             } else {
-                // 첫 번째 페이지는 항상 표시
                 pages.push(1);
-
-                // 첫 번째 이후부터 currentPage 앞에 "..." 표시
-                if (current > 4) {
-                    pages.push('...');
-                }
-
-                // 현재 페이지를 중심으로 ±2 페이지씩 표시
+                if (current > 4) pages.push('...');
                 const startPage = Math.max(2, current - 2);
                 const endPage = Math.min(total - 1, current + 2);
 
@@ -449,12 +418,7 @@ export default {
                     pages.push(i);
                 }
 
-                // 마지막 페이지 앞에 "..." 표시
-                if (current < total - 3) {
-                    pages.push('...');
-                }
-
-                // 마지막 페이지는 항상 표시
+                if (current < total - 3) pages.push('...');
                 pages.push(total);
             }
 
@@ -465,7 +429,6 @@ export default {
             () => [route.params.category, route.query.page, route.query.pageSize],
             ([newCategory, newPage, newPageSize]) => {
                 console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
-
                 selectedCategory.value = newCategory || 'all';
                 currentPage.value = parseInt(newPage) || 1;
                 pageSize.value = parseInt(newPageSize) || 10;
@@ -492,8 +455,8 @@ export default {
             getProductName,
             getRate,
             cart,
-            visiblePages, // visiblePages 추가
-            toggleCartAndIncreaseHit // 장바구니 추가 및 조회수 증가
+            visiblePages,
+            toggleCartAndIncreaseHit,
         };
     },
 };
