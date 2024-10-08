@@ -89,7 +89,6 @@
 
     <div class="ProductSelection">
       <h1>상품종류</h1>
-      <h4>(현재 장바구니가 아닌 dummyfinancial에서 불러옴)</h4>
       <div class="MakePortfolio-btn">
         <v-btn @click="openModalCart">장바구니에서 가져오기</v-btn>
       </div>
@@ -128,7 +127,6 @@
 
       <!-- 주식 상품 페이지 -->
       <h1>주식 종류</h1>
-      <h4>(현재 주식검색창이 아닌 dummyStock에서 불러옴)</h4>
       <div class="MakePortfolio-btn">
         <v-btn @click="openModal">주식 추가하기</v-btn>
       </div>
@@ -182,7 +180,6 @@ export default {
     const searchQuery = ref('');
     const selectedCategory = ref('');
     const selected = ref([]);
-    const products = ref(dummyProducts); // 더미 데이터 사용
     const chart = ref('char1'); // 기본 선택 값
     const isModalOpen = ref(false); // 모달 상태 관리
     const isModalCartOpen = ref(false);
