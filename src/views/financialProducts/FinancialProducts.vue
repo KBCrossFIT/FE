@@ -17,17 +17,23 @@
         </div>
 
         <!-- 주식 리스트 -->
+        <stock-search v-if="selectedCategory === 'stocks'" />
         <stock-list v-if="selectedCategory === 'stocks'" />
 
         <!-- 검색 및 필터링 -->
-        <div class="search-filter mb-4" v-if="selectedCategory !== 'stocks'">
-            <input
-                v-model="searchQuery"
-                type="text"
-                class="form-control mb-2"
-                placeholder="상품명 검색..."
-                @input="handleSearch"
-            />
+        <div class="search-filter-container">
+            <div class="search-filter mb-4" v-if="selectedCategory !== 'stocks'">
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    class="form-control mb-2"
+                    placeholder="상품명 검색..."
+                    @input="handleSearch"
+                />
+            </div>
+            <div v-if="selectedCategory !== 'stocks'" class="erase-filter">
+                <v-btn class="erase-filter-btn" @click="eraseFilter"> 지우기 </v-btn>
+            </div>
         </div>
 
         <!-- 로딩 중 메시지 -->
@@ -178,11 +184,13 @@ import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import { fetchDepositProducts, fetchSavingProducts } from '@/api/financeApi.js';
 import StockList from '@/views/stock/StockList.vue'; // StockList 컴포넌트 임포트
+import StockSearch from '@/views/stock/StockSearch.vue'; // StockList 컴포넌트 임포트
 
 export default {
     name: 'FinancialProducts',
     components: {
         StockList, // StockList 컴포넌트 등록
+        StockSearch,
     },
     setup() {
         const bondStore = useBondStore(); // Pinia bond store 호출
@@ -233,6 +241,7 @@ export default {
             return {};
         };
 
+        // 상품 리스트 가져오기(load)
         const loadProducts = async (page) => {
             isLoading.value = true;
             error.value = null;
@@ -373,11 +382,26 @@ export default {
 
         const filteredProducts = computed(() => {
             return displayedProducts.value.filter((product) => {
-                let productName =
-                    selectedCategory.value === 'bonds' ? product.isinCdNm : product.finPrdtNm;
+                let productName;
+
+                // 조건에 따라 상품명 설정
+                if (selectedCategory.value === 'bonds') {
+                    productName = product.isinCdNm; // 채권의 경우 ISIN 코드명
+                } else if (selectedCategory.value === 'funds') {
+                    productName = product.productNm; // 펀드의 경우 productNm
+                } else {
+                    productName = product.finPrdtNm; // 그 외 금융상품의 경우 finPrdtNm
+                }
+
+                // 상품명이 검색어를 포함하는지 여부를 반환
                 return productName?.toLowerCase().includes(searchQuery.value.toLowerCase());
             });
         });
+
+        const eraseFilter = () => {
+            searchQuery.value = ''; // 검색어 초기화
+            handleSearch(); // 검색어가 초기화된 후 다시 검색 로직 실행
+        };
 
         const handleSearch = () => {
             currentPage.value = 1;
@@ -443,6 +467,7 @@ export default {
             selectedCategory,
             tabs,
             filteredProducts,
+            eraseFilter,
             gotoDetail,
             currentPage,
             totalPages,
@@ -484,15 +509,27 @@ export default {
     color: white;
 }
 
-.search-filter {
+.search-filter-container {
     display: flex;
+    align-items: center;
     justify-content: center;
+    margin-bottom: 20px; /* 하단 여백 */
 }
 
 .search-filter input {
     width: 300px;
     padding: 8px;
     border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-right: 10px; /* 버튼과의 간격 */
+}
+
+.erase-fillter-btn {
+    background-color: #f0f0f0;
+    color: #000;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
     border: 1px solid #ccc;
 }
 
