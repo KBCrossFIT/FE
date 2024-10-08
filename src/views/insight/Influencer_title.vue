@@ -1,5 +1,4 @@
 <template>
-
   <div class="influencer-list">
     <!-- 로딩 중 상태 표시 -->
     <v-container v-if="loading">
@@ -47,16 +46,15 @@
       <v-container>
         <v-pagination v-model="page" :length="totalPages" @input="onPageChange"></v-pagination>
       </v-container>
-
     </div>
+  </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { ref, computed, onMounted } from 'vue';
+import axios from "axios";
+import { ref, computed, onMounted } from "vue";
 
 export default {
-
   name: "InfluencerList",
   setup() {
     const personas = ref([]);
@@ -107,15 +105,13 @@ export default {
       onImageError,
     };
   },
-
 };
 </script>
 
 <style scoped>
 .influencer-list {
-    padding: 20px;
+  padding: 20px;
 }
-
 
 .influencer-card {
   display: flex;
@@ -123,41 +119,36 @@ export default {
   justify-content: center;
   align-items: center;
   transition: box-shadow 0.3s ease-in-out;
-
 }
 
 .influencer-card:hover {
-    box-shadow: 0 0 20px 10px #77e077;
-    cursor: pointer;
+  box-shadow: 0 0 20px 10px #77e077;
+  cursor: pointer;
 }
 
 .image-box {
-
   object-fit: cover;
   width: 150px;
   height: 150px;
-
 }
 
 .card-title {
-    text-align: center;
+  text-align: center;
 }
 
 .content {
-    text-align: center;
-    padding: 10px;
+  text-align: center;
+  padding: 10px;
 }
 
 .post-name {
-    font-size: 1.2em;
-    margin: 0;
+  font-size: 1.2em;
+  margin: 0;
 }
 
 .post-field {
-
-    font-size: 0.9em;
-    color: #000000;
-    margin: 5px 0;
-
+  font-size: 0.9em;
+  color: #000000;
+  margin: 5px 0;
 }
 </style>
