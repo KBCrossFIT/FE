@@ -34,7 +34,7 @@ export default {
   async deletePortfolio(portfolioId) {
     try {
       console.log(portfolioId);
-      await instance.delete(`portfolio/${parseInt(portfolioId)}`);
+      await instance.delete(`portfolio/${portfolioId}`);
       return;
     } catch (error) {
       console.error('Error deleting portfolio:', error);
