@@ -1,190 +1,93 @@
 <template>
-  <!-- 상우하자 -->
-  <div style="margin: 20px 0px 70px 0px">이달의 추천 영상</div>
+    <!-- 이달의 추천 영상 섹션 -->
+    <div style="margin: 20px 0px 30px 0px; font-size: 1.5rem">이달의 추천 영상</div>
 
-  <div id="first" class="d-flex flex-wrap justify-center">
-    <!-- 첫번째 -->
-    <div id="second1" class="card-wrapper mx-2">
-      <v-card
-        class="mx-auto"
-        color="white"
-        max-width="400"
-        title="카카오뱅크로 빠르게 1억 모으는 116 플랜"
-      >
-        <template v-slot:prepend>
-          <v-icon class="red-icon">mdi-youtube</v-icon>
-        </template>
+    <!-- 이달의 추천 영상 3개 -->
+    <div id="featured-videos" class="d-flex flex-wrap justify-space-between">
+        <!-- 첫번째 -->
+        <div v-for="i in 3" :key="i" class="card-wrapper">
+            <v-card class="mx-auto" color="white" max-width="300" title="추천 영상 제목">
+                <template v-slot:prepend>
+                    <v-icon class="red-icon">mdi-youtube</v-icon>
+                </template>
 
-        <!-- 내용 -->
-        <v-card-text
-          class="text-h8 py-0"
-          style="
-            color: black;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            max-height: 4em;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-          "
-        >
-          4대 대형 시중은행 은행원 출신입니다. * YOUTUBE KOREA OFFICIAL *
-          지식공유 크리에이터 선정(2019) 유튜브와 성장한 50인 선정(2021) - 경제
-          재테크 분야 1인 - 방송 KBS 슬기로운 어른이생활(2020) 국민영수증(2021)
-          MBC 뉴스투데이 SBS 머니테크 - 도서 머니챌린지(2022) - 21세기 북스 -
-          ...
-        </v-card-text>
+                <!-- 내용 -->
+                <v-card-text
+                    class="text-h8 py-0"
+                    style="
+                        color: black;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: normal;
+                        max-height: 4em;
+                        display: -webkit-box;
+                        /* -webkit-line-clamp: 3; */
+                        -webkit-box-orient: vertical;
+                    "
+                >
+                    추천 영상 설명입니다. 여기에 추천 영상에 대한 간략한 정보를 넣을 수 있습니다.
+                </v-card-text>
 
-        <!-- 유튜버 프로필 이미지 -->
-        <v-card-actions class="d-flex">
-          <div id="Youtube profile up">
-            <v-img
-              src="https://yt3.googleusercontent.com/ytc/AIdro_mrAv17zn0TkOP6Msn1IX7Pu6vI_sbxiSPFqs54nnzwahb3=s160-c-k-c0x00ffffff-no-rj"
-              width="60"
-              padding="10px"
-            ></v-img>
-          </div>
-
-          <!-- 유튜버 프로필 -->
-          <div id="Youtube profile down">
-            <v-list-item-content>
-              <v-list-item-title style="color: black">댈님</v-list-item-title>
-              <v-list-item-subtitle style="color: black"
-                >댈님의 생활 속 금융이야기</v-list-item-subtitle
-              >
-            </v-list-item-content>
-          </div>
-        </v-card-actions>
-      </v-card>
+                <!-- 유튜버 프로필 이미지 -->
+                <v-card-actions class="d-flex">
+                    <v-img
+                        src="https://yt3.googleusercontent.com/ytc/AIdro_mrAv17zn0TkOP6Msn1IX7Pu6vI_sbxiSPFqs54nnzwahb3=s160-c-k-c0x00ffffff-no-rj"
+                        width="60"
+                        padding="10px"
+                        class="youtube-img"
+                    ></v-img>
+                    <v-list-item-content>
+                        <v-list-item-title style="color: black">유튜버 이름</v-list-item-title>
+                        <v-list-item-subtitle style="color: black">
+                            유튜버 채널 정보
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-card-actions>
+            </v-card>
+        </div>
     </div>
 
-    <!-- 두번째 -->
-    <div id="second2" class="card-wrapper mx-2">
-      <!-- mx-2로 간격 조정 -->
-      <v-card
-        class="mx-auto"
-        color="white"
-        max-width="400"
-        title="카카오뱅크로 빠르게 1억 모으는 116 플랜"
-      >
-        <template v-slot:prepend>
-          <v-icon class="red-icon">mdi-youtube</v-icon>
-        </template>
-
-        <!-- 내용 -->
-        <v-card-text
-          class="text-h8 py-0"
-          style="
-            color: black;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            max-height: 4em;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-          "
-        >
-          4대 대형 시중은행 은행원 출신입니다. * YOUTUBE KOREA OFFICIAL *
-          지식공유 크리에이터 선정(2019) 유튜브와 성장한 50인 선정(2021) - 경제
-          재테크 분야 1인 - 방송 KBS 슬기로운 어른이생활(2020) 국민영수증(2021)
-          MBC 뉴스투데이 SBS 머니테크 - 도서 머니챌린지(2022) - 21세기 북스 -
-          ...
-        </v-card-text>
-
-        <!-- 유튜버 프로필 이미지 -->
-        <v-card-actions class="d-flex">
-          <div id="Youtube profile up">
-            <v-img
-              src="https://yt3.googleusercontent.com/ytc/AIdro_mrAv17zn0TkOP6Msn1IX7Pu6vI_sbxiSPFqs54nnzwahb3=s160-c-k-c0x00ffffff-no-rj"
-              width="60"
-              padding="10px"
-            ></v-img>
-          </div>
-
-          <!-- 유튜버 프로필 -->
-          <div id="Youtube profile down">
-            <v-list-item-content>
-              <v-list-item-title style="color: black">댈님</v-list-item-title>
-              <v-list-item-subtitle style="color: black"
-                >댈님의 생활 속 금융이야기</v-list-item-subtitle
-              >
-            </v-list-item-content>
-          </div>
-        </v-card-actions>
-      </v-card>
+    <!-- 다른 영상들 리스트 형식 -->
+    <div style="margin: 40px 0px 10px 0px; font-size: 1.5rem">다른 영상들</div>
+    <div class="other-videos">
+        <v-list>
+            <v-list-item v-for="i in 5" :key="i">
+                <v-list-item-content>
+                    <v-list-item-title>다른 영상 제목 {{ i }}</v-list-item-title>
+                    <v-list-item-subtitle>다른 영상 설명입니다.</v-list-item-subtitle>
+                </v-list-item-content>
+            </v-list-item>
+        </v-list>
     </div>
-
-    <!-- 세번째 -->
-    <div id="second3" class="card-wrapper mx-2">
-      <!-- mx-2로 간격 조정 -->
-      <v-card
-        class="mx-auto"
-        color="white"
-        max-width="400"
-        title="카카오뱅크로 빠르게 1억 모으는 116 플랜"
-      >
-        <template v-slot:prepend>
-          <v-icon class="red-icon">mdi-youtube</v-icon>
-        </template>
-
-        <!-- 내용 -->
-        <v-card-text
-          class="text-h8 py-0"
-          style="
-            color: black;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: normal;
-            max-height: 4em;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-          "
-        >
-          4대 대형 시중은행 은행원 출신입니다. * YOUTUBE KOREA OFFICIAL *
-          지식공유 크리에이터 선정(2019) 유튜브와 성장한 50인 선정(2021) - 경제
-          재테크 분야 1인 - 방송 KBS 슬기로운 어른이생활(2020) 국민영수증(2021)
-          MBC 뉴스투데이 SBS 머니테크 - 도서 머니챌린지(2022) - 21세기 북스 -
-          ...
-        </v-card-text>
-
-        <!-- 유튜버 프로필 이미지 -->
-        <v-card-actions class="d-flex">
-          <div id="Youtube profile up">
-            <v-img
-              src="https://yt3.googleusercontent.com/ytc/AIdro_mrAv17zn0TkOP6Msn1IX7Pu6vI_sbxiSPFqs54nnzwahb3=s160-c-k-c0x00ffffff-no-rj"
-              width="60"
-              padding="10px"
-            ></v-img>
-          </div>
-
-          <!-- 유튜버 프로필 -->
-          <div id="Youtube profile down">
-            <v-list-item-content>
-              <v-list-item-title style="color: black">댈님</v-list-item-title>
-              <v-list-item-subtitle style="color: black"
-                >댈님의 생활 속 금융이야기</v-list-item-subtitle
-              >
-            </v-list-item-content>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </div>
-  </div>
 </template>
 
 <style scoped>
-.red-icon {
-  color: red; /* 유튜브 아이콘 색상 빨강으로 지정 */
+/* 이달의 추천 영상 3개 레이아웃 */
+#featured-videos {
+    display: flex;
+    justify-content: space-between; /* 카드들 간의 공간 균등 배치 */
+    margin-bottom: 40px;
 }
-#first {
-  display: flex; /* Flexbox를 사용하여 가로 배열 */
-  flex-wrap: wrap; /* 카드가 공간을 초과할 경우 다음 줄로 이동 */
-  justify-content: center; /* 카드들을 중앙 정렬 */
-}
+
 .card-wrapper {
-  margin: 20px 10px; /* 20px 위 아래, 10px 좌 우 */
+    width: 30%; /* 각 카드가 3등분된 공간을 차지 */
+    margin: 10px;
+}
+
+.red-icon {
+    color: red; /* 유튜브 아이콘 색상 */
+}
+
+.other-videos {
+    margin-top: 20px;
+}
+
+.v-list-item {
+    margin-bottom: 15px; /* 리스트 항목 간 간격 */
+}
+
+.youtube-img {
+    width: 15vh;
+    height: 10vh;
 }
 </style>
