@@ -29,28 +29,41 @@
                             class="form-control"
                             placeholder="검색어를 입력해 주세요"
                         />
+                        <v-btn class="erase-btn" @click="eraseSearch"> 지우기 </v-btn>
                     </div>
                 </div>
 
                 <!-- 메인 -->
-                <Influencer_title />
+                <Influencer_title :searchQuery="searchQuery" @openModal="openModal" />
             </v-container>
         </div>
+
+        <!-- 모달 창 -->
+        <ModalInfluencer
+            v-if="isModalOpen"
+            :isOpen="isModalOpen"
+            :persona="selectedPersona"
+            @close="closeModal"
+        />
     </div>
 </template>
 
 <script>
 import Influencer_title from './Influencer_title.vue';
+import ModalInfluencer from '@/components/Modal/ModalInfluencer.vue';
 
 export default {
     name: 'Influencer',
     components: {
         Influencer_title,
+        ModalInfluencer, // 모달 컴포넌트 추가
     },
     data() {
         return {
             searchQuery: '', // 검색어 데이터
             page: 1, // 현재 페이지
+            isModalOpen: false, // 모달 상태 관리
+            selectedPersona: null, // 선택된 인플루언서 데이터
         };
     },
     methods: {
@@ -60,6 +73,19 @@ export default {
         onPageChange(newPage) {
             this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
             console.log(`Current page: ${newPage}`);
+        },
+        openModal(persona) {
+            this.selectedPersona = persona;
+            this.isModalOpen = true;
+        },
+        closeModal() {
+            this.isModalOpen = false;
+            this.selectedPersona = null;
+        },
+
+        // 검색창 지우기 기능
+        eraseSearch() {
+            this.searchQuery = ''; // 검색어를 빈 문자열로 설정하여 검색창을 초기화
         },
     },
 };
@@ -93,6 +119,9 @@ export default {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+.erase-btn {
+    margin-left: 10px;
 }
 h1.sixth {
     position: relative;
