@@ -128,3 +128,25 @@ export async function getTopProductsByPreference() {
         throw error; // 오류 발생 시 오류를 던짐
     }
 }
+
+// 연령 버튼에 따라 상위 3개 상품 조회 API
+export async function getTopProductsBySelectedAgeGroup(ageGroup) {
+    try {
+        const response = await hitApi.get(`/ageGroup/${ageGroup}/top-products`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching top products for age group ${ageGroup}`, error);
+        throw error;
+    }
+}
+
+// 투자 성향 버튼에 따라 상위 3개 상품 조회 API
+export async function getTopProductsBySelectedPreference(preference) {
+    try {
+        const response = await hitApi.get(`/preference/${preference}/top-products`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching top products for ${preference}`, error);
+        throw error;
+    }
+}
