@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia'; // Pinia 가져오기
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -51,6 +52,7 @@ axiosInstance.interceptors.response.use(
 
 // Create the Vue app instance
 const app = createApp(App);
+const pinia = createPinia(); // Pinia 인스턴스 생성
 
 // Register global components
 app.component('DefaultLayout', DefaultLayout);
@@ -65,6 +67,9 @@ app.use(VueCookies);
 
 // Make axios instance available globally
 app.config.globalProperties.$axios = axiosInstance;
+
+// Use Pinia
+app.use(pinia); // Vue 앱에 Pinia 사용하기
 
 // Mount the app to the #app element
 app.mount('#app');
