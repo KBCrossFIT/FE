@@ -12,7 +12,7 @@
         {{ cartItem.expectedReturn }}
         {{ cartItem.rsrvType }}
         <!-- 삭제 버튼 추가 -->
-        <button @click="removeCartItem(cartItem.productId)">삭제</button>
+        <button @click="removeCartItem(cartItem.cartId)">삭제</button>
       </li>
     </ul>
 
@@ -70,10 +70,10 @@ export default {
     },
 
     // 장바구니에서 상품 삭제
-    async removeCartItem(productId) {
+    async removeCartItem(cartId) {
       try {
-        await deleteCartItem(productId); // API 호출로 아이템 삭제
-        this.cartItems = this.cartItems.filter(item => item.productId !== productId); // 리스트에서 삭제된 아이템 제거
+        await deleteCartItem(cartId); // API 호출로 아이템 삭제
+        this.cartItems = this.cartItems.filter(item => item.cartId !== cartId); // 리스트에서 삭제된 아이템 제거
       } catch (error) {
         console.error('Error removing cart item:', error);
       }

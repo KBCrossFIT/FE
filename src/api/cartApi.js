@@ -31,9 +31,9 @@ export async function postCartItem(cartItem) {
   }
 }
 
-export async function deleteCartItem(productId) {
+export async function deleteCartItem(cartId) {
   try {
-    await instance.delete(`/cart/items/${productId}`);
+    await instance.delete(`/cart/items/${cartId}`);
   } catch (error) {
     console.error('Error deleting cart:', error);
     throw error; // 오류 발생 시 오류를 던져줌
