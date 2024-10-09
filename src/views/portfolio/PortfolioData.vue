@@ -1,4 +1,5 @@
-<template> <!-- 포트폴리오 단일 페이지 -->
+<template>
+  <!-- 포트폴리오 단일 페이지 -->
   <div>
     <h1>내 포트폴리오</h1>
     <ul>
@@ -147,7 +148,7 @@ export default {
   },
   methods: {
     fetchPortfolioList() {
-      fetch("/api/portfolio/list")
+      fetch('/api/portfolio/list')
         .then((response) => response.json())
         .then((data) => {
           this.portfolioList = data;
@@ -158,7 +159,7 @@ export default {
     },
 
     fetchPortfolio() {
-      fetch("/api/portfolio/details/1")
+      fetch('/api/portfolio/details/1')
         .then((response) => response.json())
         .then((data) => {
           this.portfolio = data;

@@ -60,7 +60,6 @@
 
 <script>
 import { ref, computed } from 'vue';
-import { dummyStocks } from '@/dummyStock.js'; // 더미 데이터 가져오기
 
 export default {
     name: 'ModalStock',
