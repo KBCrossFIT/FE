@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import Youtube_title from './YoutubeVideos.vue';
 
 export default {
     name: 'Youtube',

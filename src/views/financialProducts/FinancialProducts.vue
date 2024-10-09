@@ -18,12 +18,12 @@
 
         <!-- 주식 리스트 -->
         <div class="stock-container">
-            <stock-search v-if="selectedCategory === 'stocks'" />
-            <stock-list v-if="selectedCategory === 'stocks'" />
+            <stock-search v-if="selectedCategory === 'stock'" />
+            <stock-list v-if="selectedCategory === 'stock'" />
         </div>
 
         <!-- 검색 및 필터링 -->
-        <div class="search-box" v-if="selectedCategory !== 'stocks'">
+        <div class="search-box" v-if="selectedCategory !== 'stock'">
             <input
                 v-model="searchQuery"
                 type="text"
@@ -51,7 +51,7 @@
         </div>
 
         <!-- 상품 리스트 -->
-        <div v-else v-if="selectedCategory !== 'stocks'">
+        <div v-else v-if="selectedCategory !== 'stock'">
             <table class="table">
                 <thead>
                     <tr>
@@ -195,7 +195,7 @@
 import { ref, computed, watch } from 'vue';
 import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
 import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
-import {useCartStore} from '@/store/modules/cart.js';
+import { useCartStore } from '@/store/modules/cart.js';
 import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import * as financeApi from '@/api/financeApi';
@@ -218,14 +218,14 @@ export default {
         const searchQuery = ref('');
         const selectedCategory = ref('deposit');
 
-        const cartItem = {
-          productId: "",
-          productType: "",
-          provider: "",
-          productName: "",
-          expectedReturn: "",
-          rsrvType: ""
-        }
+        const cartItem = ref({
+            productId: '',
+            productType: '',
+            provider: '',
+            productName: '',
+            expectedReturn: '',
+            rsrvType: '',
+        });
 
         const cart = ref([]);
         const displayedProducts = ref([]);
@@ -244,7 +244,7 @@ export default {
             { label: '적금', value: 'saving' },
             { label: '채권', value: 'bond' },
             { label: '펀드', value: 'fund' },
-            { label: '주식', value: 'stocks' },
+            { label: '주식', value: 'stock' },
         ];
 
         const activeButtonStyle = {
@@ -273,7 +273,7 @@ export default {
 
         // 상품 리스트 가져오기(load)
         const loadProducts = async () => {
-            if (selectedCategory.value === 'stocks') return;
+            if (selectedCategory.value === 'stock') return;
 
             isLoading.value = true;
             error.value = null;
@@ -418,39 +418,39 @@ export default {
                 alert(`상품 ID ${product.productId}이 장바구니에 추가되었습니다.`);
             }
 
-            cartItem.productId = product.productId;
+            cartItem.value.productId = product.productId;
             console.log(product);
             switch (product.type) {
-              case "saving":
-                cartItem.productType = "S";
-                cartItem.provider = product.korCoNm;
-                console.log(product.finPrdtNm);
-                cartItem.productName = product.finPrdtNm;
-                cartItem.expectedReturn = getRate(product.productId, 12).intrRate2;
-                cartItem.rsrvType = "S";
-                break;
-              case "deposit":
-                cartItem.productType = "S";
-                cartItem.provider = product.korCoNm;
-                cartItem.productName = product.finPrdtNm;
-                cartItem.expectedReturn = getRate(product.productId, 12).intrRate2;
-                break;
-              case "bond":
-                cartItem.provider = product.bondIsurNm;
-                cartItem.productName = product.isinCdNm;
-                cartItem.expectedReturn = product.yield12;
-                break;
-              case "fund":
-                cartItem.provider = product.companyNm;
-                cartItem.productName = product.productNm;
-                cartItem.expectedReturn = product.bondSrfcInrt;
-                break;
+                case 'saving':
+                    cartItem.value.productType = 'S';
+                    cartItem.value.provider = product.korCoNm;
+                    console.log(product.finPrdtNm);
+                    cartItem.value.productName = product.finPrdtNm;
+                    cartItem.value.expectedReturn = getRate(product.productId, 12).intrRate2;
+                    cartItem.value.rsrvType = 'S';
+                    break;
+                case 'deposit':
+                    cartItem.value.productType = 'S';
+                    cartItem.value.provider = product.korCoNm;
+                    cartItem.value.productName = product.finPrdtNm;
+                    cartItem.value.expectedReturn = getRate(product.productId, 12).intrRate2;
+                    break;
+                case 'bond':
+                    cartItem.value.provider = product.bondIsurNm;
+                    cartItem.value.productName = product.isinCdNm;
+                    cartItem.value.expectedReturn = product.yield12;
+                    break;
+                case 'fund':
+                    cartItem.value.provider = product.companyNm;
+                    cartItem.value.productName = product.productNm;
+                    cartItem.value.expectedReturn = product.bondSrfcInrt;
+                    break;
             }
 
-            console.log(cartItem)
+            console.log(cartItem.value);
 
             try {
-                await cartStore.addCartItem(cartItem);
+                await cartStore.addCartItem(cartItem.value);
                 clearCartItem();
                 await increaseAgeGroupProductHit(product.productId);
                 await increasePreferenceProductHit(product.productId);
@@ -461,14 +461,14 @@ export default {
         };
 
         const clearCartItem = () => {
-          this.cartItem = {
-            productId: "",
-            productType: "",
-            provider: "",
-            productName: "",
-            expectedReturn: "",
-            rsrvType: ""
-          }
+            cartItem.value = {
+                productId: '',
+                productType: '',
+                provider: '',
+                productName: '',
+                expectedReturn: '',
+                rsrvType: '',
+            };
         };
 
         const filteredProducts = ref([]); // 필터링된 결과를 저장할 ref

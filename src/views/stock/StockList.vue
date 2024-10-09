@@ -19,15 +19,14 @@
                         <th>시가총액</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <tr v-for="stock in paginatedStocks" :key="stock.stockCode">
                         <td>{{ stock.stockCode }}</td>
                         <td>{{ stock.stockName }}</td>
                         <td>{{ stock.mrktCtg }}</td>
                         <td>{{ stock.clpr }}</td>
-                        <!-- 전일비: 값에 따라 색상 변경 -->
                         <td :style="getColorStyle(stock.vs)">{{ stock.vs }}</td>
-                        <!-- 등락률: 값에 따라 색상 변경 -->
                         <td :style="getColorStyle(stock.fltRt)">{{ stock.fltRt }}%</td>
                         <td>{{ stock.mkp }}</td>
                         <td>{{ stock.hipr }}</td>
@@ -39,6 +38,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <p v-else>주식 데이터가 없습니다.</p>
         </div>
 
