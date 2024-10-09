@@ -56,7 +56,7 @@
                 <thead>
                     <tr>
                         <th>상품명</th>
-                        <template v-if="selectedCategory === 'funds'">
+                        <template v-if="selectedCategory === 'fund'">
                             <th>회사명</th>
                             <th>펀드유형</th>
                             <th>위험도</th>
@@ -94,7 +94,7 @@
                         </td>
 
                         <!-- 펀드 정보 -->
-                        <template v-if="selectedCategory === 'funds'">
+                        <template v-if="selectedCategory === 'fund'">
                             <td>{{ product.companyNm }}</td>
                             <td>{{ product.fundType }}</td>
                             <td>{{ product.riskLevel }}</td>
@@ -234,7 +234,7 @@ export default {
             { label: '예금', value: 'deposit' },
             { label: '적금', value: 'saving' },
             { label: '채권', value: 'bonds' },
-            { label: '펀드', value: 'funds' },
+            { label: '펀드', value: 'fund' },
             { label: '주식', value: 'stocks' },
         ];
 
@@ -246,7 +246,7 @@ export default {
         const getProductName = (product) => {
             if (selectedCategory.value === 'bonds') {
                 return product.isinCdNm || '상품명 없음';
-            } else if (selectedCategory.value === 'funds') {
+            } else if (selectedCategory.value === 'fund') {
                 return product.productNm || '상품명 없음';
             } else {
                 return product.finPrdtNm || '상품명 없음';
@@ -275,7 +275,7 @@ export default {
                 if (searchQuery.value) {
                     if (selectedCategory.value === 'bonds') {
                         data = await financeApi.searchBondProduct(searchQuery.value);
-                    } else if (selectedCategory.value === 'funds') {
+                    } else if (selectedCategory.value === 'fund') {
                         data = await financeApi.searchFundProduct(searchQuery.value);
                     } else if (selectedCategory.value === 'deposit') {
                         data = await financeApi.searchDepositProduct(searchQuery.value);
@@ -288,7 +288,7 @@ export default {
                             currentPage.value,
                             pageSize.value
                         );
-                    } else if (selectedCategory.value === 'funds') {
+                    } else if (selectedCategory.value === 'fund') {
                         data = await financeApi.fetchFundProducts(
                             currentPage.value,
                             pageSize.value
@@ -326,11 +326,21 @@ export default {
                     }
                 }
 
-                // Synchronize filteredProducts and displayedProducts
+                // 모든 상품에 category 추가
                 if (data.products || data.items) {
-                    displayedProducts.value = data.products || data.items || [];
+                    const productsWithCategory = (data.products || data.items).map((product) => ({
+                        ...product,
+                        type: selectedCategory.value,
+                    }));
+
+                    displayedProducts.value = productsWithCategory;
                     filteredProducts.value = displayedProducts.value;
                     totalPages.value = data.totalPages || 1;
+
+                    console.log(
+                        'Updated displayedProducts with category:',
+                        displayedProducts.value
+                    );
                 } else {
                     displayedProducts.value = [];
                     filteredProducts.value = [];
@@ -369,7 +379,7 @@ export default {
             const productTypeMap = {
                 saving: 'saving',
                 bonds: 'bond',
-                funds: 'fund',
+                fund: 'fund',
                 deposit: 'deposit',
             };
 
