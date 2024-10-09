@@ -120,8 +120,10 @@ import { registerUser } from '@/api/memberApi';
 import ModalTest from '@/components/Modal/ModalTest.vue'; // ModalTest 임포트
 
 export default {
+
     components: {
         ModalTest, // ModalTest 컴포넌트 등록
+
     },
     data() {
         return {

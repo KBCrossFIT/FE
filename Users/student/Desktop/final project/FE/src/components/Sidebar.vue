@@ -1,7 +1,7 @@
 <template>
   <div class="layout-wrapper">
     <!-- 사이드바 -->
-    <div class="uiNavAside" :class="{ 'expanded': isSidebarExpanded }" ref="sidebar">
+    <div class="uiNavAside" ref="sidebar">
       <ul class="nav-aside">
         <div class="button-container">
           <SidebarMenu1
@@ -10,14 +10,19 @@
             @toggleDropdown="toggleDropdown"
             @goToCreatePortfolio="goToCreatePortfolio"
           />
-          <SidebarMenu2 :activeDropdown="activeDropdown" @toggleDropdown="toggleDropdown" />
+          <SidebarMenu2
+            :activeDropdown="activeDropdown"
+            @toggleDropdown="toggleDropdown"
+            :cart="cart"
+            :removeFromCart="removeFromCart"
+          />
           <SidebarMenu3 :activeDropdown="activeDropdown" @toggleDropdown="toggleDropdown" />
         </div>
       </ul>
     </div>
 
     <!-- 메인 컨텐츠 -->
-    <div class="main-content" :class="{ 'shifted': isSidebarExpanded }">
+    <div class="main-content">
       <router-view />
     </div>
   </div>
@@ -45,28 +50,30 @@ export default {
     ]);
 
     const activeDropdown = ref(null);
-    const isSidebarExpanded = ref(false);
+    const isSidebarExpanded = ref(false); // This is not needed anymore
+    const cart = ref([]); // Initialize your cart here or fetch from props or API
     const router = useRouter();
     const sidebar = ref(null);
 
     const toggleDropdown = (menuNumber) => {
-      if (activeDropdown.value === menuNumber) {
-        activeDropdown.value = null;
-        isSidebarExpanded.value = false; // 사이드바가 축소될 때 메인 컨텐츠 원위치
-      } else {
-        activeDropdown.value = menuNumber;
-        isSidebarExpanded.value = true; // 사이드바 확장 시 메인 컨텐츠 이동
-      }
+      // Toggle the dropdown without affecting sidebar width
+      activeDropdown.value = activeDropdown.value === menuNumber ? null : menuNumber;
     };
 
     const goToCreatePortfolio = () => {
       router.push('/make-portfolio');
     };
 
+    const removeFromCart = (item) => {
+      const index = cart.value.indexOf(item);
+      if (index > -1) {
+        cart.value.splice(index, 1);
+      }
+    };
+
     const handleClickOutside = (event) => {
       if (sidebar.value && !sidebar.value.contains(event.target)) {
-        activeDropdown.value = null;
-        isSidebarExpanded.value = false; // 외부 클릭 시 사이드바 축소
+        activeDropdown.value = null; // Collapse dropdown on outside click
       }
     };
 
@@ -81,10 +88,11 @@ export default {
     return {
       portfolios,
       activeDropdown,
-      isSidebarExpanded,
       toggleDropdown,
       goToCreatePortfolio,
       sidebar,
+      cart,
+      removeFromCart,
     };
   },
 };
@@ -99,19 +107,15 @@ export default {
 .uiNavAside {
   position: fixed;
   right: 0;
-  top: 0;
-  width: 90px;
+  top: 10px;
+  width: 65px; /* Fixed width */
   height: 100vh;
   background-color: #f5f6fa;
   display: flex;
   flex-direction: column;
   z-index: 9999;
   border-left: 1px solid #e0e0e0;
-  transition: width 0.3s ease;
-}
-
-.uiNavAside.expanded {
-  width: 250px; /* 확장 시 너비 */
+  transition: none; /* Remove transition to prevent size changes */
 }
 
 .nav-aside {
@@ -131,12 +135,7 @@ export default {
 
 .main-content {
   flex-grow: 1;
-  margin-right: 90px; /* 기본 사이드바 너비 */
-  transition: margin-right 0.3s ease;
-}
-
-.main-content.shifted {
-  margin-right: 250px; /* 사이드바가 확장되었을 때 마진 조정 */
+  margin-right: 45px; /* Adjust this to match the new default sidebar width */
 }
 
 .nav-aside a {
@@ -153,12 +152,25 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-.nav-aside a:hover {
-  background-color: #f0f0f0;
+.menu-text {
+  font-size: 0.7rem;
+  margin-left: 10px;
 }
 
-.menu-text {
-  font-size: 1rem;
-  margin-left: 10px;
+.uiNavAside .nav-aside li {
+  margin-top: 25px; /* Adjust this value to align with the header */
+}
+
+/* Style for dropdown */
+.dropdown-content {
+  position: absolute; /* Positioned relative to the menu item */
+  left: 100%; /* Align dropdown to the right of the menu item */
+  top: 0; /* Aligns dropdown to the top */
+  background-color: #fff;
+  padding: 10px;
+  width: 180px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100; /* Ensure it's above other elements */
 }
 </style>
