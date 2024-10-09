@@ -3,14 +3,14 @@
     <h1>장바구니</h1>
     <ul>
       <li v-for="cartItem in cartItems" :key="cartItem.productId">
-        {{ cartItem.cartId }}
-        {{ cartItem.productId }}
-        {{ cartItem.memberNum }}
-        {{ cartItem.productType }}
-        {{ cartItem.provider }}
-        {{ cartItem.productName }}
-        {{ cartItem.expectedReturn }}
-        {{ cartItem.rsrvType }}
+        {{ cartItem.cartId }} <!-- 고유 id(출력 x) -->
+        {{ cartItem.productId }} <!-- 상품 id(출력 x) -->
+        {{ cartItem.memberNum }} <!-- 사용자 id(출력 x) -->
+        {{ cartItem.productType }} <!-- 상품 종류(S:예적금, B:채권, F:펀드) -->
+        {{ cartItem.provider }} <!-- 예적금은 은행, 채권은 발행회사, 펀드는 자산운용사 -->
+        {{ cartItem.productName }} <!-- 상품 이름 -->
+        {{ cartItem.expectedReturn }} <!-- 기대수익률(예적금은 12개월 기준 최고금리, 펀드는 12개월 기준 수익률, 채권은 금리) -->
+        {{ cartItem.rsrvType }} <!-- productType이 S인 상품에 대해서 null이면 예금, S면 적금 -->
         <!-- 삭제 버튼 추가 -->
         <button @click="removeCartItem(cartItem.cartId)">삭제</button>
       </li>
