@@ -1,15 +1,14 @@
-import {deleteCartItem, fetchCartList, getCartList, postCartItem} from "@/api/cartApi.js";
+// src/store/modules/cart.js
+import { defineStore } from 'pinia';
+import { deleteCartItem, fetchCartList, getCartList, postCartItem } from '@/api/cartApi.js';
 
-export default {
-  data() {
-    return {
-      cartItems: [], // 장바구니 아이템
-      cartItemsLoaded: false, // 장바구니 아이템 로딩 여부
-      newCartItem: null, // 새로 추가된 장바구니 아이템
-    };
-  },
-
-  methods: {
+export const useCartStore = defineStore('cart', {
+  state: () => ({
+    cartItems: [], // 장바구니 아이템
+    cartItemsLoaded: false, // 장바구니 아이템 로딩 여부
+    newCartItem: null, // 새로 추가된 장바구니 아이템
+  }),
+  actions: {
     // 장바구니 아이템을 가져오는 메서드
     async fetchCartItems() {
       if (!this.cartItems || this.cartItems.length === 0) {
@@ -38,14 +37,13 @@ export default {
     async removeCartItem(cartId) {
       try {
         await deleteCartItem(cartId);
-        this.cartItems = this.cartItems.filter(
-          (item) => item.cartId !== carttId
-        );
+        this.cartItems = this.cartItems.filter(item => item.cartId !== cartId); // cartId typo 수정
       } catch (error) {
         console.error('Error removing cart item:', error);
       }
     },
 
+    // 모든 장바구니 아이템을 가져오는 메서드
     async getCartItems() {
       try {
         const data = await getCartList();
@@ -55,5 +53,5 @@ export default {
       }
     },
   },
-};
+});
 

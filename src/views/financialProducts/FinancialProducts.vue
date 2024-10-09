@@ -60,7 +60,7 @@
                             <th>회사명</th>
                             <th>펀드유형</th>
                             <th>위험도</th>
-                            <th>1개월 수익률</th>
+                            <th>12개월 수익률</th>
                         </template>
                         <template
                             v-else-if="
@@ -98,7 +98,7 @@
                             <td>{{ product.companyNm }}</td>
                             <td>{{ product.fundType }}</td>
                             <td>{{ product.riskLevel }}</td>
-                            <td>{{ product.yield1 }}%</td>
+                            <td>{{ product.yield12 }}%</td>
                         </template>
 
                         <!-- 예금 및 적금 정보 -->
@@ -123,7 +123,7 @@
                         <td>
                             <v-btn
                                 icon
-                                @click="toggleCartAndIncreaseHit(product.productId)"
+                                @click="toggleCartAndIncreaseHit(product)"
                                 :style="{
                                     backgroundColor: cart.includes(product.productId)
                                         ? '#4caf50'
@@ -195,7 +195,7 @@
 import { ref, computed, watch } from 'vue';
 import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
 import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
-import cartModule from '@/store/modules/cart.js';
+import {useCartStore} from '@/store/modules/cart.js';
 import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import * as financeApi from '@/api/financeApi';
@@ -213,10 +213,19 @@ export default {
         // const store = useStore();
         const bondStore = useBondStore(); // Pinia bond store 호출
         const fundStore = useFundStore(); // Pinia fund store 호출
-        const addCart = cartModule;
+        const cartStore = useCartStore();
 
         const searchQuery = ref('');
         const selectedCategory = ref('deposit');
+
+        const cartItem = {
+          productId: "",
+          productType: "",
+          provider: "",
+          productName: "",
+          expectedReturn: "",
+          rsrvType: ""
+        }
 
         const cart = ref([]);
         const displayedProducts = ref([]);
@@ -386,29 +395,70 @@ export default {
             });
         };
 
-        const toggleCartAndIncreaseHit = async (productId) => {
-            const index = cart.value.indexOf(productId);
+        const toggleCartAndIncreaseHit = async (product) => {
+            const index = cart.value.indexOf(product.productId);
             if (index === -1) {
-                cart.value.push(productId);
+                cart.value.push(product.productId);
             } else {
                 cart.value.splice(index, 1);
             }
-            if (!cart.value.includes(productId)) {
-                cart.value.push(productId);
+            if (!cart.value.includes(product.productId)) {
+                cart.value.push(product.productId);
                 cart.value.push(addCart);
-                alert(`상품 ID ${productId}이 장바구니에 추가되었습니다.`);
-
-                // await addCartItem(productId);
+                alert(`상품 ID ${product.productId}이 장바구니에 추가되었습니다.`);
             }
 
+            cartItem.productId = product.productId;
+            console.log(product);
+            switch (product.type) {
+              case "savings":
+                cartItem.productType = "S";
+                cartItem.provider = product.korCoNm;
+                console.log(product.finPrdtNm);
+                cartItem.productName = product.finPrdtNm;
+                cartItem.expectedReturn = getRate(product.productId, 12).intrRate2;
+                cartItem.rsrvType = "S";
+                break;
+              case "deposit":
+                cartItem.productType = "S";
+                cartItem.provider = product.korCoNm;
+                cartItem.productName = product.finPrdtNm;
+                cartItem.expectedReturn = getRate(product.productId, 12).intrRate2;
+                break;
+              case "fund":
+                cartItem.provider = product.bondIsurNm;
+                cartItem.productName = product.isinCdNm;
+                cartItem.expectedReturn = product.yield12;
+                break;
+              case "bond":
+                cartItem.provider = product.companyNm;
+                cartItem.productName = product.productNm;
+                cartItem.expectedReturn = product.bondSrfcInrt;
+                break;
+            }
+
+            console.log(cartItem)
+
             try {
-                await cartModule.addCartItem();
-                await increaseAgeGroupProductHit(productId);
-                await increasePreferenceProductHit(productId);
+                await cartStore.addCartItem(cartItem);
+                clearCartItem();
+                await increaseAgeGroupProductHit(product.productId);
+                await increasePreferenceProductHit(product.productId);
             } catch (error) {
                 console.error('조회수 증가 오류: ', error);
                 alert('조회수를 증가하는 중 오류가 발생했습니다.');
             }
+        };
+
+        const clearCartItem = () => {
+          this.cartItem = {
+            productId: "",
+            productType: "",
+            provider: "",
+            productName: "",
+            expectedReturn: "",
+            rsrvType: ""
+          }
         };
 
         const filteredProducts = ref([]); // 필터링된 결과를 저장할 ref
