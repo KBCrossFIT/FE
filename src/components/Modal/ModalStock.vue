@@ -64,7 +64,6 @@
 </template>
 
 <script>
-import { getCartItems } from '@/store/modules/cart'; // Vuex store에서 getCartItems를 가져옴
 
 export default {
   name: 'ModalStock',
