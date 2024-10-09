@@ -1,3 +1,5 @@
+import {deleteCartItem, fetchCartList, getCartList, postCartItem} from "@/api/cartApi.js";
+
 export default {
   data() {
     return {
@@ -6,6 +8,7 @@ export default {
       newCartItem: null, // 새로 추가된 장바구니 아이템
     };
   },
+
   methods: {
     // 장바구니 아이템을 가져오는 메서드
     async fetchCartItems() {
@@ -19,8 +22,6 @@ export default {
         }
       }
     },
-
-    // 서버에서 장바구니 리스트를 가져오는 메서드
 
     // 장바구니에 새 아이템을 추가하는 메서드
     async addCartItem(cartItem) {
@@ -44,14 +45,15 @@ export default {
         console.error('Error removing cart item:', error);
       }
     },
+
+    async getCartItems() {
+      try {
+        const data = await getCartList();
+        this.cartItems = data;
+      } catch (error) {
+        console.error('Error fetching cart items:', error);
+      }
+    },
   },
 };
-// 위에 코드와 다르게 개별로 사용
-export async function getCartItems() {
-  try {
-    const data = await getCartList();
-    this.cartItems = data;
-  } catch (error) {
-    console.error('Error fetching cart items:', error);
-  }
-}
+

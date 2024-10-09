@@ -106,9 +106,7 @@ const routes = [
   { path: '/stocks', name: 'StockListView', component: StockList },
   { path: '/stock-search', name: 'StockSearch', component: StockSearch },
   { path: '/recent-view', name: 'RecentView', component: recentView },
-
-
-    { path: '/cart-ex', name: 'CartEx', component: cartEx },
+  { path: '/cart-ex', name: 'CartEx', component: cartEx },
 ];
 
 const router = createRouter({
