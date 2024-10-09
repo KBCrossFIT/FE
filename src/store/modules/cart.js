@@ -35,11 +35,11 @@ export default {
     },
 
     // 장바구니에서 아이템을 삭제하는 메서드
-    async removeCartItem(productId) {
+    async removeCartItem(cartId) {
       try {
-        await deleteCartItem(productId);
+        await deleteCartItem(cartId);
         this.cartItems = this.cartItems.filter(
-          (item) => item.productId !== productId
+          (item) => item.cartId !== carttId
         );
       } catch (error) {
         console.error('Error removing cart item:', error);
