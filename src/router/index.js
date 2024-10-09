@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuthStore } from '@/store/authStore';
 
 // views
 import Home from '@/views/home/Home.vue';
@@ -18,6 +19,8 @@ import RecentlyViewed from '@/views/financialProducts/RecentlyViewed.vue';
 import Influencer from '@/views/insight/Influencer.vue';
 import News from '@/views/insight/News.vue';
 import Youtube from '@/views/insight/Youtube.vue';
+import AddYoutube from '@/views/insight/AddYoutube.vue';
+import YoutubeDetail from '@/views/insight/YoutubeDetail.vue';
 
 // investment test
 import InvestmentTest from '@/views/investmentTest/InvestmentTest.vue';
@@ -74,6 +77,20 @@ const routes = [
     path: '/investment-test',
     name: 'InvestmentTest',
     component: InvestmentTest,
+  },
+  {
+      path: '/add-youtube',
+      name: 'AddYoutube',
+      component: AddYoutube,
+      meta: {
+        requiresAdmin: true, // 관리자만 접근 가능
+      }
+  },
+  {
+    path: '/youtube/:youtubeNum',
+    name: 'YoutubeDetail',
+    component: YoutubeDetail,
+    props: true
   },
   {
     path: '/investment-test-end',
