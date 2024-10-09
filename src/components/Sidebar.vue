@@ -1,106 +1,104 @@
 <template>
-    <div class="uiNavAside" ref="sidebar">
+    <div class="app-container">
+      <div class="uiNavAside" ref="sidebar">
         <ul class="nav-aside">
-            <div class="button-container">
-                <!-- 포트폴리오 메뉴 -->
-                <SidebarMenu1
-                    :activeDropdown="activeDropdown"
-                    :portfolios="portfolios"
-                    @toggleDropdown="toggleDropdown"
-                    @goToCreatePortfolio="goToCreatePortfolio"
-                />
-
-                <!-- 장바구니 메뉴 -->
-                <SidebarMenu2
-                    :activeDropdown="activeDropdown"
-                    :cart="cart"
-                    @toggleDropdown="toggleDropdown"
-                    @removeFromCart="removeFromCart"
-                />
-
-                <!-- 최근 본 상품 메뉴 -->
-                <SidebarMenu3 :activeDropdown="activeDropdown" @toggleDropdown="toggleDropdown" />
-            </div>
+          <div class="button-container">
+            <!-- Other sidebar menu components -->
+            <SidebarMenu1
+              :activeDropdown="activeDropdown"
+              :portfolios="portfolios"
+              @goToCreatePortfolio="goToCreatePortfolio"
+              @openSidePanel="openSidePanel"
+            />
+            <SidebarMenu2 :cart="cart" @openSidePanel="openSidePanel" />
+            <RecentProductsSection
+              :recentProducts="recentProducts"
+              @openSidePanel="openSidePanel"
+            />
+          </div>
         </ul>
+      </div>
+  
+      <!-- Side Panel -->
+      <SidePanel
+        :isVisible="isSidePanelOpen"
+        :panelTitle="panelTitle"
+        @close="isSidePanelOpen = false"
+      >
+        <div v-if="activeSection === 'RecentProductsSection'">
+          <ul>
+            <li v-for="product in panelData" :key="product.id">
+              {{ product.name }} - {{ product.price }}원
+              <button @click="$emit('removeFromRecent', product)">Remove</button>
+            </li>
+          </ul>
+        </div>
+  
+        <!-- Portfolio Section -->
+        <div v-if="activeSection === 'PortfolioSection'">
+          <ul>
+            <li v-for="portfolio in panelData" :key="portfolio.id">
+              {{ portfolio.name }} <!-- Adjust this based on your database fields -->
+            </li>
+          </ul>
+        </div>
+        <!-- Other sections for CartSection, etc. -->
+      </SidePanel>
     </div>
-</template>
-
-<script>
-import SidebarMenu1 from './sideBar/PortfolioSection.vue';
-import SidebarMenu2 from './sideBar/CartSection.vue';
-import SidebarMenu3 from './sideBar/RecentProductsSection.vue';
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-
-export default {
+  </template>
+  
+  <script>
+  import SidebarMenu1 from './sideBar/PortfolioSection.vue';
+  import SidebarMenu2 from './sideBar/CartSection.vue';
+  import RecentProductsSection from './sideBar/RecentProductsSection.vue';
+  import SidePanel from './sideBar/SidePanel.vue';
+  import { ref } from 'vue';
+  
+  export default {
     name: 'SideBar',
     components: {
-        SidebarMenu1,
-        SidebarMenu2,
-        SidebarMenu3,
+      SidebarMenu1,
+      SidebarMenu2,
+      RecentProductsSection,
+      SidePanel,
     },
     setup() {
-        const portfolios = ref([
-            { name: '포트폴리오 1', returns: 10.3, risk: 8.74 },
-            { name: '포트폴리오 2', returns: -3.0, risk: 4.0 },
-            { name: '포트폴리오 3', returns: 10.3, risk: 8.74 },
-        ]);
-
-        const cart = ref([
-            { name: '상품 1', price: 10000, quantity: 2 },
-            { name: '상품 2', price: 20000, quantity: 1 },
-        ]);
-
-        const activeDropdown = ref(null);
-        const router = useRouter();
-        const sidebar = ref(null);
-
-        const toggleDropdown = (menuNumber) => {
-            if (activeDropdown.value === menuNumber) {
-                activeDropdown.value = null;
-            } else {
-                activeDropdown.value = menuNumber;
-            }
-        };
-
-        const goToCreatePortfolio = () => {
-            console.log('포트폴리오 구성하기 버튼 클릭됨');
-            router.push('/make-portfolio');
-        };
-
-        const removeFromCart = (item) => {
-            cart.value = cart.value.filter((cartItem) => cartItem !== item);
-        };
-
-        const handleClickOutside = (event) => {
-            if (sidebar.value && !sidebar.value.contains(event.target)) {
-                activeDropdown.value = null;
-            }
-        };
-
-        onMounted(() => {
-            document.addEventListener('click', handleClickOutside);
-        });
-
-        onUnmounted(() => {
-            document.removeEventListener('click', handleClickOutside);
-        });
-
-        return {
-            portfolios,
-            cart,
-            activeDropdown,
-            toggleDropdown,
-            goToCreatePortfolio,
-            removeFromCart,
-            sidebar,
-        };
+      const portfolios = ref([]);
+      const cart = ref([]);
+      const recentProducts = ref([]);
+  
+      const isSidePanelOpen = ref(false);
+      const panelTitle = ref('');
+      const activeSection = ref('');
+      const panelData = ref([]);
+  
+      const openSidePanel = (payload) => {
+        panelTitle.value = payload.title; // Set the title
+        activeSection.value = payload.section; // Set the active section
+        panelData.value = payload.data; // Pass the data to the panel
+        isSidePanelOpen.value = true; // Open the panel
+      };
+  
+      return {
+        portfolios,
+        cart,
+        recentProducts,
+        isSidePanelOpen,
+        panelTitle,
+        activeSection,
+        panelData,
+        openSidePanel,
+      };
     },
-};
-</script>
-
-<style scoped>
-.uiNavAside {
+  };
+  </script>
+  
+  <style scoped>
+  .app-container {
+    display: flex;
+  }
+  
+  .uiNavAside {
     position: fixed;
     right: 0;
     top: 0;
@@ -112,30 +110,30 @@ export default {
     border-radius: 5px;
     padding: 10px;
     background-color: rgb(233, 233, 233);
-}
-
-.nav-aside {
+  }
+  
+  .nav-aside {
     list-style-type: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-}
-
-.button-container {
+  }
+  
+  .button-container {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-}
-
-.nav-aside li {
+  }
+  
+  .nav-aside li {
     text-align: center;
     flex-grow: 0;
     margin: 0;
-}
-
-.nav-aside a {
+  }
+  
+  .nav-aside a {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -146,76 +144,15 @@ export default {
     width: 100%;
     border-radius: 5px;
     box-sizing: border-box;
-}
-
-.nav-aside li:hover a {
+  }
+  
+  .nav-aside li:hover a {
     background-color: #575757;
-}
-
-.menu-text {
+  }
+  
+  .menu-text {
     font-size: 0.9rem;
     margin-top: 5px;
-}
-
-.dropdown-content {
-    position: absolute;
-    top: 0;
-    right: 100%; /* Change from left to right for opening to the left */
-    background-color: #fff;
-    padding: 10px;
-    width: 220px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.cart-dropdown {
-    padding: 10px;
-}
-
-.section-title {
-    font-size: 1.4rem;
-    color: #2d6a4f;
-}
-
-.empty-cart {
-    text-align: center;
-    font-size: 1.1rem;
-    color: #777;
-}
-
-.cart-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-.cart-table th,
-.cart-table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 0.9rem;
-}
-
-.cart-table th {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-.cart-table tr:hover {
-    background-color: #f9f9f9;
-}
-
-.cart-trashcanBtn {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.cart-trashcanBtn:hover {
-    background-color: #c0392b;
-}
-</style>
+  }
+  </style>
+  

@@ -56,22 +56,22 @@
                 <thead>
                     <tr>
                         <th>상품명</th>
-                        <template v-if="selectedCategory === 'funds'">
+                        <template v-if="selectedCategory === 'fund'">
                             <th>회사명</th>
                             <th>펀드유형</th>
                             <th>위험도</th>
-                            <th>1개월 수익률</th>
+                            <th>12개월 수익률</th>
                         </template>
                         <template
                             v-else-if="
-                                selectedCategory === 'deposit' || selectedCategory === 'savings'
+                                selectedCategory === 'deposit' || selectedCategory === 'saving'
                             "
                         >
                             <th>금융회사명</th>
                             <th>기본금리</th>
                             <th>최고금리</th>
                         </template>
-                        <template v-else-if="selectedCategory === 'bonds'">
+                        <template v-else-if="selectedCategory === 'bond'">
                             <th>ISIN 코드명</th>
                             <th>채권발행일자</th>
                             <th>채권금리</th>
@@ -94,17 +94,17 @@
                         </td>
 
                         <!-- 펀드 정보 -->
-                        <template v-if="selectedCategory === 'funds'">
+                        <template v-if="selectedCategory === 'fund'">
                             <td>{{ product.companyNm }}</td>
                             <td>{{ product.fundType }}</td>
                             <td>{{ product.riskLevel }}</td>
-                            <td>{{ product.yield1 }}%</td>
+                            <td>{{ product.yield12 }}%</td>
                         </template>
 
                         <!-- 예금 및 적금 정보 -->
                         <template
                             v-else-if="
-                                selectedCategory === 'deposit' || selectedCategory === 'savings'
+                                selectedCategory === 'deposit' || selectedCategory === 'saving'
                             "
                         >
                             <td>{{ product.korCoNm }}</td>
@@ -113,7 +113,7 @@
                         </template>
 
                         <!-- 채권 정보 -->
-                        <template v-else-if="selectedCategory === 'bonds'">
+                        <template v-else-if="selectedCategory === 'bond'">
                             <td>{{ product.isinCdNm }}</td>
                             <td>{{ product.bondIssuDt }}</td>
                             <td>{{ product.bondSrfcInrt }}</td>
@@ -123,7 +123,7 @@
                         <td>
                             <v-btn
                                 icon
-                                @click="toggleCartAndIncreaseHit(product.productId)"
+                                @click="toggleCartAndIncreaseHit(product)"
                                 :style="{
                                     backgroundColor: cart.includes(product.productId)
                                         ? '#4caf50'
@@ -192,14 +192,13 @@
 </template>
 
 <script>
-// import { useStore } from 'vuex';
 import { ref, computed, watch } from 'vue';
 import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
 import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
-import cartModule from '@/store/modules/cart.js';
+import {useCartStore} from '@/store/modules/cart.js';
 import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
-import { fetchDepositProducts, fetchSavingProducts } from '@/api/financeApi.js';
+import * as financeApi from '@/api/financeApi';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
 
@@ -214,10 +213,19 @@ export default {
         // const store = useStore();
         const bondStore = useBondStore(); // Pinia bond store 호출
         const fundStore = useFundStore(); // Pinia fund store 호출
-        const addCart = cartModule;
+        const cartStore = useCartStore();
 
         const searchQuery = ref('');
-        const selectedCategory = ref('');
+        const selectedCategory = ref('deposit');
+
+        const cartItem = {
+          productId: "",
+          productType: "",
+          provider: "",
+          productName: "",
+          expectedReturn: "",
+          rsrvType: ""
+        }
 
         const cart = ref([]);
         const displayedProducts = ref([]);
@@ -233,9 +241,9 @@ export default {
 
         const tabs = [
             { label: '예금', value: 'deposit' },
-            { label: '적금', value: 'savings' },
-            { label: '채권', value: 'bonds' },
-            { label: '펀드', value: 'funds' },
+            { label: '적금', value: 'saving' },
+            { label: '채권', value: 'bond' },
+            { label: '펀드', value: 'fund' },
             { label: '주식', value: 'stocks' },
         ];
 
@@ -245,9 +253,9 @@ export default {
         };
 
         const getProductName = (product) => {
-            if (selectedCategory.value === 'bonds') {
+            if (selectedCategory.value === 'bond') {
                 return product.isinCdNm || '상품명 없음';
-            } else if (selectedCategory.value === 'funds') {
+            } else if (selectedCategory.value === 'fund') {
                 return product.productNm || '상품명 없음';
             } else {
                 return product.finPrdtNm || '상품명 없음';
@@ -264,82 +272,90 @@ export default {
         };
 
         // 상품 리스트 가져오기(load)
-        const loadProducts = async (page) => {
+        const loadProducts = async () => {
+            if (selectedCategory.value === 'stocks') return;
+
             isLoading.value = true;
             error.value = null;
+
             try {
-                if (selectedCategory.value === 'bonds') {
-                    await bondStore.fetchBondList(page, pageSize.value);
-                    displayedProducts.value = bondStore.getBondList;
-                    totalPages.value = bondStore.getTotalPages;
-                } else if (selectedCategory.value === 'funds') {
-                    await fundStore.fetchFundList(page, pageSize.value);
-                    displayedProducts.value = fundStore.getFundList;
-                    totalPages.value = fundStore.getTotalPages;
-                } else if (selectedCategory.value === 'deposit') {
-                    const data = await fetchDepositProducts(page, pageSize.value);
-                    if (data.products && data.rates) {
-                        const productRatesMap = data.rates.reduce((acc, rate) => {
-                            if (!acc[rate.productId]) {
-                                acc[rate.productId] = [];
-                            }
-                            acc[rate.productId].push(rate);
-                            return acc;
-                        }, {});
+                let data;
 
-                        displayedProducts.value = data.products.map((product) => ({
-                            ...product,
-                            finPrdtNm: product.finPrdtNm || '상품명 없음',
-                            yield: productRatesMap[product.productId]
-                                ? productRatesMap[product.productId]
-                                      .sort((a, b) => a.saveTrm - b.saveTrm)
-                                      .map((r) => ({
-                                          saveTrm: r.saveTrm,
-                                          intrRate: r.intrRate,
-                                          intrRate2: r.intrRate2 || r.intrRate,
-                                      }))
-                                : [],
-                            type: selectedCategory.value,
-                        }));
-                        totalPages.value = data.totalPages || 1;
-                    } else {
-                        throw new Error('예금 데이터를 불러오는데 문제가 있습니다.');
+                if (searchQuery.value) {
+                    if (selectedCategory.value === 'bond') {
+                        data = await financeApi.searchBondProduct(searchQuery.value);
+                    } else if (selectedCategory.value === 'fund') {
+                        data = await financeApi.searchFundProduct(searchQuery.value);
+                    } else if (selectedCategory.value === 'deposit') {
+                        data = await financeApi.searchDepositProduct(searchQuery.value);
+                    } else if (selectedCategory.value === 'saving') {
+                        data = await financeApi.searchSavingProduct(searchQuery.value);
                     }
-                } else if (selectedCategory.value === 'savings') {
-                    const data = await fetchSavingProducts(page, pageSize.value);
-                    if (data.products && data.rates) {
-                        const productRatesMap = data.rates.reduce((acc, rate) => {
-                            if (!acc[rate.productId]) {
-                                acc[rate.productId] = [];
-                            }
-                            acc[rate.productId].push(rate);
-                            return acc;
-                        }, {});
+                } else {
+                    if (selectedCategory.value === 'bond') {
+                        data = await financeApi.fetchBondProducts(
+                            currentPage.value,
+                            pageSize.value
+                        );
+                    } else if (selectedCategory.value === 'fund') {
+                        data = await financeApi.fetchFundProducts(
+                            currentPage.value,
+                            pageSize.value
+                        );
+                    } else if (
+                        selectedCategory.value === 'deposit' ||
+                        selectedCategory.value === 'saving'
+                    ) {
+                        // Fetch deposit/saving products along with any associated rates
+                        data =
+                            selectedCategory.value === 'deposit'
+                                ? await financeApi.fetchDepositProducts(
+                                      currentPage.value,
+                                      pageSize.value
+                                  )
+                                : await financeApi.fetchSavingProducts(
+                                      currentPage.value,
+                                      pageSize.value
+                                  );
 
-                        displayedProducts.value = data.products.map((product) => ({
-                            ...product,
-                            finPrdtNm: product.finPrdtNm || '상품명 없음',
-                            yield: productRatesMap[product.productId]
-                                ? productRatesMap[product.productId]
-                                      .sort((a, b) => a.saveTrm - b.saveTrm)
-                                      .map((r) => ({
-                                          saveTrm: r.saveTrm,
-                                          intrRate: r.intrRate,
-                                          intrRate2: r.intrRate2 || r.intrRate,
-                                      }))
-                                : [],
-                            type: selectedCategory.value,
-                        }));
-                        totalPages.value = data.totalPages || 1;
-                    } else {
-                        throw new Error('적금 데이터를 불러오는데 문제가 있습니다.');
+                        // Check if rates are included and merge them with products by productId
+                        if (data.products && data.rates) {
+                            const productRatesMap = data.rates.reduce((acc, rate) => {
+                                if (!acc[rate.productId]) acc[rate.productId] = [];
+                                acc[rate.productId].push(rate);
+                                return acc;
+                            }, {});
+
+                            // Map the rates to each product as a 'yield' property
+                            data.products = data.products.map((product) => ({
+                                ...product,
+                                yield: productRatesMap[product.productId] || [],
+                            }));
+                        }
                     }
                 }
 
-                // 상품 리스트가 로드되면 필터링된 상품 리스트 초기화
-                filteredProducts.value = displayedProducts.value;
+                // 모든 상품에 category 추가
+                if (data.products || data.items) {
+                    const productsWithCategory = (data.products || data.items).map((product) => ({
+                        ...product,
+                        type: selectedCategory.value,
+                    }));
+
+                    displayedProducts.value = productsWithCategory;
+                    filteredProducts.value = displayedProducts.value;
+                    totalPages.value = data.totalPages || 1;
+
+                    console.log(
+                        'Updated displayedProducts with category:',
+                        displayedProducts.value
+                    );
+                } else {
+                    displayedProducts.value = [];
+                    filteredProducts.value = [];
+                }
             } catch (err) {
-                console.error('상품 정보를 불러오는 중 오류 발생:', err);
+                console.error('Error fetching products:', err);
                 error.value = '상품 정보를 불러오는 중 오류가 발생했습니다.';
             } finally {
                 isLoading.value = false;
@@ -363,15 +379,16 @@ export default {
                 });
         };
         const changePageWithScroll = (page, event) => {
-            changePage(page); // 페이지 변경 호출
-            event.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 부드럽게 스크롤
+            currentPage.value = page;
+            loadProducts();
+            event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
 
         const gotoDetail = (productId) => {
             const productTypeMap = {
-                savings: 'saving',
-                bonds: 'bond',
-                funds: 'fund',
+                saving: 'saving',
+                bond: 'bond',
+                fund: 'fund',
                 deposit: 'deposit',
             };
 
@@ -388,50 +405,82 @@ export default {
             });
         };
 
-        const toggleCartAndIncreaseHit = async (productId) => {
-            const index = cart.value.indexOf(productId);
+        const toggleCartAndIncreaseHit = async (product) => {
+            const index = cart.value.indexOf(product.productId);
             if (index === -1) {
-                cart.value.push(productId);
+                cart.value.push(product.productId);
             } else {
                 cart.value.splice(index, 1);
             }
-            if (!cart.value.includes(productId)) {
-                cart.value.push(productId);
+            if (!cart.value.includes(product.productId)) {
+                cart.value.push(product.productId);
                 cart.value.push(addCart);
-                alert(`상품 ID ${productId}이 장바구니에 추가되었습니다.`);
-
-                // await addCartItem(productId);
+                alert(`상품 ID ${product.productId}이 장바구니에 추가되었습니다.`);
             }
 
+            cartItem.productId = product.productId;
+            console.log(product);
+            switch (product.type) {
+              case "saving":
+                cartItem.productType = "S";
+                cartItem.provider = product.korCoNm;
+                console.log(product.finPrdtNm);
+                cartItem.productName = product.finPrdtNm;
+                cartItem.expectedReturn = getRate(product.productId, 12).intrRate2;
+                cartItem.rsrvType = "S";
+                break;
+              case "deposit":
+                cartItem.productType = "S";
+                cartItem.provider = product.korCoNm;
+                cartItem.productName = product.finPrdtNm;
+                cartItem.expectedReturn = getRate(product.productId, 12).intrRate2;
+                break;
+              case "bond":
+                cartItem.provider = product.bondIsurNm;
+                cartItem.productName = product.isinCdNm;
+                cartItem.expectedReturn = product.yield12;
+                break;
+              case "fund":
+                cartItem.provider = product.companyNm;
+                cartItem.productName = product.productNm;
+                cartItem.expectedReturn = product.bondSrfcInrt;
+                break;
+            }
+
+            console.log(cartItem)
+
             try {
-                await cartModule.addCartItem();
-                await increaseAgeGroupProductHit(productId);
-                await increasePreferenceProductHit(productId);
+                await cartStore.addCartItem(cartItem);
+                clearCartItem();
+                await increaseAgeGroupProductHit(product.productId);
+                await increasePreferenceProductHit(product.productId);
             } catch (error) {
                 console.error('조회수 증가 오류: ', error);
                 alert('조회수를 증가하는 중 오류가 발생했습니다.');
             }
         };
 
+        const clearCartItem = () => {
+          this.cartItem = {
+            productId: "",
+            productType: "",
+            provider: "",
+            productName: "",
+            expectedReturn: "",
+            rsrvType: ""
+          }
+        };
+
         const filteredProducts = ref([]); // 필터링된 결과를 저장할 ref
 
         const handleSearch = () => {
-            if (searchQuery.value.length < 2) {
-                alert('2글자 이상을 입력하세요');
-                return;
+            if (searchQuery.value.length >= 2) {
+                currentPage.value = 1;
+                loadProducts();
+                isSearched.value = true;
+            } else {
+                alert('검색어는 2글자 이상이어야 합니다.');
             }
-            filteredProducts.value = displayedProducts.value.filter((product) => {
-                let productName;
-                if (selectedCategory.value === 'bonds') {
-                    productName = product.isinCdNm;
-                } else if (selectedCategory.value === 'funds') {
-                    productName = product.productNm;
-                } else {
-                    productName = product.finPrdtNm;
-                }
-                return productName?.toLowerCase().includes(searchQuery.value.toLowerCase());
-            });
-            isSearched.value = true; // 검색 완료 후 상태 변경
         };
 
         const eraseFilter = () => {
