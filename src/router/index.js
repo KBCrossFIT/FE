@@ -51,12 +51,13 @@ const routes = [
   { path: '/changePW', name: 'ChangePW', component: ChangePW },
   { path: '/deleteAccount', name: 'DeleteAccount', component: DeleteAccount },
   {
-    path: '/financial-products/:productType/:pageNumber?',
-    name: 'FinancialProducts',
+    path: '/products/:category?',
+    name: 'Products', // 라우터 이름을 'Products'로 정의
     component: FinancialProducts,
+    props: true,
   },
   {
-    path: '/list/:id',
+    path: '/list/:productId',
     name: 'ProductDetail',
     component: ProductDesc,
   },

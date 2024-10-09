@@ -1,76 +1,57 @@
-import { fetchCartList, getCartList, postCartItem, deleteCartItem } from '@/api/cartApi.js';
-
-const cartModule = {
-    namespaced: true,
-    state: () => ({
-        cartItems: [],
-        cartItemsLoaded: false,
-        newCartItem: null,
-    }),
-
-    actions: {
-        async fetchCartItems({ commit, state }) {
-            if (!state.cartItems) {
-                try {
-                    const data = await fetchCartList();
-                    commit('setCartItems', data);
-                } catch (error) {
-                    console.error('Error fetching cart items:', error);
-                }
-            }
-        },
-
-        async getCartItems({ commit }) {
-            try {
-                const data = await getCartList();
-                commit('setCartItems', data);
-            } catch (error) {
-                console.error('Error fetching cart items:', error);
-            }
-        },
-
-        async addCartItem({ commit }, cartItem) {
-            try {
-                const data = await postCartItem(cartItem);
-                commit('setNewCartItem', data);
-            } catch (error) {
-                console.error('Error adding cart item:', error);
-            }
-        },
-
-        async removeCartItem({ commit }, productId) {
-            try {
-                await deleteCartItem(productId);
-                commit('removeCartItem', productId);
-            } catch (error) {
-                console.error('Error removing cart item:', error);
-            }
-        },
+export default {
+  data() {
+    return {
+      cartItems: [], // 장바구니 아이템
+      cartItemsLoaded: false, // 장바구니 아이템 로딩 여부
+      newCartItem: null, // 새로 추가된 장바구니 아이템
+    };
+  },
+  methods: {
+    // 장바구니 아이템을 가져오는 메서드
+    async fetchCartItems() {
+      if (!this.cartItems || this.cartItems.length === 0) {
+        try {
+          const data = await fetchCartList();
+          this.cartItems = data;
+          this.cartItemsLoaded = true;
+        } catch (error) {
+          console.error('Error fetching cart items:', error);
+        }
+      }
     },
 
-    getters: {
-        cartItems: (state) => state.cartItems,
-        newCartItem: (state) => state.newCartItem,
-        isCartItemsLoaded: (state) => state.cartItemsLoaded,
+    // 서버에서 장바구니 리스트를 가져오는 메서드
+
+    // 장바구니에 새 아이템을 추가하는 메서드
+    async addCartItem(cartItem) {
+      try {
+        const data = await postCartItem(cartItem);
+        this.newCartItem = data;
+        this.cartItems.push(this.newCartItem); // 새 아이템 추가
+      } catch (error) {
+        console.error('Error adding cart item:', error);
+      }
     },
 
-    mutations: {
-        setCartItems(state, cartItems) {
-            state.cartItems = cartItems;
-            state.cartItemsLoaded = true;
-        },
-
-        setNewCartItem(state, newCartItem) {
-            state.newCartItem = newCartItem;
-            state.cartItems.push(newCartItem); // 새로운 장바구니 아이템을 리스트에 추가
-        },
-
-        removeCartItem(state, productId) {
-            state.cartItems = state.cartItems.filter(
-                (item) => item.productId !== productId
-            );
-        },
+    // 장바구니에서 아이템을 삭제하는 메서드
+    async removeCartItem(productId) {
+      try {
+        await deleteCartItem(productId);
+        this.cartItems = this.cartItems.filter(
+          (item) => item.productId !== productId
+        );
+      } catch (error) {
+        console.error('Error removing cart item:', error);
+      }
     },
+  },
 };
-
-export default cartModule;
+// 위에 코드와 다르게 개별로 사용
+export async function getCartItems() {
+  try {
+    const data = await getCartList();
+    this.cartItems = data;
+  } catch (error) {
+    console.error('Error fetching cart items:', error);
+  }
+}
