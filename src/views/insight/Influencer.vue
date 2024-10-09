@@ -39,24 +39,30 @@
         </div>
 
         <!-- 모달 창 -->
-        <ModalInfluencer
+    <!--    <ModalInfluencer
             v-if="isModalOpen"
             :isOpen="isModalOpen"
             :persona="selectedPersona"
             @close="closeModal"
-        />
+        /> -->
+
+    <ModalPersona/>
+        
+
     </div>
 </template>
 
 <script>
 import Influencer_title from './Influencer_title.vue';
 import ModalInfluencer from '@/components/Modal/ModalInfluencer.vue';
+import ModalPersona from '@/components/Modal/ModalPersona.vue';
 
 export default {
     name: 'Influencer',
     components: {
         Influencer_title,
         ModalInfluencer, // 모달 컴포넌트 추가
+        ModalPersona,
     },
     data() {
         return {

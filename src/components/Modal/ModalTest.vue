@@ -206,6 +206,7 @@ export default defineComponent({
 <style scoped>
 .modal {
     display: flex;
+    position:fixed;
     justify-content: center;
     align-items: center;
     position: fixed;
