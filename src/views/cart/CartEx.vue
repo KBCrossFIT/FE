@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { deleteCartItem, fetchCartList, postCartItem } from "@/api/cartApi.js";
+import {deleteCartItem, fetchCartList, getCartList, postCartItem} from "@/api/cartApi.js";
 
 export default {
   data() {
@@ -49,9 +49,9 @@ export default {
   },
   methods: {
     // 장바구니 목록을 가져오는 메서드
-    async fetchCartItems() {
+    async getCartItems() {
       try {
-        const data = await fetchCartList();
+        const data = await getCartList();
         this.cartItems = data;
       } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -93,7 +93,7 @@ export default {
   },
   async mounted() {
     // 컴포넌트가 마운트되면 장바구니 데이터를 가져옴
-    await this.fetchCartItems();
+    await this.getCartItems();
   }
 };
 </script>
