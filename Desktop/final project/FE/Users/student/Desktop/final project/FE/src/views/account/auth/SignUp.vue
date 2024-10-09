@@ -123,75 +123,10 @@
 import { registerUser } from '@/api/memberApi'; // Import your API function
 
 export default {
-
-  components: {
-    ModalTestStart,
-    ModalTest,
-    ModalTestEnd,
-  },
-  data() {
-    return {
-      memberID: '',
-      memberName: '',
-      password: '',
-      reEnteredPassword: '',
-      email: '',
-      birth: null,
-      gender: '남',
-      isModalOpen: false,
-      currentComponent: markRaw(ModalTestStart),
-      InvestMentTest: false,
-      showPassword: false,
-      // 날짜 선택
-      selectedYear: null,
-      selectedMonth: null,
-      selectedDay: null,
-      years: Array.from(
-        { length: 100 },
-        (_, i) => new Date().getFullYear() - i
-      ),
-      months: Array.from({ length: 12 }, (_, i) => i + 1),
-      days: Array.from({ length: 31 }, (_, i) => i + 1),
-    };
-  },
-  methods: {
-    async handleSubmit() {
-      if (this.password !== this.reEnteredPassword) {
-        alert('비밀번호가 일치하지 않습니다.');
-        return;
-      }
-
-      const birthDate = `${this.selectedYear}-${String(
-        this.selectedMonth
-      ).padStart(2, '0')}-${String(this.selectedDay).padStart(2, '0')}`;
-
-      const userData = {
-        memberID: this.memberID,
-        email: this.email,
-        memberName: this.memberName,
-        password: this.password,
-        reEnteredPassword: this.reEnteredPassword,
-        birth: birthDate,
-        gender: this.gender,
-        InvestMentTest: this.InvestMentTest,
-      };
-
-      try {
-        const result = await registerUser(userData);
-        console.log('회원가입 성공:', result);
-        this.$router.push('/');
-      } catch (error) {
-        console.error('회원가입 실패:', error);
-        if (error.response) {
-          alert(
-            `회원가입에 실패했습니다: ${
-              error.response.data.message || '알 수 없는 오류'
-            }`
-          );
-        } else {
-          alert('회원가입에 실패했습니다. 다시 시도해주세요.');
-        }
-      }
+    components: {
+        // ModalTestStart,
+        // ModalTest,
+        // ModalTestEnd,
     },
     data() {
         return {
