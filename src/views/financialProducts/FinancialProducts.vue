@@ -17,23 +17,24 @@
         </div>
 
         <!-- 주식 리스트 -->
-        <stock-search v-if="selectedCategory === 'stocks'" />
-        <stock-list v-if="selectedCategory === 'stocks'" />
+        <div class="stock-container">
+            <stock-search v-if="selectedCategory === 'stocks'" />
+            <stock-list v-if="selectedCategory === 'stocks'" />
+        </div>
 
         <!-- 검색 및 필터링 -->
-        <div class="search-filter-container">
-            <div class="search-filter mb-4" v-if="selectedCategory !== 'stocks'">
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    class="form-control mb-2"
-                    placeholder="상품명 검색..."
-                    @input="handleSearch"
-                />
-            </div>
-            <div v-if="selectedCategory !== 'stocks'" class="erase-filter">
-                <v-btn class="erase-filter-btn" @click="eraseFilter"> 지우기 </v-btn>
-            </div>
+        <div class="search-box" v-if="selectedCategory !== 'stocks'">
+            <input
+                v-model="searchQuery"
+                type="text"
+                class="search-input mb-2"
+                placeholder="상품명 검색..."
+                @keydown.enter="handleSearch"
+            />
+            <button @click="handleSearch" class="search-btn">검색</button>
+            <button @click="eraseFilter" class="erase-filter-btn">
+                {{ isSearched ? '되돌리기' : '지우기' }}
+            </button>
         </div>
 
         <!-- 로딩 중 메시지 -->
@@ -78,6 +79,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- 검색 결과가 없을 때 메시지 -->
+                    <p
+                        v-if="
+                            filteredProducts.length === 0 && searchQuery.length >= 2 && !isLoading
+                        "
+                    >
+                        검색 결과가 없습니다.
+                    </p>
                     <tr v-for="product in filteredProducts" :key="product.productId">
                         <!-- 상품명 -->
                         <td @click="gotoDetail(product.productId)" class="Detail-Link">
@@ -131,70 +140,82 @@
 
             <!-- 페이지네이션 -->
             <div id="Pagination" class="mt-4 pagination-buttons">
-                <button
-                    :disabled="currentPage === 1"
-                    @click="changePage(currentPage - 1)"
-                    class="pagination-btn"
-                >
-                    이전
-                </button>
+                <div class="pagination-container">
+                    <button
+                        :disabled="currentPage === 1"
+                        @click="changePageWithScroll(1, $event)"
+                        class="pagination-btn"
+                    >
+                        처음
+                    </button>
 
-                <button v-if="currentPage > 3" @click="changePage(1)" class="pagination-btn">
-                    1
-                </button>
+                    <button
+                        :disabled="currentPage === 1"
+                        @click="changePageWithScroll(currentPage - 1, $event)"
+                        class="pagination-btn"
+                    >
+                        이전
+                    </button>
 
-                <span v-if="currentPage > 4" class="pagination-ellipsis">...</span>
+                    <span v-if="currentPage > 4" class="pagination-ellipsis">...</span>
 
-                <button
-                    v-for="page in visiblePages"
-                    :key="page"
-                    @click="changePage(page)"
-                    :class="['pagination-btn', { active: currentPage === page }]"
-                >
-                    {{ page }}
-                </button>
+                    <button
+                        v-for="page in visiblePages"
+                        :key="page"
+                        @click="changePageWithScroll(page, $event)"
+                        :class="['pagination-btn', { active: currentPage === page }]"
+                    >
+                        {{ page }}
+                    </button>
 
-                <span v-if="currentPage < totalPages - 3" class="pagination-ellipsis">...</span>
+                    <span v-if="currentPage < totalPages - 3" class="pagination-ellipsis">...</span>
 
-                <button
-                    v-if="currentPage < totalPages - 2"
-                    @click="changePage(totalPages)"
-                    class="pagination-btn"
-                >
-                    {{ totalPages }}
-                </button>
+                    <button
+                        :disabled="currentPage === totalPages"
+                        @click="changePageWithScroll(currentPage + 1, $event)"
+                        class="pagination-btn"
+                    >
+                        다음
+                    </button>
 
-                <button
-                    :disabled="currentPage === totalPages"
-                    @click="changePage(currentPage + 1)"
-                    class="pagination-btn"
-                >
-                    다음
-                </button>
+                    <button
+                        :disabled="currentPage === totalPages"
+                        @click="changePageWithScroll(totalPages, $event)"
+                        class="pagination-btn"
+                    >
+                        끝
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+// import { useStore } from 'vuex';
 import { ref, computed, watch } from 'vue';
 import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
 import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
+import cartModule from '@/store/modules/cart.js';
 import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import { fetchDepositProducts, fetchSavingProducts } from '@/api/financeApi.js';
-import StockList from '@/views/stock/StockList.vue'; // StockList 컴포넌트 임포트
-import StockSearch from '@/views/stock/StockSearch.vue'; // StockList 컴포넌트 임포트
+import StockList from '@/views/stock/StockList.vue';
+import StockSearch from '@/views/stock/StockSearch.vue';
 
 export default {
     name: 'FinancialProducts',
     components: {
-        StockList, // StockList 컴포넌트 등록
+        StockList,
         StockSearch,
     },
+
     setup() {
+        // const store = useStore();
         const bondStore = useBondStore(); // Pinia bond store 호출
         const fundStore = useFundStore(); // Pinia fund store 호출
+        const addCart = cartModule;
+
         const searchQuery = ref('');
         const selectedCategory = ref('');
 
@@ -205,6 +226,7 @@ export default {
         const totalPages = ref(1);
         const isLoading = ref(false);
         const error = ref(null);
+        const isSearched = ref(false);
 
         const router = useRouter();
         const route = useRoute();
@@ -214,7 +236,7 @@ export default {
             { label: '적금', value: 'savings' },
             { label: '채권', value: 'bonds' },
             { label: '펀드', value: 'funds' },
-            { label: '주식', value: 'stocks' }, // 주식 탭 추가
+            { label: '주식', value: 'stocks' },
         ];
 
         const activeButtonStyle = {
@@ -313,6 +335,9 @@ export default {
                         throw new Error('적금 데이터를 불러오는데 문제가 있습니다.');
                     }
                 }
+
+                // 상품 리스트가 로드되면 필터링된 상품 리스트 초기화
+                filteredProducts.value = displayedProducts.value;
             } catch (err) {
                 console.error('상품 정보를 불러오는 중 오류 발생:', err);
                 error.value = '상품 정보를 불러오는 중 오류가 발생했습니다.';
@@ -336,6 +361,10 @@ export default {
                 .catch((error) => {
                     console.error('라우터 변경 중 오류:', error);
                 });
+        };
+        const changePageWithScroll = (page, event) => {
+            changePage(page); // 페이지 변경 호출
+            event.target.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 부드럽게 스크롤
         };
 
         const gotoDetail = (productId) => {
@@ -368,10 +397,14 @@ export default {
             }
             if (!cart.value.includes(productId)) {
                 cart.value.push(productId);
+                cart.value.push(addCart);
                 alert(`상품 ID ${productId}이 장바구니에 추가되었습니다.`);
+
+                // await addCartItem(productId);
             }
 
             try {
+                await cartModule.addCartItem();
                 await increaseAgeGroupProductHit(productId);
                 await increasePreferenceProductHit(productId);
             } catch (error) {
@@ -380,36 +413,31 @@ export default {
             }
         };
 
-        const filteredProducts = computed(() => {
-            return displayedProducts.value.filter((product) => {
-                let productName;
-
-                // 조건에 따라 상품명 설정
-                if (selectedCategory.value === 'bonds') {
-                    productName = product.isinCdNm; // 채권의 경우 ISIN 코드명
-                } else if (selectedCategory.value === 'funds') {
-                    productName = product.productNm; // 펀드의 경우 productNm
-                } else {
-                    productName = product.finPrdtNm; // 그 외 금융상품의 경우 finPrdtNm
-                }
-
-                // 상품명이 검색어를 포함하는지 여부를 반환
-                return productName?.toLowerCase().includes(searchQuery.value.toLowerCase());
-            });
-        });
-
-        const eraseFilter = () => {
-            searchQuery.value = ''; // 검색어 초기화
-            handleSearch(); // 검색어가 초기화된 후 다시 검색 로직 실행
-        };
+        const filteredProducts = ref([]); // 필터링된 결과를 저장할 ref
 
         const handleSearch = () => {
-            currentPage.value = 1;
-            router.push({
-                name: 'Products',
-                params: { category: selectedCategory.value },
-                query: { page: 1, pageSize: pageSize.value },
+            if (searchQuery.value.length < 2) {
+                alert('2글자 이상을 입력하세요');
+                return;
+            }
+            filteredProducts.value = displayedProducts.value.filter((product) => {
+                let productName;
+                if (selectedCategory.value === 'bonds') {
+                    productName = product.isinCdNm;
+                } else if (selectedCategory.value === 'funds') {
+                    productName = product.productNm;
+                } else {
+                    productName = product.finPrdtNm;
+                }
+                return productName?.toLowerCase().includes(searchQuery.value.toLowerCase());
             });
+            isSearched.value = true; // 검색 완료 후 상태 변경
+        };
+
+        const eraseFilter = () => {
+            searchQuery.value = '';
+            filteredProducts.value = displayedProducts.value;
+            isSearched.value = false; // 검색 상태 초기화
         };
 
         const selectTab = (category) => {
@@ -472,6 +500,7 @@ export default {
             currentPage,
             totalPages,
             changePage,
+            changePageWithScroll,
             isLoading,
             error,
             handleSearch,
@@ -482,6 +511,8 @@ export default {
             cart,
             visiblePages,
             toggleCartAndIncreaseHit,
+            isSearched,
+            // addCartItem,
         };
     },
 };
@@ -509,28 +540,53 @@ export default {
     color: white;
 }
 
-.search-filter-container {
+.search-box {
     display: flex;
-    align-items: center;
     justify-content: center;
-    margin-bottom: 20px; /* 하단 여백 */
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.search-filter input {
-    width: 300px;
-    padding: 8px;
-    border-radius: 4px;
+.search-input {
+    width: 60%; /* 버튼과 나란히 배치되도록 너비 설정 */
+    padding: 12px;
     border: 1px solid #ccc;
-    margin-right: 10px; /* 버튼과의 간격 */
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
 }
 
-.erase-fillter-btn {
+.search-input:focus {
+    border-color: #5bc0de;
+    outline: none;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    background-color: #0056b3;
+}
+
+.erase-filter-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
     background-color: #f0f0f0;
     color: #000;
-    border-radius: 4px;
-    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    border: 1px solid #ccc;
+}
+
+.erase-filter-btn:hover {
+    background-color: #ddd;
 }
 
 .table {
@@ -544,6 +600,10 @@ export default {
     padding: 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
 .Detail-Link {
@@ -560,12 +620,23 @@ export default {
     color: white !important;
 }
 
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 600px; /* 페이지네이션 너비 고정 */
+    margin: 0 auto;
+}
+
 .pagination-btn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: #f0f0f0;
-    border: none;
+    border: 1px solid #ccc;
     cursor: pointer;
     font-size: 14px;
+    margin: 0 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 .pagination-btn.active {
@@ -573,8 +644,20 @@ export default {
     color: white;
 }
 
+.pagination-btn:hover {
+    background-color: #007bff;
+    color: white;
+}
+
 .pagination-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+/* 페이지네이션의 ... 표시 */
+.pagination-ellipsis {
+    margin: 0 8px;
+    font-size: 16px;
+    color: #333;
 }
 </style>

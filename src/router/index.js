@@ -107,12 +107,13 @@ const routes = [
   { path: '/stock-search', name: 'StockSearch', component: StockSearch },
   { path: '/recent-view', name: 'RecentView', component: recentView },
 
-  { path: '/cart-ex', name: 'CartEx', component: cartEx },
+
+    { path: '/cart-ex', name: 'CartEx', component: cartEx },
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 export default router;
