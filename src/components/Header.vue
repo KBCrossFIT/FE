@@ -48,13 +48,6 @@
                             >
                                 장바구니
                             </li>
-                            <li
-                                class="in"
-                                :class="{ active: isActive('/recently-viewed') }"
-                                @click="$router.push('/recently-viewed')"
-                            >
-                                최근 본 상품
-                            </li>
                         </ul>
                     </div>
 

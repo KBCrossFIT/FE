@@ -7,41 +7,36 @@
     </li>
   </template>
   
-  <script>
+  <script setup>
+  // Vue 3에서는 defineEmits로 이벤트 방출 함수를 정의해야 함
+  const emit = defineEmits(['openSidePanel']); // 'openSidePanel' 이벤트 정의
+  
   import { ref, onMounted } from 'vue';
-  import portfolioApi from '@/api/portfolioApi'; // Import your portfolioApi
+  import portfolioApi from '@/api/portfolioApi'; // 포트폴리오 API 임포트
   
-  export default {
-    name: 'PortfolioSection',
-    setup(props, { emit }) {
-      const portfolios = ref([]);
+  const portfolios = ref([]); // 포트폴리오 데이터
   
-      // Fetch portfolio data from the API
-      const fetchPortfolios = async () => {
-        try {
-          portfolios.value = await portfolioApi.fetchPortfolioList(); // Use your API method
-        } catch (error) {
-          console.error('Failed to fetch portfolios:', error);
-        }
-      };
+  // API에서 포트폴리오 데이터를 가져오는 함수
+  const fetchPortfolios = async () => {
+    try {
+      portfolios.value = await portfolioApi.fetchPortfolioList(); // API 호출로 데이터 가져오기
+    } catch (error) {
+      console.error('포트폴리오 데이터를 가져오지 못했습니다:', error);
+    }
+  };
   
-      onMounted(() => {
-        fetchPortfolios(); // Fetch the portfolio list when the component is mounted
-      });
+  // 컴포넌트가 마운트되었을 때 포트폴리오 데이터 로드
+  onMounted(() => {
+    fetchPortfolios();
+  });
   
-      const togglePortfolioSection = () => {
-        // Emit event to open side panel with the fetched data
-        emit('openSidePanel', {
-          title: '포트폴리오',
-          section: 'PortfolioSection',
-          data: portfolios.value, // Pass the fetched data
-        });
-      };
-  
-      return {
-        togglePortfolioSection,
-      };
-    },
+  // 포트폴리오 섹션을 토글하고 사이드 패널을 여는 함수
+  const togglePortfolioSection = () => {
+    emit('openSidePanel', {
+      title: '포트폴리오', // 패널 제목
+      section: 'PortfolioSection', // 섹션 이름
+      data: portfolios.value, // 패널에 전달할 데이터
+    });
   };
   </script>
   

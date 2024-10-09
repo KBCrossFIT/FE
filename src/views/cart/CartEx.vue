@@ -15,12 +15,7 @@
             <p>제공자: {{ item.provider }}</p> <!-- 예적금은 은행, 채권은 발행회사, 펀드는 자산운용사 -->
             <p>상품 이름: {{ item.productName }}</p> <!-- 상품 이름 -->
             <p>기대 수익률: {{ item.expectedReturn }}%</p> <!-- 기대수익률 (예적금은 12개월 기준 최고금리, 펀드는 12개월 기준 수익률, 채권은 금리) -->
-            <p>적금 여부: 
-              <span v-if="item.productType === 'S'">
-                {{ item.rsrvType === null ? '예금' : item.rsrvType === 'S' ? '적금' : '기타' }} <!-- show X-->
-              </span>
-              <span v-else>해당 없음</span>
-            </p> <!-- productType이 S인 상품에 대해서 null이면 예금, S면 적금 -->
+            <p>적금 여부: {{ item.rsrvType === 'S' ? '적금' : '예금' }}</p> <!-- productType이 S인 상품에 대해서 null이면 예금, S면 적금 -->
             <v-btn class="cart-trashcanBtn" @click="removeFromCart(item.cartID)" icon>
               <v-icon>mdi-delete</v-icon> <!-- 삭제 버튼 추가 -->
             </v-btn>
@@ -104,6 +99,7 @@ export default {
 
     // Method to determine the product type display
     const getProductType = (type) => {
+
       switch (type) {
         case 'S':
           return '예적금'; // 예적금
