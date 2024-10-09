@@ -1,115 +1,83 @@
 <template>
-  <li class="nav-item" @click="toggleDropdown(3)">
-    <a class="nav-link" href="javascript:void(0)">
-      <i class="fas fa-history nav-icon"></i>
-      최근 본 상품
-    </a>
-    <div v-if="activeDropdown === 3" class="dropdown-content">
-      <div class="recent-products">
-        <h3 class="section-title">최근 본 상품</h3>
+    <li class="menu-item" @click="toggleDropdown(3)">
+      <a href="javascript:void(0)" class="sidebar-link">
+        <i class="fas fa-clock icon"></i>
+        <span class="menu-text">최근 본 상품</span>
+      </a>
+      <div v-if="activeDropdown === 3" class="dropdown-content">
+        <h3 class="section-title">최근 본 상품 목록</h3>
         <ul>
-          <li v-for="(product, index) in recentProducts" :key="index">{{ product.name }}</li>
+          <li v-for="item in recentlyViewed" :key="item.name" @click.stop="openSidePanel('최근 본 상품', item)">
+            {{ item.name }}
+          </li>
         </ul>
       </div>
-    </div>
-  </li>
-</template>
-
-<script>
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'RecentProductSection',
-  props: {
-    activeDropdown: Number,
-    toggleDropdown: Function,
-  },
-  data() {
-    return {
-      recentProducts: [
-        { name: '상품 A' },
-        { name: '상품 B' },
-        { name: '상품 C' },
-      ],
-    };
-  },
-});
-</script>
-
-<style scoped>
-.sidebar {
-  background-color: #333;
-  width: 60px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  position: fixed;
-  right: 0;
-  top: 0;
-}
-
-.sidebar-header {
-  padding: 10px;
-  background-color: #444;
-}
-
-.sidebar-brand {
-  color: #fff;
-  font-size: 1.2rem;
-}
-
-.sidebar-nav {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.nav-item {
-  width: 100%;
-}
-
-.nav-link {
-  display: block;
-  padding: 10px;
-  color: #fff;
-  text-align: center;
-  text-decoration: none;
-}
-
-.nav-link i {
-  display: block;
-  font-size: 1.5rem;
-}
-
-.nav-item:hover .nav-link {
-  background-color: #575757;
-}
-
-.dropdown-content {
-  position: absolute;
-  right: 60px;
-  background-color: #444;
-  padding: 10px;
-  width: 300px;
-  z-index: 9999!important;
-}
-
-.portfolio-dropdown,
-.cart-dropdown {
-  background-color: #f0f8f4;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.action-buttons button {
-  background-color: #2d6a4f;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-}
-
-.action-buttons button:hover {
-  background-color: #1b4633;
-}
-</style>
+    </li>
+  </template>
+  
+  <script>
+  export default {
+    name: 'RecentProductsSection',
+    props: {
+      activeDropdown: {
+        type: Number,
+        required: true,
+      },
+      recentlyViewed: {
+        type: Array,
+        required: true,
+      },
+    },
+    methods: {
+      toggleDropdown(menuNumber) {
+        this.$emit('toggleDropdown', menuNumber);
+      },
+      openSidePanel(sectionTitle, data) {
+        this.$emit('openSidePanel', {
+          title: sectionTitle,
+          section: 'RecentProductsSection',
+          data: data,
+        });
+      },
+    },
+  };
+  </script>
+  
+  <style scoped>
+  .menu-item {
+    position: relative; /* Ensures the dropdown is positioned correctly */
+  }
+  .sidebar-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    color: grey;
+    text-decoration: none;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+  .sidebar-link:hover {
+    background-color: #D7DBDE;
+  }
+  .icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  .menu-text {
+    font-size: 0.7rem;
+    opacity: 1; /* Always fully visible */
+    transition: none; /* Remove the transition */
+    text-align: center; /* Center the text */
+  }
+  .dropdown-content {
+    position: absolute;
+    left: 100%; /* Align dropdown to the right of the menu item */
+    top: 0;
+    background-color: #fff;
+    padding: 10px;
+    width: 180px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  </style>

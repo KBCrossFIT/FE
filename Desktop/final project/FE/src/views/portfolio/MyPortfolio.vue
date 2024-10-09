@@ -2,7 +2,6 @@
   <div class="MyPortfolio-container">
     <h1>내 포트폴리오 리스트 페이지</h1>
     <div class="MyPortfolio-DataTable">
-      <!-- 기본 HTML 테이블로 대체 -->
       <table>
         <thead>
           <tr>
@@ -13,25 +12,52 @@
                 @change="toggleSelectAll"
               />
             </th>
-            <th>포트폴리오 이름</th>
-            <th>투자 총액</th>
-            <th>위험도</th>
+            <th @click="sortBy('portfolioName')">
+              포트폴리오 이름
+              <span v-if="sortKey === 'portfolioName'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sortBy('total')">
+              투자 총액
+              <span v-if="sortKey === 'total'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sortBy('expectedReturn')">
+              기대 수익률
+              <span v-if="sortKey === 'expectedReturn'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th @click="sortBy('riskLevel')">
+              위험도
+              <span v-if="sortKey === 'riskLevel'">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
           </tr>
         </thead>
+
         <tbody>
-          <tr v-for="item in portfolioList" :key="item.id">
+          <tr v-for="item in sortedPortfolioList" :key="item.id">
             <td>
               <input
                 type="checkbox"
                 v-model="selected"
-                :value="item.PortfolioName"
+                :value="item.portfolioId"
+                @change="updateSelectAllState"
               />
             </td>
-            <td class="NameCursor" @click="goToPortfolioDetail(item.id)">
-              {{ item.PortfolioName }}
+            <td
+              class="NameCursor"
+              @click="goToPortfolioDetail(item.portfolioName)"
+            >
+              {{ item.portfolioName }}
             </td>
-            <td>{{ item.ExpectedReturn }}%</td>
-            <td>{{ item.RiskLevel }}</td>
+            <td>{{ item.total }}원</td>
+            <td>{{ item.expectedReturn }}%</td>
+            <td>{{ item.riskLevel }}등급</td>
           </tr>
         </tbody>
       </table>
@@ -43,94 +69,91 @@
   </div>
 </template>
 
-<script>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // Import useRouter for navigation
-import { fetchPortfolioList, deletePortfolio } from '@/api/portfolioApi';
+<script setup>
+import { useRouter } from 'vue-router';
+import { usePortfolioStore } from '@/store/modules/portfolio';
+import { ref, onMounted, computed } from 'vue';
 
-export default {
-  setup() {
-    const portfolioList = ref([]); // 포트폴리오 목록
-    const selected = ref([]); // 선택된 포트폴리오
-    const allSelected = ref(false); // 전체 선택 체크박스 상태
-    const portfolioListLoaded = ref(false); // 포트폴리오 목록 로드 여부
-    const router = useRouter(); // Access Vue Router in Composition API
+const router = useRouter();
+const portfolioStore = usePortfolioStore();
 
-    // Fetch portfolio data
-    const fetchPortfolioListData = async () => {
-      try {
-        const data = await fetchPortfolioList();
-        portfolioList.value = data;
-        portfolioListLoaded.value = true;
-      } catch (error) {
-        console.error('Error fetching portfolio list:', error);
-      }
-    };
+const portfolioList = computed(() => portfolioStore.portfolioList);
+const { fetchPortfolioListAction, deletePortfolioAction } = portfolioStore;
 
-    // Delete a specific portfolio by ID
-    const deletePortfolioData = async (portfolioId) => {
-      try {
-        await deletePortfolio(portfolioId);
-        portfolioList.value = portfolioList.value.filter(
-          (portfolio) => portfolio.id !== portfolioId
-        );
-      } catch (error) {
-        console.error('Error deleting portfolio:', error);
-      }
-    };
+const selected = ref([]); // 선택된 포트폴리오
+const allSelected = ref(false); // 전체 선택 체크박스 상태
+const sortKey = ref('portfolioName'); // 정렬할 컬럼
+const sortOrder = ref('asc'); // 오름차순('asc') 또는 내림차순('desc')
 
-    // Toggle all selections
-    const toggleSelectAll = () => {
-      if (allSelected.value) {
-        selected.value = portfolioList.value.map(
-          (portfolio) => portfolio.PortfolioName
-        );
-      } else {
-        selected.value = [];
-      }
-    };
-
-    // Navigate to portfolio detail page
-    const goToPortfolioDetail = (id) => {
-      router.push({ name: 'PortfolioDetail', params: { id } });
-    };
-
-    // Navigate to portfolio creation page
-    const goToCreatePortfolio = () => {
-      router.push({ name: 'CreatePortfolio' });
-    };
-
-    // Delete selected portfolios
-    const deleteSelectedPortfolios = () => {
-      selected.value.forEach((portfolioName) => {
-        const portfolio = portfolioList.value.find(
-          (p) => p.PortfolioName === portfolioName
-        );
-        if (portfolio) {
-          deletePortfolioData(portfolio.id);
-        }
-      });
-      selected.value = [];
-    };
-
-    // Fetch portfolio list on component mount
-    onMounted(() => {
-      if (!portfolioListLoaded.value) {
-        fetchPortfolioListData();
-      }
-    });
-
-    return {
-      selected,
-      allSelected,
-      portfolioList,
-      toggleSelectAll,
-      goToPortfolioDetail,
-      goToCreatePortfolio,
-      deleteSelectedPortfolios,
-    };
-  },
+// 전체 선택 처리
+const toggleSelectAll = () => {
+  if (allSelected.value) {
+    selected.value = portfolioList.value.map(
+      (portfolio) => portfolio.portfolioId // 포트폴리오 이름으로 설정
+    );
+  } else {
+    selected.value = [];
+  }
 };
+
+// 체크박스 상태 변경 시 전체 선택 체크박스 상태 업데이트
+const updateSelectAllState = () => {
+  allSelected.value = selected.value.length === portfolioList.value.length; // 전체 선택 여부 업데이트
+};
+
+// 포트폴리오 상세 페이지로 이동
+const goToPortfolioDetail = (id) => {
+  router.push({ name: 'Portfolio', params: { id } });
+};
+
+// 포트폴리오 생성 페이지로 이동
+const goToCreatePortfolio = () => {
+  router.push({ name: 'MakePortfolio' });
+};
+
+const deleteSelectedPortfolios = async () => {
+  for (const portfolioId of selected.value) {
+    try {
+      await deletePortfolioAction(portfolioId); // 비동기 요청 대기
+    } catch (error) {
+      console.error(
+        'Error deleting portfolio:',
+        error.response?.data || error.message
+      );
+    }
+  }
+  selected.value = []; // 선택 해제
+  window.location.reload();
+};
+
+// 정렬 기준과 방향 변경 함수
+const sortBy = (key) => {
+  if (sortKey.value === key) {
+    // 동일한 키를 클릭했을 때 방향 변경
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = key;
+    sortOrder.value = 'asc'; // 기본은 오름차순
+  }
+};
+
+// 정렬된 포트폴리오 리스트 계산
+const sortedPortfolioList = computed(() => {
+  return portfolioList.value.slice().sort((a, b) => {
+    let result = 0;
+    if (a[sortKey.value] < b[sortKey.value]) {
+      result = -1;
+    } else if (a[sortKey.value] > b[sortKey.value]) {
+      result = 1;
+    }
+    return sortOrder.value === 'asc' ? result : -result;
+  });
+});
+
+// 컴포넌트가 마운트될 때 포트폴리오 리스트를 불러옴
+onMounted(() => {
+  fetchPortfolioListAction();
+});
 </script>
 
 <style scoped>
@@ -154,6 +177,7 @@ export default {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  cursor: pointer;
 }
 
 .MyPortfolio-btn {
@@ -166,10 +190,5 @@ export default {
   cursor: pointer;
   text-decoration: underline;
   color: blue;
-}
-
-.header-text {
-  color: black;
-  font-weight: bold;
 }
 </style>

@@ -2,6 +2,7 @@
     <div v-if="isOpen" class="modal">
         <div class="modal-content">
             <span class="close" @click="closeModal">&times;</span>
+
             <div v-if="step === 'start'">
                 <h2>테스트 시작 설명</h2>
                 <div class="InvestmentTest-body">
@@ -26,30 +27,46 @@
                     </div>
                     <div class="question-text">{{ currentQuestion.question }}</div>
                     <div class="answers">
-                        <v-btn
-                            v-for="(option, index) in currentQuestion.options"
-                            :key="index"
-                            :class="{ selected: selectedAnswers.includes(option) }"
-                            @click="selectAnswer(option)"
-                        >
-                            {{ option }}
-                        </v-btn>
+                        <ul>
+                            <li
+                                v-for="(option, index) in currentQuestion.options"
+                                :key="index"
+                                @click="selectAnswer(option)"
+                                :class="{
+                                    selected: selectedAnswers[currentQuestionIndex] === option,
+                                }"
+                            >
+                                {{ index + 1 }}. {{ option }}
+                            </li>
+                        </ul>
                     </div>
                     <div class="navigation">
-                        <v-btn
-                            v-if="currentQuestionIndex > 0"
-                            class="ModalTest-btn"
-                            @click="prevQuestion"
-                        >
-                            이전 질문
-                        </v-btn>
-                        <v-btn v-if="!isLastQuestion" class="ModalTest-btn" @click="nextQuestion">
-                            다음 질문
-                        </v-btn>
-                        <v-btn v-else-if="isLastQuestion" class="ModalTest-btn" @click="finishTest">
-                            테스트 완료
-                        </v-btn>
-                        <v-btn class="ModalTest-btn" @click="closeModal">취소</v-btn>
+                        <div class="navigation-buttons">
+                            <v-btn
+                                v-if="currentQuestionIndex > 0"
+                                class="ModalTest-btn"
+                                @click="prevQuestion"
+                            >
+                                이전 질문
+                            </v-btn>
+                            <v-btn
+                                v-if="!isLastQuestion"
+                                class="ModalTest-btn"
+                                @click="nextQuestion"
+                            >
+                                다음 질문
+                            </v-btn>
+                        </div>
+                        <div class="navigation-End-btn">
+                            <v-btn
+                                :disabled="!allQuestionsAnswered"
+                                class="ModalTest-btn"
+                                @click="finishTest"
+                            >
+                                테스트 완료
+                            </v-btn>
+                            <v-btn class="ModalTest-btn" @click="closeModal">취소</v-btn>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -67,7 +84,6 @@
 
 <script>
 import { ref, computed, defineComponent, watch } from 'vue';
-import { questions } from '@/dummyQuestion.js'; // Assuming this holds the questions
 
 export default defineComponent({
     props: {
@@ -77,67 +93,87 @@ export default defineComponent({
         },
     },
     setup(props, { emit }) {
-        const step = ref('start'); // Tracks which step the modal is in: 'start', 'test', 'end'
+        const step = ref('start');
         const currentQuestionIndex = ref(0);
-        const selectedAnswers = ref([]); // Stores selected answers for the current question
-        const questionsList = questions;
+        const selectedAnswers = ref([]);
 
-        // Computed properties
+        // 임시 질문 데이터
+        const questions = [
+            {
+                question: '1. 첫 번째 질문 내용?',
+                options: ['옵션 1', '옵션 2', '옵션 3'],
+            },
+            {
+                question: '2. 두 번째 질문 내용?',
+                options: ['옵션 A', '옵션 B', '옵션 C'],
+            },
+            {
+                question: '3. 세 번째 질문 내용?',
+                options: ['옵션 A', '옵션 B', '옵션 C'],
+            },
+        ];
+
         const currentQuestion = computed(() => questions[currentQuestionIndex.value]);
         const isLastQuestion = computed(() => currentQuestionIndex.value === questions.length - 1);
         const progress = computed(
             () => ((currentQuestionIndex.value + 1) / questions.length) * 100
         );
+        const allQuestionsAnswered = computed(() => {
+            return (
+                selectedAnswers.value.length === questions.length &&
+                selectedAnswers.value.every((answer) => answer !== null)
+            );
+        });
 
-        // Method to start the test
         const startTest = () => {
-            step.value = 'test'; // Move to the test part of the modal
+            step.value = 'test';
         };
 
-        // Method to go to the next question
         const nextQuestion = () => {
             if (currentQuestionIndex.value < questions.length - 1) {
                 currentQuestionIndex.value++;
-                selectedAnswers.value = []; // Clear selected answers for the next question
             }
         };
 
-        // Method to go to the previous question
         const prevQuestion = () => {
             if (currentQuestionIndex.value > 0) {
                 currentQuestionIndex.value--;
-                selectedAnswers.value = []; // Clear selected answers for the previous question
             }
         };
 
-        // Method to select an answer
         const selectAnswer = (option) => {
-            if (!selectedAnswers.value.includes(option)) {
-                selectedAnswers.value.push(option);
-                nextQuestion();
+            const currentAnswer = selectedAnswers.value[currentQuestionIndex.value];
+            if (currentAnswer === option) {
+                selectedAnswers.value[currentQuestionIndex.value] = null;
+            } else {
+                selectedAnswers.value[currentQuestionIndex.value] = option;
+            }
+
+            if (currentAnswer !== option) {
+                setTimeout(() => {
+                    if (currentQuestionIndex.value < questions.length - 1) {
+                        nextQuestion();
+                    }
+                }, 200);
             }
         };
 
-        // Method to finish the test
         const finishTest = () => {
-            step.value = 'end'; // Move to the end part of the modal
-            emit('finishTest'); // Emit event to parent component
+            step.value = 'end';
+            emit('finishTest');
         };
 
-        // Method to close the modal
         const closeModal = () => {
             emit('close');
-            resetModal(); // Reset the modal state
+            resetModal();
         };
 
-        // Method to reset the modal state
         const resetModal = () => {
-            step.value = 'start'; // Reset to start
-            currentQuestionIndex.value = 0; // Reset questions
-            selectedAnswers.value = []; // Clear selected answers
+            step.value = 'start';
+            currentQuestionIndex.value = 0;
+            selectedAnswers.value = [];
         };
 
-        // Watch for changes in the modal's open state to reset if necessary
         watch(
             () => props.isOpen,
             (newValue) => {
@@ -153,6 +189,7 @@ export default defineComponent({
             selectedAnswers,
             currentQuestion,
             isLastQuestion,
+            allQuestionsAnswered,
             progress,
             startTest,
             nextQuestion,
@@ -160,7 +197,7 @@ export default defineComponent({
             selectAnswer,
             finishTest,
             closeModal,
-            questions: questionsList,
+            questions, // 컴포넌트에서 사용할 질문 리스트
         };
     },
 });
@@ -201,6 +238,38 @@ export default defineComponent({
 }
 
 .selected {
-    background-color: lightblue;
+    color: blue;
+    font-weight: bold;
+}
+
+.answers {
+    margin-top: 15px;
+}
+
+.answers ul {
+    list-style: none;
+    padding: 0;
+}
+
+.answers li {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.navigation-End-btn {
+    display: flex;
+    justify-content: center;
 }
 </style>

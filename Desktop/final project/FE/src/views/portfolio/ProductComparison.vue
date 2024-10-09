@@ -139,7 +139,6 @@
 <script>
 import { ref, computed } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
-import { dummyProducts } from '@/dummyfinancial.js'; // 더미 데이터 가져오기
 
 export default {
     name: 'ProductComparison',
@@ -156,7 +155,7 @@ export default {
         const warningMessage = ref('');
         const confirmMessage = ref('');
 
-        const products = ref(dummyProducts); // 더미 데이터 사용
+        // const products = ref(dummyProducts);
 
         // 차트 옵션 및 시리즈 생성
         const chartOptions = ref({

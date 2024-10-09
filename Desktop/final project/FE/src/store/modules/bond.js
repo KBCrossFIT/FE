@@ -1,71 +1,107 @@
+// store/bond.js
+import { defineStore } from 'pinia';
 import { fetchBondProducts, searchBondProduct, getBondProductDetail } from '@/api/financeApi';
 
-const bondModule = {
-    namespaced: true,
+export const useBondStore = defineStore('bond', {
     state: () => ({
-        bondList: [], // This will hold the list of bonds
+        bondList: [], // 채권 리스트
         bondListLoaded: false,
-        searchBondProducts: [], // This will hold the search results
-        bondProductDetail: {}, // Change this to an object to hold detailed info
+        totalPages: 1, // 총 페이지 수
+        searchBondProducts: [], // 검색 결과
+        bondProductDetail: {}, // 상세 정보
     }),
 
-    mutations: {
-        setBondList(state, bonds) {
-            state.bondList = bonds;
-            state.bondListLoaded = true;
-        },
-
-        setSearchBondList(state, searchResults) {
-            state.searchBondProducts = searchResults;
-        },
-
-        setBondProductDetail(state, getDetail) {
-            state.bondProductDetail = getDetail; // Keep as an object
-        },
-    },
-
     actions: {
-        async fetchBondList({ commit, state }) {
-            if (!state.bondListLoaded) {
-                try {
-                    const bonds = await fetchBondProducts();
-                    commit('setBondList', bonds);
-                } catch (error) {
-                    console.error('Error fetching bond list: ', error);
-                }
+        setBondList(bonds) {
+            if (Array.isArray(bonds)) {
+                this.bondList = bonds.map((bond) => ({
+                    ...bond,
+                    finPrdtNm: bond.isinCdNm || '상품명 없음',
+                }));
+            } else if (typeof bonds === 'object' && bonds !== null) {
+                this.bondList = [
+                    {
+                        ...bonds,
+                        finPrdtNm: bonds.isinCdNm || '상품명 없음',
+                    },
+                ];
+            } else {
+                this.bondList = [];
+            }
+            this.bondListLoaded = true;
+        },
+
+        setTotalPages(totalPages) {
+            this.totalPages = totalPages;
+        },
+
+        setSearchBondList(searchResults) {
+            if (Array.isArray(searchResults)) {
+                this.searchBondProducts = searchResults.map((bond) => ({
+                    ...bond,
+                    finPrdtNm: bond.isinCdNm || '상품명 없음',
+                }));
+            } else {
+                this.searchBondProducts = [];
             }
         },
 
-        async searchBondList({ commit }, keyword) {
+        setBondProductDetail(detail) {
+            this.bondProductDetail = {
+                ...detail,
+                finPrdtNm: detail.isinCdNm || '상품명 없음',
+            };
+        },
+
+        async fetchBondList(page, pageSize) {
+            try {
+                const response = await fetchBondProducts(page, pageSize);
+                // API 응답 구조에 따라 처리
+                if (response.items && Array.isArray(response.items)) {
+                    this.setBondList(response.items);
+                    this.setTotalPages(response.totalPages || 1);
+                } else if (response.productInfoTable) {
+                    this.setBondList(response.productInfoTable);
+                    this.setTotalPages(response.totalPages || 1);
+                } else {
+                    throw new Error('채권 API 응답 구조가 예상과 다릅니다.');
+                }
+            } catch (error) {
+                console.error('Error fetching bond list:', error);
+            }
+        },
+
+        async searchBondList(keyword) {
             try {
                 const searchResults = await searchBondProduct(keyword);
-                commit('setSearchBondList', searchResults);
+                this.setSearchBondList(searchResults);
             } catch (error) {
-                console.error('Error searching bond list: ', error);
+                console.error('Error searching bond list:', error);
             }
         },
 
-        async fetchBondProductDetail({ commit }, productId) {
+        async fetchBondProductDetail(productId) {
             try {
                 const response = await getBondProductDetail(productId);
-                // Assuming response contains an object with details and an array of bonds
-                commit('setBondProductDetail', response); // response should be an object
+                this.setBondProductDetail(response);
             } catch (error) {
-                console.error('Error fetching bond product detail: ', error);
+                console.error('Error fetching bond product detail:', error);
             }
         },
     },
+
     getters: {
-        getBondList(state) {
-            return state.bondList;
+        getBondList() {
+            return this.bondList;
         },
-        getSearchBondList(state) {
-            return state.searchBondProducts;
+        getTotalPages() {
+            return this.totalPages;
         },
-        getProductDetail(state) {
-            return state.bondProductDetail; // This will return the object with bond details
+        getSearchBondList() {
+            return this.searchBondProducts;
+        },
+        getProductDetail() {
+            return this.bondProductDetail;
         },
     },
-};
-
-export default bondModule;
+});

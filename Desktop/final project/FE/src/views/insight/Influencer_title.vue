@@ -1,172 +1,154 @@
 <template>
-    <div class="influencer-list">
-        <v-container>
-            <v-row>
-                <v-col v-for="(post, index) in paginatedPosts" :key="index" cols="12" md="4">
-                    <v-card class="influencer-card my-3" @click="navigateToInfluencerDesc(post.name)">
-                        <v-img :src="post.image" aspect-ratio="1.5" class="image-box"></v-img>
-                        <v-card-title class="card-title">
-                            <h3 class="post-name">{{ post.name }}</h3>
-                        </v-card-title>
-                        <div class="content">
-                            <p class="post-field">{{ post.field }}</p>
-                            <p class="post-summary">{{ post.summary }}</p>
-                        </div>
-                        <v-card-subtitle class="post-date">{{ post.date }}</v-card-subtitle>
-                    </v-card>
-                </v-col>
-            </v-row>
-        </v-container>
+  <div class="influencer-list">
+    <!-- 로딩 중 상태 표시 -->
+    <v-container v-if="loading">
+      <v-row>
+        <p>Loading personas...</p>
+      </v-row>
+    </v-container>
 
-        <!-- 페이지네이션 -->
-        <div id="Pagination">
-            <v-container>
-                <v-pagination
-                    v-model="page"
-                    :length="totalPages"
-                    @input="onPageChange"
-                ></v-pagination>
-            </v-container>
-        </div>
+    <!-- 페르소나 데이터가 없을 때 표시 -->
+    <v-container v-else-if="personas.length === 0">
+      <v-row>
+        <p>No personas available.</p>
+      </v-row>
+    </v-container>
+
+    <!-- 페르소나 데이터를 정상적으로 로드했을 때 -->
+    <v-container v-else>
+      <v-row>
+        <v-col v-for="persona in paginatedPersonas" :key="persona.personaId" cols="12" md="4">
+          <v-card class="influencer-card my-3">
+            <!-- 이미지 경로가 있으면 이미지 표시, 없으면 기본 이미지 표시 -->
+            <v-img
+              :src="
+                persona.imagePath
+                  ? `http://localhost:8080/api/personas/crossfit_images/${persona.imagePath.split('/').pop()}`
+                  : '/default_image.jpg'
+              "
+              class="image-box"
+              style="width: 150px; height: 150px"
+              @error="onImageError"
+            />
+            <v-card-title class="card-title">
+              <h3 class="post-name">{{ persona.personaName || "이름 없음" }}</h3>
+            </v-card-title>
+            <div class="content">
+              <p class="post-field">{{ persona.job || "직업 정보 없음" }}</p>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <!-- 페이지네이션 -->
+    <div id="Pagination">
+      <v-container>
+        <v-pagination v-model="page" :length="totalPages" @input="onPageChange"></v-pagination>
+      </v-container>
     </div>
+  </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router'; // Import useRouter
+import axios from "axios";
+import { ref, computed, onMounted } from "vue";
 
 export default {
-    name: 'Influencer_title',
-    setup() {
-        const page = ref(1);
-        const pageSize = 9;
+  name: "InfluencerList",
+  setup() {
+    const personas = ref([]);
+    const loading = ref(true);
+    const page = ref(1);
+    const pageSize = 6;
 
-        const router = useRouter(); // Use Vue Router instance
+    const loadPersonas = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/personas/get");
+        personas.value = response.data;
+      } catch (error) {
+        console.error("Error loading personas:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
-        // posts 데이터 정의
-        const posts = ref([
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '홍길동',
-                field: '재테크 전문가',
-                summary: '최신 재테크 트렌드를 소개합니다.',
-                date: '2024-09-28',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '김영희',
-                field: '주식 투자자',
-                summary: '주식 투자에서의 성공 노하우를 공유합니다.',
-                date: '2024-09-27',
-            },
-            {
-                image: '', // 이미지 경로 비워둠
-                name: '이철수',
-                field: '금융 분석가',
-                summary: '금융 시장의 최근 동향을 분석합니다.',
-                date: '2024-09-26',
-            },
-            // ... 추가 데이터
-        ]);
+    const paginatedPersonas = computed(() => {
+      const start = (page.value - 1) * pageSize;
+      const end = start + pageSize;
+      return personas.value.slice(start, end);
+    });
 
-        // 페이지네이션을 위한 slice 처리
-        const paginatedPosts = computed(() => {
-            const start = (page.value - 1) * pageSize;
-            const end = start + pageSize;
-            return posts.value.slice(start, end);
-        });
+    const totalPages = computed(() => {
+      return Math.ceil(personas.value.length / pageSize);
+    });
 
-        // 전체 페이지 계산
-        const totalPages = computed(() => {
-            return Math.ceil(posts.value.length / pageSize);
-        });
+    const onPageChange = (newPage) => {
+      page.value = newPage;
+    };
 
-        // 페이지 변경 처리
-        const onPageChange = (newPage) => {
-            page.value = newPage;
-        };
+    const onImageError = (event) => {
+      event.target.src = "/default_image.jpg"; // 이미지 로드 실패 시 기본 이미지로 대체
+    };
 
-        // Method to navigate to Influencer Description page
-        const navigateToInfluencerDesc = (influencerName) => {
-            // Navigates to '/influencer/:name'
-            router.push({ name: 'InfluencerDesc', params: { name: influencerName } });
-        };
+    onMounted(() => {
+      loadPersonas();
+    });
 
-        return {
-            paginatedPosts,
-            totalPages,
-            page,
-            onPageChange,
-            navigateToInfluencerDesc,
-        };
-    },
+    return {
+      personas,
+      paginatedPersonas,
+      totalPages,
+      page,
+      onPageChange,
+      loading,
+      onImageError,
+    };
+  },
 };
 </script>
 
 <style scoped>
 .influencer-list {
-    padding: 20px;
-}
-
-.title {
-    font-size: 1.5em;
-    margin-bottom: 20px;
-    text-align: center; /* 제목 중앙 정렬 */
+  padding: 20px;
 }
 
 .influencer-card {
-    display: flex;
-    flex-direction: column; /* 세로 방향으로 정렬 */
-    height: 300px; /* 카드의 높이 줄임 */
-    justify-content: center; /* 카드 내용 중앙 정렬 */
-    align-items: center; /* 카드 내용 중앙 정렬 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
 .influencer-card:hover {
-    box-shadow: 0 0 20px 10px #77e077;
-    cursor: pointer;
+  box-shadow: 0 0 20px 10px #77e077;
+  cursor: pointer;
 }
 
 .image-box {
-    height: 150px; /* 이미지 박스 높이 줄임 */
+  object-fit: cover;
+  width: 150px;
+  height: 150px;
 }
 
 .card-title {
-    text-align: center; /* 제목 중앙 정렬 */
+  text-align: center;
 }
 
 .content {
-    flex: 1; /* 내용 부분이 남은 공간을 차지 */
-    text-align: center; /* 내용 중앙 정렬 */
-    padding: 10px;
+  text-align: center;
+  padding: 10px;
 }
 
 .post-name {
-    font-size: 1.2em;
-    margin: 0;
+  font-size: 1.2em;
+  margin: 0;
 }
 
 .post-field {
-    font-size: 0.9em;
-    color: #888;
-    margin: 5px 0; /* 필드와 설명 사이의 여백 */
-}
-
-.post-summary {
-    font-size: 0.9em;
-    color: #666;
-    margin: 5px 0; /* 설명 사이 여백 줄임 */
-}
-
-.post-date {
-    font-size: 0.8em;
-    color: #aaa;
-    text-align: center; /* 날짜 중앙 정렬 */
-    margin-top: 10px; /* 날짜와 카드 내용 사이의 여백 */
-}
-
-#Pagination {
-    margin-top: 20px; /* 페이지네이션과 카드 사이의 여백 */
-    text-align: center; /* 페이지네이션 중앙 정렬 */
+  font-size: 0.9em;
+  color: #000000;
+  margin: 5px 0;
 }
 </style>
