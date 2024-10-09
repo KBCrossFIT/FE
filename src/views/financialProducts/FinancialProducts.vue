@@ -452,8 +452,8 @@ export default {
             try {
                 await cartStore.addCartItem(cartItem);
                 clearCartItem();
-                // await increaseAgeGroupProductHit(product.productId);
-                // await increasePreferenceProductHit(product.productId);
+                await increaseAgeGroupProductHit(product.productId);
+                await increasePreferenceProductHit(product.productId);
             } catch (error) {
                 console.error('조회수 증가 오류: ', error);
                 alert('조회수를 증가하는 중 오류가 발생했습니다.');
