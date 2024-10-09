@@ -17,7 +17,7 @@
           </v-row>
           <v-divider></v-divider>
           
-          <div v-for="item in paginatedCart" :key="item.cartID" class="cart-item">
+          <div v-for="item in paginatedCart" :key="item.cartId" class="cart-item">
             <v-card elevation="2" class="cart-item-card mb-2">
               <v-card-text>
                 <v-row>
@@ -35,7 +35,7 @@
                   <v-col>{{ item.productName }}</v-col>
                   <v-col>{{ item.expectedReturn }}%</v-col>
                   <v-col>
-                    <v-btn class="cart-trashcanBtn" @click="removeFromCart(item.cartID)" icon>
+                    <v-btn class="cart-trashcanBtn" @click="removeFromCart(item.cartId)" icon>
                       <v-icon>mdi-delete</v-icon>
                     </v-btn>
                   </v-col>
@@ -90,10 +90,11 @@
         return cart.value.slice(start, start + itemsPerPage); // 페이지에 맞게 슬라이스
       });
   
-      const removeFromCart = async (cartID) => {
+      const removeFromCart = async (cartId) => {
         try {
-          await deleteCartItem(cartID); // 장바구니 항목 삭제
-          cart.value = cart.value.filter(item => item.cartID !== cartID); // 삭제된 항목 필터링
+            console.log(cartId);
+          await deleteCartItem(cartId); // 장바구니 항목 삭제
+          cart.value = cart.value.filter(item => item.cartId !== cartId); // 삭제된 항목 필터링
         } catch (error) {
           console.error('장바구니에서 항목을 제거하는 데 실패했습니다:', error);
           alert('장바구니에서 항목을 제거하는 중 오류가 발생했습니다.');

@@ -3,7 +3,7 @@
       <div class="uiNavAside" ref="sidebar">
         <ul class="nav-aside">
           <div class="button-container">
-            <!-- Other sidebar menu components -->
+            <!-- Sidebar Menu Components -->
             <SidebarMenu1
               :activeDropdown="activeDropdown"
               :portfolios="portfolios"
@@ -21,29 +21,19 @@
   
       <!-- Side Panel -->
       <SidePanel
-        :isVisible="isSidePanelOpen"
-        :panelTitle="panelTitle"
-        @close="isSidePanelOpen = false"
-      >
-        <div v-if="activeSection === 'RecentProductsSection'">
-          <ul>
-            <li v-for="product in panelData" :key="product.id">
-              {{ product.name }} - {{ product.price }}원
-              <button @click="$emit('removeFromRecent', product)">Remove</button>
-            </li>
-          </ul>
-        </div>
-  
-        <!-- Portfolio Section -->
-        <div v-if="activeSection === 'PortfolioSection'">
-          <ul>
-            <li v-for="portfolio in panelData" :key="portfolio.id">
-              {{ portfolio.name }} <!-- Adjust this based on your database fields -->
-            </li>
-          </ul>
-        </div>
-        <!-- Other sections for CartSection, etc. -->
-      </SidePanel>
+    :isVisible="isSidePanelOpen"
+    :panelTitle="panelTitle"
+    @close="isSidePanelOpen = false"
+    >
+    <div v-if="activeSection === 'PortfolioSection'">
+        <ul v-if="panelData.length > 0">
+        <li v-for="portfolio in panelData" :key="portfolio.id">
+            {{ portfolio.portfolioName }} - 총액: {{ portfolio.total }}원
+        </li>
+        </ul>
+        <p v-else>포트폴리오 데이터가 없습니다.</p>
+    </div>
+    </SidePanel>
     </div>
   </template>
   
@@ -70,13 +60,14 @@
       const isSidePanelOpen = ref(false);
       const panelTitle = ref('');
       const activeSection = ref('');
-      const panelData = ref([]);
+      const panelData = ref([]); // The data to be passed to the side panel
   
+      // Function to open the side panel with the relevant data
       const openSidePanel = (payload) => {
-        panelTitle.value = payload.title; // Set the title
+        panelTitle.value = payload.title; // Set the title of the panel
         activeSection.value = payload.section; // Set the active section
-        panelData.value = payload.data; // Pass the data to the panel
-        isSidePanelOpen.value = true; // Open the panel
+        panelData.value = payload.data; // Set the data to be displayed in the panel
+        isSidePanelOpen.value = true; // Open the side panel
       };
   
       return {
@@ -94,6 +85,7 @@
   </script>
   
   <style scoped>
+  /* Styles for the sidebar and side panel */
   .app-container {
     display: flex;
   }

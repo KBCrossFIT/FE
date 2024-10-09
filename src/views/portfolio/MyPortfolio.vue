@@ -51,7 +51,7 @@
             </td>
             <td
               class="NameCursor"
-              @click="goToPortfolioDetail(item.portfolioName)"
+              @click="openPortfolioInSidePanel(item)"
             >
               {{ item.portfolioName }}
             </td>
@@ -111,6 +111,16 @@ const goToCreatePortfolio = () => {
   router.push({ name: 'MakePortfolio' });
 };
 
+// 선택된 포트폴리오 데이터를 사이드패널로 전달
+const openPortfolioInSidePanel = (portfolio) => {
+  emit('openSidePanel', {
+    title: '포트폴리오 상세',
+    section: 'PortfolioSection',
+    data: [portfolio], // 선택된 포트폴리오 데이터 전달
+  });
+};
+
+// 선택된 포트폴리오 삭제
 const deleteSelectedPortfolios = async () => {
   for (const portfolioId of selected.value) {
     try {
@@ -155,6 +165,7 @@ onMounted(() => {
   fetchPortfolioListAction();
 });
 </script>
+
 
 <style scoped>
 .MyPortfolio-container {
