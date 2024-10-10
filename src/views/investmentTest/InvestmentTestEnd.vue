@@ -18,7 +18,7 @@
           <h3>투자 성향: {{ resultMessage }}</h3>
         </div>
 
-        <v-btn class="InvestmentTest-btn" @click="navigateTo('/my-investment-analyze'), cancel()"> 결과보기 </v-btn>
+        <v-btn class="InvestmentTest-btn" @click="navigateToMyInvestmentAnalyze"> 결과보기 </v-btn>
       </div>
     </div>
   </div>
@@ -26,7 +26,6 @@
 
 <script>
 export default {
-  name: "InvestmentTestEnd",
   data() {
     return {
       finalScore: 0,
@@ -51,8 +50,9 @@ export default {
     }
   },
   methods: {
-    navigateTo(path) {
-      this.$router.push(path);
+    navigateToMyInvestmentAnalyze() {
+      // 점수와 함께 MyInvestmentAnalyze 페이지로 이동
+      this.$router.push({ path: "/my-investment-analyze", query: { score: this.finalScore } });
     },
   },
 };
