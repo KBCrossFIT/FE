@@ -436,11 +436,13 @@ export default {
                     cartItem.value.expectedReturn = getRate(product.productId, 12).intrRate2;
                     break;
                 case 'bond':
+                    cartItem.value.productType = 'B';
                     cartItem.value.provider = product.bondIsurNm;
                     cartItem.value.productName = product.isinCdNm;
                     cartItem.value.expectedReturn = product.yield12;
                     break;
                 case 'fund':
+                    cartItem.value.productType = 'F';
                     cartItem.value.provider = product.companyNm;
                     cartItem.value.productName = product.productNm;
                     cartItem.value.expectedReturn = product.bondSrfcInrt;

@@ -149,13 +149,7 @@
             </div>
 
             <div class="ModalStock-btn">
-                <button
-                    :disabled="selectedStocks.length === 0"
-                    class="portfolio-button"
-                    @click="addToPortfolio"
-                >
-                    구성 페이지에 담기
-                </button>
+                <button class="portfolio-button" @click="addToPortfolio">구성 페이지에 담기</button>
                 <button class="close-button" @click="closeModal">모달 닫기</button>
             </div>
         </div>
@@ -304,7 +298,12 @@ export default {
         }
 
         function addToPortfolio() {
-            emit('add-stocks', selectedStocks.value);
+            // 선택된 주식들에 수량 정보 추가
+            const stocksWithQuantities = selectedStocks.value.map((stock) => ({
+                ...stock,
+                quantity: quantities.value[stock.stockCode] || 1,
+            }));
+            emit('add-stocks', stocksWithQuantities);
             closeModal();
         }
 
@@ -321,7 +320,7 @@ export default {
                 if (newStocks.length > 0) {
                     selectedStocks.value = [...newStocks];
                     newStocks.forEach((stock) => {
-                        quantities.value[stock.stockCode] = quantities.value[stock.stockCode] || 1;
+                        quantities.value[stock.stockCode] = stock.quantity || 1;
                     });
                 }
             },
