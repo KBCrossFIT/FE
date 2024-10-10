@@ -29,11 +29,12 @@
             @click="goToPortfolioDetail(portfolio.portfolioId)"
         >
           <td>{{ portfolio.portfolioName }}</td>
-          <td :class="{'positive-return': portfolio.expectedReturn > 0, 'negative-return': portfolio.expectedReturn < 0}">
-            {{ portfolio.expectedReturn }}%
+          <td :class="{ 'positive-return': portfolio.expectedReturn > 0, 'negative-return': portfolio.expectedReturn < 0 }">
+            <span v-if="portfolio.expectedReturn > 0">+{{ portfolio.expectedReturn }}%</span>
+            <span v-else-if="portfolio.expectedReturn < 0">{{ portfolio.expectedReturn }}%</span>
           </td>
           <td>{{ portfolio.riskLevel }}등급</td>
-          <td>{{ portfolio.total }}원</td>
+          <td>{{ portfolio.total.toLocaleString() }}원</td>
         </tr>
         </tbody>
       </table>
@@ -53,18 +54,26 @@
         <thead>
         <tr>
           <th class="product-type">상품 종류</th>
-          <th class="provider">제공자</th>
+          <th class="provider">제공</th>
           <th class="product-name">상품 이름</th>
           <th class="return-rate">수익률</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="item in data" :key="item.productId" class="data-row">
+        <tr
+            v-for="item in data"
+            :key="item.productId"
+            class="data-row"
+            @click="goToProductDetail(item.productId, getProductTypeReturn(item.productType))"
+        >
           <td>{{ getProductTypeLabel(item.productType) }}</td>
           <td>{{ item.provider }}</td>
-          <td class="product-name">{{ item.productName }}</td>
-          <td :class="{'positive-return': item.expectedReturn > 0, 'negative-return': item.expectedReturn < 0}">
-            {{ item.expectedReturn }}%
+          <td class="product-name">
+            {{ item.productName.length > 10 ? item.productName.slice(0, 10) + '...' : item.productName }}
+          </td>
+          <td :class="{ 'positive-return': item.expectedReturn > 0, 'negative-return': item.expectedReturn < 0 }">
+            <span v-if="item.expectedReturn > 0">+{{ item.expectedReturn }}%</span>
+            <span v-else-if="item.expectedReturn < 0">{{ item.expectedReturn }}%</span>
           </td>
         </tr>
         </tbody>
@@ -82,8 +91,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr v-for="item in data" :key="item.productId" class="data-row">
-          <td>{{ getProductTypeLabel(item.productType) }}</td>
+        <tr
+            v-for="item in data"
+            :key="item.productId"
+            class="data-row"
+            @click="goToProductDetail(item.productId, item.productType)"
+        >
+          <td>{{ getProductType(item.productType) }}</td>
           <td class="product-name">{{ item.productName }}</td>
         </tr>
         </tbody>
@@ -111,7 +125,25 @@ const goToPortfolioDetail = (portfolioId) => {
   router.push(`/portfolio/${portfolioId}`);
 };
 
+const goToProductDetail = (productId, productType) => {
+  router.push(`/list/${productId}?productType=${productType}`).then(() => {
+    window.location.reload();
+  });
+};
+
 const emit = defineEmits(['close']);
+
+const getProductTypeReturn = (productType, rsrvType) => {
+  switch (productType) {
+    case 'S':
+      if(rsrvType != null) return 'saving';
+      return 'deposit';
+    case 'F':
+      return 'fund';
+    default:
+      return 'bond';
+  }
+};
 
 const getProductTypeLabel = (productType) => {
   switch (productType) {
@@ -123,6 +155,19 @@ const getProductTypeLabel = (productType) => {
       return '채권';
     default:
       return '기타';
+  }
+};
+
+const getProductType = (productType) => {
+  switch (productType) {
+    case 'deposit':
+      return '예금';
+    case 'saving':
+      return '적금';
+    case 'bond':
+      return '채권';
+    default:
+      return '펀드';
   }
 };
 
@@ -167,7 +212,6 @@ const closePanel = () => {
   color: #333;
 }
 
-/* 포트폴리오 섹션 열 간격 조정 */
 .portfolio-name {
   min-width: 150px;
 }
