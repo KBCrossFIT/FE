@@ -119,6 +119,7 @@ export default {
         productId: null,
         productType: null,
         productName: null,
+        rsrvType: null
       }
     };
   },
@@ -150,18 +151,7 @@ export default {
 
     addRecentViewItem(newRecentViewItem) {
       newRecentViewItem.productId = this.productId;
-      console.log(this.productType)
-      switch (this.productType){
-        case 'fund':
-          newRecentViewItem.productType = 'F';
-          break;
-        case 'bond':
-          newRecentViewItem.productType = 'B';
-          break;
-        default:
-          newRecentViewItem.productType = 'S';
-          break;
-      }
+      newRecentViewItem.productType = this.productType
       newRecentViewItem.productName = this.getProductName(this.productDetails);
 
       try {
