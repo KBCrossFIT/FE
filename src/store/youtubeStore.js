@@ -23,6 +23,7 @@ export const useYoutubeStore = defineStore('youtube', {
     async fetchYoutubeDetail(youtubeNum) {
       try {
         this.selectedVideoDetail = await getYoutubeDetail(youtubeNum);
+        console.log(selectedVideoDetail.youtubeUrl);
       } catch (error) {
         console.error('Error fetching YouTube detail:', error);
       }
