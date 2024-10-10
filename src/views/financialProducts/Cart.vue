@@ -3,6 +3,10 @@
     <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
     <div v-else-if="cart.length === 0" class="empty-cart">
       장바구니가 비어 있습니다.
+      <router-link to="/login" class="sidebar-link">
+        <i class="fas fa-sign-in-alt icon"></i>
+        <span class="menu-text">로그인</span>
+      </router-link>
     </div>
     <v-card v-else>
       <v-card-title class="d-flex justify-space-between align-center">
@@ -91,6 +95,9 @@ export default {
     onMounted(async () => {
       try {
         cart.value = await getCartList(); // 장바구니 데이터 가져오기
+        if(cart.value == null) {
+          alert("장바구니")
+        }
         cart.value.forEach((item) => {
           item.showDetails = false; // 세부 정보의 초기 상태 설정
         });

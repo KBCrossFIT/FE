@@ -42,8 +42,10 @@
                             <td>
                                 <input
                                     type="checkbox"
-                                    :checked="selected.includes(item.cartId)"
-                                    @change.stop="toggleSelect(item)"
+                                    :value="item.productId"
+                                    v-model="selected"
+<!--                              :checked="selected.includes(item.cartId)"-->
+<!--                                    @change.stop="toggleSelect(item)"-->
                                 />
                             </td>
                             <td>{{ item.productName }}</td>

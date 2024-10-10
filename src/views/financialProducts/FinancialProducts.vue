@@ -121,16 +121,7 @@
 
                         <!-- 장바구니 버튼 -->
                         <td>
-                            <v-btn
-                                icon
-                                @click="toggleCartAndIncreaseHit(product)"
-                                :style="{
-                                    backgroundColor: cart.includes(product.productId)
-                                        ? '#4caf50'
-                                        : '',
-                                    color: cart.includes(product.productId) ? 'white' : '',
-                                }"
-                            >
+                            <v-btn icon @click="toggleCartAndIncreaseHit(product)">
                                 <v-icon>mdi-cart</v-icon>
                             </v-btn>
                         </td>
