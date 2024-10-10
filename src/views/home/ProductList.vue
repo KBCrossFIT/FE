@@ -32,10 +32,10 @@
         >50대</button>
 
         <button
-          :class="{ active: activeAge === '60대 이상', hovered: hoverAge === '60대 이상' }"
-          @mouseover="setHoverAge('60대 이상')"
+          :class="{ active: activeAge === '60대', hovered: hoverAge === '60대' }"
+          @mouseover="setHoverAge('60대')"
           @mouseleave="resetHoverAge"
-          @click="setActiveAge('60대 이상')"
+          @click="setActiveAge('60대')"
         >60대 이상</button>
       </div>
 
@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { getTopProductsByAgeGroup, getTopProductsByPreference } from '@/api/hit'; // API 호출 함수 임포트
+import { getTopProductsBySelectedAgeGroup, getTopProductsBySelectedPreference } from '@/api/hit';
 
 export default {
   name: 'ProductListSection',
@@ -149,18 +149,20 @@ export default {
     return {
       activeAge: '20대',
       hoverAge: null,
-      activeInvestment: '공격투자형',
+      activeInvestment: '위험중립형',
       hoverInvestment: null,
-      ageGroupProducts: [], // 연령대에 맞는 추천 상품 리스트
-      investmentProducts: [], // 투자 성향에 맞는 추천 상품 리스트
+      ageGroupProducts: [],
+      investmentProducts: [],
     };
   },
   methods: {
     setActiveAge(age) {
       this.activeAge = age;
       this.hoverAge = null;
-      // 연령대에 맞는 상품을 불러오는 API 호출
-      this.fetchAgeGroupProducts();
+      const ageGroup = this.convertAgeToNumber(age);
+      this.fetchAgeGroupProducts(ageGroup, true);
+      // 선택한 연령대를 localStorage에 저장
+      localStorage.setItem('selectedAgeGroup', age);
     },
     setHoverAge(age) {
       if (this.activeAge !== age) {
@@ -173,8 +175,10 @@ export default {
     setActiveInvestment(investment) {
       this.activeInvestment = investment;
       this.hoverInvestment = null;
-      // 투자 성향에 맞는 상품을 불러오는 API 호출
-      this.fetchInvestmentProducts();
+      const preference = this.convertInvestmentToNumber(investment);
+      this.fetchInvestmentProducts(preference, true);
+      // 선택한 투자 성향을 localStorage에 저장
+      localStorage.setItem('selectedInvestmentType', investment);
     },
     setHoverInvestment(investment) {
       if (this.activeInvestment !== investment) {
@@ -184,42 +188,18 @@ export default {
     resetHoverInvestment() {
       this.hoverInvestment = null;
     },
-    // 연령대에 맞는 상품을 API로부터 가져오는 함수
-    async fetchAgeGroupProducts() {
+    async fetchAgeGroupProducts(ageGroup, skipAuth = false) {
       try {
-        const response = await getTopProductsByAgeGroup(); // 연령대별 상위 3개 상품 API 호출
-        const ageGroup = response.pop(); // 마지막에 연령대 정보가 추가됨
-        this.ageGroupProducts = response.map((p) => {
-          if (p.isinCdNm && p.bondIsurNm) {
-            return {
-              isinCdNm: p.isinCdNm,
-              bondIsurNm: p.bondIsurNm,
-            };
-          } else if (p.productNm && p.companyNm) {
-            return {
-              productNm: p.productNm,
-              companyNm: p.companyNm,
-            };
-          } else if (p.savingProduct && p.savingProduct.finPrdtNm && p.savingProduct.korCoNm) {
-            return {
-              savingProduct: {
-                finPrdtNm: p.savingProduct.finPrdtNm,
-                korCoNm: p.savingProduct.korCoNm,
-              },
-            };
-          }
-          return { message: '알 수 없는 상품' };
-        });
-        this.activeAge = `${ageGroup}대`; // 연령대 탭 업데이트
+        const response = await getTopProductsBySelectedAgeGroup(ageGroup, skipAuth);
+        this.ageGroupProducts = response.slice(0, 3); // 최대 3개까지만 가져오기
+        this.activeAge = `${ageGroup}대`;
       } catch (error) {
-        console.error('Error fetching age group products:', error);
+        console.error('Error fetching top products for age group:', error);
       }
     },
-    // 투자 성향에 맞는 상품을 API로부터 가져오는 함수
-    async fetchInvestmentProducts() {
+    async fetchInvestmentProducts(preference, skipAuth = false) {
       try {
-        const response = await getTopProductsByPreference(); // 투자 성향별 상위 3개 상품 API 호출
-        const preference = response.pop(); // 마지막에 투자 성향 정보가 추가됨
+        const response = await getTopProductsBySelectedPreference(preference, skipAuth);
         this.investmentProducts = response.map((p) => {
           if (p.isinCdNm && p.bondIsurNm) {
             return {
@@ -241,9 +221,9 @@ export default {
           }
           return { message: '알 수 없는 상품' };
         });
-        this.activeInvestment = this.getInvestmentType(preference); // 투자 성향 탭 업데이트
+        this.activeInvestment = this.getInvestmentType(preference);
       } catch (error) {
-        console.error('Error fetching investment products:', error);
+        console.error('Error fetching top products for preference:', error);
       }
     },
     getInvestmentType(preference) {
@@ -256,11 +236,45 @@ export default {
       };
       return types[preference] || '공격투자형';
     },
+    convertAgeToNumber(age) {
+      const ageMapping = {
+        '20대': 20,
+        '30대': 30,
+        '40대': 40,
+        '50대': 50,
+        '60대 이상': 60,
+      };
+      return ageMapping[age] || 20;
+    },
+    convertInvestmentToNumber(investment) {
+      const investmentMapping = {
+        '안전형': 1,
+        '안전추구형': 2,
+        '위험중립형': 3,
+        '적극투자형': 4,
+        '공격투자형': 5,
+      };
+      return investmentMapping[investment] || 5;
+    },
   },
-  // 컴포넌트가 마운트되면 연령대 및 투자성향에 맞는 상품을 처음 불러옴
-  mounted() {
-    this.fetchAgeGroupProducts();
-    this.fetchInvestmentProducts();
+  async mounted() {
+    // localStorage에서 이전에 선택한 연령대와 투자 성향을 가져옴
+    const savedAge = localStorage.getItem('selectedAgeGroup');
+    const savedInvestment = localStorage.getItem('selectedInvestmentType');
+
+    if (savedAge) {
+      this.activeAge = savedAge;
+    }
+    if (savedInvestment) {
+      this.activeInvestment = savedInvestment;
+    }
+
+    const ageGroup = this.convertAgeToNumber(this.activeAge);
+    const preference = this.convertInvestmentToNumber(this.activeInvestment);
+
+    // 연령대와 투자 성향에 맞는 데이터를 가져옴
+    await this.fetchAgeGroupProducts(ageGroup, false);
+    await this.fetchInvestmentProducts(preference, false);
   },
 };
 </script>
