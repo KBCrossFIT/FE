@@ -1,121 +1,123 @@
 <template>
-  <div class="layout-wrapper">
-    <!-- 사이드바 -->
+  <div class="app-container">
     <div class="uiNavAside" ref="sidebar">
       <ul class="nav-aside">
         <div class="button-container">
+          <!-- Sidebar Menu Components -->
           <SidebarMenu1
             :activeDropdown="activeDropdown"
             :portfolios="portfolios"
-            @toggleDropdown="toggleDropdown"
             @goToCreatePortfolio="goToCreatePortfolio"
+            @openSidePanel="openSidePanel"
           />
-          <SidebarMenu2
-            :activeDropdown="activeDropdown"
-            @toggleDropdown="toggleDropdown"
-            :cart="cart"
-            :removeFromCart="removeFromCart"
+          <SidebarMenu2 :cart="cart" @openSidePanel="openSidePanel" />
+          <RecentProductsSection
+            :recentProducts="recentProducts"
+            @openSidePanel="openSidePanel"
           />
-          <SidebarMenu3 :activeDropdown="activeDropdown" @toggleDropdown="toggleDropdown" />
         </div>
       </ul>
     </div>
 
-    <!-- 메인 컨텐츠 -->
-    <div class="main-content">
-      <router-view />
-    </div>
+    <!-- Side Panel -->
+    <SidePanel
+      :isVisible="isSidePanelOpen"
+      :panelTitle="panelTitle"
+      :section="activeSection"
+      :data="panelData"
+      @close="closeSidePanel"
+    />
+    <div
+      v-if="isSidePanelOpen"
+      class="overlay"
+      @click="closeSidePanel"
+    ></div>
   </div>
 </template>
 
 <script>
 import SidebarMenu1 from './sideBar/PortfolioSection.vue';
 import SidebarMenu2 from './sideBar/CartSection.vue';
-import SidebarMenu3 from './sideBar/RecentProductsSection.vue';
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import RecentProductsSection from './sideBar/RecentProductsSection.vue';
+import SidePanel from './sideBar/SidePanel.vue';
+import { ref, onMounted } from 'vue';
+import { getCartList } from '@/api/cartApi'; // Import your API function for fetching cart data
 
 export default {
   name: 'SideBar',
   components: {
     SidebarMenu1,
     SidebarMenu2,
-    SidebarMenu3,
+    RecentProductsSection,
+    SidePanel,
   },
   setup() {
-    const portfolios = ref([
-      { name: '포트폴리오 1', returns: 10.3, risk: 8.74 },
-      { name: '포트폴리오 2', returns: -3.0, risk: 4.0 },
-      { name: '포트폴리오 3', returns: 10.3, risk: 8.74 },
-    ]);
+    const portfolios = ref([]);
+    const cart = ref([]); // Initialize cart as a reactive reference
+    const recentProducts = ref([]);
 
-    const activeDropdown = ref(null);
-    const isSidebarExpanded = ref(false); // This is not needed anymore
-    const cart = ref([]); // Initialize your cart here or fetch from props or API
-    const router = useRouter();
-    const sidebar = ref(null);
+    const isSidePanelOpen = ref(false);
+    const panelTitle = ref('');
+    const activeSection = ref('');
+    const panelData = ref([]); // The data to be passed to the side panel
 
-    const toggleDropdown = (menuNumber) => {
-      // Toggle the dropdown without affecting sidebar width
-      activeDropdown.value = activeDropdown.value === menuNumber ? null : menuNumber;
-    };
-
-    const goToCreatePortfolio = () => {
-      router.push('/make-portfolio');
-    };
-
-    const removeFromCart = (item) => {
-      const index = cart.value.indexOf(item);
-      if (index > -1) {
-        cart.value.splice(index, 1);
+    // Function to fetch cart data on component mount
+    const fetchCartData = async () => {
+      try {
+        cart.value = await getCartList(); // Fetch cart data from the API
+      } catch (error) {
+        console.error('Failed to fetch cart data:', error);
       }
     };
 
-    const handleClickOutside = (event) => {
-      if (sidebar.value && !sidebar.value.contains(event.target)) {
-        activeDropdown.value = null; // Collapse dropdown on outside click
-      }
+    // Fetch the cart data when the component is mounted
+    onMounted(fetchCartData);
+
+    // Function to open the side panel with the relevant data
+    const openSidePanel = (payload) => {
+      panelTitle.value = payload.title; // Set the title of the panel
+      activeSection.value = payload.section; // Set the active section
+      panelData.value = payload.data; // Set the data to be displayed in the panel
+      isSidePanelOpen.value = true; // Open the side panel
     };
 
-    onMounted(() => {
-      document.addEventListener('click', handleClickOutside);
-    });
-
-    onUnmounted(() => {
-      document.removeEventListener('click', handleClickOutside);
-    });
+    // Function to close the side panel
+    const closeSidePanel = () => {
+      isSidePanelOpen.value = false;
+    };
 
     return {
       portfolios,
-      activeDropdown,
-      toggleDropdown,
-      goToCreatePortfolio,
-      sidebar,
       cart,
-      removeFromCart,
+      recentProducts,
+      isSidePanelOpen,
+      panelTitle,
+      activeSection,
+      panelData,
+      openSidePanel,
+      closeSidePanel,
     };
   },
 };
 </script>
 
 <style scoped>
-.layout-wrapper {
+.app-container {
   display: flex;
-  height: 100vh;
 }
 
 .uiNavAside {
   position: fixed;
   right: 0;
-  top: 10px;
-  width: 65px; /* Fixed width */
+  top: 0;
+  width: 90px;
   height: 100vh;
-  background-color: #f5f6fa;
   display: flex;
   flex-direction: column;
   z-index: 9999;
-  border-left: 1px solid #e0e0e0;
-  transition: none; /* Remove transition to prevent size changes */
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgb(233, 233, 233);
 }
 
 .nav-aside {
@@ -133,44 +135,41 @@ export default {
   flex-grow: 1;
 }
 
-.main-content {
-  flex-grow: 1;
-  margin-right: 45px; /* Adjust this to match the new default sidebar width */
+.nav-aside li {
+  text-align: center;
+  flex-grow: 0;
+  margin: 0;
 }
 
 .nav-aside a {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  padding: 15px;
-  color: #333;
+  color: white;
+  padding: 10px;
   text-decoration: none;
-  background-color: #fff;
-  border-radius: 8px;
-  margin: 5px 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
+  background-color: #e2dfdf;
+  width: 100%;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.nav-aside li:hover a {
+  background-color: #575757;
 }
 
 .menu-text {
-  font-size: 0.7rem;
-  margin-left: 10px;
+  font-size: 0.9rem;
+  margin-top: 5px;
 }
 
-.uiNavAside .nav-aside li {
-  margin-top: 25px; /* Adjust this value to align with the header */
-}
-
-/* Style for dropdown */
-.dropdown-content {
-  position: absolute; /* Positioned relative to the menu item */
-  left: 100%; /* Align dropdown to the right of the menu item */
-  top: 0; /* Aligns dropdown to the top */
-  background-color: #fff;
-  padding: 10px;
-  width: 180px;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 100; /* Ensure it's above other elements */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
 }
 </style>

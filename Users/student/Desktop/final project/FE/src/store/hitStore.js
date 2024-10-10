@@ -1,10 +1,19 @@
 import { defineStore } from 'pinia';
-import { increaseAgeGroupProductHit, increasePreferenceProductHit, getTopProductsByAgeGroup, getTopProductsByPreference } from '@/api/hit';
+import { 
+  increaseAgeGroupProductHit, 
+  increasePreferenceProductHit, 
+  getTopProductsByAgeGroup, 
+  getTopProductsByPreference,
+  getTopProductsBySelectedAgeGroup,
+  getTopProductsBySelectedPreference 
+} from '@/api/hit';
 
 export const useHitStore = defineStore('hit', {
     state: () => ({
         topAgeGroupProducts: [],
         topPreferenceProducts: [],
+        selectedAgeGroupProducts: [], // 선택된 연령대에 따른 상품
+        selectedPreferenceProducts: [], // 선택된 투자 성향에 따른 상품
         hitMessage: '',
     }),
     actions: {
@@ -43,6 +52,26 @@ export const useHitStore = defineStore('hit', {
             console.error('Error fetching top products by preference:', error);
             throw error;
           }
-        }
+        },
+        // 선택된 연령대에 따른 상위 3개 상품 가져오기
+        async fetchTopProductsBySelectedAgeGroup(ageGroup) {
+          try {
+            const products = await getTopProductsBySelectedAgeGroup(ageGroup);
+            this.selectedAgeGroupProducts = products;
+          } catch (error) {
+            console.error(`Error fetching top products for age group ${ageGroup}:`, error);
+            throw error;
+          }
+        },
+        // 선택된 투자 성향에 따른 상위 3개 상품 가져오기
+        async fetchTopProductsBySelectedPreference(preference) {
+          try {
+            const products = await getTopProductsBySelectedPreference(preference);
+            this.selectedPreferenceProducts = products;
+          } catch (error) {
+            console.error(`Error fetching top products for preference ${preference}:`, error);
+            throw error;
+          }
+        },
     },
 });
