@@ -155,7 +155,7 @@ export default {
         const warningMessage = ref('');
         const confirmMessage = ref('');
 
-        // const products = ref(dummyProducts);
+        const products = ref(dummyProducts); // 더미 데이터 사용
 
         // 차트 옵션 및 시리즈 생성
         const chartOptions = ref({

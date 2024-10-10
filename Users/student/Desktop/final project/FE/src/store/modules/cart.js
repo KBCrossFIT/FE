@@ -1,59 +1,76 @@
-// src/store/modules/cart.js
-import { defineStore } from 'pinia';
-import { deleteCartItem, fetchCartList, getCartList, postCartItem } from '@/api/cartApi.js';
+import { fetchCartList, getCartList, postCartItem, deleteCartItem } from '@/api/cartApi.js';
 
-export const useCartStore = defineStore('cart', {
-  state: () => ({
-    cartItems: [], // List of cart items
-    cartItemsLoaded: false, // Flag to track loading status
-  }),
-  actions: {
-    // Fetch initial cart items
-    async fetchCartItems() {
-      if (!this.cartItems || this.cartItems.length === 0) {
-        try {
-          const data = await fetchCartList();
-          this.cartItems = data;
-          this.cartItemsLoaded = true;
-          console.log('Fetched initial cart items:', data);
-        } catch (error) {
-          console.error('Error fetching initial cart items:', error);
-        }
-      }
+const cartModule = {
+    namespaced: true,
+    state: () => ({
+        cartItems: [],
+        cartItemsLoaded: false,
+        newCartItem: null,
+    }),
+
+    actions: {
+        async fetchCartItems({ commit, state }) {
+            if (!state.cartItems) {
+                try {
+                    const data = await fetchCartList();
+                    commit('setCartItems', data);
+                } catch (error) {
+                    console.error('Error fetching cart items:', error);
+                }
+            }
+        },
+
+        async getCartItems({ commit }) {
+            try {
+                const data = await getCartList();
+                commit('setCartItems', data);
+            } catch (error) {
+                console.error('Error fetching cart items:', error);
+            }
+        },
+
+        async addCartItem({ commit }, cartItem) {
+            try {
+                const data = await postCartItem(cartItem);
+                commit('setNewCartItem', data);
+            } catch (error) {
+                console.error('Error adding cart item:', error);
+            }
+        },
+
+        async removeCartItem({ commit }, productId) {
+            try {
+                await deleteCartItem(productId);
+                commit('removeCartItem', productId);
+            } catch (error) {
+                console.error('Error removing cart item:', error);
+            }
+        },
     },
 
-    // Fetch all cart items for regular use
-    async getCartItems() {
-      try {
-        const data = await getCartList();
-        this.cartItems = data;
-        this.cartItemsLoaded = true;
-        console.log('Fetched cart items:', data);
-      } catch (error) {
-        console.error('Error fetching cart items:', error);
-      }
+    getters: {
+        cartItems: (state) => state.cartItems,
+        newCartItem: (state) => state.newCartItem,
+        isCartItemsLoaded: (state) => state.cartItemsLoaded,
     },
 
-    // Add a new item to the cart
-    async addCartItem(cartItem) {
-      try {
-        const data = await postCartItem(cartItem);
-        this.cartItems.push(data);
-        console.log('Added item to cart:', data);
-      } catch (error) {
-        console.error('Error adding item to cart:', error);
-      }
-    },
+    mutations: {
+        setCartItems(state, cartItems) {
+            state.cartItems = cartItems;
+            state.cartItemsLoaded = true;
+        },
 
-    // Remove an item from the cart
-    async removeCartItem(cartId) {
-      try {
-        await deleteCartItem(cartId);
-        this.cartItems = this.cartItems.filter(item => item.cartId !== cartId);
-        console.log(`Removed item with ID ${cartId} from cart`);
-      } catch (error) {
-        console.error('Error removing item from cart:', error);
-      }
+        setNewCartItem(state, newCartItem) {
+            state.newCartItem = newCartItem;
+            state.cartItems.push(newCartItem); // 새로운 장바구니 아이템을 리스트에 추가
+        },
+
+        removeCartItem(state, productId) {
+            state.cartItems = state.cartItems.filter(
+                (item) => item.productId !== productId
+            );
+        },
     },
-  },
-});
+};
+
+export default cartModule;

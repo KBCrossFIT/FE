@@ -64,7 +64,7 @@ export async function fetchDepositProducts(page = 1, pageSize = 10) {
 export async function getDepositProductDetail(productId) {
     try {
         // 엔드포인트를 수정: /list/{productId} -> /deposit/{productId}
-        const response = await savingApi.get(`/deposit/${productId}`);
+        const response = await savingApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching deposit product detail:', error);
@@ -88,7 +88,7 @@ export async function fetchSavingProducts(page = 1, pageSize = 10) {
 // 적금 상품 상세 조회 API with path parameter
 export async function getSavingProductDetail(productId) {
     try {
-        const response = await savingApi.get(`/deposit/${productId}`);
+        const response = await savingApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching saving product detail:', error);
