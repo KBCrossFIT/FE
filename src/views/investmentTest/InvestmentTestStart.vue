@@ -6,20 +6,37 @@
         <div class="InvestmentTest-body">
             <div class="InvestmentTest-content">
                 <div class="InvestmentTest-text">
-                    투자성향분석 결과는 12개월간 재사용이 가능합니다.다만 당일이 아닐 경우 재사용을
-                    하더라도 일부 문항에 대한 답변은 필수입니다.재사용을 원하지 않을 경우 혹은
-                    유효기간이 경과된 후에는 영업점 방문 혹은 비대면을 통하여 재분석
-                    가능합니다.투자자성향분석은 비대면에서 1일 1회만 분석가능하오니 신중히
-                    답변해주시기 바랍니다. 투자자정보 확인 고객님에게 가장 적합한 상품을 제공하기
-                    위해서는 고객님의 정확한 답변이 필요합니다.최대한 고객님의 상황에 부합하거나
-                    가장 가까운 항목을 선택하여 주시기 바랍니다.
+                    투자성향 분석은 계정에 저장되어 내 투자성향 페이지를 통해 언제든지 접근 가능하며
+                    별도의 기한 없이 언제든지 이용하실 수 있습니다. 분석 횟수에 제한은 없으며,
+                    필요할 때마다 재분석이 가능합니다. 테스트를 완료하고 결과를 저장하신 후 성향을
+                    변경하고자 할 경우, 다시 한 번 테스트를 진행하셔야 합니다. 본 분석은 총 점수를
+                    기반으로 다섯 가지 투자 성향으로 분류되며, 이를 통해 고객님께 적합한 투자 전략을
+                    제안해드립니다. 신중하고 정확한 답변을 통해 자신의 투자 성향을 명확히
+                    파악해보시기 바랍니다.
                 </div>
-                <v-btn class="InvestmentTest-btn" @click="navigateTo('/investment-test'), cancel()">
+                <br /><br />
+                <v-btn
+                    class="InvestmentTest-btn center-btn"
+                    @click="navigateTo('/investment-test')"
+                >
                     분석하기
                 </v-btn>
-                <v-btn class="InvestmentTest-btn" @click="navigateTo('/'), cancel()">
+                <v-btn class="InvestmentTest-btn bottom-right-btn" @click="openCancelDialog">
                     다음에 하기
                 </v-btn>
+
+                <!-- 확인 대화상자 추가_다음에 하기 누를 때 발생 -->
+                <v-dialog v-model="dialog" max-width="400">
+                    <v-card>
+                        <v-card-title class="headline">확인</v-card-title>
+                        <v-card-text>투자성향 분석을 취소하시겠습니까?</v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="green darken-1" text @click="closeDialog">취소</v-btn>
+                            <v-btn color="red darken-1" text @click="confirmCancel">확인</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </div>
         </div>
     </div>
@@ -29,9 +46,25 @@
 export default {
     name: 'InvestmentTestStart',
 
+    data() {
+        return {
+            dialog: false,
+        };
+    },
+
     methods: {
         navigateTo(path) {
             this.$router.push(path);
+        },
+        openCancelDialog() {
+            this.dialog = true;
+        },
+        closeDialog() {
+            this.dialog = false;
+        },
+        confirmCancel() {
+            this.dialog = false;
+            this.navigateTo('/');
         },
     },
 };
@@ -43,7 +76,7 @@ export default {
     flex-direction: column; /* 세로 정렬 */
     align-items: flex-start; /* 좌측 정렬 */
     justify-content: space-between; /* 상단과 하단 요소 배치 */
-    height: 100vh; /* 전체 화면 높이 */
+    height: 100%; /* 전체 화면 높이 */
     padding: 20px; /* 좌우 여백 */
 }
 
@@ -64,11 +97,13 @@ export default {
     padding: 20px; /* 여백 추가 */
     background-color: #f0f0f0; /* 배경색 설정 */
     border-radius: 8px; /* 모서리 둥글게 */
+    position: relative; /* 자식 요소의 절대 위치를 위해 추가 */
 }
 
 .InvestmentTest-text {
     white-space: normal; /* 기본 줄바꿈 사용 */
     line-height: 1.5; /* 줄 간격 조정 */
+    text-align: center; /* 텍스트 중앙 정렬 */
 }
 
 .InvestmentTest-btn {
@@ -80,7 +115,18 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
-    margin-left: 20px;
+    /* margin-left: 20px; 기존 여백 제거 */
+}
+
+.center-btn {
+    align-self: center; /* 중앙 정렬 */
+}
+
+.bottom-right-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    margin-left: 0; /* 불필요한 여백 제거 */
 }
 
 .InvestmentTest-btn:hover {
