@@ -63,9 +63,7 @@
                         <label for="dob">생년월일</label>
                         <div class="dob-container">
                             <v-select v-model="selectedYear" :items="years" label="년"></v-select>
-
                             <v-select v-model="selectedMonth" :items="months" label="월"></v-select>
-
                             <v-select v-model="selectedDay" :items="days" label="일"></v-select>
                         </div>
                     </div>
@@ -102,13 +100,11 @@
                     </button>
                 </form>
 
+                <!-- ModalTest를 바로 사용 -->
                 <ModalTest
                     :isOpen="isModalOpen"
-                    :InvestMentTest="InvestMentTest"
-                    :currentComponent="currentComponent"
                     @close="handleClose"
                     @finishTest="markTestAsFinished"
-                    @next="nextStep"
                 />
 
                 <div class="login-link">
@@ -120,13 +116,14 @@
 </template>
 
 <script>
-import { registerUser } from '@/api/memberApi'; // Import your API function
+import { registerUser } from '@/api/memberApi';
+import ModalTest from '@/components/Modal/ModalTest.vue'; // ModalTest 임포트
 
 export default {
+
     components: {
-        // ModalTestStart,
-        // ModalTest,
-        // ModalTestEnd,
+        ModalTest, // ModalTest 컴포넌트 등록
+
     },
     data() {
         return {
@@ -137,11 +134,8 @@ export default {
             email: '',
             birth: null,
             gender: '남',
-            isModalOpen: false,
-            currentComponent: markRaw(ModalTestStart),
-            InvestMentTest: false,
-            showPassword: false,
-            // 날짜 선택
+            isModalOpen: false, // 모달 열림 상태
+            InvestMentTest: false, // 테스트 완료 상태
             selectedYear: null,
             selectedMonth: null,
             selectedDay: null,
@@ -191,36 +185,24 @@ export default {
             }
         },
         openModal() {
-            this.isModalOpen = true;
-            this.currentComponent = markRaw(ModalTestStart);
+            this.isModalOpen = true; // 모달 열기
         },
-
         handleClose() {
-            this.isModalOpen = false;
-        },
-        nextStep() {
-            if (this.currentComponent.__file.includes('ModalTestStart.vue')) {
-                this.currentComponent = markRaw(ModalTest);
-            } else if (this.currentComponent.__file.includes('ModalTest.vue')) {
-                this.currentComponent = markRaw(ModalTestEnd);
-            }
+            this.isModalOpen = false; // 모달 닫기
         },
         markTestAsFinished() {
-            this.InvestMentTest = true;
-            this.handleClose();
-        },
-
-        openDatePicker() {
-            console.log('Open date picker');
+            this.InvestMentTest = true; // 테스트 완료 상태 설정
+            this.handleClose(); // 모달 닫기
         },
     },
 };
 </script>
 
 <style scoped>
+/* 기존 스타일 그대로 유지 */
 body {
-    font-family: 'Arial', sans-serif; /* Modern font */
-    background-color: #f0f4f8; /* Light background color */
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
 }
 
 .signup-wrapper {
@@ -228,8 +210,8 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 100%; /* Full width */
-    min-height: 100vh; /* Full height */
+    width: 100%;
+    min-height: 100vh;
     background: linear-gradient(to bottom, #a0e0d2, #ffffff);
 }
 
@@ -241,41 +223,41 @@ body {
 
 .signup-box {
     background-color: rgba(255, 255, 255, 0.9);
-    padding: 30px; /* Increased padding */
-    border-radius: 15px; /* More rounded corners */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow */
-    width: 400px; /* Fixed width */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 400px;
     text-align: center;
 }
 
 h2 {
-    margin-bottom: 20px; /* Spacing below the title */
-    color: #4db6ac; /* Title color */
+    margin-bottom: 20px;
+    color: #4db6ac;
 }
 
 .form-group {
-    margin-bottom: 20px; /* Increased margin */
+    margin-bottom: 20px;
     text-align: left;
 }
 
 label {
     display: block;
-    font-size: 16px; /* Larger font size */
+    font-size: 16px;
     margin-bottom: 5px;
-    color: #333; /* Darker label color */
+    color: #333;
 }
 
 input {
-    width: 100%; /* Fill the width of the container */
-    padding: 12px; /* Increased padding */
+    width: 100%;
+    padding: 12px;
     border: 1px solid #ddd;
     border-radius: 5px;
-    transition: border-color 0.3s; /* Smooth border transition */
+    transition: border-color 0.3s;
 }
 
 input:focus {
-    border-color: #4db6ac; /* Highlighted border color on focus */
-    outline: none; /* Remove default outline */
+    border-color: #4db6ac;
+    outline: none;
 }
 
 .gender-radio {
@@ -287,18 +269,18 @@ input:focus {
 
 .create-btn {
     width: 100%;
-    padding: 12px; /* Increased padding */
+    padding: 12px;
     background-color: #4db6ac;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
-    transition: background-color 0.3s; /* Smooth transition */
+    transition: background-color 0.3s;
 }
 
 .create-btn:hover {
-    background-color: #399d91; /* Darker button on hover */
+    background-color: #399d91;
 }
 
 .login-link {
@@ -308,11 +290,11 @@ input:focus {
 .login-link a {
     color: #4db6ac;
     text-decoration: none;
-    transition: color 0.3s; /* Smooth color transition */
+    transition: color 0.3s;
 }
 
 .login-link a:hover {
-    color: #2e8b83; /* Darker link color on hover */
+    color: #2e8b83;
 }
 
 .dob-container {
@@ -321,7 +303,7 @@ input:focus {
 }
 
 .dob-container input {
-    width: calc(100% - 50px); /* Adjust width for the button */
+    width: calc(100% - 50px);
     margin-right: 5px;
 }
 </style>
