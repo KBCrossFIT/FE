@@ -1,12 +1,12 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" ref="sidebarContainer">
     <div class="uiNavAside" ref="sidebar">
       <ul class="nav-aside">
         <div class="button-container">
           <!-- Sidebar Menu Components -->
-          <SidebarMenu1 :portfolios="portfolios" @openSidePanel="openSidePanel" />
-          <SidebarMenu2 :cart="cart" @openSidePanel="openSidePanel" />
-          <SidebarMenu3 :recentProducts="recentProducts" @openSidePanel="openSidePanel" />
+          <SidebarMenu1 :portfolios="portfolios" @openSidePanel="toggleSidePanel" />
+          <SidebarMenu2 :cart="cart" @openSidePanel="toggleSidePanel" />
+          <SidebarMenu3 :recentProducts="recentProducts" @openSidePanel="toggleSidePanel" />
         </div>
       </ul>
     </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {onMounted, ref} from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import SidebarMenu1 from './sideBar/PortfolioSection.vue';
 import SidebarMenu2 from './sideBar/CartSection.vue';
 import SidebarMenu3 from './sideBar/RecentProductsSection.vue';
@@ -39,28 +39,45 @@ export default {
     SidePanel,
   },
   setup() {
-    const portfolios = ref([]);          // 포트폴리오 데이터
-    const cart = ref([]);                // 장바구니 데이터
-    const recentProducts = ref([]);      // 최근 본 상품 데이터
+    const portfolios = ref([]);
+    const cart = ref([]);
+    const recentProducts = ref([]);
 
-    const isSidePanelOpen = ref(false);  // 사이드 패널 표시 여부
-    const panelTitle = ref('');          // 사이드 패널 제목
-    const activeSection = ref('');       // 활성 섹션 ID
-    const panelData = ref([]);           // 사이드 패널에 표시할 데이터
+    const isSidePanelOpen = ref(false);
+    const panelTitle = ref('');
+    const activeSection = ref('');
+    const panelData = ref([]);
+    const sidebarContainer = ref(null);
 
-    // 라우터 이동 후 사이드 패널을 닫기 위한 감시 설정
+    // 패널 열기/닫기 함수 (클릭한 메뉴와 동일한 섹션이 열려 있으면 닫음)
+    const toggleSidePanel = (payload) => {
+      if (isSidePanelOpen.value && activeSection.value === payload.section) {
+        isSidePanelOpen.value = false;
+      } else {
+        panelTitle.value = payload.title;
+        activeSection.value = payload.section;
+        panelData.value = payload.data;
+        isSidePanelOpen.value = true;
+      }
+    };
+
+    // 라우터 이동 후 사이드 패널 닫기
     onMounted(() => {
       router.afterEach(() => {
         isSidePanelOpen.value = false;
       });
+      document.addEventListener('click', handleClickOutside);
     });
 
-    // 사이드 패널을 열고 데이터 및 설정을 갱신하는 함수
-    const openSidePanel = (payload) => {
-      panelTitle.value = payload.title;
-      activeSection.value = payload.section;
-      panelData.value = payload.data;
-      isSidePanelOpen.value = true;
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+
+    // 사이드바 외부 클릭 시 닫기
+    const handleClickOutside = (event) => {
+      if (sidebarContainer.value && !sidebarContainer.value.contains(event.target)) {
+        isSidePanelOpen.value = false;
+      }
     };
 
     return {
@@ -71,7 +88,8 @@ export default {
       panelTitle,
       activeSection,
       panelData,
-      openSidePanel,
+      toggleSidePanel,
+      sidebarContainer,
     };
   },
 };
