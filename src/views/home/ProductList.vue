@@ -1,7 +1,7 @@
 <template>
   <section class="product-container">
     <div class="product-list">
-      <h2>연령별 금융상품 추천</h2>
+      <h2 class="title">연령별 금융상품 추천</h2>
       <div class="age-tabs">
         <button
           :class="{ active: state.activeAge === '20대', hovered: state.hoverAge === '20대' }"
@@ -67,7 +67,7 @@
     </div>
 
     <div class="investment-section">
-      <h2>투자 성향별 금융상품 추천</h2>
+      <h2 class="title">투자 성향별 금융상품 추천</h2>
       <div class="investment-types">
         <button
           :class="{ active: state.activeInvestment === '공격투자형', hovered: state.hoverInvestment === '공격투자형' }"
@@ -314,6 +314,16 @@ export default {
   background-color: #f9fafb;
 }
 
+/* 타이틀 스타일 */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* 공통 섹션 스타일 */
 .product-list,
 .investment-section {
   margin-bottom: 5%;
@@ -324,6 +334,7 @@ export default {
   padding: 2%;
 }
 
+/* 버튼 스타일 */
 .age-tabs,
 .investment-types {
   display: flex;
@@ -342,8 +353,6 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   font-weight: bold;
-  width: auto;
-  min-width: 10%;
 }
 
 .age-tabs .active,
@@ -358,10 +367,11 @@ export default {
   color: white;
 }
 
+/* 상품 카드 스타일 */
 .product-grid,
 .investment-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2%;
 }
 
