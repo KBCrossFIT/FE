@@ -7,7 +7,7 @@
 
             <div v-if="isTutorialActive" class="overlay"></div>
 
-            <!-- Explanatory Text Box -->
+            <!-- 설명 텍스트 박스 -->
             <div v-if="isTutorialActive" class="tutorial-message" :style="tutorialStyles">
                 {{ currentStep.text }}
                 <div class="tutorial-buttons">
@@ -21,53 +21,53 @@
                 <h3>유형 별 추천 포트폴리오 구성 비율</h3>
                 <div class="PortfolioChart">
                     <div class="SelectionChar">
-                        <label>유형 선택 체크박스 버튼</label>
+                        <label>유형 선택 라디오 버튼</label>
                         <div class="CharCheck-radio">
-                            <label
-                                ><input
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char1"
                                     v-model="chart"
                                 />
-                                공격투자형</label
-                            >
-                            <label
-                                ><input
+                                공격투자형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char2"
                                     v-model="chart"
                                 />
-                                적극투자형</label
-                            >
-                            <label
-                                ><input
+                                적극투자형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char3"
                                     v-model="chart"
                                 />
-                                위험중립형</label
-                            >
-                            <label
-                                ><input
+                                위험중립형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char4"
                                     v-model="chart"
                                 />
-                                위험회피형</label
-                            >
-                            <label
-                                ><input
+                                위험회피형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char5"
                                     v-model="chart"
                                 />
-                                안정형</label
-                            >
+                                안정형
+                            </label>
                         </div>
                     </div>
                     <div class="ProportionChart">
@@ -78,6 +78,35 @@
                             :series="series"
                         ></apexchart>
                     </div>
+                </div>
+            </div>
+
+            <!-- 현재 포트폴리오 구성 비율 -->
+            <div class="presentProportion">
+                <h3>현재 포트폴리오 구성 비율</h3>
+
+                <!-- 각 투자액 및 퍼센티지 표시 -->
+                <div class="presentProportion_calc">
+                    <p>
+                        예금 투자액: {{ formatCurrency(depositInvestment) }}원
+                        {{ investmentRatios.deposit }}%
+                    </p>
+                    <p>
+                        적금 투자액: {{ formatCurrency(savingInvestment) }}원
+                        {{ investmentRatios.saving }}%
+                    </p>
+                    <p>
+                        채권 투자액: {{ formatCurrency(bondInvestment) }}원
+                        {{ investmentRatios.bond }}%
+                    </p>
+                    <p>
+                        펀드 투자액: {{ formatCurrency(fundInvestment) }}원
+                        {{ investmentRatios.fund }}%
+                    </p>
+                    <p>
+                        주식 투자액: {{ formatCurrency(stockTotalInvestment) }}원
+                        {{ investmentRatios.stock }}%
+                    </p>
                 </div>
             </div>
 
@@ -103,7 +132,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template v-if="selectedProducts.length > 0">
+                            <template v-if="filteredProducts.length > 0">
                                 <tr v-for="item in filteredProducts" :key="item.productId">
                                     <td>{{ item.productName }}</td>
                                     <td>{{ item.category }}</td>
@@ -151,7 +180,7 @@
                                     <td>{{ stock.stockCode }}</td>
                                     <td>{{ stock.stockName }}</td>
                                     <td>{{ stock.category }}</td>
-                                    <td>{{ stock.clpr }}</td>
+                                    <td>{{ formatCurrency(stock.clpr) }}</td>
                                 </tr>
                             </template>
                             <template v-else>
@@ -205,10 +234,29 @@ export default {
         // 튜토리얼 단계 정의
         const tutorialSteps = [
             {
-                element: 'exampleElement',
-                text: '이것은 튜토리얼의 첫 번째 단계입니다.',
+                element: 'wrap-center',
+                text: '포트폴리오 구성페이지에 오신 것을 환영합니다! 이곳에서 포트폴리오를 구성할 수 있습니다.',
             },
-            // 추가적인 단계 정의
+            {
+                element: 'PortfolioChart',
+                text: '여기서는 추천 포트폴리오 구성 비율을 확인할 수 있습니다. 투자 유형을 선택하세요.',
+            },
+            {
+                element: 'presentProportion',
+                text: '현재 포트폴리오의 구성 비율을 확인할 수 있습니다.',
+            },
+            {
+                element: 'ProductSelection',
+                text: '상품종류 섹션에서는 장바구니에서 상품을 가져오거나, 카테고리에 따라 상품을 필터링할 수 있습니다.',
+            },
+            {
+                element: 'MakePortfolio-stockList-section',
+                text: '주식 종류 섹션에서는 주식을 추가하거나 수정할 수 있습니다.',
+            },
+            {
+                element: 'MakePortfolioEnd-btn',
+                text: '모든 구성이 완료되면 저장 버튼을 눌러 포트폴리오를 저장하세요.',
+            },
         ];
 
         const currentStep = ref(tutorialSteps[0]);
@@ -218,13 +266,13 @@ export default {
             highlightElement(currentStep.value.element);
         };
 
-        const highlightElement = (elementRefName) => {
-            const element = this.$refs[elementRefName];
+        const highlightElement = (elementId) => {
+            const element = document.getElementById(elementId);
             if (element) {
                 const rect = element.getBoundingClientRect();
                 tutorialStyles.value = {
-                    top: `${rect.top}px`,
-                    left: `${rect.left}px`,
+                    top: `${rect.top + window.scrollY}px`,
+                    left: `${rect.left + window.scrollX}px`,
                     width: `${rect.width}px`,
                     height: `${rect.height}px`,
                 };
@@ -310,6 +358,58 @@ export default {
             }
         });
 
+        // 투자액 계산
+        const depositInvestment = computed(() => {
+            return selectedProducts.value
+                .filter((item) => item.category === '예적금')
+                .reduce((total, item) => total + Number(item.amount), 0);
+        });
+
+        const savingInvestment = computed(() => {
+            return selectedProducts.value
+                .filter((item) => item.category === '예적금')
+                .reduce((total, item) => total + Number(item.amount), 0);
+        });
+
+        const bondInvestment = computed(() => {
+            return selectedProducts.value
+                .filter((item) => item.category === '채권')
+                .reduce((total, item) => total + Number(item.amount), 0);
+        });
+
+        const fundInvestment = computed(() => {
+            return selectedProducts.value
+                .filter((item) => item.category === '펀드')
+                .reduce((total, item) => total + Number(item.amount), 0);
+        });
+
+        const stockTotalInvestment = computed(() => {
+            return portfolioStocks.value.reduce((total, stock) => total + Number(stock.amount), 0);
+        });
+
+        // 투자 비율 계산
+        const investmentRatios = computed(() => {
+            const total =
+                depositInvestment.value +
+                savingInvestment.value +
+                bondInvestment.value +
+                fundInvestment.value +
+                stockTotalInvestment.value;
+            return {
+                deposit: total ? ((depositInvestment.value / total) * 100).toFixed(2) : 0,
+                saving: total ? ((savingInvestment.value / total) * 100).toFixed(2) : 0,
+                bond: total ? ((bondInvestment.value / total) * 100).toFixed(2) : 0,
+                fund: total ? ((fundInvestment.value / total) * 100).toFixed(2) : 0,
+                stock: total ? ((stockTotalInvestment.value / total) * 100).toFixed(2) : 0,
+            };
+        });
+
+        // 화폐 형식으로 변환하는 함수
+        const formatCurrency = (value) => {
+            if (typeof value !== 'number') return value;
+            return value.toLocaleString('ko-KR');
+        };
+
         const openModal = () => {
             isModalOpen.value = true;
         };
@@ -350,6 +450,13 @@ export default {
             endTutorial,
             tutorialStyles,
             confirmCancel,
+            depositInvestment,
+            savingInvestment,
+            bondInvestment,
+            fundInvestment,
+            stockTotalInvestment,
+            investmentRatios,
+            formatCurrency,
         };
     },
 };
@@ -365,7 +472,7 @@ export default {
 #wrap-center {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 20px 40px;
     background-color: #fff;
     border-radius: 8px;
 }
@@ -380,7 +487,7 @@ export default {
     color: white;
 }
 
-.tutorial-btn-group,
+.tutorial-buttons,
 .MakePortfolioEnd-btn {
     display: flex;
     gap: 10px;
