@@ -10,7 +10,7 @@ export async function fetchRecentViewList() {
     }
 }
 
-export async function postRecentViewItem(recentViewedItem) {
+export async function addRecentViewItem(recentViewedItem) {
     try {
         const response = await instance.post('/recentView/items', recentViewedItem);
         return response.data;

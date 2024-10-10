@@ -26,8 +26,13 @@ export async function postCartItem(cartItem) {
     const response = await instance.post('/cart/items', cartItem);
     return response.data;
   } catch (error) {
-    console.error('Error posting cart:', error);
-    throw error; // 오류 발생 시 오류를 던져줌
+    if (error.response && error.response.status === 409) {
+      // 상태 코드가 409일 때 팝업 띄우기
+      alert('이미 존재하는 상품입니다.');
+    } else {
+      console.error('Error posting cart:', error);
+      throw error; // 오류 발생 시 오류를 던져줌
+    }
   }
 }
 
