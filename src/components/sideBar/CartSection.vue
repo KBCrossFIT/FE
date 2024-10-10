@@ -58,6 +58,7 @@ export default {
   transition: background-color 0.3s ease;
 }
 
+
 .sidebar-link:hover {
   background-color: #645f5f;
 }
