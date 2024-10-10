@@ -42,25 +42,19 @@
       <div class="product-grid">
         <!-- 연령대 추천 상품을 렌더링 -->
         <div class="product-card" v-for="(product, index) in ageGroupProducts" :key="index">
-          <!-- 채권 상품일 경우 -->
+          <!-- 상품 렌더링 로직 -->
           <div v-if="product.isinCdNm && product.bondIsurNm">
-            <h3>{{ product.isinCdNm }}</h3> <!-- 채권 발행인 이름 -->
-            <p>{{ product.bondIsurNm }}</p> <!-- ISIN 코드 -->
+            <h3>{{ product.isinCdNm }}</h3>
+            <p>{{ product.bondIsurNm }}</p>
           </div>
-
-          <!-- 펀드 상품일 경우 -->
           <div v-else-if="product.productNm && product.companyNm">
-            <h3>{{ product.productNm }}</h3> <!-- 펀드 상품명 -->
-            <p>{{ product.companyNm }}</p> <!-- 펀드 회사명 -->
+            <h3>{{ product.productNm }}</h3>
+            <p>{{ product.companyNm }}</p>
           </div>
-
-          <!-- 예/적금 상품일 경우 -->
           <div v-else-if="product.savingProduct && product.savingProduct.finPrdtNm && product.savingProduct.korCoNm">
-            <h3>{{ product.savingProduct.finPrdtNm }}</h3> <!-- 예/적금 상품명 -->
-            <p>{{ product.savingProduct.korCoNm }}</p> <!-- 금융회사명 -->
+            <h3>{{ product.savingProduct.finPrdtNm }}</h3>
+            <p>{{ product.savingProduct.korCoNm }}</p>
           </div>
-
-          <!-- 알 수 없는 상품일 경우 -->
           <div v-else>
             <h3>알 수 없는 상품</h3>
             <p>상품 데이터를 확인해주세요.</p>
@@ -111,25 +105,19 @@
       <div class="investment-grid">
         <!-- 투자 성향 추천 상품을 렌더링 -->
         <div class="product-card" v-for="(product, index) in investmentProducts" :key="index">
-          <!-- 채권 상품일 경우 -->
+          <!-- 상품 렌더링 로직 -->
           <div v-if="product.isinCdNm && product.bondIsurNm">
-            <h3>{{ product.bondIsurNm }}</h3> <!-- 채권 발행인 이름 -->
-            <p>{{ product.isinCdNm }}</p> <!-- ISIN 코드 -->
+            <h3>{{ product.bondIsurNm }}</h3>
+            <p>{{ product.isinCdNm }}</p>
           </div>
-
-          <!-- 펀드 상품일 경우 -->
           <div v-else-if="product.productNm && product.companyNm">
-            <h3>{{ product.productNm }}</h3> <!-- 펀드 상품명 -->
-            <p>{{ product.companyNm }}</p> <!-- 펀드 회사명 -->
+            <h3>{{ product.productNm }}</h3>
+            <p>{{ product.companyNm }}</p>
           </div>
-
-          <!-- 예/적금 상품일 경우 -->
           <div v-else-if="product.savingProduct && product.savingProduct.finPrdtNm && product.savingProduct.korCoNm">
-            <h3>{{ product.savingProduct.finPrdtNm }}</h3> <!-- 예/적금 상품명 -->
-            <p>{{ product.savingProduct.korCoNm }}</p> <!-- 금융회사명 -->
+            <h3>{{ product.savingProduct.finPrdtNm }}</h3>
+            <p>{{ product.savingProduct.korCoNm }}</p>
           </div>
-
-          <!-- 알 수 없는 상품일 경우 -->
           <div v-else>
             <h3>알 수 없는 상품</h3>
             <p>상품 데이터를 확인해주세요.</p>
@@ -141,7 +129,7 @@
 </template>
 
 <script>
-import { getTopProductsBySelectedAgeGroup, getTopProductsBySelectedPreference } from '@/api/hit';
+import { getTopProductsByAgeGroup, getTopProductsByPreference, getTopProductsBySelectedAgeGroup, getTopProductsBySelectedPreference } from '@/api/hit';
 
 export default {
   name: 'ProductListSection',
@@ -192,7 +180,6 @@ export default {
       try {
         const response = await getTopProductsBySelectedAgeGroup(ageGroup, skipAuth);
         this.ageGroupProducts = response.slice(0, 3); // 최대 3개까지만 가져오기
-        this.activeAge = `${ageGroup}대`;
       } catch (error) {
         console.error('Error fetching top products for age group:', error);
       }
@@ -200,41 +187,10 @@ export default {
     async fetchInvestmentProducts(preference, skipAuth = false) {
       try {
         const response = await getTopProductsBySelectedPreference(preference, skipAuth);
-        this.investmentProducts = response.map((p) => {
-          if (p.isinCdNm && p.bondIsurNm) {
-            return {
-              isinCdNm: p.isinCdNm,
-              bondIsurNm: p.bondIsurNm,
-            };
-          } else if (p.productNm && p.companyNm) {
-            return {
-              productNm: p.productNm,
-              companyNm: p.companyNm,
-            };
-          } else if (p.savingProduct && p.savingProduct.finPrdtNm && p.savingProduct.korCoNm) {
-            return {
-              savingProduct: {
-                finPrdtNm: p.savingProduct.finPrdtNm,
-                korCoNm: p.savingProduct.korCoNm,
-              },
-            };
-          }
-          return { message: '알 수 없는 상품' };
-        });
-        this.activeInvestment = this.getInvestmentType(preference);
+        this.investmentProducts = response.slice(0, 3);
       } catch (error) {
         console.error('Error fetching top products for preference:', error);
       }
-    },
-    getInvestmentType(preference) {
-      const types = {
-        1: '안전형',
-        2: '안전추구형',
-        3: '위험중립형',
-        4: '적극투자형',
-        5: '공격투자형',
-      };
-      return types[preference] || '공격투자형';
     },
     convertAgeToNumber(age) {
       const ageMapping = {
@@ -242,7 +198,7 @@ export default {
         '30대': 30,
         '40대': 40,
         '50대': 50,
-        '60대 이상': 60,
+        '60대': 60,
       };
       return ageMapping[age] || 20;
     },
@@ -258,23 +214,20 @@ export default {
     },
   },
   async mounted() {
-    // localStorage에서 이전에 선택한 연령대와 투자 성향을 가져옴
-    const savedAge = localStorage.getItem('selectedAgeGroup');
-    const savedInvestment = localStorage.getItem('selectedInvestmentType');
+    // 기본 연령대와 투자 성향에 맞는 데이터를 가져옴
+    try {
+      const ageResponse = await getTopProductsByAgeGroup();
+      const investmentResponse = await getTopProductsByPreference();
 
-    if (savedAge) {
-      this.activeAge = savedAge;
+      if (ageResponse) {
+        this.ageGroupProducts = ageResponse.slice(0, 3);
+      }
+      if (investmentResponse) {
+        this.investmentProducts = investmentResponse.slice(0, 3);
+      }
+    } catch (error) {
+      console.error('Error during initial load:', error);
     }
-    if (savedInvestment) {
-      this.activeInvestment = savedInvestment;
-    }
-
-    const ageGroup = this.convertAgeToNumber(this.activeAge);
-    const preference = this.convertInvestmentToNumber(this.activeInvestment);
-
-    // 연령대와 투자 성향에 맞는 데이터를 가져옴
-    await this.fetchAgeGroupProducts(ageGroup, false);
-    await this.fetchInvestmentProducts(preference, false);
   },
 };
 </script>
