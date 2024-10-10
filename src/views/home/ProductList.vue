@@ -137,7 +137,7 @@ export default {
     return {
       activeAge: '20대',
       hoverAge: null,
-      activeInvestment: '위험중립형',
+      activeInvestment: '공격투자형',
       hoverInvestment: null,
       ageGroupProducts: [],
       investmentProducts: [],
@@ -149,8 +149,6 @@ export default {
       this.hoverAge = null;
       const ageGroup = this.convertAgeToNumber(age);
       this.fetchAgeGroupProducts(ageGroup, true);
-      // 선택한 연령대를 localStorage에 저장
-      localStorage.setItem('selectedAgeGroup', age);
     },
     setHoverAge(age) {
       if (this.activeAge !== age) {
@@ -165,8 +163,6 @@ export default {
       this.hoverInvestment = null;
       const preference = this.convertInvestmentToNumber(investment);
       this.fetchInvestmentProducts(preference, true);
-      // 선택한 투자 성향을 localStorage에 저장
-      localStorage.setItem('selectedInvestmentType', investment);
     },
     setHoverInvestment(investment) {
       if (this.activeInvestment !== investment) {
@@ -212,19 +208,43 @@ export default {
       };
       return investmentMapping[investment] || 5;
     },
+    convertNumberToInvestment(investmentNumber) {
+      const investmentMapping = {
+        1: '안전형',
+        2: '안전추구형',
+        3: '위험중립형',
+        4: '적극투자형',
+        5: '공격투자형',
+      };
+      return investmentMapping[investmentNumber] || '공격투자형';
+    },
   },
   async mounted() {
     // 기본 연령대와 투자 성향에 맞는 데이터를 가져옴
     try {
       const ageResponse = await getTopProductsByAgeGroup();
       const investmentResponse = await getTopProductsByPreference();
+      this.activeAge = `${ageResponse[ageResponse.length - 1]}대`;
 
+      if (investmentResponse[investmentResponse.length - 1] === 1) {
+        this.activeInvestment = '안전형';
+      } else if (investmentResponse[investmentResponse.length - 1] === 2) {
+        this.activeInvestment = '안전추구형';
+      } else if (investmentResponse[investmentResponse.length - 1] === 3) {
+        this.activeInvestment = '위험중립형';
+      } else if (investmentResponse[investmentResponse.length - 1] === 4) {
+        this.activeInvestment = '적극투자형';
+      } else {
+        this.activeInvestment = '공격투자형';
+      }
+      
       if (ageResponse) {
         this.ageGroupProducts = ageResponse.slice(0, 3);
       }
       if (investmentResponse) {
         this.investmentProducts = investmentResponse.slice(0, 3);
       }
+
     } catch (error) {
       console.error('Error during initial load:', error);
     }
@@ -234,40 +254,51 @@ export default {
 
 <style scoped>
 .product-container {
-  display: flex;
-  justify-content: space-between;
-  padding: 40px;
+  display: block;
+  padding: 5%;
   background-color: #f9fafb;
 }
 
-.product-list {
-  flex: 1;
-  padding: 20px;
+.product-list,
+.investment-section {
+  margin-bottom: 5%;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 2%;
 }
 
-.age-tabs {
+.age-tabs,
+.investment-types {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 2%;
+  margin-bottom: 3%;
+  flex-wrap: wrap;
 }
 
-.age-tabs button {
-  padding: 10px 15px;
+.age-tabs button,
+.investment-types button {
+  padding: 0.5rem 1rem;
   border: 1px solid #0070f3;
   background-color: #ffffff;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   font-weight: bold;
+  width: auto;
+  min-width: 10%;
 }
 
-.age-tabs .active {
+.age-tabs .active,
+.investment-types .active {
   background-color: #0070f3;
   color: white;
 }
 
-.age-tabs .hovered {
+.age-tabs .hovered,
+.investment-types .hovered {
   background-color: #0056b3;
   color: white;
 }
@@ -275,62 +306,45 @@ export default {
 .product-grid,
 .investment-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+  gap: 2%;
 }
 
 .product-card {
   background-color: white;
-  padding: 20px;
+  padding: 5%;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-0.5rem);
 }
 
 .product-card h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
   color: #0070f3;
 }
 
-.investment-section {
-  flex: 1;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+@media (max-width: 768px) {
+  .product-grid,
+  .investment-grid {
+    grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+  }
 }
 
-.investment-types {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.investment-types button {
-  padding: 10px 15px;
-  border: 1px solid #0070f3;
-  background-color: #ffffff;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  font-weight: bold;
-}
-
-.investment-types .active {
-  background-color: #0070f3;
-  color: white;
-}
-
-.investment-types .hovered {
-  background-color: #0056b3;
-  color: white;
+@media (max-width: 576px) {
+  .product-grid,
+  .investment-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+  }
+  .age-tabs button,
+  .investment-types button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
 </style>
