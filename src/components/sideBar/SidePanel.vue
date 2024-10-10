@@ -1,164 +1,99 @@
 <template>
-    <div v-if="isVisible" class="side-panel">
-      <button @click="closePanel" class="close-button">Close</button>
-      <h2>{{ panelTitle }}</h2>
-  
-      <!-- Render portfolio data -->
-      <div v-if="section === 'PortfolioSection'">
-        <table>
-          <thead>
-            <tr>
-              <th>
-                <input type="checkbox" v-model="allSelected" @change="toggleSelectAll" />
-              </th>
-              <th @click="sortBy('portfolioName')">
-                포트폴리오 이름
-                <span v-if="sortKey === 'portfolioName'">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </th>
-              <th @click="sortBy('total')">
-                투자 총액
-                <span v-if="sortKey === 'total'">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </th>
-              <th @click="sortBy('expectedReturn')">
-                기대 수익률
-                <span v-if="sortKey === 'expectedReturn'">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </th>
-              <th @click="sortBy('riskLevel')">
-                위험도
-                <span v-if="sortKey === 'riskLevel'">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in sortedPortfolioList" :key="item.portfolioId">
-              <td>
-                <input type="checkbox" v-model="selected" :value="item.portfolioId" @change="updateSelectAllState" />
-              </td>
-              <td class="NameCursor" @click="goToPortfolioDetail(item.portfolioId)">
-                {{ item.portfolioName }}
-              </td>
-              <td>{{ item.total }}원</td>
-              <td>{{ item.expectedReturn }}%</td>
-              <td>{{ item.riskLevel }}등급</td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="sidepanel-buttons">
-          <button @click="goToCreatePortfolio">포트폴리오 만들기</button>
-          <button @click="deleteSelectedPortfolios">삭제하기</button>
-        </div>
+  <div class="side-panel">
+    <button @click="closePanel" class="close-button">Close</button>
+    <h2>{{ title }}</h2>
+
+    <!-- 포트폴리오 섹션 -->
+    <div v-if="section === 'PortfolioSection'">
+      <div v-if="user == null">
+        <p>로그인 후 사용해주세요.</p>
+        <router-link to="/login" class="sidebar-link">
+          <i class="fas fa-sign-in-alt icon"></i>
+          <span class="menu-text">로그인</span>
+        </router-link>
       </div>
+      <ul v-else-if="data.length > 0">
+        <li v-for="portfolio in data" :key="portfolio.portfolioId">
+          {{ portfolio.PortfolioName }} 수익률: {{portfolio.expectedReturn}} {{portfolio.riskLevel}}등급 총액: {{ portfolio.total }}원
+        </li>
+      </ul>
+      <p v-else>포트폴리오 데이터가 없습니다.</p>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, computed } from 'vue';
-  import { useRouter } from 'vue-router';
-  
-  // Props passed from the parent component
-  const props = defineProps({
-    isVisible: Boolean,
-    panelTitle: String,
-    section: String,
-    data: Array, // This will contain the portfolio data
-  });
-  
-  // State variables
-  const selected = ref([]);
-  const allSelected = ref(false);
-  const sortKey = ref('portfolioName');
-  const sortOrder = ref('asc');
-  
-  // Sorting logic
-  const sortBy = (key) => {
-    if (sortKey.value === key) {
-      sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-    } else {
-      sortKey.value = key;
-      sortOrder.value = 'asc';
-    }
-  };
-  
-  // Compute sorted portfolio list
-  const sortedPortfolioList = computed(() => {
-    return props.data.slice().sort((a, b) => {
-      let result = 0;
-      if (a[sortKey.value] < b[sortKey.value]) {
-        result = -1;
-      } else if (a[sortKey.value] > b[sortKey.value]) {
-        result = 1;
-      }
-      return sortOrder.value === 'asc' ? result : -result;
-    });
-  });
-  
-  // Router navigation for portfolio actions
-  const router = useRouter();
-  
-  const goToPortfolioDetail = (id) => {
-    router.push({ name: 'PortfolioDetail', params: { id } });
-  };
-  
-  const goToCreatePortfolio = () => {
-    router.push({ name: 'MakePortfolio' });
-  };
-  
-  const deleteSelectedPortfolios = () => {
-    // Handle portfolio deletion logic
-    console.log('Deleting portfolios', selected.value);
-  };
-  
-  // Select All and Update Select All State
-  const toggleSelectAll = () => {
-    allSelected.value = !allSelected.value;
-    selected.value = allSelected.value ? props.data.map(p => p.portfolioId) : [];
-  };
-  
-  const updateSelectAllState = () => {
-    allSelected.value = selected.value.length === props.data.length;
-  };
-  
-  // Closing the side panel
-  const closePanel = () => {
-    emit('close'); // Emit an event to close the panel
-  };
-  </script>
-  
-  <style scoped>
-  .side-panel {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 450px;
-    height: 100vh;
-    background-color: white;
-    padding: 20px;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    overflow-y: auto;
+
+    <!-- 장바구니 섹션 -->
+    <div v-if="section === 'CartSection'">
+      <div v-if="user == null">
+        <p>로그인 후 사용해주세요.</p>
+        <router-link to="/login" class="sidebar-link">
+          <i class="fas fa-sign-in-alt icon"></i>
+          <span class="menu-text">로그인</span>
+        </router-link>
+      </div>
+      <ul v-else-if="data.length > 0">
+        <li v-for="item in data" :key="item.productId">
+          {{ getProductTypeLabel(item.productType) }} {{item.provider}} {{ item.productName }} {{ item.expectedReturn }}%
+        </li>
+      </ul>
+      <p v-else>장바구니가 비어 있습니다.</p>
+    </div>
+
+    <!-- 최근 본 상품 섹션 -->
+    <div v-if="section === 'RecentProductsSection'">
+      <ul v-if="data.length > 0">
+        <li v-for="item in data" :key="item.productId">
+          {{ getProductTypeLabel(item.productType) }} {{ item.productName }}
+        </li>
+      </ul>
+      <p v-else>최근 본 상품이 없습니다.</p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { defineProps, defineEmits } from 'vue';
+
+const user = localStorage.getItem('user')
+
+const props = defineProps({
+  title: String,
+  section: String,
+  data: Array,
+});
+
+const emit = defineEmits(['close']);
+
+const getProductTypeLabel = (productType, rsrvType) => {
+  switch (productType) {
+    case 'S':
+      return '예/적금';
+    case 'F':
+      return '펀드';
+    case 'B':
+      return '채권';
+    default:
+      return '기타';
   }
-  
-  .close-button {
-    margin-bottom: 20px;
-  }
-  
-  .NameCursor {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  
-  .sidepanel-buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-  }
-  </style>
-  
+};
+
+const closePanel = () => {
+  emit('close');
+};
+</script>
+
+<style scoped>
+.side-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 450px;
+  height: 100vh;
+  background-color: white;
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  overflow-y: auto;
+}
+.close-button {
+  margin-bottom: 20px;
+}
+</style>
