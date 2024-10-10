@@ -292,7 +292,7 @@ export default {
             ],
         });
 
-        // 차트 데이터 시리즈
+        // 차트 데이터 시리즈.
         const series = computed(() => {
             switch (chart.value) {
                 case 'char1':
