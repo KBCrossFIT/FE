@@ -18,59 +18,59 @@
 
       <!-- 추천 포트폴리오 구성 비율 -->
       <div class="recommendProportion">
-        <h3>유형 별 추천 포트폴리오 구성 비율</h3>
-        <div class="PortfolioChart">
-          <div class="SelectionChar">
-            <label>유형 선택 라디오 버튼</label>
-            <div class="CharCheck-radio">
-              <label>
-                <input
-                    type="radio"
-                    name="InvestChar"
-                    value="char1"
-                    v-model="chart"
-                />
-                공격투자형
-              </label>
-              <label>
-                <input
-                    type="radio"
-                    name="InvestChar"
-                    value="char2"
-                    v-model="chart"
-                />
-                적극투자형
-              </label>
-              <label>
-                <input
-                    type="radio"
-                    name="InvestChar"
-                    value="char3"
-                    v-model="chart"
-                />
-                위험중립형
-              </label>
-              <label>
-                <input
-                    type="radio"
-                    name="InvestChar"
-                    value="char4"
-                    v-model="chart"
-                />
-                위험회피형
-              </label>
-              <label>
-                <input
-                    type="radio"
-                    name="InvestChar"
-                    value="char5"
-                    v-model="chart"
-                />
-                안정형
-              </label>
+        <div class="PortfolioChartsContainer">
+          <!-- 추천 차트 (왼쪽) -->
+          <div class="PortfolioChart">
+            <h3>추천 포트폴리오 구성 비율</h3>
+            <div class="SelectionChar">
+              <div class="CharCheck-radio">
+                <label>
+                  <input
+                      type="radio"
+                      name="InvestChar"
+                      value="char1"
+                      v-model="chart"
+                  />
+                  공격투자형
+                </label>
+                <label>
+                  <input
+                      type="radio"
+                      name="InvestChar"
+                      value="char2"
+                      v-model="chart"
+                  />
+                  적극투자형
+                </label>
+                <label>
+                  <input
+                      type="radio"
+                      name="InvestChar"
+                      value="char3"
+                      v-model="chart"
+                  />
+                  위험중립형
+                </label>
+                <label>
+                  <input
+                      type="radio"
+                      name="InvestChar"
+                      value="char4"
+                      v-model="chart"
+                  />
+                  위험회피형
+                </label>
+                <label>
+                  <input
+                      type="radio"
+                      name="InvestChar"
+                      value="char5"
+                      v-model="chart"
+                  />
+                  안정형
+                </label>
+              </div>
             </div>
-          </div>
-          <div class="ProportionChart">
             <apexchart
                 type="pie"
                 width="380"
@@ -78,38 +78,18 @@
                 :series="series"
             ></apexchart>
           </div>
+
+          <!-- 현재 차트 (오른쪽) -->
+          <div class="RealTimeProportionChart">
+            <h3>현재 포트폴리오 구성 비율</h3>
+            <apexchart
+                type="pie"
+                width="380"
+                :options="chartOptions"
+                :series="dynamicChartSeries"
+            ></apexchart>
+          </div>
         </div>
-      </div>
-
-      <!-- 현재 포트폴리오 구성 비율 -->
-
-      <!-- 각 투자액 표시 -->
-      <div class="presentProportion_calc">
-        <p>
-          예금 투자액: {{ formatCurrency(depositInvestment) }}원
-          {{ investmentRatios.deposit }} %
-        </p>
-        <p>
-          적금 투자액: {{ formatCurrency(savingInvestment) }}원
-          {{ investmentRatios.saving }} %
-        </p>
-        <p>
-          채권 투자액: {{ formatCurrency(bondInvestment) }}원
-          {{ investmentRatios.bond }} %
-        </p>
-        <p>
-          펀드 투자액: {{ formatCurrency(fundInvestment) }}원
-          {{ investmentRatios.fund }} %
-        </p>
-        <p>
-          주식 투자액: {{ formatCurrency(stockTotalInvestment) }}원
-          {{ investmentRatios.stock }} %
-        </p>
-      </div>
-
-      <!-- 총 투자금액 표시 -->
-      <div class="totalInvestmentAmount">
-        <h3>총 투자금액: {{ formatCurrency(totalInvestment) }}원</h3>
       </div>
 
       <!-- 상품 종류 섹션 -->
@@ -204,19 +184,18 @@
 
             <!-- 빈 항목 표시 -->
             <template v-else>
-              <tr v-for="n in 3" :key="n">
+              <tr v-for="n in 1" :key="n">
                 <td colspan="5" class="empty-row">빈 항목</td>
               </tr>
             </template>
             </tbody>
           </table>
         </div>
-      </div>
 
-
-      <!-- 장바구니 총 투자액 표시 -->
-      <div class="totalInvestmentAmount">
-        <h3>장바구니 총 투자액: {{ formatCurrency(cartTotalInvestment) }}원</h3>
+        <!-- 장바구니 총 투자액 표시 -->
+        <div class="totalInvestmentAmount">
+          <h3>장바구니 총 투자액: {{ formatCurrency(cartTotalInvestment) }}원</h3>
+        </div>
       </div>
 
       <ModalCart
@@ -265,10 +244,13 @@
                 >
               </td>
               <td>{{ isNaN(stock.clpr * stock.quantity) ? 0 : stock.clpr * stock.quantity }}</td>
+              <td>
+                <button @click="removeItem(item)">삭제</button>
+              </td>
             </tr>
           </template>
           <template v-else>
-            <tr v-for="n in 3" :key="n">
+            <tr v-for="n in 1" :key="n">
               <td colspan="6" class="empty-row">빈 항목</td>
             </tr>
           </template>
@@ -663,6 +645,30 @@ export default {
 
     onMounted(fetchProductDetails);
 
+    const dynamicChartSeries = ref([100]);
+
+    const chartOption = ref({
+      chart: {
+        type: 'pie'
+      },
+      labels: ['예금', '적금', '채권', '펀드', '주식'],
+      responsive: [{ breakpoint: 480, options: { chart: { width: 300 }}}]
+    });
+
+    // 실시간 차트 업데이트
+    watch(totalInvestment, (newTotal) => {
+      if (newTotal > 0) {
+        dynamicChartSeries.value = [
+          depositInvestment.value,
+          savingInvestment.value,
+          bondInvestment.value,
+          fundInvestment.value,
+          stockTotalInvestment.value
+        ];
+      }
+    });
+
+
     return {
       selectedCategory,
       selectedProducts,
@@ -698,7 +704,9 @@ export default {
       fundInvestment,
       goToMyPortfolio,
       investmentRatios,
-      savePortfolio
+      savePortfolio,
+      chartOption,
+      dynamicChartSeries
     };
   },
 };
@@ -844,5 +852,16 @@ export default {
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+.PortfolioChartsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px; /* 차트 간 간격 조정 */
+}
+
+.PortfolioChart,
+.RealTimeProportionChart {
+  flex: 1;
 }
 </style>
