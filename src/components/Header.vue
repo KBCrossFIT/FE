@@ -161,7 +161,7 @@ export default {
     async handleLogout() {
       const { cookies } = useCookies();
 
-      await instance.post("/member/logout");
+      // await instance.post("/member/logout");
 
       // Clear cookies and local storage
       cookies.remove('Authorization');
@@ -222,11 +222,11 @@ export default {
 }
 
 .logo-img {
-  width: 155px;
+  width: 163px;
   height: auto;
   position: absolute;
-  top: -5px;
-  left: 266px;
+  top: -10px;
+  left: 96px;
 }
 
 nav {
@@ -244,7 +244,7 @@ nav {
 }
 
 .menu-item {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: bold;
   padding: 0 10px;
 }
@@ -343,6 +343,6 @@ nav {
 }
 
 .in {
-  font-size: 13px;
+  font-size: 18px;
 }
 </style>

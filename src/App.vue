@@ -2,9 +2,7 @@
 <template>
   <v-app>
     <DefaultLayout>
-      <v-main>
-        <router-view />
-      </v-main>
+      <router-view />
     </DefaultLayout>
   </v-app>
 </template>
