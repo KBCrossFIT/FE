@@ -106,7 +106,7 @@ const routes = [
   { path: '/make-portfolio', name: 'MakePortfolio', component: MakePortfolio },
   { path: '/my-portfolio', name: 'MyPortfolio', component: MyPortfolio },
   {
-    path: '/productcomparison',
+    path: '/product66comparison',
     name: 'ProductComparison',
     component: ProductComparison,
   },

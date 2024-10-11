@@ -14,28 +14,37 @@
       </div>
       <table v-else-if="data.length > 0" class="data-table">
         <thead>
-        <tr>
-          <th class="portfolio-name">포트폴리오 이름</th>
-          <th class="return-rate">수익률</th>
-          <th class="risk-level">위험등급</th>
-          <th class="total-amount">총액</th>
-        </tr>
+          <tr>
+            <th class="portfolio-name">포트폴리오 이름</th>
+            <th class="return-rate">수익률</th>
+            <th class="risk-level">위험등급</th>
+            <th class="total-amount">총액</th>
+          </tr>
         </thead>
         <tbody>
-        <tr
+          <tr
             v-for="portfolio in data"
             :key="portfolio.portfolioId"
             class="data-row"
             @click="goToPortfolioDetail(portfolio.portfolioId)"
-        >
-          <td>{{ portfolio.portfolioName }}</td>
-          <td :class="{ 'positive-return': portfolio.expectedReturn > 0, 'negative-return': portfolio.expectedReturn < 0 }">
-            <span v-if="portfolio.expectedReturn > 0">+{{ portfolio.expectedReturn }}%</span>
-            <span v-else-if="portfolio.expectedReturn < 0">{{ portfolio.expectedReturn }}%</span>
-          </td>
-          <td>{{ portfolio.riskLevel }}등급</td>
-          <td>{{ portfolio.total.toLocaleString() }}원</td>
-        </tr>
+          >
+            <td>{{ portfolio.portfolioName }}</td>
+            <td
+              :class="{
+                'positive-return': portfolio.expectedReturn > 0,
+                'negative-return': portfolio.expectedReturn < 0,
+              }"
+            >
+              <span v-if="portfolio.expectedReturn > 0"
+                >+{{ portfolio.expectedReturn }}%</span
+              >
+              <span v-else-if="portfolio.expectedReturn < 0"
+                >{{ portfolio.expectedReturn }}%</span
+              >
+            </td>
+            <td>{{ portfolio.riskLevel }}등급</td>
+            <td>{{ portfolio.total.toLocaleString() }}원</td>
+          </tr>
         </tbody>
       </table>
       <p v-else>포트폴리오 데이터가 없습니다.</p>
@@ -52,30 +61,48 @@
       </div>
       <table v-else-if="data.length > 0" class="data-table cart-table">
         <thead>
-        <tr>
-          <th class="product-type">상품 종류</th>
-          <th class="provider">제공</th>
-          <th class="product-name">상품 이름</th>
-          <th class="return-rate">수익률</th>
-        </tr>
+          <tr>
+            <th class="product-type">상품 종류</th>
+            <th class="provider">제공</th>
+            <th class="product-name">상품 이름</th>
+            <th class="return-rate">수익률</th>
+          </tr>
         </thead>
         <tbody>
-        <tr
+          <tr
             v-for="item in data"
             :key="item.productId"
             class="data-row"
-            @click="goToProductDetail(item.productId, getProductTypeReturn(item.productType))"
-        >
-          <td>{{ getProductTypeLabel(item.productType) }}</td>
-          <td>{{ item.provider }}</td>
-          <td class="product-name">
-            {{ item.productName.length > 10 ? item.productName.slice(0, 10) + '...' : item.productName }}
-          </td>
-          <td :class="{ 'positive-return': item.expectedReturn > 0, 'negative-return': item.expectedReturn < 0 }">
-            <span v-if="item.expectedReturn > 0">+{{ item.expectedReturn }}%</span>
-            <span v-else-if="item.expectedReturn < 0">{{ item.expectedReturn }}%</span>
-          </td>
-        </tr>
+            @click="
+              goToProductDetail(
+                item.productId,
+                getProductTypeReturn(item.productType)
+              )
+            "
+          >
+            <td>{{ getProductTypeLabel(item.productType) }}</td>
+            <td>{{ item.provider }}</td>
+            <td class="product-name">
+              {{
+                item.productName.length > 10
+                  ? item.productName.slice(0, 10) + '...'
+                  : item.productName
+              }}
+            </td>
+            <td
+              :class="{
+                'positive-return': item.expectedReturn > 0,
+                'negative-return': item.expectedReturn < 0,
+              }"
+            >
+              <span v-if="item.expectedReturn > 0"
+                >+{{ item.expectedReturn }}%</span
+              >
+              <span v-else-if="item.expectedReturn < 0"
+                >{{ item.expectedReturn }}%</span
+              >
+            </td>
+          </tr>
         </tbody>
       </table>
       <p v-else>장바구니가 비어 있습니다.</p>
@@ -85,21 +112,21 @@
     <div v-if="section === 'RecentProductsSection'">
       <table v-if="data.length > 0" class="data-table">
         <thead>
-        <tr>
-          <th class="product-type">상품 종류</th>
-          <th class="product-name">상품 이름</th>
-        </tr>
+          <tr>
+            <th class="product-type">상품 종류</th>
+            <th class="product-name">상품 이름</th>
+          </tr>
         </thead>
         <tbody>
-        <tr
+          <tr
             v-for="item in data"
             :key="item.productId"
             class="data-row"
             @click="goToProductDetail(item.productId, item.productType)"
-        >
-          <td>{{ getProductType(item.productType) }}</td>
-          <td class="product-name">{{ item.productName }}</td>
-        </tr>
+          >
+            <td>{{ getProductType(item.productType) }}</td>
+            <td class="product-name">{{ item.productName }}</td>
+          </tr>
         </tbody>
       </table>
       <p v-else>최근 본 상품이 없습니다.</p>
@@ -108,7 +135,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+// import { defineProps, defineEmits } from 'vue';
 import { useRouter } from 'vue-router';
 
 const user = localStorage.getItem('user');
@@ -136,7 +163,7 @@ const emit = defineEmits(['close']);
 const getProductTypeReturn = (productType, rsrvType) => {
   switch (productType) {
     case 'S':
-      if(rsrvType != null) return 'saving';
+      if (rsrvType != null) return 'saving';
       return 'deposit';
     case 'F':
       return 'fund';
@@ -179,9 +206,9 @@ const closePanel = () => {
 <style scoped>
 .side-panel {
   position: fixed;
-  right: 0;
-  top: 0;
-  width: 600px;
+  right: 89px;
+  top: 140px;
+  width: 508px;
   height: 100vh;
   background-color: white;
   padding: 20px;
