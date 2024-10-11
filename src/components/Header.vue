@@ -124,36 +124,36 @@
 </template>
 
 <script>
-import { useCookies } from 'vue3-cookies';
+import { useCookies } from "vue3-cookies";
 
 export default {
-  name: 'Header',
+  name: "Header",
   data() {
     return {
       isLoggedIn: false,
       userProfile: {
-        username: '',
+        username: "",
       },
       showDropdown: false, // 드롭다운 표시 제어
     };
   },
   methods: {
     navigateToHome() {
-      this.$router.push('/');
+      this.$router.push("/");
     },
     navigateToLogin() {
-      this.$router.push('/login');
+      this.$router.push("/login");
     },
     navigateToSignup() {
-      this.$router.push('/signup');
+      this.$router.push("/signup");
     },
     navigateToProfile() {
-      this.$router.push('/myPage');
+      this.$router.push("/myPage");
     },
     navigateToProductList(category) {
       this.$router.push({
-        name: 'Products',
-        params: { category: 'deposit' },
+        name: "Products",
+        params: { category: "deposit" },
         query: { page: 1, pageSize: 10 },
       });
     },
@@ -162,16 +162,16 @@ export default {
       const { cookies } = useCookies();
 
       // Clear cookies and local storage
-      cookies.remove('Authorization');
-      cookies.remove('Refresh-Token');
-      localStorage.removeItem('user');
+      cookies.remove("Authorization");
+      cookies.remove("Refresh-Token");
+      localStorage.removeItem("user");
 
       // Update user profile state
       await this.updateUserProfile(); // Update the state
       this.navigateToHome(); // Redirect to home
     },
     updateUserProfile() {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
+      const storedUser = JSON.parse(localStorage.getItem("user"));
       if (storedUser) {
         this.isLoggedIn = true;
         this.userProfile.username = storedUser.username;
@@ -179,8 +179,8 @@ export default {
           storedUser.picture || this.userProfile.picture;
       } else {
         this.isLoggedIn = false;
-        this.userProfile.username = '';
-        this.userProfile.picture = 'path/to/default/profile/pic.png';
+        this.userProfile.username = "";
+        this.userProfile.picture = "path/to/default/profile/pic.png";
       }
     },
     isActive(route) {
@@ -268,7 +268,7 @@ nav {
 .dropdown-section {
   display: flex;
   flex-direction: column;
-  flex: ;
+  flex: 1;
   padding: 0 10px; /* 섹션 간의 여백 추가 */
   border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
 }

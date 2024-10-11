@@ -2,22 +2,40 @@
   <div class="portfolio-container">
     <!-- 포트폴리오 상단 헤더 -->
     <header class="portfolio-header">
-      <h1>포트폴리오 상세정보</h1>
-      <h2>{{ portfolioDetail.portfolioName }}</h2>
+      <h1>{{ portfolioDetail.portfolioName }}</h1>
     </header>
 
     <main class="portfolio-main">
       <section class="portfolio-summary">
         <h2>포트폴리오 요약</h2>
-
+        투자 금액 : {{ portfolioDetail.total }}원 예상 수익률 :
+        {{ portfolioDetail.expectedReturn }} 위험도 :
+        {{ portfolioDetail.riskLevel }}
         <!-- 투자 비중 파이 차트 -->
         <h4>포트폴리오 투자 비중</h4>
-        <VueApexCharts
+        <!-- <VueApexCharts
           type="pie"
           width="380"
           :options="chartOptions"
           :series="series"
-        ></VueApexCharts>
+        ></VueApexCharts> -->
+      </section>
+      <section class="portfolio-summary-detail">
+        <h2>종합 예상 투자 결과</h2>
+        <div class="investment-results">
+          <div class="result-item">
+            <span>투자 금액</span>
+            <span>{{ portfolioDetail.total | currency }}원</span>
+          </div>
+          <div class="result-item">
+            <span>예상 수익률</span>
+            <span>{{ portfolioDetail.expectedReturn }}%</span>
+          </div>
+          <div class="result-item">
+            <span>위험도</span>
+            <span>{{ portfolioDetail.riskLevel }}</span>
+          </div>
+        </div>
       </section>
 
       <section class="portfolio-details">
@@ -40,14 +58,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'; // Composition API
-import { useRoute } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
-import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
-import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
+import { ref, onMounted } from "vue"; // Composition API
+import { useRoute } from "vue-router"; // 라우트 정보 접근을 위한 useRoute import
+import { usePortfolioStore } from "@/store/modules/portfolio"; // Pinia 스토어 가져오기
+import VueApexCharts from "vue3-apexcharts"; // ApexCharts 컴포넌트 import
 
 // 현재 라우트에서 포트폴리오 ID를 가져옴
 const route = useRoute();
 const portfolioId = route.params.id; // 라우트 파라미터에서 포트폴리오 ID 추출
+
+const series = ref([30, 40, 20, 10]);
 
 // Pinia 스토어 가져오기
 const portfolioStore = usePortfolioStore();
@@ -59,24 +79,25 @@ const getPortfolioDetailAction = async (portfolioId) => {
   try {
     await portfolioStore.getPortfolioDetailAction(portfolioId);
     portfolioDetail.value = portfolioStore.portfolioDetail;
-    console.log('Portfolio Detail:', portfolioDetail.value);
+    console.log("Portfolio Detail:", portfolioDetail.value);
   } catch (error) {
-    console.error('Error fetching portfolio detail:', error);
+    console.error("Error fetching portfolio detail:", error);
   }
 };
 
 // 컴포넌트가 마운트될 때 포트폴리오 데이터를 가져오기
 onMounted(() => {
   getPortfolioDetailAction(portfolioId); // 포트폴리오 데이터 가져오기
+  setChartData();
 });
 
 // 차트 설정
 const chartOptions = {
   chart: {
     width: 380,
-    type: 'pie',
+    type: "pie",
   },
-  labels: ['예/적금', '채권', '펀드', '주식'],
+  labels: ["예/적금", "채권", "펀드", "주식"],
   responsive: [
     {
       breakpoint: 480,
@@ -85,15 +106,12 @@ const chartOptions = {
           width: 200,
         },
         legend: {
-          position: 'bottom',
+          position: "bottom",
         },
       },
     },
   ],
 };
-
-// 예시 데이터
-const series = [30, 40, 20, 10];
 
 // 포트폴리오 수정 함수
 const editPortfolio = (id) => {
@@ -103,6 +121,15 @@ const editPortfolio = (id) => {
 // 포트폴리오 삭제 함수
 const deletePortfolio = (id) => {
   console.log(`Deleting portfolio with ID: ${id}`);
+};
+
+const setChartData = () => {
+  series.value = [
+    portfolioDetail.value.depositRate,
+    portfolioDetail.value.bondRate,
+    portfolioDetail.value.fundRate,
+    portfolioDetail.value.stockRate,
+  ];
 };
 </script>
 
@@ -195,6 +222,40 @@ const deletePortfolio = (id) => {
 .v-btn.red:hover {
   opacity: 0.85;
   cursor: pointer;
+}
+
+.portfolio-summary-detail {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.investment-results {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #dee2e6;
+  padding-top: 10px;
+}
+
+.result-item {
+  text-align: center;
+  flex: 1;
+}
+
+.result-item span:first-child {
+  display: block;
+  font-size: 1rem;
+  color: #495057;
+  margin-bottom: 5px;
+}
+
+.result-item span:last-child {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #007bff;
 }
 
 @media (max-width: 768px) {

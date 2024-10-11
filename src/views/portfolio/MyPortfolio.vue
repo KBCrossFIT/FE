@@ -15,25 +15,25 @@
             <th @click="sortBy('goToPortfolioDetail')">
               포트폴리오 이름
               <span v-if="sortKey === 'portfolioName'">
-                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                {{ sortOrder === "asc" ? "▲" : "▼" }}
               </span>
             </th>
             <th @click="sortBy('total')">
               투자 총액
               <span v-if="sortKey === 'total'">
-                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                {{ sortOrder === "asc" ? "▲" : "▼" }}
               </span>
             </th>
             <th @click="sortBy('expectedReturn')">
               기대 수익률
               <span v-if="sortKey === 'expectedReturn'">
-                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                {{ sortOrder === "asc" ? "▲" : "▼" }}
               </span>
             </th>
             <th @click="sortBy('riskLevel')">
               위험도
               <span v-if="sortKey === 'riskLevel'">
-                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                {{ sortOrder === "asc" ? "▲" : "▼" }}
               </span>
             </th>
           </tr>
@@ -49,7 +49,7 @@
                 @change="updateSelectAllState"
               />
             </td>
-            <td class="NameCursor" @click="goToPortfolioDetail(item)">
+            <td class="NameCursor" @click="goToPortfolioDetail(item.portfolioId)">
               {{ item.portfolioName }}
             </td>
             <td>{{ item.total }}원</td>
@@ -67,9 +67,9 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import { usePortfolioStore } from '@/store/modules/portfolio';
-import { ref, onMounted, computed } from 'vue';
+import { useRouter } from "vue-router";
+import { usePortfolioStore } from "@/store/modules/portfolio";
+import { ref, onMounted, computed } from "vue";
 
 const router = useRouter();
 const portfolioStore = usePortfolioStore();
@@ -79,8 +79,8 @@ const { fetchPortfolioListAction, deletePortfolioAction } = portfolioStore;
 
 const selected = ref([]); // 선택된 포트폴리오
 const allSelected = ref(false); // 전체 선택 체크박스 상태
-const sortKey = ref('portfolioName'); // 정렬할 컬럼
-const sortOrder = ref('asc'); // 오름차순('asc') 또는 내림차순('desc')
+const sortKey = ref("portfolioName"); // 정렬할 컬럼
+const sortOrder = ref("asc"); // 오름차순('asc') 또는 내림차순('desc')
 
 // 전체 선택 처리
 const toggleSelectAll = () => {
@@ -100,19 +100,19 @@ const updateSelectAllState = () => {
 
 // 포트폴리오 상세 페이지로 이동
 const goToPortfolioDetail = (id) => {
-  router.push({ name: 'Portfolio', params: { id } });
+  router.push({ name: "Portfolio", params: { id } });
 };
 
 // 포트폴리오 생성 페이지로 이동
 const goToCreatePortfolio = () => {
-  router.push({ name: 'MakePortfolio' });
+  router.push({ name: "MakePortfolio" });
 };
 
 // 선택된 포트폴리오 데이터를 사이드패널로 전달
 const openPortfolioInSidePanel = (portfolio) => {
-  emit('openSidePanel', {
-    title: '포트폴리오 상세',
-    section: 'PortfolioSection',
+  emit("openSidePanel", {
+    title: "포트폴리오 상세",
+    section: "PortfolioSection",
     data: [portfolio], // 선택된 포트폴리오 데이터 전달
   });
 };
@@ -124,7 +124,7 @@ const deleteSelectedPortfolios = async () => {
       await deletePortfolioAction(portfolioId); // 비동기 요청 대기
     } catch (error) {
       console.error(
-        'Error deleting portfolio:',
+        "Error deleting portfolio:",
         error.response?.data || error.message
       );
     }
@@ -137,10 +137,10 @@ const deleteSelectedPortfolios = async () => {
 const sortBy = (key) => {
   if (sortKey.value === key) {
     // 동일한 키를 클릭했을 때 방향 변경
-    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+    sortOrder.value = sortOrder.value === "asc" ? "desc" : "asc";
   } else {
     sortKey.value = key;
-    sortOrder.value = 'asc'; // 기본은 오름차순
+    sortOrder.value = "asc"; // 기본은 오름차순
   }
 };
 
@@ -153,7 +153,7 @@ const sortedPortfolioList = computed(() => {
     } else if (a[sortKey.value] > b[sortKey.value]) {
       result = 1;
     }
-    return sortOrder.value === 'asc' ? result : -result;
+    return sortOrder.value === "asc" ? result : -result;
   });
 });
 
