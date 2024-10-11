@@ -12,6 +12,7 @@ export const useCartStore = defineStore('cart', {
     cartItems: [], // 장바구니 아이템
     cartItemsLoaded: false, // 장바구니 아이템 로딩 여부
     newCartItem: null, // 새로 추가된 장바구니 아이템
+    selectedProducts: [], // 선택된 상품 목록
   }),
   actions: {
     // 모든 장바구니 아이템을 가져오는 메서드
@@ -59,6 +60,21 @@ export const useCartStore = defineStore('cart', {
           console.error('Error fetching cart items:', error);
         }
       }
+    },
+
+     // 선택된 상품 목록 설정 메서드
+    setSelectedProducts(products) {
+      this.selectedProducts = products;
+    },
+
+    // 선택된 상품 목록 초기화 메서드
+    clearSelectedProducts() {
+      this.selectedProducts = [];
+    },
+
+    // 선택된 상품 목록 가져오기
+    getSelectedProducts() {
+      return this.selectedProducts;
     },
   },
 });
