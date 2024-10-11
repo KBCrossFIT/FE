@@ -1,35 +1,7 @@
 <template>
   <footer>
-    <div class="footer-links">
-      <div class="useful-links">
-        <h4>Useful Links</h4>
-        <ul>
-          <li>Legal & Privacy</li>
-          <li>Contact</li>
-          <li>Gift Card</li>
-        </ul>
-      </div>
-      <div class="shop-links">
-        <h4>Shop</h4>
-        <ul>
-          <li>Televisions</li>
-          <li>Washing Machines</li>
-          <li>Air Conditioners</li>
-        </ul>
-      </div>
-      <div class="account-links">
-        <h4>My Account</h4>
-        <ul>
-          <li>My Profile</li>
-          <li>Orders</li>
-          <li>Wishlist</li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
       <span>&copy; 2024 ProPortFolio. All rights reserved.</span>
-      <span>Designed by YourName</span>
-    </div>
+      <span>고객센터 000-000-0000</span>
   </footer>
 </template>
 

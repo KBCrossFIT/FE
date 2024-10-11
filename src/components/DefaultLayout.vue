@@ -5,20 +5,42 @@ import SideBar from './Sidebar.vue';
 </script>
 
 <template>
+  <Header />
+
   <div class="container">
-    <SideBar />
     <div class="main">
-      <Header />
-      <div class="content my-5 px-3">
+      <SideBar />
+
+      <div class="exceptSide">
         <slot></slot>
       </div>
-      <Footer />
     </div>
   </div>
+  <Footer />
 </template>
 
 <style scoped>
+.container {
+  display: flex;
+  width: 100%;
+  height: 200vh;
+}
+
 .main {
-  margin-right: 60px;
+  display: flex; /* 가로로 나열하기 위한 플렉스 설정 */
+  flex-direction: row; /* row로 변경하여 가로 정렬 */
+  min-height: 100vh;
+  width: 100%; /* 페이지 전체 너비 사용 */
+  padding: 0px;
+}
+
+#sidebar {
+  flex-basis: 4.5%; /* 사이드바가 30% 차지 */
+  background-color: #f0f0f0; /* 사이드바 배경색 */
+}
+
+.exceptSide {
+  flex-basis: 95.5%; /* exceptSide가 70% 차지 */
+  background-color: #ffffff; /* 배경색을 추가해서 확인 가능 */
 }
 </style>

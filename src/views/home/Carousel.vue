@@ -1,71 +1,128 @@
 <template>
   <div class="carousel">
     <!-- Left Arrow -->
-    <div class="carousel-arrow left" @click="prevImage">
-      &#10094; <!-- Unicode left arrow -->
-    </div>
+    <div class="carousel-arrow left" @click="prevImage">&#10094;</div>
 
     <!-- Images -->
     <div class="carousel-images">
-      <img :src="images[currentImage]" alt="Carousel Image" />
+      <div
+        class="image-container"
+        :style="imageContainerStyle"
+        @transitionend="handleTransitionEnd"
+      >
+        <!-- 복제된 마지막 이미지 -->
+        <img
+          v-for="(image, index) in displayImages"
+          :key="index"
+          :src="image"
+          alt="Carousel Image"
+        />
+      </div>
     </div>
 
     <!-- Right Arrow -->
-    <div class="carousel-arrow right" @click="nextImage">
-      &#10095; <!-- Unicode right arrow -->
-    </div>
+    <div class="carousel-arrow right" @click="nextImage">&#10095;</div>
 
     <!-- Dots for navigation -->
     <div class="carousel-nav">
-      <span 
-        class="dot" 
-        v-for="(image, index) in images" 
-        :key="index" 
-        :class="{ active: currentImage === index }" 
-        @click="changeImage(index)">
-      </span>
+      <span
+        class="dot"
+        v-for="(image, index) in images"
+        :key="index"
+        :class="{ active: currentImage === index }"
+        @click="changeImage(index)"
+      ></span>
     </div>
   </div>
 </template>
 
 <script>
+import image1 from '@/assets/img/1first.jpg';
+import image2 from '@/assets/img/1second.jpg';
+import image3 from '@/assets/img/1third.png';
+
 export default {
   data() {
     return {
       currentImage: 0,
-      images: [
-        // Add your image URLs here
-        '/path-to-your-image1.jpg',
-        '/path-to-your-image2.jpg',
-        '/path-to-your-image3.jpg'
-      ]
+      images: [image1, image2, image3],
+      isTransitioning: true, // 애니메이션 상태 확인
     };
   },
+  computed: {
+    displayImages() {
+      // 첫 번째와 마지막 이미지의 복제본 추가
+      return [
+        this.images[this.images.length - 1],
+        ...this.images,
+        this.images[0],
+      ];
+    },
+    imageContainerStyle() {
+      return {
+        transform: `translateX(-${(this.currentImage + 1) * 100}%)`,
+        transition: this.isTransitioning
+          ? 'transform 0.5s ease-in-out'
+          : 'none',
+      };
+    },
+  },
   methods: {
+    handleTransitionEnd() {
+      // 첫 번째에서 마지막으로 넘어갔을 때 애니메이션 없이 순간 이동
+      if (this.currentImage === -1) {
+        this.isTransitioning = false;
+        this.currentImage = this.images.length - 1;
+      }
+
+      // 마지막에서 첫 번째로 넘어갔을 때 애니메이션 없이 순간 이동
+      if (this.currentImage === this.images.length) {
+        this.isTransitioning = false;
+        this.currentImage = 0;
+      }
+      setTimeout(() => {
+        this.isTransitioning = true; // 애니메이션 재활성화
+      }, 0);
+    },
+    nextImage() {
+      if (this.currentImage < this.images.length) {
+        this.currentImage++;
+      } else {
+        this.currentImage = 0;
+      }
+    },
+    prevImage() {
+      if (this.currentImage > -1) {
+        this.currentImage--;
+      } else {
+        this.currentImage = this.images.length - 1;
+      }
+    },
     changeImage(index) {
       this.currentImage = index;
     },
-    nextImage() {
-      this.currentImage = (this.currentImage + 1) % this.images.length;
-    },
-    prevImage() {
-      this.currentImage = (this.currentImage - 1 + this.images.length) % this.images.length;
-    }
   },
   mounted() {
-    // Automatically swap images every 10 seconds
     setInterval(() => {
       this.nextImage();
-    }, 10000);
-  }
+    }, 9000);
+  },
 };
 </script>
 
 <style scoped>
 .carousel {
   position: relative;
-  height: 400px; /* Adjust this to make the carousel smaller */
+  height: 450px;
   overflow: hidden;
+  margin-bottom: 0px;
+  background-color: black;
+}
+
+.image-container {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 100%;
 }
 
 .carousel-images img {
@@ -76,23 +133,25 @@ export default {
 
 .carousel-arrow {
   position: absolute;
-  top: 50%;
+  top: 50%; /* 수직 중앙에 배치 */
   transform: translateY(-50%);
+  width: 50px;
   font-size: 30px;
-  color: white;
   cursor: pointer;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   user-select: none;
+  z-index: 10; /* 다른 요소들 위에 표시되도록 z-index 설정 */
 }
 
 .carousel-arrow.left {
-  left: 20px;
+  left: 0; /* 왼쪽에 배치 */
 }
 
 .carousel-arrow.right {
-  right: 20px;
+  right: 0; /* 오른쪽에 배치 */
 }
 
 .carousel-nav {

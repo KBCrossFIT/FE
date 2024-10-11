@@ -1,238 +1,103 @@
 <template>
-  <div id="seartext" class="search-container">
-    <h1 class="sixth">인플루언서 포트폴리오</h1>
+  <div>
+    <h1>장바구니</h1>
+    <ul>
+      <li v-for="cartItem in cartItems" :key="cartItem.productId">
+        {{ cartItem.cartId }}
+        <!-- 고유 id(출력 x) -->
+        {{ cartItem.productId }}
+        <!-- 상품 id(출력 x) -->
+        {{ cartItem.memberNum }}
+        <!-- 사용자 id(출력 x) -->
+        {{ cartItem.productType }}
+        <!-- 상품 종류(S:예적금, B:채권, F:펀드) -->
+        {{ cartItem.provider }}
+        <!-- 예적금은 은행, 채권은 발행회사, 펀드는 자산운용사 -->
+        {{ cartItem.productName }}
+        <!-- 상품 이름 -->
+        {{ cartItem.expectedReturn }}
+        <!-- 기대수익률(예적금은 12개월 기준 최고금리, 펀드는 12개월 기준 수익률, 채권은 금리) -->
+        {{ cartItem.rsrvType }}
+        <!-- productType이 S인 상품에 대해서 null이면 예금, S면 적금 -->
+        <!-- 삭제 버튼 추가 -->
+        <button @click="removeCartItem(cartItem.cartId)">삭제</button>
+      </li>
+    </ul>
 
-    <div id="search" class="search-filter">
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="form-control"
-        placeholder="상품명 검색..."
-      />
-    </div>
-  </div>
-
-  <div id="main">
-    <div id="left">
-      <v-card class="pa-4" elevation="2" style="height: 100%">
-        <v-card-text>
-          <v-list>
-            <v-list-item @click="navigateTo('/Youtube')">
-              <v-list-item-content>
-                <v-list-item-title>금융 유튜브</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="navigateTo('/Influencer')">
-              <v-list-item-content>
-                <v-list-item-title>인플루언서</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="navigateTo('/News')">
-              <v-list-item-content>
-                <v-list-item-title>뉴스</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-      </v-card>
-    </div>
-
-    <div id="right">
-      <v-container>
-        <div id="Influencer1">
-          <v-row justify="center">
-            <v-col v-for="n in 4" :key="n" cols="auto">
-              <v-card class="my-4" max-width="344">
-                <v-img
-                  height="200px"
-                  src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                  cover
-                ></v-img>
-                <v-card-title>Top Western Road Trips</v-card-title>
-                <v-card-subtitle>1,000 miles of wonder</v-card-subtitle>
-                <v-card-actions>
-                  <v-btn color="orange lighten-2" text>Explore</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    :icon="show[n - 1] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                    @click="toggleShow(n - 1)"
-                    :aria-label="show[n - 1] ? 'Collapse' : 'Expand'"
-                  ></v-btn>
-                </v-card-actions>
-                <v-expand-transition>
-                  <div v-show="show[n - 1]">
-                    <v-divider></v-divider>
-                  </div>
-                </v-expand-transition>
-              </v-card>
-            </v-col>
-          </v-row>
-        </div>
-
-        <div id="Influencer2">
-          <v-row justify="center">
-            <v-col v-for="n in 4" :key="n" cols="auto">
-              <v-card class="my-4" max-width="344">
-                <v-img
-                  height="200px"
-                  src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                  cover
-                ></v-img>
-                <v-card-title>Top Western Road Trips</v-card-title>
-                <v-card-subtitle>1,000 miles of wonder</v-card-subtitle>
-                <v-card-actions>
-                  <v-btn color="orange lighten-2" text>Explore</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    :icon="show[n - 1] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                    @click="toggleShow(n - 1)"
-                    :aria-label="show[n - 1] ? 'Collapse' : 'Expand'"
-                  ></v-btn>
-                </v-card-actions>
-                <v-expand-transition>
-                  <div v-show="show[n - 1]">
-                    <v-divider></v-divider>
-                  </div>
-                </v-expand-transition>
-              </v-card>
-            </v-col>
-          </v-row>
-        </div>
-
-        <div id="Influencer3">
-          <v-row justify="center">
-            <v-col v-for="n in 4" :key="n" cols="auto">
-              <v-card class="my-4" max-width="344">
-                <v-img
-                  height="200px"
-                  src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
-                  cover
-                ></v-img>
-                <v-card-title>Top Western Road Trips</v-card-title>
-                <v-card-subtitle>1,000 miles of wonder</v-card-subtitle>
-                <v-card-actions>
-                  <v-btn color="orange lighten-2" text>Explore</v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    :icon="show[n - 1] ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-                    @click="toggleShow(n - 1)"
-                    :aria-label="show[n - 1] ? 'Collapse' : 'Expand'"
-                  ></v-btn>
-                </v-card-actions>
-                <v-expand-transition>
-                  <div v-show="show[n - 1]">
-                    <v-divider></v-divider>
-                  </div>
-                </v-expand-transition>
-              </v-card>
-            </v-col>
-          </v-row>
-        </div>
-
-        <!-- 페이지 넘기는 코드 -->
-      </v-container>
-      <div id="Pagination">
-        <v-container>
-          <v-pagination
-            v-model="page"
-            :length="5"
-            @input="onPageChange"
-          ></v-pagination>
-        </v-container>
-      </div>
+    <!-- 상품 추가 폼 -->
+    <div>
+      <h2>상품 추가</h2>
+      <input v-model="newProduct.productId" placeholder="상품 ID" />
+      <input v-model="newProduct.productType" placeholder="상품 유형" />
+      <input v-model="newProduct.provider" placeholder="제공자" />
+      <input v-model="newProduct.productName" placeholder="상품 이름" />
+      <input v-model="newProduct.expectedReturn" placeholder="예상 수익" />
+      <input v-model="newProduct.rsrvType" placeholder="예적금 여부" />
+      <button @click="addCart">장바구니에 추가</button>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Influencer',
-  components: {},
-  data() {
-    return {
-      searchQuery: '', // 검색어 데이터 추가
-      show: Array(4).fill(false), // 4개의 카드에 대한 show 상태 초기화
-      page: 1, // 현재 페이지
-    };
-  },
-  methods: {
-    toggleShow(index) {
-      this.show[index] = !this.show[index]; // 배열의 값을 직접 토글
-    },
-    navigateTo(path) {
-      this.$router.push(path);
-    },
-    onPageChange(newPage) {
-      this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-      console.log(`Current page: ${newPage}`); // 현재 페이지 출력
-    },
-  },
+<script setup>
+import { ref, onMounted } from 'vue';
+import { deleteCartItem, getCartList, postCartItem } from '@/api/cartApi.js';
+
+// 장바구니 아이템 및 추가할 상품 데이터 관리
+const cartItems = ref([]);
+const newProduct = ref({
+  productId: '',
+  productType: '',
+  provider: '',
+  productName: '',
+  expectedReturn: '',
+  rsrvType: '',
+});
+
+// 장바구니 목록 가져오기
+const getCartItems = async () => {
+  try {
+    const data = await getCartList();
+    cartItems.value = data;
+  } catch (error) {
+    console.error('Error fetching cart items:', error);
+  }
 };
+
+// 장바구니에 상품 추가
+const addCart = async () => {
+  try {
+    const data = await postCartItem(newProduct.value); // API 호출
+    cartItems.value.push(data); // 장바구니 리스트에 새로 추가된 상품 반영
+    clearNewProduct(); // 입력 필드 초기화
+  } catch (error) {
+    console.error('Error adding cart item:', error);
+  }
+};
+
+// 장바구니에서 상품 삭제
+const removeCartItem = async (cartId) => {
+  try {
+    await deleteCartItem(cartId); // API 호출로 아이템 삭제
+    cartItems.value = cartItems.value.filter((item) => item.cartId !== cartId); // 리스트에서 삭제된 아이템 제거
+  } catch (error) {
+    console.error('Error removing cart item:', error);
+  }
+};
+
+// 새 상품 입력 필드 초기화
+const clearNewProduct = () => {
+  newProduct.value = {
+    productId: '',
+    productType: '',
+    provider: '',
+    productName: '',
+    expectedReturn: '',
+    rsrvType: '',
+  };
+};
+
+// 컴포넌트가 마운트되면 장바구니 데이터를 가져옴
+onMounted(async () => {
+  await getCartItems();
+});
 </script>
-
-<style scoped>
-.my-4 {
-  margin-top: 16px; /* 카드 사이의 여백 조정 */
-}
-#main {
-  display: flex;
-  align-items: stretch; /* 왼쪽과 오른쪽 영역을 세로로 늘림 */
-  padding-left: 100px;
-}
-#left {
-  width: 300px; /* 고정된 너비 (300px) */
-}
-#right {
-  flex: 1; /* 오른쪽 영역은 남은 공간을 모두 차지 */
-  align-items: flex-start; /* 수직 정렬 */
-  margin-right: 250px;
-}
-.search-container {
-  display: flex;
-  align-items: center; /* 수직 정렬 */
-  margin-bottom: 20px; /* 아래 여백 추가 */
-}
-#search {
-  margin-left: 6px; /* 제목과의 간격 조정 */
-}
-#seartext {
-  justify-content: space-between;
-}
-.form-control {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-.portfolio-title {
-  font-size: 24px; /* 글꼴 크기 조정 */
-}
-h1.sixth {
-  position: relative;
-}
-
-h1.sixth:before,
-h1.sixth:after {
-  content: '[';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-
-  transition: all 0.5s ease;
-}
-
-h1.sixth:after {
-  content: ']';
-}
-
-h1.sixth:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.sixth:hover:after {
-  transform: translateX(5px);
-}
-</style>

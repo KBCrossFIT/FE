@@ -1,111 +1,140 @@
 <template>
-    <div class="uiNavAside">
-        <ul class="nav-aside">
-            <li class="menu1" @click="toggleDropdown(1)">
-                <a href="javascript:void(0)">포트폴리오</a>
-                <div v-if="activeDropdown === 1" class="dropdown-content">
-                    <p>포트폴리오 관련 내용</p>
-                </div>
-            </li>
-            <li class="menu2" @click="toggleDropdown(2)">
-                <a href="javascript:void(0)">장바구니</a>
-                <div v-if="activeDropdown === 2" class="dropdown-content">
-                    <p>장바구니 관련 내용</p>
-                </div>
-            </li>
-            <li class="menu3" @click="toggleDropdown(3)">
-                <a href="javascript:void(0)">최근 본 상품</a>
-                <div v-if="activeDropdown === 3" class="dropdown-content">
-                    <p>최근 본 상품 관련 내용</p>
-                </div>
-            </li>
-            <li class="menu4" @click="toggleDropdown(4)">
-                <a href="./make-portfolio">포트폴리오 구성하기</a>
-
-                <!-- <div v-if="activeDropdown === 4" class="dropdown-content">
-                    <p>포트폴리오 구성 관련 내용</p>
-                </div> -->
-            </li>
-        </ul>
+  <div class="app-container" ref="sidebarContainer">
+    <div class="uiNavAside" ref="sidebar">
+      <ul class="nav-aside">
+        <div class="button-container">
+          <!-- Sidebar Menu Components -->
+          <SidebarMenu1
+            :portfolios="portfolios"
+            @openSidePanel="toggleSidePanel"
+          />
+          <SidebarMenu2 :cart="cart" @openSidePanel="toggleSidePanel" />
+          <SidebarMenu3
+            :recentProducts="recentProducts"
+            @openSidePanel="toggleSidePanel"
+          />
+        </div>
+      </ul>
     </div>
+
+    <!-- Side Panel Component -->
+    <SidePanel
+      v-if="isSidePanelOpen"
+      :title="panelTitle"
+      :data="panelData"
+      :section="activeSection"
+      @close="isSidePanelOpen = false"
+    />
+  </div>
 </template>
 
 <script>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import SidebarMenu1 from './sideBar/PortfolioSection.vue';
+import SidebarMenu2 from './sideBar/CartSection.vue';
+import SidebarMenu3 from './sideBar/RecentProductsSection.vue';
+import SidePanel from './sideBar/SidePanel.vue';
+import router from '@/router/index.js';
+
 export default {
-    name: 'SideBar',
-    data() {
-        return {
-            activeDropdown: null, // 활성화된 드롭다운 메뉴의 번호
-        };
-    },
-    methods: {
-        toggleDropdown(menuNumber) {
-            if (this.activeDropdown === menuNumber) {
-                this.activeDropdown = null; // 이미 활성화된 메뉴 클릭 시 닫음
-            } else {
-                this.activeDropdown = menuNumber; // 선택한 메뉴의 드롭다운 활성화
-            }
-        },
-    },
+  name: 'SideBar',
+  components: {
+    SidebarMenu1,
+    SidebarMenu2,
+    SidebarMenu3,
+    SidePanel,
+  },
+  setup() {
+    const portfolios = ref([]);
+    const cart = ref([]);
+    const recentProducts = ref([]);
+
+    const isSidePanelOpen = ref(false);
+    const panelTitle = ref('');
+    const activeSection = ref('');
+    const panelData = ref([]);
+    const sidebarContainer = ref(null);
+
+    // 패널 열기/닫기 함수 (클릭한 메뉴와 동일한 섹션이 열려 있으면 닫음)
+    const toggleSidePanel = (payload) => {
+      if (isSidePanelOpen.value && activeSection.value === payload.section) {
+        isSidePanelOpen.value = false;
+      } else {
+        panelTitle.value = payload.title;
+        activeSection.value = payload.section;
+        panelData.value = payload.data;
+        isSidePanelOpen.value = true;
+      }
+    };
+
+    // 라우터 이동 후 사이드 패널 닫기
+    onMounted(() => {
+      router.afterEach(() => {
+        isSidePanelOpen.value = false;
+      });
+      document.addEventListener('click', handleClickOutside);
+    });
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+
+    // 사이드바 외부 클릭 시 닫기
+    const handleClickOutside = (event) => {
+      if (
+        sidebarContainer.value &&
+        !sidebarContainer.value.contains(event.target)
+      ) {
+        isSidePanelOpen.value = false;
+      }
+    };
+
+    return {
+      portfolios,
+      cart,
+      recentProducts,
+      isSidePanelOpen,
+      panelTitle,
+      activeSection,
+      panelData,
+      toggleSidePanel,
+      sidebarContainer,
+    };
+  },
 };
 </script>
 
 <style scoped>
+.app-container {
+  display: flex;
+}
 .uiNavAside {
-    position: fixed;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 60px;
-    background-color: #333;
-    display: flex;
-    flex-direction: column;
-    z-index: 9999;
+  position: fixed;
+  right: -4px;
+  top: 118px;
+  width: 90px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  /* border-radius: 5px; */
+  border: 0.5px solid #e9e9e9;
+  padding: 10px;
+  /* background-color: rgb(233, 233, 233); */
+}
+.button-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
-.nav-aside {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-}
-
-.nav-aside li {
-    width: 100%;
-    text-align: right;
-}
-
-.nav-aside a {
-    display: block;
-    color: white;
-    padding: 15px;
-    text-align: right;
-    text-decoration: none;
-    background-color: #333;
-    width: 100%;
-}
-
-.nav-aside li:hover a {
-    background-color: #575757;
-}
-
-.dropdown-content {
-    position: absolute;
-    right: 60px;
-    top: 0;
-    background-color: #444;
-    color: white;
-    padding: 10px;
-    text-align: left;
-    width: 300px; /* 드롭다운이 확장되는 폭 */
-    height: 100%;
-    border-left: 1px solid #575757;
-    display: flex;
-    align-items: center; /* 수직 가운데 정렬 */
-    justify-content: center; /* 수평 가운데 정렬 */
-}
-
-.dropdown-content p {
-    margin: 0;
-}
+/* .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+} */
 </style>

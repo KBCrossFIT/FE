@@ -1,12 +1,13 @@
 <template>
-  <div class="portfolio-page">
-    <div class="nonHeader">
-      <DevBtnSection />
-      <CarouselSection />
-      <ComparisonSection />
-      <ProductListSection />
-    </div>
-  </div>
+  <!-- <div class="portfolio-page"> -->
+  <!-- <div class="nonHeader"> -->
+  <!-- <DevBtnSection /> -->
+  <CarouselSection />
+  <ComparisonSection />
+
+  <ProductListSection />
+  <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 <script>
@@ -27,16 +28,6 @@ export default {
 </script>
 
 <style scoped>
-.portfolio-page {
-  /* display: flex; */
-  /* margin: 0 220px 0 220px; */
-  /* padding: 20px; */
-}
-
-.nonHeader {
-  margin: 0 220px 0 220px;
-}
-
 .home-header {
   background-color: #e9ecef;
   padding: 20px;
@@ -49,14 +40,13 @@ export default {
 }
 
 .carousel {
-  margin-bottom: 20px;
+  margin-bottom: 1px;
 }
 
 .comparison-section {
-  margin-bottom: 20px;
+  margin-bottom: 1px;
 }
-
-.product-list-section {
+. .product-list-section {
   margin-bottom: 20px;
 }
 

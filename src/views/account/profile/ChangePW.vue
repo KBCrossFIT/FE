@@ -1,12 +1,12 @@
 <template>
     <div class="changePW-container">
         <div class="changePW-header">
-            <h1>회원가입</h1>
+            <h1>비밀번호 변경</h1>
         </div>
         <div class="changePW-box">
             <form @submit.prevent="handleSubmit" class="changePW-form">
                 <div class="form-group">
-                    <label for="password"> 기존 비밀번호</label>
+                    <label for="password">기존 비밀번호</label>
                     <input
                         type="password"
                         id="password"
@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password2"> 새 비밀번호</label>
+                    <label for="password2">새 비밀번호</label>
                     <input
                         type="password"
                         id="password2"
@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="confirmPassword"> 새 비밀번호 확인</label>
+                    <label for="confirmPassword">새 비밀번호 확인</label>
                     <input
                         type="password"
                         id="confirmPassword"
@@ -39,48 +39,64 @@
                 </div>
 
                 <button class="changePW-btn" type="submit">비밀번호 변경</button>
-                <v-btn color="teal" block @click="navigateTo('/mypage'), cancel()">취소</v-btn>
+                <v-btn color="grey" block @click="cancel()">취소</v-btn>
             </form>
         </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios'; // Import Axios
+
 export default {
     data() {
         return {
             password: '',
             password2: '',
             confirmPassword: '',
-            user_pw: '1234',
+            user_pw: '1234', // Replace with the actual logic for fetching user's current password
         };
     },
 
     methods: {
-        handleSubmit() {
-            // 1. 기존 비밀번호 확인
+        async handleSubmit() {
+            // 1. Check existing password
             if (this.password !== this.user_pw) {
                 alert('기존 비밀번호가 일치하지 않습니다.');
                 return;
             }
 
-            // 2. 새 비밀번호와 확인 비밀번호가 일치하는지 확인
+            // 2. Check if new password and confirm password match
             if (this.password2 !== this.confirmPassword) {
                 alert('새 비밀번호가 일치하지 않습니다.');
                 return;
             }
 
-            // 비밀번호 변경 성공
-            alert('비밀번호가 성공적으로 변경되었습니다.');
-            console.log('새 비밀번호:', this.password2);
+            // 3. Update password
+            const payload = {
+                newPassword: this.password2,
+            };
+
+            try {
+                // Make an API call to update the password
+                await axios.post('@/api/member/password/update', payload);
+                alert('비밀번호가 성공적으로 변경되었습니다.');
+                // Clear fields after successful change
+                this.cancel();
+                this.navigateTo('/mypage'); // Redirect after successful update
+            } catch (error) {
+                console.error('Error updating password:', error);
+                alert('비밀번호 변경에 실패했습니다.');
+            }
         },
 
         cancel() {
-            // 취소 버튼을 눌렀을 때, 비밀번호 입력 필드 초기화
+            // Reset password input fields
             this.password = '';
             this.password2 = '';
             this.confirmPassword = '';
         },
+
         navigateTo(path) {
             this.$router.push(path);
         },
@@ -95,11 +111,7 @@ export default {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background: linear-gradient(
-        to bottom,
-        #e0f2f1,
-        #ffffff
-    ); /* Gradient from light mint to white */
+    background: linear-gradient(to bottom, #e0f2f1, #ffffff);
     padding: 20px;
 }
 
@@ -117,8 +129,8 @@ export default {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 300px; /* Smaller box */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 400px; /* Wider box for better layout */
     text-align: center;
 }
 
@@ -139,6 +151,12 @@ input {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #4db6ac; /* Change border color on focus */
+    outline: none;
 }
 
 .changePW-btn {
@@ -150,9 +168,14 @@ input {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 10px;
+    transition: background-color 0.3s;
 }
 
 .changePW-btn:hover {
     background-color: #399d91;
+}
+
+.v-btn {
+    margin-top: 10px; /* Add some space above the cancel button */
 }
 </style>
