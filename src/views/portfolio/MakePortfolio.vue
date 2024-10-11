@@ -137,17 +137,12 @@
                             </tr>
                         </thead>
                         <tbody>
-<<<<<<< HEAD
                             <template v-if="filteredProducts.length > 0">
                                 <tr v-for="item in filteredProducts" :key="item.productId">
-=======
-                            <template v-if="fetchedProducts.length > 0">
-                                <tr v-for="item in fetchedProducts" :key="item.productId">
->>>>>>> fc7414edef10c73cabd5689dbc2219b8fb77a97d
                                     <td>{{ item.productName }}</td>
                                     <td>
                                         <span v-if="item.productType === 'S'">
-                                        {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
                                         </span>
                                         <span v-else-if="item.productType === 'B'">채권</span>
                                         <span v-else-if="item.productType === 'F'">펀드</span>
@@ -264,7 +259,12 @@ import { useBondStore } from '@/store/modules/bond';
 import { useFundStore } from '@/store/modules/fund';
 import { useDepositStore } from '@/store/modules/deposit';
 import { useSavingStore } from '@/store/modules/saving';
-import { getBondProductDetail, getDepositProductDetail, getFundProductDetail, getSavingProductDetail } from '@/api/financeApi';
+import {
+    getBondProductDetail,
+    getDepositProductDetail,
+    getFundProductDetail,
+    getSavingProductDetail,
+} from '@/api/financeApi';
 import * as financeApi from '@/api/financeApi';
 import ModalStock from '@/components/Modal/ModalStock.vue';
 import ModalCart from '@/components/Modal/ModalCart.vue';
