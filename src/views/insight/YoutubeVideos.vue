@@ -1,74 +1,54 @@
 <template>
-    <!-- 이달의 추천 영상 섹션 -->
-    <div class="featured-header">
-        이달의 추천 영상
-        
-        <!-- 관리자인 경우에 추가하기 버튼 표시-->
-         <v-btn v-if="isAdmin" color="primary" @click="goToAddYoutubePage">
-            추가하기
-         </v-btn>
-    </div>
-
-    <!-- 이달의 추천 영상 2개 -->
-    <div id="featured-videos" class="d-flex flex-wrap justify-space-between">
-        <div v-for="(video, index) in featuredVideos.slice(0, 2)" :key="index" class="card-wrapper featured">
-            <v-card class="mx-auto featured-card" color="white" max-width="500" elevation="5">
-                <template v-slot:prepend>
-                    <v-icon class="red-icon">mdi-youtube</v-icon>
-                </template>
-
-                <!-- 유튜브 비디오 임베드 -->
-                <iframe
-                    :src="getYoutubeEmbedUrl(video.youtubeUrl)"
-                    width="100%"
-                    height="250"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    style="border-radius: 10px; margin-bottom: 10px;"
-                ></iframe>
-
-                <!-- 제목 (상세 페이지로 이동 버튼) -->
-                <v-card-title class="video-title" @click="goToYoutubeDetail(video.youtubeNum)" style="cursor: pointer;">
-                    {{ video.youtubeTitle }}
-                </v-card-title>
-            </v-card>
+    <div class="youtube-videos-container">
+      <!-- 이달의 추천 영상 섹션 -->
+      <h2 class="section-title">이달의 추천 영상</h2>
+      
+      <!-- 관리자인 경우에 추가하기 버튼 표시 -->
+      <v-btn v-if="isAdmin" color="primary" @click="goToAddYoutubePage" class="add-button">
+        추가하기
+      </v-btn>
+  
+      <!-- 이달의 추천 영상 2개 -->
+      <div class="featured-videos">
+        <div v-for="(video, index) in featuredVideos.slice(0, 2)" :key="index" class="video-card featured">
+          <div class="video-wrapper" @click="goToYoutubeDetail(video.youtubeNum)">
+            <iframe
+              :src="getYoutubeEmbedUrl(video.youtubeUrl)"
+              width="100%"
+              height="250"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <h3 class="video-title" @click="goToYoutubeDetail(video.youtubeNum)">{{ video.youtubeTitle }}</h3>
         </div>
-    </div>
-
-    <!-- 다른 영상들 리스트 형식 -->
-    <div class="other-header">다른 영상들</div>
-    <div id="other-videos" class="d-flex flex-wrap justify-space-between">
-        <div v-for="(video, index) in otherVideos" :key="index" class="card-wrapper">
-            <v-card class="mx-auto other-card" color="white" max-width="300" elevation="3">
-                <template v-slot:prepend>
-                    <v-icon class="red-icon">mdi-youtube</v-icon>
-                </template>
-
-                <!-- 유튜브 비디오 임베드 -->
-                <iframe
-                    :src="getYoutubeEmbedUrl(video.youtubeUrl)"
-                    width="100%"
-                    height="180"
-                    frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen
-                    style="border-radius: 10px; margin-bottom: 10px;"
-                ></iframe>
-
-                <!-- 제목 (상세 페이지로 이동 버튼) -->
-                <v-card-title class="video-title" @click="goToYoutubeDetail(video.youtubeNum)" style="cursor: pointer;">
-                    {{ video.youtubeTitle }}
-                </v-card-title>
-            </v-card>
+      </div>
+  
+      <!-- 다른 영상들 리스트 -->
+      <h2 class="section-title">다른 영상들</h2>
+      <div class="other-videos">
+        <div v-for="(video, index) in otherVideos" :key="index" class="video-card">
+          <div class="video-wrapper" @click="goToYoutubeDetail(video.youtubeNum)">
+            <iframe
+              :src="getYoutubeEmbedUrl(video.youtubeUrl)"
+              width="100%"
+              height="180"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <h3 class="video-title" @click="goToYoutubeDetail(video.youtubeNum)">{{ video.youtubeTitle }}</h3>
         </div>
+      </div>
     </div>
-</template>
+  </template>
 
 <script>
 import { useYoutubeStore } from '@/store/youtubeStore';
 import { useAuthStore } from '@/store/authStore';
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -78,9 +58,15 @@ export default {
         const authStore = useAuthStore();
         const router = useRouter();
 
-        onMounted(() => {
-            youtubeStore.fetchAllYoutubeData();
-            authStore.checkAuth(); // 사용자 인증 상태 및 역할 확인
+        const featuredVideos = ref([]);
+        const otherVideos = ref([]);
+
+        onMounted(async () => {
+            await youtubeStore.fetchAllYoutubeData();
+            await authStore.checkAuth(); // 사용자 인증 상태 및 역할 확인
+
+            featuredVideos.value = youtubeStore.featuredVideos;
+            otherVideos.value = youtubeStore.otherVideos;
         });
 
         // 유튜브 URL에서 v= 뒤의 ID 값을 추출해 임베드 주소를 생성하는 함수
@@ -99,8 +85,8 @@ export default {
         };
 
         return {
-            featuredVideos: youtubeStore.featuredVideos,
-            otherVideos: youtubeStore.otherVideos,
+            featuredVideos,
+            otherVideos,
             getYoutubeEmbedUrl,
             isAdmin: authStore.userRole === 'admin',
             goToAddYoutubePage,
@@ -111,85 +97,78 @@ export default {
 </script>
 
 <style scoped>
-/* 이달의 추천 영상 섹션 스타일 */
-.featured-header {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin: 30px 0;
-    color: #ff6347;
-    text-transform: uppercase;
+.youtube-videos-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* 다른 영상들 헤더 스타일 */
-.other-header {
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin: 40px 0 20px;
-    color: #007acc;
-    text-transform: uppercase;
+.section-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 30px 0;
+  color: #333;
 }
 
-/* 이달의 추천 영상 2개 레이아웃 */
-#featured-videos {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
-    flex-wrap: wrap;
-    gap: 30px;
+.add-button {
+  display: block;
+  margin: 20px auto;
 }
 
-#other-videos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 40px;
-    justify-content: space-evenly;
+.featured-videos, .other-videos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
 }
 
-.card-wrapper {
-    width: calc(45% - 20px);
-    margin: 10px;
-    min-width: 260px;
-    transition: transform 0.3s, box-shadow 0.3s;
+.video-card {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
-.card-wrapper.featured {
-    width: calc(45% - 20px);
-    max-width: 500px;
+.video-card:hover {
+  transform: translateY(-5px);
 }
 
-.card-wrapper:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 비율 */
+  height: 0;
+  overflow: hidden;
+  cursor: pointer;
 }
 
-.v-card {
-    border-radius: 15px;
-    transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.v-card:hover {
-    background-color: #f0f0f0;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
-}
-
-.red-icon {
-    color: red;
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .video-title {
-    font-weight: bold;
-    font-size: 1.2rem;
-    white-space: normal;
-    margin: 10px;
-    text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 15px;
+  text-align: center;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.video-title:hover {
+  color: #007bff;
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
-    .card-wrapper {
-        width: 100%;
-    }
+  .featured-videos, .other-videos {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

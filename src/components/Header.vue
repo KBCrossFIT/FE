@@ -1,102 +1,109 @@
 <template>
-  <header>
+  <header class="header">
     <div class="logoBox" @click="navigateToHome">
-      <div class="logo">ProPortFolio</div>
+      <img
+        src="/src/assets/img/LogoMVP2.png"
+        alt="ProPortFolio Logo"
+        class="logo-img"
+      />
     </div>
 
     <nav>
-      <div class="menu">
-        <span class="menu-item"
-          >포트폴리오
-          <!-- Unified Dropdown -->
-          <div class="dropdown">
-            <div class="dropdown-section">
-              <ul>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/my-portfolio') }"
-                  @click="$router.push('/my-portfolio')"
-                >
-                  내 포트폴리오
-                </li>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/make-portfolio') }"
-                  @click="$router.push('/make-portfolio')"
-                >
-                  포트폴리오 구성하기
-                </li>
-              </ul>
-            </div>
-
-            <div class="dropdown-section">
-              <ul>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/products/deposit') }"
-                  @click="navigateToProductList('deposit')"
-                >
-                  상품 리스트
-                </li>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/cart') }"
-                  @click="$router.push('/cart')"
-                >
-                  장바구니
-                </li>
-              </ul>
-            </div>
-
-            <div class="dropdown-section">
-              <ul>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/news') }"
-                  @click="$router.push('/news')"
-                >
-                  뉴스
-                </li>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/youtube') }"
-                  @click="$router.push('/youtube')"
-                >
-                  유튜브
-                </li>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/influencer') }"
-                  @click="$router.push('/influencer')"
-                >
-                  인플루언서
-                </li>
-              </ul>
-            </div>
-
-            <div class="dropdown-section">
-              <ul>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/my-investment-analyze') }"
-                  @click="$router.push('/my-investment-analyze')"
-                >
-                  내 투자성향 분석
-                </li>
-                <li
-                  class="in"
-                  :class="{ active: isActive('/investment-test-start') }"
-                  @click="$router.push('/investment-test-start')"
-                >
-                  투자성향 분석하기
-                </li>
-              </ul>
-            </div>
-          </div>
-        </span>
+      <div
+        class="menu"
+        @mouseover="showDropdown = true"
+        @mouseleave="showDropdown = false"
+      >
+        <span class="menu-item">포트폴리오</span>
         <span class="menu-item">금융상품</span>
         <span class="menu-item">Insight</span>
         <span class="menu-item">My Investment</span>
+
+        <!-- Unified Dropdown -->
+        <div v-if="showDropdown" class="dropdown">
+          <div class="dropdown-section">
+            <ul>
+              <li
+                class="in"
+                :class="{ active: isActive('/my-portfolio') }"
+                @click="$router.push('/my-portfolio')"
+              >
+                내 포트폴리오
+              </li>
+              <li
+                class="in"
+                :class="{ active: isActive('/make-portfolio') }"
+                @click="$router.push('/make-portfolio')"
+              >
+                포트폴리오 구성하기
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown-section">
+            <ul>
+              <li
+                class="in"
+                :class="{ active: isActive('/products/deposit') }"
+                @click="navigateToProductList('deposit')"
+              >
+                상품 리스트
+              </li>
+              <li
+                class="in"
+                :class="{ active: isActive('/cart') }"
+                @click="$router.push('/cart')"
+              >
+                장바구니
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown-section">
+            <ul>
+              <li
+                class="in"
+                :class="{ active: isActive('/news') }"
+                @click="$router.push('/news')"
+              >
+                뉴스
+              </li>
+              <li
+                class="in"
+                :class="{ active: isActive('/youtube') }"
+                @click="$router.push('/youtube')"
+              >
+                유튜브
+              </li>
+              <li
+                class="in"
+                :class="{ active: isActive('/influencer') }"
+                @click="$router.push('/influencer')"
+              >
+                인플루언서
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown-section">
+            <ul>
+              <li
+                class="in"
+                :class="{ active: isActive('/my-investment-analyze') }"
+                @click="$router.push('/my-investment-analyze')"
+              >
+                내 투자성향 분석
+              </li>
+              <li
+                class="in"
+                :class="{ active: isActive('/investment-test-start') }"
+                @click="$router.push('/investment-test-start')"
+              >
+                투자성향 분석하기
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </nav>
 
@@ -117,40 +124,36 @@
 </template>
 
 <script>
-import { useCookies } from "vue3-cookies";
-import instance from "@/api/index.js";
+import { useCookies } from 'vue3-cookies';
 
 export default {
-  name: "Header",
+  name: 'Header',
   data() {
     return {
       isLoggedIn: false,
       userProfile: {
-        username: "",
+        username: '',
       },
       showDropdown: false, // 드롭다운 표시 제어
     };
   },
   methods: {
-    toggleDropdown() {
-      this.showDropdown = !this.showDropdown; // 드롭다운 표시 상태 토글
-    },
     navigateToHome() {
-      this.$router.push("/");
+      this.$router.push('/');
     },
     navigateToLogin() {
-      this.$router.push("/login");
+      this.$router.push('/login');
     },
     navigateToSignup() {
-      this.$router.push("/signup");
+      this.$router.push('/signup');
     },
     navigateToProfile() {
-      this.$router.push("/myPage");
+      this.$router.push('/myPage');
     },
     navigateToProductList(category) {
       this.$router.push({
-        name: "Products",
-        params: { category: "deposit" },
+        name: 'Products',
+        params: { category: 'deposit' },
         query: { page: 1, pageSize: 10 },
       });
     },
@@ -159,17 +162,18 @@ export default {
       const { cookies } = useCookies();
 
       await instance.post("/member/logout");
+
       // Clear cookies and local storage
-      cookies.remove("Authorization");
-      cookies.remove("Refresh-Token");
-      localStorage.removeItem("user");
+      cookies.remove('Authorization');
+      cookies.remove('Refresh-Token');
+      localStorage.removeItem('user');
 
       // Update user profile state
       await this.updateUserProfile(); // Update the state
       this.navigateToHome(); // Redirect to home
     },
     updateUserProfile() {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
+      const storedUser = JSON.parse(localStorage.getItem('user'));
       if (storedUser) {
         this.isLoggedIn = true;
         this.userProfile.username = storedUser.username;
@@ -177,8 +181,9 @@ export default {
           storedUser.picture || this.userProfile.picture;
       } else {
         this.isLoggedIn = false;
-        this.userProfile.username = "";
-        this.userProfile.picture = "path/to/default/profile/pic.png";
+
+        this.userProfile.username = '';
+        this.userProfile.picture = 'path/to/default/profile/pic.png';
       }
     },
     isActive(route) {
@@ -197,40 +202,51 @@ export default {
 </script>
 
 <style scoped>
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: rgb(10, 1, 1);
   width: 100%;
-  background-color: white;
-  z-index: 1000;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 1rem 2rem;
-  display: flex; /* Flexbox 사용 */
-  align-items: center; /* 수직 중앙 정렬 */
-  justify-content: space-between; /* 양쪽 정렬 */
+  height: 100px;
+  position: relative;
+  box-sizing: border-box;
+  margin-top: 20px;
+  border-bottom: 2px solid #ddd;
 }
 
-.logoBox {
+.logoBox:hover {
   cursor: pointer;
 }
 
+.logo-img {
+  width: 155px;
+  height: auto;
+  position: absolute;
+  top: -5px;
+  left: 266px;
+}
+
 nav {
+  position: relative;
   display: flex;
-  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center;
 }
 
 .menu {
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
   display: flex;
-  gap: 2rem; /* rem 단위로 변경 */
-  position: relative; /* 드롭다운 위치 조정을 위해 추가 */
+  gap: 90px;
 }
 
 .menu-item {
-  font-size: 1.25rem;
+  font-size: 13px;
   font-weight: bold;
-  padding: 0 1rem;
-  position: relative; /* 드롭다운 위치 조정을 위해 추가 */
+  padding: 0 10px;
 }
 
 .menu-item:hover {
@@ -238,12 +254,12 @@ nav {
 }
 
 .dropdown {
-  display: none; /* 기본적으로 숨김 */
-  flex-direction: column;
+  display: flex;
+  justify-content: space-between;
   position: absolute;
-  top: 100%; /* 메뉴 바로 아래에 위치 */
-  left: 0; /* 메뉴의 왼쪽에 위치 */
-  width: 100%; /* 메뉴의 전체 너비 */
+  top: 100%; /* 헤더 바로 아래 정렬 */
+  left: 0; /* 헤더 왼쪽 가장자리에 정렬 */
+  width: 100%; /* 헤더의 전체 너비 */
   background-color: white;
   padding: 10px;
   border-radius: 8px;
@@ -255,7 +271,7 @@ nav {
 .dropdown-section {
   display: flex;
   flex-direction: column;
-  flex: 1;
+
   padding: 0 10px; /* 섹션 간의 여백 추가 */
   border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
 }
@@ -291,13 +307,17 @@ nav {
 
 .user-controls {
   display: flex;
-  align-items: center; /* 수직 중앙 정렬 */
+
+  align-items: center;
 }
 
 .profile-info {
   display: flex;
   align-items: center;
   cursor: pointer;
+
+  position: fixed;
+  right: 10px;
 }
 
 .profile-picture {
@@ -322,19 +342,7 @@ nav {
   background-color: #4d85ff;
 }
 
-@media (max-width: 768px) {
-  header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  nav {
-    margin-top: 1rem;
-  }
-
-  .menu {
-    flex-direction: column;
-    gap: 1rem;
-  }
+.in {
+  font-size: 13px;
 }
 </style>

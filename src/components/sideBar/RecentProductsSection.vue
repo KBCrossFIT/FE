@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import {useRecentViewStore} from '@/store/modules/recentView.js';
+import { useRecentViewStore } from '@/store/modules/recentView.js';
 
 export default {
   name: 'RecentProductsSection',
@@ -37,10 +37,17 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px;
-  color: grey;
+  color: white;
+  padding: 10px;
   text-decoration: none;
+  background-color: #575757;
+  border-radius: 5px;
   width: 100%;
+  height: 6vh;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: background-color 0.3s ease;
 }
 

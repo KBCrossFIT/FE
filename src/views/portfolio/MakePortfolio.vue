@@ -21,53 +21,53 @@
                 <h3>유형 별 추천 포트폴리오 구성 비율</h3>
                 <div class="PortfolioChart">
                     <div class="SelectionChar">
-                        <label>유형 선택 체크박스 버튼</label>
+                        <label>유형 선택 라디오 버튼</label>
                         <div class="CharCheck-radio">
-                            <label
-                                ><input
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char1"
                                     v-model="chart"
                                 />
-                                공격투자형</label
-                            >
-                            <label
-                                ><input
+                                공격투자형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char2"
                                     v-model="chart"
                                 />
-                                적극투자형</label
-                            >
-                            <label
-                                ><input
+                                적극투자형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char3"
                                     v-model="chart"
                                 />
-                                위험중립형</label
-                            >
-                            <label
-                                ><input
+                                위험중립형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char4"
                                     v-model="chart"
                                 />
-                                위험회피형</label
-                            >
-                            <label
-                                ><input
+                                위험회피형
+                            </label>
+                            <label>
+                                <input
                                     type="radio"
                                     name="InvestChar"
                                     value="char5"
                                     v-model="chart"
                                 />
-                                안정형</label
-                            >
+                                안정형
+                            </label>
                         </div>
                     </div>
                     <div class="ProportionChart">
@@ -137,12 +137,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template v-if="selectedProducts.length > 0">
+<<<<<<< HEAD
+                            <template v-if="filteredProducts.length > 0">
                                 <tr v-for="item in filteredProducts" :key="item.productId">
+=======
+                            <template v-if="fetchedProducts.length > 0">
+                                <tr v-for="item in fetchedProducts" :key="item.productId">
+>>>>>>> fc7414edef10c73cabd5689dbc2219b8fb77a97d
                                     <td>{{ item.productName }}</td>
                                     <td>
                                         <span v-if="item.productType === 'S'">
-                                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                                        {{ item.rsrvType === 'S' ? '적금' : '예금' }}
                                         </span>
                                         <span v-else-if="item.productType === 'B'">채권</span>
                                         <span v-else-if="item.productType === 'F'">펀드</span>
@@ -252,9 +257,15 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import VueApexCharts from 'vue3-apexcharts';
+import { useBondStore } from '@/store/modules/bond';
+import { useFundStore } from '@/store/modules/fund';
+import { useDepositStore } from '@/store/modules/deposit';
+import { useSavingStore } from '@/store/modules/saving';
+import { getBondProductDetail, getDepositProductDetail, getFundProductDetail, getSavingProductDetail } from '@/api/financeApi';
+import * as financeApi from '@/api/financeApi';
 import ModalStock from '@/components/Modal/ModalStock.vue';
 import ModalCart from '@/components/Modal/ModalCart.vue';
 
@@ -262,6 +273,14 @@ export default {
     name: 'MakePortfolio',
     components: { apexchart: VueApexCharts, ModalStock, ModalCart },
     setup() {
+        const router = useRouter();
+        const route = useRoute();
+        const bondStore = useBondStore();
+        const fundStore = useFundStore();
+        const savingStore = useSavingStore();
+        const depositStore = useDepositStore();
+        const fetchedProducts = ref([]);
+
         const selectedCategory = ref('');
         const selectedProducts = ref([]);
         const portfolioStocks = ref([]);
@@ -277,10 +296,29 @@ export default {
         // 튜토리얼 단계 정의
         const tutorialSteps = [
             {
-                element: 'exampleElement',
-                text: '이것은 튜토리얼의 첫 번째 단계입니다.',
+                element: 'wrap-center',
+                text: '포트폴리오 구성페이지에 오신 것을 환영합니다! 이곳에서 포트폴리오를 구성할 수 있습니다.',
             },
-            // 추가적인 단계 정의
+            {
+                element: 'PortfolioChart',
+                text: '여기서는 추천 포트폴리오 구성 비율을 확인할 수 있습니다. 투자 유형을 선택하세요.',
+            },
+            {
+                element: 'presentProportion',
+                text: '현재 포트폴리오의 구성 비율을 확인할 수 있습니다.',
+            },
+            {
+                element: 'ProductSelection',
+                text: '상품종류 섹션에서는 장바구니에서 상품을 가져오거나, 카테고리에 따라 상품을 필터링할 수 있습니다.',
+            },
+            {
+                element: 'MakePortfolio-stockList-section',
+                text: '주식 종류 섹션에서는 주식을 추가하거나 수정할 수 있습니다.',
+            },
+            {
+                element: 'MakePortfolioEnd-btn',
+                text: '모든 구성이 완료되면 저장 버튼을 눌러 포트폴리오를 저장하세요.',
+            },
         ];
 
         const currentStep = computed(() => tutorialSteps[currentStepIndex.value]);
@@ -290,13 +328,13 @@ export default {
             highlightElement(currentStep.value.element);
         };
 
-        const highlightElement = (elementRefName) => {
-            const element = this.$refs[elementRefName];
+        const highlightElement = (elementId) => {
+            const element = document.getElementById(elementId);
             if (element) {
                 const rect = element.getBoundingClientRect();
                 tutorialStyles.value = {
-                    top: `${rect.top}px`,
-                    left: `${rect.left}px`,
+                    top: `${rect.top + window.scrollY}px`,
+                    left: `${rect.left + window.scrollX}px`,
                     width: `${rect.width}px`,
                     height: `${rect.height}px`,
                 };
@@ -316,6 +354,43 @@ export default {
         const endTutorial = () => {
             isTutorialActive.value = false;
             currentStepIndex.value = 0;
+        };
+
+        const fetchProductDetails = async () => {
+            const productIds = JSON.parse(route.query.productIds);
+            const productTypes = JSON.parse(route.query.productTypes);
+
+            for (let index = 0; index < productIds.length; index++) {
+                const productId = productIds[index];
+                const productType = productTypes[index];
+
+                try {
+                    let productDetail;
+                    console.log(productId);
+                    console.log(productType);
+                    switch (productType) {
+                        case 'B':
+                            productDetail = await financeApi.getBondProductDetail(productId);
+                            console.log(productDetail);
+                            break;
+                        case 'S':
+                            productDetail = await financeApi.getSavingProductDetail(productId);
+                            console.log(productDetail);
+                            break;
+                        case 'F':
+                            productDetail = await financeApi.getFundProductDetail(productId);
+                            console.log(productDetail);
+                            break;
+                        default:
+                            console.warn(`Unknown product type: ${productType}`);
+                            return;
+                    }
+                    fetchedProducts.value.push({ ...productDetail, productType });
+                    console.log(fetchedProducts.value);
+                } catch (error) {
+                    console.error('Failed to fetch product detail:', error);
+                }
+            }
         };
 
         // ModalCart에서 전달받은 상품들을 추가
@@ -489,13 +564,16 @@ export default {
             isModalCartOpen.value = true;
         };
 
-        const router = useRouter();
         const goToMyPortfolio = () => router.push('/my-portfolio');
+
         const confirmCancel = () => {
             if (confirm('취소하시겠습니까?')) {
                 router.push('/my-portfolio');
             }
         };
+
+        onMounted(fetchProductDetails);
+
         return {
             selectedCategory,
             selectedProducts,
@@ -530,6 +608,7 @@ export default {
             fundInvestment,
             goToMyPortfolio,
             investmentRatios,
+            fetchedProducts,
         };
     },
 };
@@ -544,7 +623,7 @@ export default {
 #wrap-center {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 20px 40px;
     background-color: #fff;
     border-radius: 8px;
 }
@@ -559,7 +638,7 @@ export default {
     color: white;
 }
 
-.tutorial-btn-group,
+.tutorial-buttons,
 .MakePortfolioEnd-btn {
     display: flex;
     gap: 10px;

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import {useCartStore} from "@/store/modules/cart.js";
+import { useCartStore } from '@/store/modules/cart.js';
 
 export default {
   name: 'CartSection',
@@ -26,7 +26,6 @@ export default {
         section: 'CartSection',
         data: cartStore.cartItems,
       });
-
     },
   },
 };
@@ -44,20 +43,18 @@ export default {
   flex-direction: column;
   align-items: center;
   color: white;
-  padding: 15px;
+  padding: 10px;
   text-decoration: none;
   background-color: #575757;
   border-radius: 5px;
-  margin-bottom: 5px;
   width: 100%;
-  height: 5vh;
+  height: 6vh;
   position: relative;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   transition: background-color 0.3s ease;
 }
-
 
 .sidebar-link:hover {
   background-color: #645f5f;
@@ -70,7 +67,7 @@ export default {
 }
 
 .menu-text {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   opacity: 1; /* Always fully visible */
 }
 </style>
