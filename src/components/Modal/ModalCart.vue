@@ -1,195 +1,278 @@
 <template>
-    <div class="modal" @click.self="closeModal">
-        <div class="ModalCart-Header">
-            <h1>장바구니 불러오기</h1>
-        </div>
-        <hr />
-        <!-- 장바구니 상품 검색 -->
-        <div class="Cart-filter">
-            <input
-                v-model="searchQuery"
-                type="text"
-                class="form-control"
-                placeholder="상품명 검색..."
-            />
-        </div>
-        <div class="cartList">
-            <v-data-table
-                class="cartListTable"
-                :items="filteredCartItems"
-                item-value="id"
-                :headers="headers"
-                hide-default-footer
-            >
-                <template #top>
+    <div class="modal-overlay" @click.self="closeModal">
+        <div class="modal">
+            <div class="ModalCart-Header">
+                <h1>장바구니</h1>
+            </div>
+            <hr />
+
+            <!-- 상품 종류 필터 -->
+            <div class="Cart-filter">
+                <select v-model="selectedProductType" class="product-type-filter">
+                    <option value="S">예/적금</option>
+                    <option value="B">채권</option>
+                    <option value="F">펀드</option>
+                </select>
+            </div>
+
+            <!-- 장바구니 목록 -->
+            <div class="cartList">
+                <table class="cartListTable">
                     <thead>
                         <tr>
-                            <th @click="toggleAllSelect" style="cursor: pointer; width: 10%">
-                                <input type="checkbox" :checked="allSelected" />
-                                전체 선택
+                            <th style="width: 10%">
+                                <input
+                                    type="checkbox"
+                                    @change="toggleAllSelect"
+                                    :checked="allSelected"
+                                />
                             </th>
-                            <th style="width: 40%">상품명</th>
-                            <th style="width: 40%">은행/제공자</th>
-                            <th style="width: 50%">상세 정보</th>
+                            <th style="width: 20%">제공</th>
+                            <th style="width: 30%">상품명</th>
+                            <th style="width: 20%">상품 종류</th>
+                            <th style="width: 20%">수익률</th>
                         </tr>
                     </thead>
-                </template>
-                <template #item="{ item }">
-                    <tr
-                        :class="{ 'selected-row': selected.includes(item.id) }"
-                        @click="toggleSelect(item)"
-                    >
-                        <td>
-                            <input
-                                type="checkbox"
-                                :checked="selected.includes(item.id)"
-                                @change.stop="toggleSelect(item)"
-                            />
-                        </td>
-                        <td>{{ item.productName }}</td>
-                        <td>{{ item.provider }}</td>
-                        <td>
-                            <div>
-                                상품 유형: {{ item.productType }}<br />
-                                기대수익률: {{ item.expectedReturn }}%
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-            </v-data-table>
-        </div>
+                    <tbody>
+                        <tr
+                            v-for="item in paginatedCartItems"
+                            :key="item.cartId"
+                            :class="{ 'selected-row': selected.includes(item.cartId) }"
+                            @click="toggleSelect(item)"
+                        >
+                            <td>
+                                <input type="checkbox" :value="item.cartId" v-model="selected" />
+                            </td>
+                            <td>{{ item.provider }}</td>
+                            <td>{{ item.productName }}</td>
+                            <td>
+                                <span v-if="item.productType === 'S'">{{
+                                    item.rsrvType === 'S' ? '적금' : '예금'
+                                }}</span>
+                                <span v-else-if="item.productType === 'B'">채권</span>
+                                <span v-else-if="item.productType === 'F'">펀드</span>
+                                <span v-else>기타</span>
+                            </td>
+                            <td :style="getColorStyle(item.expectedReturn)">
+                                <span v-if="item.expectedReturn > 0"
+                                    >+{{ item.expectedReturn }}%</span
+                                >
+                                <span v-else-if="item.expectedReturn < 0"
+                                    >{{ item.expectedReturn }}%</span
+                                >
+                                <span v-else>{{ item.expectedReturn }}%</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="ModalCart-btn">
-            <v-btn @click="addToPortfolio">포트폴리오에 추가하기</v-btn>
-            <v-btn @click="closeModal">모달 닫기</v-btn>
+            <!-- 페이지네이션 -->
+            <div class="pagination-controls">
+                <button @click="changePage(-1)" :disabled="currentPage === 1">이전</button>
+                <span>{{ currentPage }} / {{ totalPages }}</span>
+                <button @click="changePage(1)" :disabled="currentPage === totalPages">다음</button>
+            </div>
+
+            <!-- 하단 버튼들 -->
+            <div class="ModalCart-btn">
+                <button @click="addToPortfolio">추가하기</button>
+                <button @click="closeModal">닫기</button>
+            </div>
         </div>
     </div>
 </template>
 
-<script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useCartStore } from '@/store/modules/cart';
+<script>
+import { ref, computed, onMounted, watch } from 'vue';
+import {
+    getDepositProductDetail,
+    getSavingProductDetail,
+    getFundProductDetail,
+    getBondProductDetail,
+} from '@/api/financeApi.js';
+import { getCartList } from '@/api/cartApi';
 
-// Pinia 스토어를 호출하여 사용
-const cartStore = useCartStore();
+export default {
+    name: 'ModalCart',
+    setup(props, { emit }) {
+        const selected = ref([]);
+        const selectedProductType = ref('');
+        const cartItems = ref([]);
+        const currentPage = ref(1);
+        const itemsPerPage = ref(4);
 
-// 모달 닫기용 emit
-const emit = defineEmits(['close', 'add-items']);
+        onMounted(async () => {
+            try {
+                cartItems.value = await getCartList();
+            } catch (error) {
+                console.error('장바구니 데이터를 불러오는 중 오류 발생:', error);
+                alert('장바구니 정보를 불러오는 중 오류가 발생했습니다.');
+            }
+        });
 
-// 장바구니 아이템을 가져오는 메서드 호출
-onMounted(async () => {
-    try {
-        await cartStore.getCartItems(); // 데이터 가져오기
-        console.log('장바구니 아이템:', cartStore.cartItems); // 데이터 로드 후 출력
-    } catch (error) {
-        console.error('장바구니 아이템 가져오기 오류:', error);
-    }
-});
+        const filteredCartItems = computed(() => {
+            return cartItems.value.filter((item) => {
+                const matchesType = selectedProductType.value
+                    ? item.productType === selectedProductType.value
+                    : true;
+                return matchesType;
+            });
+        });
 
-// 검색어와 선택된 항목을 관리
-const searchQuery = ref('');
-const selected = ref([]);
+        const paginatedCartItems = computed(() => {
+            const start = (currentPage.value - 1) * itemsPerPage.value;
+            const end = start + itemsPerPage.value;
+            return filteredCartItems.value.slice(start, end);
+        });
 
-// 테이블 헤더
-const headers = [
-    { text: '선택', value: 'select', align: 'center' },
-    { text: '상품 명', value: 'productName', align: 'center' },
-    { text: '은행/제공자', value: 'provider', align: 'center' },
-    { text: '상세 정보', value: 'details', align: 'start' },
-];
+        const totalPages = computed(() => {
+            return Math.ceil(filteredCartItems.value.length / itemsPerPage.value) || 1;
+        });
 
-// 필터된 장바구니 아이템 (cartStore.cartItems를 사용)
-const filteredCartItems = computed(() => {
-    return cartStore.cartItems.filter((item) => {
-        return item.productName.toLowerCase().includes(searchQuery.value.toLowerCase());
-    });
-});
+        const toggleSelect = (item) => {
+            const index = selected.value.indexOf(item.cartId);
+            if (index > -1) {
+                selected.value.splice(index, 1);
+            } else {
+                selected.value.push(item.cartId);
+            }
+        };
 
-// 모든 상품이 선택되었는지 여부
-const allSelected = computed(() => {
-    return (
-        selected.value.length === filteredCartItems.value.length &&
-        filteredCartItems.value.length > 0
-    );
-});
+        const toggleAllSelect = () => {
+            if (allSelected.value) {
+                selected.value = [];
+            } else {
+                selected.value = paginatedCartItems.value.map((item) => item.cartId);
+            }
+        };
 
-// 아이템 선택/해제 토글
-const toggleSelect = (item) => {
-    const index = selected.value.indexOf(item.id);
-    if (index > -1) {
-        selected.value.splice(index, 1); // 선택 해제
-    } else {
-        selected.value.push(item.id); // 선택
-    }
-};
+        const allSelected = computed(() => {
+            return (
+                selected.value.length > 0 &&
+                selected.value.length === paginatedCartItems.value.length
+            );
+        });
 
-// 전체 선택/해제 토글
-const toggleAllSelect = () => {
-    if (selected.value.length === filteredCartItems.value.length) {
-        selected.value = []; // 모든 선택 해제
-    } else {
-        selected.value = filteredCartItems.value.map((item) => item.id); // 모든 선택
-    }
-};
+        const changePage = (direction) => {
+            currentPage.value += direction;
+        };
 
-// 포트폴리오에 추가
-const addToPortfolio = () => {
-    if (selected.value.length === 0) {
-        alert('선택한 상품이 없습니다.');
-        return;
-    }
-    const selectedProducts = cartStore.cartItems.filter((item) => selected.value.includes(item.id));
-    console.log('포트폴리오에 추가할 상품:', selectedProducts);
-    emit('add-items', selectedProducts); // 부모 컴포넌트로 선택된 상품들 전달
-    closeModal(); // 모달 닫기
-};
+        watch(selectedProductType, () => {
+            currentPage.value = 1;
+            selected.value = [];
+        });
 
-// 모달 닫기
-const closeModal = () => {
-    emit('close');
+        const getColorStyle = (value) => ({
+            color: value > 0 ? 'red' : value < 0 ? 'blue' : 'black',
+        });
+
+        const addToPortfolio = async () => {
+            if (selected.value.length === 0) {
+                alert('선택한 상품이 없습니다.');
+                return;
+            }
+
+            try {
+                const selectedProducts = await Promise.all(
+                    selected.value.map(async (cartId) => {
+                        const item = cartItems.value.find((item) => item.cartId === cartId);
+                        let productDetails;
+
+                        if (item.productType === 'S') {
+                            if (item.rsrvType === null) {
+                                productDetails = await getDepositProductDetail(item.productId);
+                            } else {
+                                productDetails = await getSavingProductDetail(item.productId);
+                            }
+                        } else if (item.productType === 'F') {
+                            productDetails = await getFundProductDetail(item.productId);
+                        } else if (item.productType === 'B') {
+                            productDetails = await getBondProductDetail(item.productId);
+                        }
+
+                        return { ...productDetails };
+                    })
+                );
+
+                emit('add-items', selectedProducts);
+                closeModal();
+            } catch (error) {
+                console.error('상품 세부 정보를 가져오는 중 오류 발생:', error);
+                alert('상품 정보를 불러오는 중 오류가 발생했습니다.');
+            }
+        };
+
+        const closeModal = () => {
+            emit('close');
+        };
+
+        return {
+            selected,
+            selectedProductType,
+            paginatedCartItems,
+            toggleSelect,
+            toggleAllSelect,
+            addToPortfolio,
+            closeModal,
+            allSelected,
+            currentPage,
+            totalPages,
+            changePage,
+            getColorStyle,
+        };
+    },
 };
 </script>
 
 <style scoped>
-.modal {
+.modal-overlay {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 1080px;
-    height: auto;
-    display: flex;
-    flex-direction: column;
+    width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
 }
 
 .ModalCart-Header {
     text-align: center;
-    padding: 10px;
 }
 
 .Cart-filter {
-    margin: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.product-type-filter {
+    padding: 5px;
 }
 
 .cartListTable {
     width: 100%;
+    border-collapse: collapse;
 }
 
-.cartList th {
-    text-align: center;
-    background-color: #f2f2f2;
-    padding: 12px;
-    height: auto;
-    width: auto;
-}
-
-.cartList td {
-    padding: 12px;
+.cartListTable th,
+.cartListTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
     text-align: center;
 }
 
@@ -200,11 +283,32 @@ const closeModal = () => {
 .ModalCart-btn {
     display: flex;
     justify-content: flex-end;
-    margin: 10px;
+    margin-top: 15px;
+    gap: 10px;
 }
 
-.ModalCart-btn v-btn {
+.ModalCart-btn button {
+    padding: 10px 20px;
     background-color: #4db6ac;
-    margin-left: 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.ModalCart-btn button:hover {
+    background-color: #399d91;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.pagination-controls button {
+    padding: 5px 10px;
 }
 </style>

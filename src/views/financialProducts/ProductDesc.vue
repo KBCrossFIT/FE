@@ -103,6 +103,7 @@ import {
     getBondProductDetail,
     getFundProductDetail,
 } from '@/api/financeApi.js';
+import { useRecentViewStore } from '@/store/modules/recentView.js';
 
 export default {
     data() {
@@ -114,6 +115,12 @@ export default {
             isDepositOrSaving: false, // 예/적금 여부
             isBond: false, // 채권 여부
             isFund: false, // 펀드 여부
+            newRecentViewItem: {
+                productId: null,
+                productType: null,
+                productName: null,
+                rsrvType: null,
+            },
         };
     },
     created() {
@@ -141,6 +148,22 @@ export default {
                 this.isBond = true;
             }
         },
+
+        addRecentViewItem(newRecentViewItem) {
+            newRecentViewItem.productId = this.productId;
+            newRecentViewItem.productType = this.productType;
+            newRecentViewItem.productName = this.getProductName(this.productDetails);
+
+            try {
+                useRecentViewStore().addRecentViewItem(newRecentViewItem);
+            } catch (error) {
+                console.error('최근 본 상품 추가 중 에러 발생', error);
+            }
+            this.newRecentViewItem.productId = null;
+            this.newRecentViewItem.productName = null;
+            this.newRecentViewItem.productType = null;
+        },
+
         async fetchProductDetails() {
             this.isLoading = true;
             try {
@@ -160,6 +183,7 @@ export default {
 
                 if (data) {
                     this.productDetails = data;
+                    this.addRecentViewItem(this.newRecentViewItem);
                 } else {
                     this.productDetails = null;
                 }
@@ -187,10 +211,12 @@ export default {
             const label = productLabelMapping.deposit[key] || productLabelMapping.saving[key];
             return label && !label.includes('삭제') ? label : null;
         },
+
         getLabelForBondOrFund(key) {
             const label = productLabelMapping.bond[key] || productLabelMapping.fund[key];
             return label && !label.includes('삭제') ? label : null;
         },
+
         getProductDetailsWithFilteredKeys(productDetails) {
             const filteredProductDetails = {};
             Object.keys(productDetails).forEach((key) => {

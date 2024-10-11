@@ -1,149 +1,120 @@
 <template>
-    <div class="app-container">
-        <div class="uiNavAside" ref="sidebar">
-            <ul class="nav-aside">
-                <div class="button-container">
-                    <!-- Sidebar Menu Components -->
-                    <SidebarMenu1
-                        :activeDropdown="activeDropdown"
-                        :portfolios="portfolios"
-                        @goToCreatePortfolio="goToCreatePortfolio"
-                        @openSidePanel="openSidePanel"
-                    />
-                    <SidebarMenu2 :cart="cart" @openSidePanel="openSidePanel" />
-                    <RecentProductsSection
-                        :recentProducts="recentProducts"
-                        @openSidePanel="openSidePanel"
-                    />
-                </div>
-            </ul>
+  <div class="app-container" ref="sidebarContainer">
+    <div class="uiNavAside" ref="sidebar">
+      <ul class="nav-aside">
+        <div class="button-container">
+          <!-- Sidebar Menu Components -->
+          <SidebarMenu1 :portfolios="portfolios" @openSidePanel="toggleSidePanel" />
+          <SidebarMenu2 :cart="cart" @openSidePanel="toggleSidePanel" />
+          <SidebarMenu3 :recentProducts="recentProducts" @openSidePanel="toggleSidePanel" />
         </div>
-
-        <!-- Side Panel -->
-        <SidePanel
-            :isVisible="isSidePanelOpen"
-            :panelTitle="panelTitle"
-            @close="isSidePanelOpen = false"
-        >
-            <div v-if="activeSection === 'PortfolioSection'">
-                <ul v-if="panelData.length > 0">
-                    <li v-for="portfolio in panelData" :key="portfolio.id">
-                        {{ portfolio.portfolioName }} - 총액: {{ portfolio.total }}원
-                    </li>
-                </ul>
-                <p v-else>포트폴리오 데이터가 없습니다.</p>
-            </div>
-        </SidePanel>
+      </ul>
     </div>
+
+    <!-- Side Panel Component -->
+    <SidePanel
+        v-if="isSidePanelOpen"
+        :title="panelTitle"
+        :data="panelData"
+        :section="activeSection"
+        @close="isSidePanelOpen = false"
+    />
+  </div>
 </template>
 
 <script>
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import SidebarMenu1 from './sideBar/PortfolioSection.vue';
 import SidebarMenu2 from './sideBar/CartSection.vue';
-import RecentProductsSection from './sideBar/RecentProductsSection.vue';
+import SidebarMenu3 from './sideBar/RecentProductsSection.vue';
 import SidePanel from './sideBar/SidePanel.vue';
-import { ref } from 'vue';
+import router from "@/router/index.js";
 
 export default {
-    name: 'SideBar',
-    components: {
-        SidebarMenu1,
-        SidebarMenu2,
-        RecentProductsSection,
-        SidePanel,
-    },
-    setup() {
-        const portfolios = ref([]);
-        const cart = ref([]);
-        const recentProducts = ref([]);
+  name: 'SideBar',
+  components: {
+    SidebarMenu1,
+    SidebarMenu2,
+    SidebarMenu3,
+    SidePanel,
+  },
+  setup() {
+    const portfolios = ref([]);
+    const cart = ref([]);
+    const recentProducts = ref([]);
 
-        const isSidePanelOpen = ref(false);
-        const panelTitle = ref('');
-        const activeSection = ref('');
-        const panelData = ref([]); // The data to be passed to the side panel
+    const isSidePanelOpen = ref(false);
+    const panelTitle = ref('');
+    const activeSection = ref('');
+    const panelData = ref([]);
+    const sidebarContainer = ref(null);
 
-        // Function to open the side panel with the relevant data
-        const openSidePanel = (payload) => {
-            panelTitle.value = payload.title; // Set the title of the panel
-            activeSection.value = payload.section; // Set the active section
-            panelData.value = payload.data; // Set the data to be displayed in the panel
-            isSidePanelOpen.value = true; // Open the side panel
-        };
+    // 패널 열기/닫기 함수 (클릭한 메뉴와 동일한 섹션이 열려 있으면 닫음)
+    const toggleSidePanel = (payload) => {
+      if (isSidePanelOpen.value && activeSection.value === payload.section) {
+        isSidePanelOpen.value = false;
+      } else {
+        panelTitle.value = payload.title;
+        activeSection.value = payload.section;
+        panelData.value = payload.data;
+        isSidePanelOpen.value = true;
+      }
+    };
 
-        return {
-            portfolios,
-            cart,
-            recentProducts,
-            isSidePanelOpen,
-            panelTitle,
-            activeSection,
-            panelData,
-            openSidePanel,
-        };
-    },
+    // 라우터 이동 후 사이드 패널 닫기
+    onMounted(() => {
+      router.afterEach(() => {
+        isSidePanelOpen.value = false;
+      });
+      document.addEventListener('click', handleClickOutside);
+    });
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleClickOutside);
+    });
+
+    // 사이드바 외부 클릭 시 닫기
+    const handleClickOutside = (event) => {
+      if (sidebarContainer.value && !sidebarContainer.value.contains(event.target)) {
+        isSidePanelOpen.value = false;
+      }
+    };
+
+    return {
+      portfolios,
+      cart,
+      recentProducts,
+      isSidePanelOpen,
+      panelTitle,
+      activeSection,
+      panelData,
+      toggleSidePanel,
+      sidebarContainer,
+    };
+  },
 };
 </script>
 
 <style scoped>
-/* Styles for the sidebar and side panel */
 .app-container {
-    display: flex;
+  display: flex;
 }
-
 .uiNavAside {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 90px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    z-index: 9999;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: rgb(233, 233, 233);
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 90px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgb(233, 233, 233);
 }
-
-.nav-aside {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
 .button-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.nav-aside li {
-    text-align: center;
-    flex-grow: 0;
-    margin: 0;
-}
-
-.nav-aside a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-    padding: 10px;
-    text-decoration: none;
-    background-color: #e2dfdf;
-    width: 100%;
-    border-radius: 5px;
-    box-sizing: border-box;
-}
-
-.nav-aside li:hover a {
-    background-color: #575757;
-}
-
-.menu-text {
-    font-size: 0.9rem;
-    margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 </style>

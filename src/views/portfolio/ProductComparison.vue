@@ -1,25 +1,18 @@
 <template>
     <div class="CandidatesPick-container">
         <h1>상품 비교 페이지</h1>
+        <hr />
+        <br />
         <div class="search-filter">
             <!-- 상품 필터 -->
             <div class="button-group">
-                <v-btn
-                    :class="{ active: selectedCategory === 'saving' }"
-                    @click="selectCategory('saving')"
-                >
+                <v-btn :class="{ active: selectedCategory === 'S' }" @click="selectCategory('S')">
                     예/적금
                 </v-btn>
-                <v-btn
-                    :class="{ active: selectedCategory === 'bond' }"
-                    @click="selectCategory('bond')"
-                >
+                <v-btn :class="{ active: selectedCategory === 'B' }" @click="selectCategory('B')">
                     채권
                 </v-btn>
-                <v-btn
-                    :class="{ active: selectedCategory === 'fund' }"
-                    @click="selectCategory('fund')"
-                >
+                <v-btn :class="{ active: selectedCategory === 'F' }" @click="selectCategory('F')">
                     펀드
                 </v-btn>
             </div>
@@ -33,123 +26,386 @@
             </div>
 
             <!-- 확인 메세지 박스-->
-            <div v-if="confirmMessage" class="alert-confirm">
+            <div v-else-if="confirmMessage" class="alert-confirm">
                 {{ confirmMessage }}
             </div>
-        </div>
 
-        <!-- 장바구니 상품 카드 표시 위치 -->
-        <div class="product-list">
-            <div v-for="product in paginatedProducts" :key="product.id" class="product-card card">
-                <div class="card-body" @click="addToCompare(product)">
-                    <h5 class="card-title">{{ product.productName }}</h5>
-                    <p class="card-text">
-                        <span v-if="product.type === 'deposit' || product.type === 'saving'">
-                            금융회사명: {{ product.korCoNm }} <br />
-                            기본금리: {{ getRate(product.productId, 12).intrRate }}%<br />
-                            최고금리: {{ getRate(product.productId, 12).intrRate2 }}%<br />
-                        </span>
-
-                        <span v-else-if="product.type === 'bond'">
-                            ISIN 코드명: {{ product.isinCdNm }}<br />
-                            채권발행일자: {{ product.bondIssuDt }}<br />
-                            채권금리: {{ product.bondSrfcInrt }}%<br />
-                        </span>
-
-                        <span v-else-if="product.type === 'fund'">
-                            회사명: {{ product.companyNm }}<br />
-                            펀드유형: {{ product.fundType }}<br />
-                            위험도: {{ product.riskLevel }}<br />
-                            12개월 수익률: {{ product.yield12 }}%<br />
-                        </span>
-
-                        <span v-else> 수익률 정보 없음<br /><br /><br /> </span>
-                    </p>
-                </div>
+            <!-- 일반 메시지 박스 -->
+            <div v-else class="alert-normal">
+                {{ normalMessage }}
             </div>
         </div>
 
-        <div class="text-center">
+        <!-- 로딩 상태 표시 -->
+        <div v-if="loading" class="loading">로딩 중...</div>
+
+        <!-- 장바구니 상품 카드 표시 위치 -->
+        <div v-else class="product-list">
+            <div
+                v-for="product in paginatedProducts"
+                :key="product.productId"
+                :class="['product-card', { isInCompare: isProductInCompare(product) }]"
+            >
+                <div class="card-body" @click="addToCompare(product)">
+                    <!-- 카드 헤더(상품 유형, 제공자) -->
+                    <div class="card-header">
+                        <!-- 상품 유형 -->
+                        <span class="product-type">
+                            <span v-if="product.productType === 'S'">{{
+                                product.rsrvType === '' ? '예금' : '적금'
+                            }}</span>
+                            <span v-else-if="product.productType === 'B'">채권</span>
+                            <span v-else-if="product.productType === 'F'">펀드</span>
+                        </span>
+
+                        <!-- 제공자 명 -->
+                        <span class="korconm">
+                            <span v-if="product.productType === 'S'">
+                                {{
+                                    detailedProducts[product.productId]?.products[0]?.korCoNm ||
+                                    product.kor_co_nm
+                                }}
+                            </span>
+
+                            <span v-else-if="product.productType === 'F'">
+                                {{
+                                    detailedProducts[product.productId]?.companyNm ||
+                                    product.companyNm
+                                }}
+                            </span>
+
+                            <span v-else-if="product.productType === 'B'">
+                                {{
+                                    detailedProducts[product.productId]?.bondIsurNm ||
+                                    product.bondIsurNm
+                                }}
+                            </span>
+                        </span>
+                    </div>
+
+                    <!-- 상품명 -->
+                    <h5 class="card-title">{{ product.productName }}</h5>
+
+                    <!-- 기타 정보 (기본금리 및 최고금리 또는 기타 정보) -->
+                    <div class="rate-info">
+                        <div class="rate-item" v-if="product.productType === 'S'">
+                            <div class rate-item-a>
+                                <strong> 기본금리 </strong><br />
+                                {{
+                                    detailedProducts[product.productId]?.rates[0]?.intrRate ||
+                                    '정보 없음'
+                                }}%
+                            </div>
+
+                            <div class rate-item-b>
+                                <strong> 최고금리 </strong><br />
+                                {{
+                                    detailedProducts[product.productId]?.rates[0]?.intrRate2 ||
+                                    '정보 없음'
+                                }}%
+                            </div>
+                        </div>
+                        <div class="rate-item" v-else-if="product.productType === 'B'">
+                            <div class rate-item-a>
+                                <strong> 채권발행일자 </strong><br />
+                                {{
+                                    detailedProducts[product.productId]?.bondIssuDt ||
+                                    product.bondIssuDt
+                                }}
+                            </div>
+                            <div class rate-item-b>
+                                <strong> 채권금리 </strong><br />
+                                {{
+                                    detailedProducts[product.productId]?.bondSrfcInrt ||
+                                    product.bondSrfcInrt
+                                }}%
+                            </div>
+                        </div>
+
+                        <div class="rate-item" v-else-if="product.productType === 'F'">
+                            <div class rate-item-a>
+                                <strong> 펀드유형 </strong><br />
+                                {{
+                                    detailedProducts[product.productId]?.fundType ||
+                                    product.fundType
+                                }}
+                            </div>
+
+                            <div class rate-item-b>
+                                <strong> 12개월 수익률 </strong><br />
+                                {{
+                                    detailedProducts[product.productId]?.yield12 || product.yield12
+                                }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="paginatedProducts.length === 0" class="no-products">
+                <p>해당 카테고리에 상품이 없습니다.</p>
+            </div>
+        </div>
+
+        <div class="text-center" v-if="!loading && totalPages > 1">
             <v-pagination v-model="page" :length="totalPages" :total-visible="4"></v-pagination>
         </div>
     </div>
-
+    <br /><br />
+    <!-- 3개 선택 상품 비교 카드 섹션 -->
     <div class="CandidatesCompare-container">
         <h1>비교군 목록</h1>
+        <hr />
         <div class="CandidatesCompare-body">
-            <h3>최대 세 카드(compare) 담을 수 있는 박스</h3>
             <v-btn @click="clearAllProducts">일괄 비우기</v-btn>
             <div class="compare-cards">
                 <div
-                    v-for="(product, index) in compare"
-                    :key="product.id"
-                    class="compare-card"
-                    @click="removeFromCompare(index)"
+                    v-for="(product, index) in compareWithEmptySlots"
+                    :key="index"
+                    :class="['compare-card', { 'empty-card': product.isEmpty }]"
+                    @click="!product.isEmpty && removeFromCompare(index)"
                 >
-                    <h5 class="card-title">{{ product.productName }}</h5>
-                    <p class="card-text">
-                        <span v-if="product.type === 'deposit' || product.type === 'saving'">
-                            금융회사명: {{ product.korCoNm }} <br />
-                            기본금리: {{ getRate(product.productId, 12).intrRate }}%<br />
-                            최고금리: {{ getRate(product.productId, 12).intrRate2 }}%<br />
-                        </span>
+                    <!-- 해당 박스가 비어있다면 빈 슬롯 표시 -->
+                    <template v-if="product.isEmpty">
+                        <p class="empty-placeholder" @click="scrollToCandidatesPick">빈 슬롯</p>
+                    </template>
+                    <!-- 비어있지 않다면 내용 표시 -->
+                    <template v-else>
+                        <!-- 카드 헤더(상품 유형, 제공자) -->
+                        <div class="card-header">
+                            <!-- 상품 유형 -->
+                            <span class="product-type">
+                                <span v-if="product.productType === 'S'">{{
+                                    product.rsrvType === '' ? '예금' : '적금'
+                                }}</span>
+                                <span v-else-if="product.productType === 'B'">채권</span>
+                                <span v-else-if="product.productType === 'F'">펀드</span>
+                            </span>
 
-                        <span v-else-if="product.type === 'bond'">
-                            ISIN 코드명: {{ product.isinCdNm }}<br />
-                            채권발행일자: {{ product.bondIssuDt }}<br />
-                            채권금리: {{ product.bondSrfcInrt }}%<br />
-                        </span>
+                            <!-- 제공자 명 -->
+                            <span class="korconm">
+                                <span v-if="product.productType === 'S'">
+                                    {{
+                                        detailedProducts[product.productId]?.products[0]?.korCoNm ||
+                                        product.kor_co_nm
+                                    }}
+                                </span>
 
-                        <span v-else-if="product.type === 'fund'">
-                            회사명: {{ product.companyNm }}<br />
-                            펀드유형: {{ product.fundType }}<br />
-                            위험도: {{ product.riskLevel }}<br />
-                            12개월 수익률: {{ product.yield12 }}%<br />
-                        </span>
+                                <span v-else-if="product.productType === 'F'">
+                                    {{
+                                        detailedProducts[product.productId]?.companyNm ||
+                                        product.companyNm
+                                    }}
+                                </span>
 
-                        <span v-else> 수익률 정보 없음<br /><br /><br /> </span>
-                    </p>
-                </div>
-                <div v-if="compare.length === 0" class="no-cards">
-                    <p>비교할 카드를 선택하세요.</p>
+                                <span v-else-if="product.productType === 'B'">
+                                    {{
+                                        detailedProducts[product.productId]?.bondIsurNm ||
+                                        product.bondIsurNm
+                                    }}
+                                </span>
+                            </span>
+                        </div>
+
+                        <!-- 상품 명 -->
+                        <h5 class="card-title">{{ product.productName }}</h5>
+
+                        <!-- 기타 정보 (기본금리 및 최고금리 또는 기타 정보) -->
+                        <div class="rate-info">
+                            <div class="rate-item" v-if="product.productType === 'S'">
+                                <div class rate-item-a>
+                                    <strong> 기본금리 </strong><br />
+                                    {{
+                                        detailedProducts[product.productId]?.rates[0]?.intrRate ||
+                                        '정보 없음'
+                                    }}%
+                                </div>
+
+                                <div class rate-item-b>
+                                    <strong> 최고금리 </strong><br />
+                                    {{
+                                        detailedProducts[product.productId]?.rates[0]?.intrRate2 ||
+                                        '정보 없음'
+                                    }}%
+                                </div>
+                            </div>
+                            <div class="rate-item" v-else-if="product.productType === 'B'">
+                                <div class rate-item-a>
+                                    <strong> 채권발행일자 </strong><br />
+                                    {{
+                                        detailedProducts[product.productId]?.bondIssuDt ||
+                                        product.bondIssuDt
+                                    }}
+                                </div>
+                                <div class rate-item-b>
+                                    <strong> 채권금리 </strong><br />
+                                    {{
+                                        detailedProducts[product.productId]?.bondSrfcInrt ||
+                                        product.bondSrfcInrt
+                                    }}%
+                                </div>
+                            </div>
+
+                            <div class="rate-item" v-else-if="product.productType === 'F'">
+                                <div class rate-item-a>
+                                    <strong> 펀드유형 </strong><br />
+                                    {{
+                                        detailedProducts[product.productId]?.fundType ||
+                                        product.fundType
+                                    }}
+                                </div>
+
+                                <div class rate-item-b>
+                                    <strong> 12개월 수익률 </strong><br />
+                                    {{
+                                        detailedProducts[product.productId]?.yield12 ||
+                                        product.yield12
+                                    }}%
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>
+        <br /><br />
+
+        <!-- 그래프 위치  -->
         <div class="CandidatesCompare-desc">
-            <h3>열 기준 설명(상품 별 정보) 페이지 + 막대 그래프 비교</h3>
+            <h2>막대 그래프 비교</h2>
+            <hr />
+            <br />
             <div id="chart">
                 <VueApexCharts
                     type="bar"
                     height="350"
-                    :options="chartOptions"
+                    :options="updatedChartOptions"
                     :series="series"
                 ></VueApexCharts>
             </div>
+
             <!-- 비교한 상품들의 상세 정보 카드 -->
-            <div v-if="compare.length > 0" class="product-details-container">
-                <h3>비교한 상품 상세 정보</h3>
+            <h2>비교한 상품 상세 정보</h2>
+            <hr />
+            <div class="product-details-container">
                 <div class="card-container">
                     <v-card
-                        v-for="(product, index) in compare"
-                        :key="product.id"
-                        class="desc-card"
+                        v-for="(product, index) in descWithEmptySlots"
+                        :key="index"
+                        :class="[{ 'empty-card': product.isEmpty }, 'desc-card']"
                         elevation="3"
                     >
-                        <v-card-title
-                            >{{ product.productName }} (ID: {{ product.id }})</v-card-title
-                        >
-                        <v-card-text>
-                            <p>상품 종류: {{ product.type }}</p>
-                            <p v-if="product.yield && product.yield.length > 0">
-                                수익률: {{ product.yield.join(', ') }}%
-                            </p>
-                            <p v-else>수익률 정보 없음</p>
-                        </v-card-text>
+                        <!-- 빈 슬롯인 경우 -->
+                        <template v-if="product.isEmpty">
+                            <v-card-title @click="scrollToCandidatesPick">빈 슬롯</v-card-title>
+                        </template>
+
+                        <!-- 상품 정보가 있는 경우 -->
+                        <template v-else>
+                            <v-card-title>
+                                {{ product.productName }} (ID: {{ product.productId }})
+                            </v-card-title>
+                            <v-card-text>
+                                <p>
+                                    상품 종류:
+                                    {{
+                                        product.productType === 'S'
+                                            ? product.rsrvType === ''
+                                                ? '예금'
+                                                : '적금'
+                                            : product.productType === 'B'
+                                            ? '채권'
+                                            : product.productType === 'F'
+                                            ? '펀드'
+                                            : '기타'
+                                    }}
+                                </p>
+
+                                <!-- 기본 정보 테이블 -->
+                                <table
+                                    v-if="
+                                        product.productType === 'S' ||
+                                        product.productType === 'B' ||
+                                        product.productType === 'F'
+                                    "
+                                    class="details-table"
+                                >
+                                    <thead>
+                                        <tr>
+                                            <th>항목</th>
+                                            <th>내용</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- 예/적금 -->
+                                        <tr v-if="product.productType === 'S'">
+                                            <td>금융회사명</td>
+                                            <td>
+                                                {{
+                                                    detailedProducts[product.productId]?.products[0]
+                                                        ?.provider ||
+                                                    product.korCoNm ||
+                                                    '정보 없음'
+                                                }}
+                                            </td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'S'">
+                                            <td>기본금리</td>
+                                            <td>
+                                                {{
+                                                    detailedProducts[product.productId]?.rates[0]
+                                                        ?.intrRate || '정보 없음'
+                                                }}%
+                                            </td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'S'">
+                                            <td>최고금리</td>
+                                            <td>
+                                                {{
+                                                    detailedProducts[product.productId]?.rates[0]
+                                                        ?.intrRate2 || '정보 없음'
+                                                }}%
+                                            </td>
+                                        </tr>
+
+                                        <!-- 채권 -->
+                                        <tr v-if="product.productType === 'B'">
+                                            <td>ISIN 코드명</td>
+                                            <td>{{ product.isinCdNm || '정보 없음' }}</td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'B'">
+                                            <td>채권발행일자</td>
+                                            <td>{{ product.bondIssuDt || '정보 없음' }}</td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'B'">
+                                            <td>채권금리</td>
+                                            <td>{{ product.bondSrfcInrt || 0 }}%</td>
+                                        </tr>
+
+                                        <!-- 펀드 -->
+                                        <tr v-if="product.productType === 'F'">
+                                            <td>회사명</td>
+                                            <td>{{ product.companyNm || '정보 없음' }}</td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'F'">
+                                            <td>펀드유형</td>
+                                            <td>{{ product.fundType || '정보 없음' }}</td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'F'">
+                                            <td>위험도</td>
+                                            <td>{{ product.riskLevel || '정보 없음' }}</td>
+                                        </tr>
+                                        <tr v-if="product.productType === 'F'">
+                                            <td>12개월 수익률</td>
+                                            <td>{{ product.yield12 || 0 }}%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <p v-else>수익률 정보 없음</p>
+                            </v-card-text>
+                        </template>
                     </v-card>
                 </div>
-            </div>
-            <div v-else>
-                <p>비교할 상품이 없습니다.</p>
             </div>
         </div>
     </div>
@@ -159,26 +415,89 @@
 import { ref, computed, onMounted } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { useCartStore } from '@/store/modules/cart';
+import {
+    getDepositProductDetail,
+    getSavingProductDetail,
+    getBondProductDetail,
+    getFundProductDetail,
+} from '@/api/financeApi.js';
 
 // 상태 변수 선언
 const searchQuery = ref('');
-const selectedCategory = ref('saving');
+const selectedCategory = ref('S'); // 초기 값을 'S'로 변경
 const compare = ref([]);
 const currentProductType = ref(null); // 현재 선택된 상품의 타입 저장
 const page = ref(1);
-const itemsPerPage = ref(4); // 페이지당 아이템 수
+const itemsPerPage = ref(8); // 페이지당 아이템 수
 const warningMessage = ref('');
 const confirmMessage = ref('');
+const normalMessage = ref('각 카드를 클릭하여 비교해 볼 수 있습니다.');
 const loading = ref(true); // 로딩 상태
+
+// 상세 정보 저장을 위한 상태 변수
+const detailedProducts = ref({});
 
 // Pinia 스토어 사용
 const cartStore = useCartStore();
 
-// 장바구니 아이템을 가져오는 메서드 호출
+// 카테고리 정의 가변
+const displayedCategories = computed(() => {
+    switch (selectedCategory.value) {
+        case 'S':
+            return ['기본 금리', '최고 금리'];
+        case 'B':
+            return ['채권 금리'];
+        case 'F':
+            return ['1개월 수익률', '3개월 수익률', '6개월 수익률', '12개월 수익률'];
+        default:
+            return [];
+    }
+});
+
+// 장바구니 아이템을 가져오는 메서드 호출 및 상세 정보 요청
 onMounted(async () => {
     try {
         await cartStore.getCartItems(); // 데이터 가져오기
         console.log('Cart Items:', cartStore.cartItems); // 데이터 로드 후 출력
+
+        // 상세 정보 요청을 위한 배열 생성
+        const detailPromises = cartStore.cartItems.map(async (product) => {
+            try {
+                let detailData = null;
+                if (product.productType === 'S') {
+                    // 예금/적금 타입에 따라 데이터 요청
+                    if (product.rsrvType !== null) {
+                        detailData = await getSavingProductDetail(product.productId);
+                    } else {
+                        detailData = await getDepositProductDetail(product.productId);
+                    }
+                } else if (product.productType === 'B') {
+                    // 채권 타입
+                    detailData = await getBondProductDetail(product.productId);
+                } else if (product.productType === 'F') {
+                    // 펀드 타입
+                    detailData = await getFundProductDetail(product.productId);
+                }
+
+                // 예금/적금 상품의 경우 products와 rates 데이터를 포함하는 구조로 저장
+                if (detailData) {
+                    if (product.productType === 'S') {
+                        detailedProducts.value[product.productId] = {
+                            products: detailData.products || [], // 기본 정보
+                            rates: detailData.rates || [], // 금리 정보
+                        };
+                    } else {
+                        detailedProducts.value[product.productId] = detailData;
+                    }
+                }
+            } catch (error) {
+                console.error(`Error fetching details for productId ${product.productId}:`, error);
+            }
+        });
+
+        // 모든 상세 정보 요청 완료 대기
+        await Promise.all(detailPromises);
+        console.log('Detailed Products:', detailedProducts.value);
     } catch (error) {
         console.error('Error fetching cart items:', error);
     } finally {
@@ -186,7 +505,7 @@ onMounted(async () => {
     }
 });
 
-// 차트 옵션 및 시리즈 생성
+// 차트 옵션 설정
 const chartOptions = ref({
     chart: {
         type: 'bar',
@@ -199,28 +518,73 @@ const chartOptions = ref({
         },
     },
     xaxis: {
-        categories: ['3개월', '6개월', '12개월'],
+        categories: displayedCategories,
     },
     dataLabels: {
         enabled: false,
     },
     yaxis: {
         title: {
-            text: '수익률 (%)',
+            text: '수익률 / 금리 (%)',
+        },
+    },
+    tooltip: {
+        y: {
+            formatter: function (val) {
+                return val + '%';
+            },
         },
     },
 });
 
+// 차트 옵션에 고정된 카테고리 반영
+const updatedChartOptions = computed(() => ({
+    ...chartOptions.value,
+    xaxis: {
+        categories: displayedCategories.value,
+    },
+}));
+
 // 비교한 상품의 수익률 데이터를 차트에 표시
 const series = computed(() => {
     return compare.value.map((product) => {
-        const productYield =
-            product.yield && product.yield.length > 0
-                ? product.yield.map((y) => y.intrRate || y.yield12 || 0)
-                : [0, 0, 0];
+        let dataPoints = new Array(displayedCategories.value.length).fill(0);
+        let seriesName = product.productName || '상품명 없음';
+
+        if (product.productType === 'S') {
+            // 예금/적금: 기본 금리와 최고 금리
+            const basicRate = product.rates?.[0]?.intrRate || 0;
+            const highestRate = product.rates?.[0]?.intrRate2 || 0;
+            const basicIndex = displayedCategories.value.indexOf('기본 금리');
+            const highestIndex = displayedCategories.value.indexOf('최고 금리');
+            if (basicIndex !== -1) dataPoints[basicIndex] = basicRate;
+            if (highestIndex !== -1) dataPoints[highestIndex] = highestRate;
+        } else if (product.productType === 'B') {
+            // 채권: 채권 금리
+            const bondRate = product.bondSrfcInrt || 0;
+            const bondRateIndex = displayedCategories.value.indexOf('채권 금리');
+            if (bondRateIndex !== -1) dataPoints[bondRateIndex] = bondRate;
+        } else if (product.productType === 'F') {
+            // 펀드: 1, 3, 6, 12개월 수익률
+            const yield1 = product.yield1 || 0;
+            const yield3 = product.yield3 || 0;
+            const yield6 = product.yield6 || 0;
+            const yield12 = product.yield12 || 0;
+
+            const yield1Index = displayedCategories.value.indexOf('1개월 수익률');
+            const yield3Index = displayedCategories.value.indexOf('3개월 수익률');
+            const yield6Index = displayedCategories.value.indexOf('6개월 수익률');
+            const yield12Index = displayedCategories.value.indexOf('12개월 수익률');
+
+            if (yield1Index !== -1) dataPoints[yield1Index] = yield1;
+            if (yield3Index !== -1) dataPoints[yield3Index] = yield3;
+            if (yield6Index !== -1) dataPoints[yield6Index] = yield6;
+            if (yield12Index !== -1) dataPoints[yield12Index] = yield12;
+        }
+
         return {
-            name: product.productName,
-            data: productYield,
+            name: seriesName,
+            data: dataPoints,
         };
     });
 });
@@ -228,14 +592,24 @@ const series = computed(() => {
 // 필터링된 제품 목록
 const filteredProducts = computed(() => {
     return cartStore.cartItems.filter((product) => {
-        const matchesCategory = selectedCategory.value
-            ? product.type === selectedCategory.value
-            : true;
+        let matchesCategory = true;
+        if (selectedCategory.value === 'S') {
+            matchesCategory = ['S'].includes(product.productType);
+        } else {
+            matchesCategory = product.productType === selectedCategory.value;
+        }
+
         const matchesSearch = searchQuery.value
             ? product.productName.toLowerCase().includes(searchQuery.value.toLowerCase())
             : true;
+
         return matchesCategory && matchesSearch;
     });
+});
+
+// 디버깅을 위해 필터링된 결과 출력
+filteredProducts.value.forEach((product) => {
+    console.log('Filtered Product:', product);
 });
 
 // 카테고리 선택
@@ -247,7 +621,9 @@ const selectCategory = (category) => {
 // 페이지네이션된 제품 목록
 const paginatedProducts = computed(() => {
     const start = (page.value - 1) * itemsPerPage.value;
-    return filteredProducts.value.slice(start, start + itemsPerPage.value);
+    const paginated = filteredProducts.value.slice(start, start + itemsPerPage.value);
+    console.log('Paginated Products:', paginated); // 디버깅용
+    return paginated;
 });
 
 // 전체 페이지 수
@@ -256,32 +632,43 @@ const totalPages = computed(() => {
 });
 
 // 비교 리스트에 상품을 추가하는 함수
+// 비교 리스트에 상품을 추가하거나 제거하는 함수
 const addToCompare = (product) => {
-    if (compare.value.length >= 3) {
-        warningMessage.value = '비교 리스트가 가득 찼습니다.(최대 3 상품)';
-        confirmMessage.value = '';
-        return;
-    }
+    const existingIndex = compare.value.findIndex((item) => item.productId === product.productId);
 
-    if (compare.value.find((item) => item.id === product.id)) {
-        warningMessage.value = '이미 비교 리스트에 있는 상품입니다.';
-        confirmMessage.value = '';
-        return;
-    }
+    if (existingIndex !== -1) {
+        // 상품이 이미 비교 리스트에 있을 경우 제거
+        removeFromCompare(existingIndex);
+    } else {
+        // 비교 리스트가 가득 찬 경우 경고 메시지 표시
+        if (compare.value.length >= 3) {
+            warningMessage.value = '비교 리스트가 가득 찼습니다.(최대 3 상품)';
+            confirmMessage.value = '';
+            return;
+        }
 
-    if (compare.value.length === 0) {
-        currentProductType.value = product.type;
-    }
+        // 다른 카테고리의 상품을 추가하려 할 경우 경고 메시지 표시
+        const productCategory = product.productType === 'S' ? 'S' : product.productType;
+        if (compare.value.length === 0) {
+            currentProductType.value = productCategory;
+        }
+        if (productCategory !== currentProductType.value) {
+            warningMessage.value = '같은 종류의 상품만 비교할 수 있습니다.';
+            confirmMessage.value = '';
+            return;
+        }
 
-    if (product.type !== currentProductType.value) {
-        warningMessage.value = '같은 종류의 상품만 비교할 수 있습니다.';
-        confirmMessage.value = '';
-        return;
-    }
+        // 상세 정보 통합 후 추가
+        const detailedData = detailedProducts.value[product.productId] || {};
+        const compareProduct = {
+            ...product,
+            ...detailedData,
+        };
 
-    compare.value.push(product);
-    warningMessage.value = '';
-    confirmMessage.value = `${product.productName}이(가) 비교 리스트에 추가되었습니다.`;
+        compare.value.push(compareProduct);
+        warningMessage.value = '';
+        confirmMessage.value = `${compareProduct.productName}이(가) 비교 리스트에 추가되었습니다.`;
+    }
 };
 
 // 비교 리스트에서 상품을 제거하는 함수
@@ -304,15 +691,29 @@ const clearAllProducts = () => {
     confirmMessage.value = '';
 };
 
-// getRate 함수 수정: save_trm이 없을 경우 기본값 반환
-const getRate = (productId, term) => {
-    const product = cartStore.cartItems.find((p) => p.productId === productId);
-    if (product && product.yield) {
-        // save_trm을 숫자로 변환하여 비교
-        const rate = product.yield.find((r) => Number(r.save_trm) === Number(term));
-        return rate || { intrRate: 0, intrRate2: 0 };
+// 빈 슬롯을 포함한 compare 리스트
+const compareWithEmptySlots = computed(() => {
+    const emptySlotsCount = 3 - compare.value.length;
+    return [...compare.value, ...Array(emptySlotsCount).fill({ isEmpty: true })];
+});
+
+// 빈 슬롯을 포함한 상세 정보 리스트
+const descWithEmptySlots = computed(() => {
+    const emptySlotsCount = 3 - compare.value.length;
+    return [...compare.value, ...Array(emptySlotsCount).fill({ isEmpty: true })];
+});
+
+// 비교 리스트에 있는지 확인하는 메서드
+const isProductInCompare = (product) => {
+    return compare.value.some((item) => item.productId === product.productId);
+};
+
+// 화면 이동을 위한 스크롤 메서드
+const scrollToCandidatesPick = () => {
+    const container = document.querySelector('.CandidatesPick-container');
+    if (container) {
+        container.scrollIntoView({ behavior: 'smooth' });
     }
-    return { intrRate: 0, intrRate2: 0 };
 };
 </script>
 
@@ -320,18 +721,24 @@ const getRate = (productId, term) => {
 .CandidatesPick-container {
     width: 100%;
     padding: 20px;
+    background-color: #f4f6f8;
 }
 
 .search-filter {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.button-group {
-    display: flex;
-    gap: 10px;
+.button-group .v-btn {
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .button-group .v-btn.active {
@@ -339,87 +746,261 @@ const getRate = (productId, term) => {
     color: white;
 }
 
+.button-group .v-btn:hover {
+    background-color: #3961e4;
+    color: white;
+}
+
 .alert-container {
+    display: flex;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
 .alert-warning {
     color: #856404;
     background-color: #fff3cd;
-    border-color: #ffeeba;
-    padding: 10px;
-    border: 1px solid transparent;
+    border: 1px solid #ffeeba;
+    font-size: 14px;
+    padding: 10px 15px;
     border-radius: 4px;
+    margin: 0 5px;
 }
 
 .alert-confirm {
     color: #155724;
     background-color: #d4edda;
-    border-color: #c3e6cb;
-    padding: 10px;
-    border: 1px solid transparent;
+    border: 1px solid #c3e6cb;
+    font-size: 14px;
+    padding: 10px 15px;
     border-radius: 4px;
+    margin: 0 5px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
 }
 
 .product-list {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-}
-
-.product-card {
-    width: calc(25% - 20px);
-    cursor: pointer;
-}
-
-.product-card .card-body {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    transition: box-shadow 0.3s;
-}
-
-.product-card .card-body:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.compare-cards {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
-.compare-card {
-    width: calc(33.333% - 20px);
-    padding: 20px;
-    background-color: #f1f1f1;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.compare-card:hover {
-    background-color: #e2e2e2;
-}
-
-.no-cards {
-    flex: 1;
-    text-align: center;
-    color: #777;
-}
-
-.product-details-container {
-    margin-top: 40px;
+    justify-content: center;
+    grid-template-columns: repeat(4, 1fr);
 }
 
 .card-container {
     display: flex;
-    gap: 20px;
     flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.product-card,
+.compare-card,
+.empty-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px;
+    height: 250px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s, transform 0.3s;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    flex: 1;
+}
+
+.card-title {
+    width: 100%;
+    flex: 2;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    flex: 2;
+}
+
+.rate-info {
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: space-between;
+    flex: 3;
+    color: #000000;
+}
+
+.rate-item {
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.rate-item-a,
+.rate-item-b {
+    font-size: 14px;
+}
+
+.compare-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.product-card:active {
+    transform: scale(0.9);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.compare-card:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.product-card .card-body {
+    transition: background-color 0.3s;
+}
+
+.compare-card .card-body {
+    transition: background-color 0.3s;
+}
+
+.product-card.card:hover {
+    background-color: #f7f9fc;
+}
+
+.compare-card:hover {
+    background-color: #f7f9fc;
+}
+
+.empty-card:hover {
+    background-color: #f7f9fc;
+}
+
+.product-detail {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #777;
+}
+
+.empty-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #777;
+    font-size: 10px;
+    font-style: italic;
+}
+
+.product-detail strong {
+    color: #333;
+}
+
+.no-products {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
+
+.product-details-container {
+    margin-top: 40px;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* 카드를 균등 간격으로 배치 */
+    gap: 20px;
 }
 
 .desc-card {
-    width: calc(33.333% - 20px);
+    flex: 1; /* 카드가 균등하게 공간을 차지하도록 설정 */
+    min-width: 30%; /* 최소 너비 설정 */
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.details-table th {
+    background-color: #f2f2f2;
+    color: #3961e4;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left;
+}
+
+.details-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 14px;
+    text-align: left;
+}
+
+.alert-normal {
+    font-size: 14px;
+    padding: 10px 15px;
+    color: #31708f;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    border-radius: 4px;
+}
+
+.isInCompare {
+    background-color: #e0f7fa; /* 강조 표시 색상 */
+    border: 2px solid #00796b; /* 테두리 색상 */
+    color: #00796b; /* 텍스트 색상 */
+}
+
+.product-card .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* 요소 간격 */
+}
+
+.product-type {
+    font-size: 12px;
+    font-weight: bold;
+    color: #3961e4;
+}
+
+.korconm {
+    font-size: 10px;
+    font-weight: bold;
+    text-align: right;
+    flex: 1;
 }
 </style>

@@ -13,7 +13,6 @@ import DeleteAccount from '@/views/account/profile/DeleteAccount.vue';
 import FinancialProducts from '@/views/financialProducts/FinancialProducts.vue'; // 금융 상품 페이지
 import ProductDesc from '@/views/financialProducts/ProductDesc.vue'; // 개별 상품 상세 페이지
 import Cart from '@/views/financialProducts/Cart.vue';
-import RecentlyViewed from '@/views/financialProducts/RecentlyViewed.vue';
 
 // insight
 import Influencer from '@/views/insight/Influencer.vue';
@@ -65,11 +64,6 @@ const routes = [
     component: ProductDesc,
   },
   { path: '/cart', name: 'Cart', component: Cart },
-  {
-    path: '/recently-viewed',
-    name: 'RecentlyViewed',
-    component: RecentlyViewed,
-  },
   { path: '/influencer', name: 'Influencer', component: Influencer },
   { path: '/news', name: 'News', component: News },
   { path: '/youtube', name: 'Youtube', component: Youtube },

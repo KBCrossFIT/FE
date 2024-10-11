@@ -7,7 +7,7 @@
 
             <div v-if="isTutorialActive" class="overlay"></div>
 
-            <!-- 설명 텍스트 박스 -->
+            <!-- 튜토리얼 안내 박스 -->
             <div v-if="isTutorialActive" class="tutorial-message" :style="tutorialStyles">
                 {{ currentStep.text }}
                 <div class="tutorial-buttons">
@@ -82,32 +82,34 @@
             </div>
 
             <!-- 현재 포트폴리오 구성 비율 -->
-            <div class="presentProportion">
-                <h3>현재 포트폴리오 구성 비율</h3>
 
-                <!-- 각 투자액 및 퍼센티지 표시 -->
-                <div class="presentProportion_calc">
-                    <p>
-                        예금 투자액: {{ formatCurrency(depositInvestment) }}원
-                        {{ investmentRatios.deposit }}%
-                    </p>
-                    <p>
-                        적금 투자액: {{ formatCurrency(savingInvestment) }}원
-                        {{ investmentRatios.saving }}%
-                    </p>
-                    <p>
-                        채권 투자액: {{ formatCurrency(bondInvestment) }}원
-                        {{ investmentRatios.bond }}%
-                    </p>
-                    <p>
-                        펀드 투자액: {{ formatCurrency(fundInvestment) }}원
-                        {{ investmentRatios.fund }}%
-                    </p>
-                    <p>
-                        주식 투자액: {{ formatCurrency(stockTotalInvestment) }}원
-                        {{ investmentRatios.stock }}%
-                    </p>
-                </div>
+            <!-- 각 투자액 표시 -->
+            <div class="presentProportion_calc">
+                <p>
+                    예금 투자액: {{ formatCurrency(depositInvestment) }}원
+                    {{ investmentRatios.deposit }} %
+                </p>
+                <p>
+                    적금 투자액: {{ formatCurrency(savingInvestment) }}원
+                    {{ investmentRatios.saving }} %
+                </p>
+                <p>
+                    채권 투자액: {{ formatCurrency(bondInvestment) }}원
+                    {{ investmentRatios.bond }} %
+                </p>
+                <p>
+                    펀드 투자액: {{ formatCurrency(fundInvestment) }}원
+                    {{ investmentRatios.fund }} %
+                </p>
+                <p>
+                    주식 투자액: {{ formatCurrency(stockTotalInvestment) }}원
+                    {{ investmentRatios.stock }} %
+                </p>
+            </div>
+
+            <!-- 총 투자금액 표시 -->
+            <div class="totalInvestmentAmount">
+                <h3>총 투자금액: {{ formatCurrency(totalInvestment) }}원</h3>
             </div>
 
             <!-- 상품 종류 섹션 -->
@@ -118,9 +120,9 @@
                 <div class="Product-filter">
                     <select v-model="selectedCategory">
                         <option value="">모든 카테고리</option>
-                        <option value="예적금">예/적금</option>
-                        <option value="채권">채권</option>
-                        <option value="펀드">펀드</option>
+                        <option value="S">예/적금</option>
+                        <option value="B">채권</option>
+                        <option value="F">펀드</option>
                     </select>
                 </div>
                 <div class="table-container">
@@ -129,23 +131,54 @@
                             <tr>
                                 <th>상품명</th>
                                 <th>카테고리</th>
+                                <th>상품 정보</th>
+                                <th>투자액</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <template v-if="filteredProducts.length > 0">
                                 <tr v-for="item in filteredProducts" :key="item.productId">
                                     <td>{{ item.productName }}</td>
-                                    <td>{{ item.category }}</td>
+                                    <td>
+                                        <span v-if="item.productType === 'S'">
+                                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                                        </span>
+                                        <span v-else-if="item.productType === 'B'">채권</span>
+                                        <span v-else-if="item.productType === 'F'">펀드</span>
+                                        <span v-else>기타</span>
+                                    </td>
+                                    <td>
+                                        제공자: {{ item.provider }}<br />
+                                        기대 수익률: {{ item.expectedReturn }}%
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="number"
+                                            v-model.number="item.investmentAmount"
+                                            min="0"
+                                            placeholder="투자액 입력"
+                                        />
+                                    </td>
+                                    <td>
+                                        <button @click="removeItem(item)">삭제</button>
+                                    </td>
                                 </tr>
                             </template>
                             <template v-else>
                                 <tr v-for="n in 3" :key="n">
-                                    <td colspan="2" class="empty-row">빈 항목</td>
+                                    <td colspan="5" class="empty-row">빈 항목</td>
                                 </tr>
                             </template>
                         </tbody>
                     </table>
                 </div>
+
+                <!-- 장바구니 총 투자액 표시 -->
+                <div class="totalInvestmentAmount">
+                    <h3>장바구니 총 투자액: {{ formatCurrency(cartTotalInvestment) }}원</h3>
+                </div>
+
                 <ModalCart
                     v-if="isModalCartOpen"
                     @close="isModalCartOpen = false"
@@ -168,6 +201,8 @@
                                 <th>주식명</th>
                                 <th>카테고리</th>
                                 <th>종가</th>
+                                <th>수량</th>
+                                <th>주식 투자액</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,17 +215,25 @@
                                     <td>{{ stock.stockCode }}</td>
                                     <td>{{ stock.stockName }}</td>
                                     <td>{{ stock.category }}</td>
-                                    <td>{{ formatCurrency(stock.clpr) }}</td>
+                                    <td>{{ stock.clpr }}</td>
+                                    <td>{{ stock.quantity }}</td>
+                                    <td>{{ stock.clpr * stock.quantity }}</td>
                                 </tr>
                             </template>
                             <template v-else>
                                 <tr v-for="n in 3" :key="n">
-                                    <td colspan="4" class="empty-row">빈 항목</td>
+                                    <td colspan="6" class="empty-row">빈 항목</td>
                                 </tr>
                             </template>
                         </tbody>
                     </table>
                 </div>
+
+                <!-- 주식 총 투자액 표시 -->
+                <div class="totalInvestmentAmount">
+                    <h3>주식 총 투자액: {{ formatCurrency(stockTotalInvestment) }}원</h3>
+                </div>
+
                 <ModalStock
                     v-if="isModalOpen"
                     @close="isModalOpen = false"
@@ -209,7 +252,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import VueApexCharts from 'vue3-apexcharts';
 import ModalStock from '@/components/Modal/ModalStock.vue';
@@ -259,7 +302,7 @@ export default {
             },
         ];
 
-        const currentStep = ref(tutorialSteps[0]);
+        const currentStep = computed(() => tutorialSteps[currentStepIndex.value]);
 
         const startTutorial = () => {
             isTutorialActive.value = true;
@@ -296,7 +339,27 @@ export default {
 
         // ModalCart에서 전달받은 상품들을 추가
         const addItemsToPortfolio = (items) => {
-            selectedProducts.value.push(...items);
+            items.forEach((item) => {
+                // 중복 추가 방지
+                if (
+                    !selectedProducts.value.some((product) => product.productId === item.productId)
+                ) {
+                    selectedProducts.value.push({
+                        ...item,
+                        investmentAmount: item.investmentAmount || 0,
+                    });
+                }
+            });
+        };
+
+        // 상품 삭제 함수
+        const removeItem = (item) => {
+            const index = selectedProducts.value.findIndex(
+                (product) => product.productId === item.productId
+            );
+            if (index !== -1) {
+                selectedProducts.value.splice(index, 1);
+            }
         };
 
         // ModalStock에서 전달받은 주식들을 추가
@@ -308,14 +371,93 @@ export default {
             }
         };
 
-        const isEditMode = computed(() => portfolioStocks.value.length > 0);
-        const modalButtonLabel = computed(() => (isEditMode.value ? '수정하기' : '추가하기'));
-
         // 선택된 상품들에 대한 필터링
         const filteredProducts = computed(() => {
             return selectedProducts.value.filter(
-                (product) => !selectedCategory.value || product.category === selectedCategory.value
+                (product) =>
+                    !selectedCategory.value || product.productType === selectedCategory.value
             );
+        });
+
+        const isEditMode = computed(() => portfolioStocks.value.length > 0);
+        const modalButtonLabel = computed(() => (isEditMode.value ? '수정하기' : '추가하기'));
+
+        // 장바구니 총 투자액 계산
+        const cartTotalInvestment = computed(() => {
+            return selectedProducts.value.reduce(
+                (total, item) => total + (Number(item.investmentAmount) || 0),
+                0
+            );
+        });
+
+        // 예금 총 투자액 계산
+        const depositInvestment = computed(() => {
+            return selectedProducts.value
+                .filter(
+                    (item) =>
+                        item.productType === 'S' &&
+                        (item.rsrvType === null ||
+                            item.rsrvType === undefined ||
+                            item.rsrvType === '')
+                )
+                .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
+        });
+
+        // 적금 총 투자액 계산
+        const savingInvestment = computed(() => {
+            return selectedProducts.value
+                .filter(
+                    (item) =>
+                        item.productType === 'S' &&
+                        item.rsrvType !== null &&
+                        item.rsrvType !== undefined &&
+                        item.rsrvType !== ''
+                )
+                .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
+        });
+
+        // 채권 총 투자액 계산
+        const bondInvestment = computed(() => {
+            return selectedProducts.value
+                .filter((item) => item.productType?.toUpperCase() === 'B')
+                .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
+        });
+
+        // 펀드 총 투자액 계산
+        const fundInvestment = computed(() => {
+            return selectedProducts.value
+                .filter((item) => item.productType?.toUpperCase() === 'F')
+                .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
+        });
+
+        // 주식 총 투자액 계산
+        const stockTotalInvestment = computed(() => {
+            return portfolioStocks.value.reduce(
+                (total, stock) => total + Number(stock.clpr) * Number(stock.quantity),
+                0
+            );
+        });
+
+        // 총 투자금액 계산 (장바구니 총 투자액 + 주식 총 투자액)
+        const totalInvestment = computed(() => {
+            return cartTotalInvestment.value + stockTotalInvestment.value;
+        });
+
+        // 통화 형식으로 변환하는 함수
+        const formatCurrency = (value) => {
+            return Number(value).toLocaleString();
+        };
+
+        // 투자 비율 계산
+        const investmentRatios = computed(() => {
+            const total = totalInvestment.value || 1; // 0으로 나누는 것을 방지
+            return {
+                deposit: ((depositInvestment.value / total) * 100).toFixed(2),
+                saving: ((savingInvestment.value / total) * 100).toFixed(2),
+                bond: ((bondInvestment.value / total) * 100).toFixed(2),
+                fund: ((fundInvestment.value / total) * 100).toFixed(2),
+                stock: ((stockTotalInvestment.value / total) * 100).toFixed(2),
+            };
         });
 
         // 차트 옵션
@@ -340,75 +482,23 @@ export default {
             ],
         });
 
-        // 차트 데이터 시리즈.
+        // 차트 데이터 시리즈 (예/적금, 채권, 펀드, 주식 순서)
         const series = computed(() => {
             switch (chart.value) {
                 case 'char1':
-                    return [60, 20, 10, 10];
+                    return [10, 10, 20, 60];
                 case 'char2':
-                    return [50, 30, 15, 5];
+                    return [15, 15, 20, 50];
                 case 'char3':
-                    return [40, 45, 10, 5];
+                    return [25, 25, 20, 30];
                 case 'char4':
-                    return [35, 50, 10, 5];
+                    return [35, 35, 20, 10];
                 case 'char5':
-                    return [20, 65, 10, 5];
+                    return [50, 30, 15, 5];
                 default:
                     return [0, 0, 0, 0];
             }
         });
-
-        // 투자액 계산
-        const depositInvestment = computed(() => {
-            return selectedProducts.value
-                .filter((item) => item.category === '예적금')
-                .reduce((total, item) => total + Number(item.amount), 0);
-        });
-
-        const savingInvestment = computed(() => {
-            return selectedProducts.value
-                .filter((item) => item.category === '예적금')
-                .reduce((total, item) => total + Number(item.amount), 0);
-        });
-
-        const bondInvestment = computed(() => {
-            return selectedProducts.value
-                .filter((item) => item.category === '채권')
-                .reduce((total, item) => total + Number(item.amount), 0);
-        });
-
-        const fundInvestment = computed(() => {
-            return selectedProducts.value
-                .filter((item) => item.category === '펀드')
-                .reduce((total, item) => total + Number(item.amount), 0);
-        });
-
-        const stockTotalInvestment = computed(() => {
-            return portfolioStocks.value.reduce((total, stock) => total + Number(stock.amount), 0);
-        });
-
-        // 투자 비율 계산
-        const investmentRatios = computed(() => {
-            const total =
-                depositInvestment.value +
-                savingInvestment.value +
-                bondInvestment.value +
-                fundInvestment.value +
-                stockTotalInvestment.value;
-            return {
-                deposit: total ? ((depositInvestment.value / total) * 100).toFixed(2) : 0,
-                saving: total ? ((savingInvestment.value / total) * 100).toFixed(2) : 0,
-                bond: total ? ((bondInvestment.value / total) * 100).toFixed(2) : 0,
-                fund: total ? ((fundInvestment.value / total) * 100).toFixed(2) : 0,
-                stock: total ? ((stockTotalInvestment.value / total) * 100).toFixed(2) : 0,
-            };
-        });
-
-        // 화폐 형식으로 변환하는 함수
-        const formatCurrency = (value) => {
-            if (typeof value !== 'number') return value;
-            return value.toLocaleString('ko-KR');
-        };
 
         const openModal = () => {
             isModalOpen.value = true;
@@ -425,7 +515,6 @@ export default {
                 router.push('/my-portfolio');
             }
         };
-
         return {
             selectedCategory,
             selectedProducts,
@@ -440,7 +529,6 @@ export default {
             addItemsToPortfolio,
             openModal,
             openModalCart,
-            goToMyPortfolio,
             isEditMode,
             modalButtonLabel,
             isTutorialActive,
@@ -450,20 +538,23 @@ export default {
             endTutorial,
             tutorialStyles,
             confirmCancel,
+            removeItem,
+            cartTotalInvestment,
+            stockTotalInvestment,
+            totalInvestment,
+            formatCurrency,
             depositInvestment,
             savingInvestment,
             bondInvestment,
             fundInvestment,
-            stockTotalInvestment,
+            goToMyPortfolio,
             investmentRatios,
-            formatCurrency,
         };
     },
 };
 </script>
 
 <style scoped>
-/* 기존 스타일 */
 #wrap {
     width: 100%;
     background-color: black;
@@ -557,5 +648,44 @@ export default {
     color: #aaa;
     text-align: center;
     font-style: italic;
+}
+
+/* 투자액 입력 박스와 삭제 버튼 스타일 추가 */
+.table input[type='number'] {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.table button {
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.table button:hover {
+    background-color: #d32f2f;
+}
+
+/* 총 투자금액 스타일 */
+.totalInvestmentAmount {
+    margin-top: 20px;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 각 투자액 및 퍼센티지 스타일 */
+.presentProportion_calc {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+.presentProportion_calc p {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
 }
 </style>

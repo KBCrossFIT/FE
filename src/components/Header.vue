@@ -117,6 +117,7 @@
 
 <script>
 import { useCookies } from 'vue3-cookies';
+import instance from '@/api/index.js';
 
 export default {
     name: 'Header',
@@ -153,6 +154,7 @@ export default {
         async handleLogout() {
             const { cookies } = useCookies();
 
+            await instance.post('/member/logout')
             // Clear cookies and local storage
             cookies.remove('Authorization');
             cookies.remove('Refresh-Token');
