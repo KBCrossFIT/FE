@@ -1,67 +1,98 @@
 <template>
-  <div class="youtube-detail-container" v-if="isLoading">
-    <div class="loading-message">데이터를 불러오는 중입니다...</div>
-  </div>
+  <v-container class="youtube-detail-container" v-if="isLoading">
+    <v-row>
+      <v-col>
+        <div class="loading-message">데이터를 불러오는 중입니다...</div>
+      </v-col>
+    </v-row>
+  </v-container>
 
-  <div class="youtube-detail-container" v-else-if="videoDetail && !isLoading">
-    <div class="content-wrapper">
-      <div class="intro-section">
-        <h1 class="video-title">{{ videoDetail.youtubeTitle }}</h1>
-        <div class="intro-content">
-          <!-- 영상 부분 -->
-          <div class="video-section">
-            <iframe
-              :src="getYoutubeEmbedUrl(videoDetail.youtubeUrl)"
-              width="100%"
-              height="300"
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
-          </div>
+  <v-container class="youtube-detail-container" v-else-if="videoDetail && !isLoading">
+    <v-row class="content-wrapper">
+      <v-col>
+        <v-card class="intro-section">
+          <v-card-title>
+            <h1 class="video-title">{{ videoDetail.youtubeTitle }}</h1>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="intro-content">
+            <v-col class="video-section" cols="5">
+              <v-responsive :aspect-ratio="16/9">
+                <iframe
+                  :src="getYoutubeEmbedUrl(videoDetail.youtubeUrl)"
+                  width="100%"
+                  height="100%"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                ></iframe>
+              </v-responsive>
+            </v-col>
+            <v-col class="description-section" cols="7">
+              <v-card class="intro-box" v-html="introContent"></v-card>
+            </v-col>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
-          <!-- 설명 부분 -->
-          <div class="description-section">
-            <div class="intro-box" v-html="introContent"></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <v-row class="title-section">
+      <v-col>
+        <h2 class="section-title">핵심주제</h2>
+      </v-col>
+    </v-row>
 
-    <!-- 핵심주제 제목 출력 -->
-    <div class="title-section">
-      <h2 class="section-title">핵심주제</h2>
-    </div>
+    <!-- 핵심주제 리스트 세로 배치 -->
+    <v-row v-if="mainTopics.length > 0" class="main-topic-list">
+    <v-col v-for="(topic, index) in mainTopics" :key="index" cols="12" md="6">
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-title>
+            <template v-slot:default="{ expanded }">
+              <div class="d-flex align-center">
+                <v-icon :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-right'" class="mr-2"></v-icon>
+                <span v-html="formatContent(topic.title)"></span>
+              </div>
+            </template>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <ol>
+              <li v-for="(detail, detailIndex) in topic.details" :key="detailIndex">
+                <span v-html="formatContent(detail)"></span>
+              </li>
+            </ol>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-col>
+  </v-row>
 
-    <!-- 핵심주제 슬라이드 -->
-    <div v-if="mainTopics.length > 0" class="slider-container">
-      <div class="card-slider">
-        <button @click="prevSlide" :disabled="currentSlide === 0">
-          <span class="material-icons">arrow_back</span>
-        </button>
-        <div class="topic-card" v-html="mainTopics[currentSlide]"></div>
-        <button @click="nextSlide" :disabled="currentSlide === mainTopics.length - 1">
-          <span class="material-icons">arrow_forward</span>
-        </button>
-      </div>
-    </div>
+  <v-row v-if="timelineContent.length > 0" class="timeline-section">
+    <v-col cols="12">
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-title>
+            <template v-slot:default="{ expanded }">
+              <div class="d-flex align-center">
+                <v-icon :icon="expanded ? 'mdi-chevron-down' : 'mdi-chevron-right'" class="mr-2"></v-icon>
+                <span class="font-weight-bold">타임라인 보기</span>
+              </div>
+            </template>
+          </v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <div v-for="(paragraph, index) in timelineContent" :key="index" class="timeline-content">
+              <div v-html="paragraph"></div>
+            </div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-col>
+  </v-row>
+  </v-container>
 
-    <!-- 타임라인 제목 출력 -->
-    <div v-if="timelineContent.length > 0" class="title-section">
-      <h2 class="section-title">타임라인</h2>
-    </div>
-
-    <!-- 타임라인 내용 출력 -->
-    <div v-if="timelineContent.length > 0" class="video-content">
-      <div v-for="(paragraph, index) in timelineContent" :key="index" class="content-box">
-        <div v-html="paragraph"></div>
-      </div>
-    </div>
-  </div>
-
-  <div v-else class="loading-message">
-    데이터를 찾을 수 없습니다.
-  </div>
+  <v-container v-else>
+    <div class="loading-message">데이터를 찾을 수 없습니다.</div>
+  </v-container>
 </template>
 
 <script>
@@ -77,9 +108,8 @@ export default {
     const route = useRoute();
     const isLoading = ref(true);
     const introContent = ref('');
-    const mainTopics = ref([]); // 핵심주제 한 줄 제목들
+    const mainTopics = ref([]);
     const timelineContent = ref([]);
-    const currentSlide = ref(0);
 
     const loadVideoDetail = async (youtubeNum) => {
       isLoading.value = true;
@@ -90,37 +120,42 @@ export default {
 
     const processContent = () => {
       const content = youtubeStore.selectedVideoDetail?.youtubeContext || '';
-      const cleanedContent = content.replace(/<<.*?>>/g, ''); // <<>> 패턴 제거
+      const cleanedContent = content.replace(/<<.*?>>/g, '');
       const [intro, mainPart] = cleanedContent.split('### 핵심주제');
       const [main, timeline] = mainPart.split('### 타임라인');
 
       introContent.value = marked(intro.trim());
 
-      // 한 줄 주제를 mainTopics에 저장하고 ###을 추가하여 marked 처리
       mainTopics.value = main
         .split('### ')
         .filter((section) => section.trim() !== '')
-        .map((section) => marked(`### ${section.split('\n')[0].trim()}`)); // 첫 줄만 가져오고 ### 추가
+        .map((section) => {
+          const [title, ...details] = section.split('\n').filter(line => line.trim() !== '');
+          return {
+            title: title.trim(),
+            details: details.filter(detail => detail.startsWith('-')).map(detail => detail.slice(1).trim())
+          };
+        });
 
-      if (timeline) {
-        timelineContent.value = timeline
-          .split('\n\n')
-          .map((paragraph) => marked(paragraph.trim()));
-      } else {
-        timelineContent.value = [];
-      }
+        if (timeline) {
+          timelineContent.value = timeline
+            .split('\n\n')
+            .map((paragraph) => marked(paragraph.trim()));
+        } else {
+          timelineContent.value = [];
+        }
+      };
+
+    const formatTopicTitle = (title) => {
+      return title.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     };
 
-    const prevSlide = () => {
-      if (currentSlide.value > 0) {
-        currentSlide.value--;
-      }
+    const formatContent = (content) => {
+      return content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     };
 
-    const nextSlide = () => {
-      if (currentSlide.value < mainTopics.value.length - 1) {
-        currentSlide.value++;
-      }
+    const handleTopicClick = (index) => {
+      console.log(`주제 ${index + 1} 클릭됨`);
     };
 
     onMounted(() => {
@@ -151,24 +186,21 @@ export default {
       introContent,
       mainTopics,
       timelineContent,
-      currentSlide,
-      prevSlide,
-      nextSlide,
+      handleTopicClick,
+      formatTopicTitle,
+      formatContent,
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
 .youtube-detail-container {
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .content-wrapper {
-  width: 80%;
+  width: 100%;
 }
 
 .intro-section {
@@ -176,91 +208,112 @@ export default {
   border: 1px solid #ddd;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
-}
-
-.video-title {
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 20px;
 }
 
 .intro-content {
   display: flex;
   gap: 20px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .video-section {
   flex: 1;
+  max-width: 100%;
 }
 
 .description-section {
   flex: 1;
+  max-width: 100%;
 }
 
 .intro-box {
-  padding: 30px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  height: 350px;
+  height: auto;
   overflow-y: auto;
   line-height: 1.8;
+  background-color: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  font-size: 1.3rem;
 }
 
-.slider-container {
-  width: 80%;
-  margin: 30px 0;
-  display: flex;
-  justify-content: center;
-}
-
-.card-slider {
-  display: flex;
-  align-items: center;
-  gap: 15px;
+.main-topic-list {
+  margin-top: 20px;
 }
 
 .topic-card {
-  padding: 30px;
-  border: 1px solid #ccc;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-bottom: 15px;
+  padding: 15px;
+  text-align: center;
+  background-color: #9ef0b8;
   border-radius: 10px;
-  background-color: #fff;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  text-align: center;
 }
 
-.title-section {
-  text-align: center;
-  margin: 20px 0;
+.hover-card {
+  transform: scale(1.05);
+  background-color: #7de0a0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.section-title {
-  font-size: 2rem;
+.topic-content {
+  font-size: 1.2rem;
   font-weight: bold;
-  background-color: #e6f7ff;
-  padding: 10px;
-  border-radius: 10px;
-  display: inline-block;
   color: #333;
 }
 
-.loading-message {
-  text-align: center;
+.topic-index {
   font-size: 1.5rem;
-  color: #888;
-  margin-top: 50px;
+  margin-bottom: 5px;
+  color: #1e8449;
 }
 
-/* 아이콘 버튼 스타일 */
-.material-icons {
-  font-size: 2rem;
-  cursor: pointer;
+.v-expansion-panel {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.v-expansion-panel-title {
+  padding: 12px !important;
+  min-height: 48px !important;
+  background-color: transparent !important;
+  transition: background-color 0.3s ease;
+}
+
+.v-expansion-panel-title:hover,
+.v-expansion-panel-title--active {
+  background-color: #e8f5e9 !important;
+}
+
+.v-expansion-panel-text__wrapper {
+  padding: 0 12px 12px 36px !important;
+}
+
+ol {
+  padding-left: 20px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 960px) {
+  .v-col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.timeline-section {
+  margin-top: 30px;
+}
+
+.timeline-content {
+  margin-bottom: 15px;
+}
+
+.timeline-content:last-child {
+  margin-bottom: 0;
 }
 </style>

@@ -269,7 +269,6 @@ nav {
 .dropdown-section {
   display: flex;
   flex-direction: column;
-  flex: 1;
   padding: 0 10px; /* 섹션 간의 여백 추가 */
   border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
 }
@@ -290,7 +289,6 @@ nav {
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   border-radius: 4px;
-  //text-align: middle;
 }
 
 .dropdown-section ul li:hover {
