@@ -606,7 +606,7 @@ export default {
 .search-btn {
     padding: 10px 15px;
     margin-left: 10px;
-    background-color: #007bff;
+    background-color: #7BD5C3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -658,7 +658,7 @@ export default {
 }
 
 .v-btn--active {
-    background-color: #3961e4 !important;
+    background-color: #7BD5C3 !important;
     color: white !important;
 }
 
@@ -682,7 +682,7 @@ export default {
 }
 
 .pagination-btn.active {
-    background-color: #3961e4;
+    background-color: #7BD5C3;
     color: white;
 }
 
