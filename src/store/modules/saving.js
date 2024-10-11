@@ -83,5 +83,9 @@ export const useSavingStore = defineStore('saving', {
     getSearchSavingList() {
       return this.searchSavingProducts;
     },
+    
+    getProductDetail() {
+        return this.fetchSavingProductDetail;
+    }
   },
 });
