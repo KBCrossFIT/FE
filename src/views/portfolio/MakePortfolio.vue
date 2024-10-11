@@ -137,12 +137,17 @@
                             </tr>
                         </thead>
                         <tbody>
+<<<<<<< HEAD
                             <template v-if="filteredProducts.length > 0">
                                 <tr v-for="item in filteredProducts" :key="item.productId">
+=======
+                            <template v-if="fetchedProducts.length > 0">
+                                <tr v-for="item in fetchedProducts" :key="item.productId">
+>>>>>>> fc7414edef10c73cabd5689dbc2219b8fb77a97d
                                     <td>{{ item.productName }}</td>
                                     <td>
                                         <span v-if="item.productType === 'S'">
-                                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                                        {{ item.rsrvType === 'S' ? '적금' : '예금' }}
                                         </span>
                                         <span v-else-if="item.productType === 'B'">채권</span>
                                         <span v-else-if="item.productType === 'F'">펀드</span>
@@ -252,9 +257,15 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import VueApexCharts from 'vue3-apexcharts';
+import { useBondStore } from '@/store/modules/bond';
+import { useFundStore } from '@/store/modules/fund';
+import { useDepositStore } from '@/store/modules/deposit';
+import { useSavingStore } from '@/store/modules/saving';
+import { getBondProductDetail, getDepositProductDetail, getFundProductDetail, getSavingProductDetail } from '@/api/financeApi';
+import * as financeApi from '@/api/financeApi';
 import ModalStock from '@/components/Modal/ModalStock.vue';
 import ModalCart from '@/components/Modal/ModalCart.vue';
 
@@ -262,6 +273,14 @@ export default {
     name: 'MakePortfolio',
     components: { apexchart: VueApexCharts, ModalStock, ModalCart },
     setup() {
+        const router = useRouter();
+        const route = useRoute();
+        const bondStore = useBondStore();
+        const fundStore = useFundStore();
+        const savingStore = useSavingStore();
+        const depositStore = useDepositStore();
+        const fetchedProducts = ref([]);
+
         const selectedCategory = ref('');
         const selectedProducts = ref([]);
         const portfolioStocks = ref([]);
@@ -335,6 +354,43 @@ export default {
         const endTutorial = () => {
             isTutorialActive.value = false;
             currentStepIndex.value = 0;
+        };
+
+        const fetchProductDetails = async () => {
+            const productIds = JSON.parse(route.query.productIds);
+            const productTypes = JSON.parse(route.query.productTypes);
+
+            for (let index = 0; index < productIds.length; index++) {
+                const productId = productIds[index];
+                const productType = productTypes[index];
+
+                try {
+                    let productDetail;
+                    console.log(productId);
+                    console.log(productType);
+                    switch (productType) {
+                        case 'B':
+                            productDetail = await financeApi.getBondProductDetail(productId);
+                            console.log(productDetail);
+                            break;
+                        case 'S':
+                            productDetail = await financeApi.getSavingProductDetail(productId);
+                            console.log(productDetail);
+                            break;
+                        case 'F':
+                            productDetail = await financeApi.getFundProductDetail(productId);
+                            console.log(productDetail);
+                            break;
+                        default:
+                            console.warn(`Unknown product type: ${productType}`);
+                            return;
+                    }
+                    fetchedProducts.value.push({ ...productDetail, productType });
+                    console.log(fetchedProducts.value);
+                } catch (error) {
+                    console.error('Failed to fetch product detail:', error);
+                }
+            }
         };
 
         // ModalCart에서 전달받은 상품들을 추가
@@ -508,13 +564,16 @@ export default {
             isModalCartOpen.value = true;
         };
 
-        const router = useRouter();
         const goToMyPortfolio = () => router.push('/my-portfolio');
+
         const confirmCancel = () => {
             if (confirm('취소하시겠습니까?')) {
                 router.push('/my-portfolio');
             }
         };
+
+        onMounted(fetchProductDetails);
+
         return {
             selectedCategory,
             selectedProducts,
@@ -549,6 +608,7 @@ export default {
             fundInvestment,
             goToMyPortfolio,
             investmentRatios,
+            fetchedProducts,
         };
     },
 };
