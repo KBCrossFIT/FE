@@ -49,7 +49,7 @@
                 @change="updateSelectAllState"
               />
             </td>
-            <td class="NameCursor" @click="goToPortfolioDetail(item)">
+            <td class="NameCursor" @click="goToPortfolioDetail(item.portfolioId)">
               {{ item.portfolioName }}
             </td>
             <td>{{ item.total }}원</td>
