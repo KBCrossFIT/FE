@@ -110,15 +110,15 @@ export default {
 }
 .uiNavAside {
   position: fixed;
-  right: -1px;
-  top: 138px;
+  right: -4px;
+  top: 118px;
   width: 90px;
   height: 100vh;
   display: flex;
   flex-direction: column;
   z-index: 9999;
-  border-radius: 5px;
-  border: 1px solid #e9e9e9;
+  /* border-radius: 5px; */
+  border: 0.5px solid #e9e9e9;
   padding: 10px;
   /* background-color: rgb(233, 233, 233); */
 }

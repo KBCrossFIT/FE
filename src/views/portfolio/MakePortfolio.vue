@@ -16,70 +16,70 @@
         </div>
       </div>
 
-            <!-- 추천 포트폴리오 구성 비율 -->
-            <div class="recommendProportion">
-                <h3>유형 별 추천 포트폴리오 구성 비율</h3>
-                <div class="PortfolioChart">
-                    <div class="SelectionChar">
-                        <label>유형 선택 라디오 버튼</label>
-                        <div class="CharCheck-radio">
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="InvestChar"
-                                    value="char1"
-                                    v-model="chart"
-                                />
-                                공격투자형
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="InvestChar"
-                                    value="char2"
-                                    v-model="chart"
-                                />
-                                적극투자형
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="InvestChar"
-                                    value="char3"
-                                    v-model="chart"
-                                />
-                                위험중립형
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="InvestChar"
-                                    value="char4"
-                                    v-model="chart"
-                                />
-                                위험회피형
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="InvestChar"
-                                    value="char5"
-                                    v-model="chart"
-                                />
-                                안정형
-                            </label>
-                        </div>
-                    </div>
-                    <div class="ProportionChart">
-                        <apexchart
-                            type="pie"
-                            width="380"
-                            :options="chartOptions"
-                            :series="series"
-                        ></apexchart>
-                    </div>
-                </div>
+      <!-- 추천 포트폴리오 구성 비율 -->
+      <div class="recommendProportion">
+        <h3>유형 별 추천 포트폴리오 구성 비율</h3>
+        <div class="PortfolioChart">
+          <div class="SelectionChar">
+            <label>유형 선택 라디오 버튼</label>
+            <div class="CharCheck-radio">
+              <label>
+                <input
+                    type="radio"
+                    name="InvestChar"
+                    value="char1"
+                    v-model="chart"
+                />
+                공격투자형
+              </label>
+              <label>
+                <input
+                    type="radio"
+                    name="InvestChar"
+                    value="char2"
+                    v-model="chart"
+                />
+                적극투자형
+              </label>
+              <label>
+                <input
+                    type="radio"
+                    name="InvestChar"
+                    value="char3"
+                    v-model="chart"
+                />
+                위험중립형
+              </label>
+              <label>
+                <input
+                    type="radio"
+                    name="InvestChar"
+                    value="char4"
+                    v-model="chart"
+                />
+                위험회피형
+              </label>
+              <label>
+                <input
+                    type="radio"
+                    name="InvestChar"
+                    value="char5"
+                    v-model="chart"
+                />
+                안정형
+              </label>
             </div>
+          </div>
+          <div class="ProportionChart">
+            <apexchart
+                type="pie"
+                width="380"
+                :options="chartOptions"
+                :series="series"
+            ></apexchart>
+          </div>
+        </div>
+      </div>
 
       <!-- 현재 포트폴리오 구성 비율 -->
 
@@ -327,33 +327,33 @@ export default {
     const currentStepIndex = ref(0);
     const tutorialStyles = ref({});
 
-        // 튜토리얼 단계 정의
-        const tutorialSteps = [
-            {
-                element: 'wrap-center',
-                text: '포트폴리오 구성페이지에 오신 것을 환영합니다! 이곳에서 포트폴리오를 구성할 수 있습니다.',
-            },
-            {
-                element: 'PortfolioChart',
-                text: '여기서는 추천 포트폴리오 구성 비율을 확인할 수 있습니다. 투자 유형을 선택하세요.',
-            },
-            {
-                element: 'presentProportion',
-                text: '현재 포트폴리오의 구성 비율을 확인할 수 있습니다.',
-            },
-            {
-                element: 'ProductSelection',
-                text: '상품종류 섹션에서는 장바구니에서 상품을 가져오거나, 카테고리에 따라 상품을 필터링할 수 있습니다.',
-            },
-            {
-                element: 'MakePortfolio-stockList-section',
-                text: '주식 종류 섹션에서는 주식을 추가하거나 수정할 수 있습니다.',
-            },
-            {
-                element: 'MakePortfolioEnd-btn',
-                text: '모든 구성이 완료되면 저장 버튼을 눌러 포트폴리오를 저장하세요.',
-            },
-        ];
+    // 튜토리얼 단계 정의
+    const tutorialSteps = [
+      {
+        element: 'wrap-center',
+        text: '포트폴리오 구성페이지에 오신 것을 환영합니다! 이곳에서 포트폴리오를 구성할 수 있습니다.',
+      },
+      {
+        element: 'PortfolioChart',
+        text: '여기서는 추천 포트폴리오 구성 비율을 확인할 수 있습니다. 투자 유형을 선택하세요.',
+      },
+      {
+        element: 'presentProportion',
+        text: '현재 포트폴리오의 구성 비율을 확인할 수 있습니다.',
+      },
+      {
+        element: 'ProductSelection',
+        text: '상품종류 섹션에서는 장바구니에서 상품을 가져오거나, 카테고리에 따라 상품을 필터링할 수 있습니다.',
+      },
+      {
+        element: 'MakePortfolio-stockList-section',
+        text: '주식 종류 섹션에서는 주식을 추가하거나 수정할 수 있습니다.',
+      },
+      {
+        element: 'MakePortfolioEnd-btn',
+        text: '모든 구성이 완료되면 저장 버튼을 눌러 포트폴리오를 저장하세요.',
+      },
+    ];
 
     const currentStep = computed(() => tutorialSteps[currentStepIndex.value]);
 
@@ -362,18 +362,18 @@ export default {
       highlightElement(currentStep.value.element);
     };
 
-        const highlightElement = (elementId) => {
-            const element = document.getElementById(elementId);
-            if (element) {
-                const rect = element.getBoundingClientRect();
-                tutorialStyles.value = {
-                    top: `${rect.top + window.scrollY}px`,
-                    left: `${rect.left + window.scrollX}px`,
-                    width: `${rect.width}px`,
-                    height: `${rect.height}px`,
-                };
-            }
+    const highlightElement = (elementId) => {
+      const element = document.getElementById(elementId);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        tutorialStyles.value = {
+          top: `${rect.top + window.scrollY}px`,
+          left: `${rect.left + window.scrollX}px`,
+          width: `${rect.width}px`,
+          height: `${rect.height}px`,
         };
+      }
+    };
 
     const nextStep = () => {
       if (currentStepIndex.value < tutorialSteps.length - 1) {
@@ -644,9 +644,9 @@ export default {
       const formattedStocks = portfolioStocks.value
           .filter(product => product.investmentAmount > 0)
           .map((stock) => ({
-        stockCode: stock.stockCode,
-        amount: stock.investmentAmount
-      }));
+            stockCode: stock.stockCode,
+            amount: stock.investmentAmount
+          }));
 
       return [...formattedProducts, ...formattedStocks];
     };
@@ -726,16 +726,16 @@ export default {
 }
 
 .v-btn {
-    background-color: #4db6ac;
-    color: white;
+  background-color: #4db6ac;
+  color: white;
 }
 
 .tutorial-buttons,
 .MakePortfolioEnd-btn {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 15px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 15px;
 }
 
 .overlay {
@@ -846,4 +846,3 @@ export default {
   border-radius: 4px;
 }
 </style>
-

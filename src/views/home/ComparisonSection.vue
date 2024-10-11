@@ -51,18 +51,15 @@ export default {
 </script>
 
 <style scoped>
-.all {
-  /* background-color: #d0f5ed; */
-}
 .comparison {
   display: flex;
   gap: 146px;
   padding: 60px;
   margin-top: 42px;
-  justify-content: center;
-  border: 2px solid #2d6a4f;
-
   border-radius: 10px;
+  position: relative; /* 상대 위치 지정 */
+  top: 20px;
+  left: 450px; /* 왼쪽으로 30px 이동 */
 }
 
 .comparison-item {

@@ -232,4 +232,3 @@ export default {
   margin-top: 20px; /* 버튼 간격 추가 */
 }
 </style>
-

@@ -289,6 +289,7 @@ nav {
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
   border-radius: 4px;
+  text-align: middle;
 }
 
 .dropdown-section ul li:hover {

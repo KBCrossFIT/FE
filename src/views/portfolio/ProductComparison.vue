@@ -342,9 +342,7 @@
                                             <td>
                                                 {{
                                                     detailedProducts[product.productId]?.products[0]
-                                                        ?.provider ||
-                                                    product.korCoNm ||
-                                                    '정보 없음'
+                                                        ?.korCoNm || product.kor_co_nm
                                                 }}
                                             </td>
                                         </tr>
