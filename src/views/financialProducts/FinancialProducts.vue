@@ -430,13 +430,13 @@ export default {
                     cartItem.value.productType = 'B';
                     cartItem.value.provider = product.bondIsurNm;
                     cartItem.value.productName = product.isinCdNm;
-                    cartItem.value.expectedReturn = product.yield12;
+                    cartItem.value.expectedReturn = product.bondSrfcInrt;
                     break;
                 case 'fund':
                     cartItem.value.productType = 'F';
                     cartItem.value.provider = product.companyNm;
                     cartItem.value.productName = product.productNm;
-                    cartItem.value.expectedReturn = product.bondSrfcInrt;
+                    cartItem.value.expectedReturn = product.yield12;
                     break;
             }
 

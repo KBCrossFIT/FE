@@ -113,68 +113,87 @@
             </div>
 
             <!-- 상품 종류 섹션 -->
-            <div class="ProductSelection">
-                <h1>상품종류</h1>
-                <v-btn class="cart-btn" @click="openModalCart">장바구니에서 가져오기</v-btn>
-                <hr />
-                <div class="Product-filter">
-                    <select v-model="selectedCategory">
-                        <option value="">모든 카테고리</option>
-                        <option value="S">예/적금</option>
-                        <option value="B">채권</option>
-                        <option value="F">펀드</option>
-                    </select>
-                </div>
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>상품명</th>
-                                <th>카테고리</th>
-                                <th>상품 정보</th>
-                                <th>투자액</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <template v-if="selectedProducts.length > 0">
-                                <tr v-for="item in filteredProducts" :key="item.productId">
-                                    <td>{{ item.productName }}</td>
-                                    <td>
-                                        <span v-if="item.productType === 'S'">
-                                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
-                                        </span>
-                                        <span v-else-if="item.productType === 'B'">채권</span>
-                                        <span v-else-if="item.productType === 'F'">펀드</span>
-                                        <span v-else>기타</span>
-                                    </td>
-                                    <td>
-                                        제공자: {{ item.provider }}<br />
-                                        기대 수익률: {{ item.expectedReturn }}%
-                                    </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            v-model.number="item.investmentAmount"
-                                            min="0"
-                                            placeholder="투자액 입력"
-                                        />
-                                    </td>
-                                    <td>
-                                        <button @click="removeItem(item)">삭제</button>
-                                    </td>
-                                </tr>
-                            </template>
-                            <template v-else>
-                                <tr v-for="n in 3" :key="n">
-                                    <td colspan="5" class="empty-row">빈 항목</td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
+          <div class="ProductSelection">
 
-                <!-- 장바구니 총 투자액 표시 -->
+            <h1>금융상품</h1>
+            <v-btn class="cart-btn" @click="openModalCart">장바구니에서 가져오기</v-btn>
+            <hr />
+            <div class="Product-filter">
+              <select v-model="selectedCategory" class="styled-select">
+                <option value="">모든 카테고리</option>
+                <option value="S">예/적금</option>
+                <option value="B">채권</option>
+                <option value="F">펀드</option>
+              </select>
+            </div>
+            {{selectedProducts}}
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                <tr>
+                  <th>상품명</th>
+                  <th>카테고리</th>
+                  <th>상품 정보</th>
+                  <th>투자액</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <template v-if="filteredProducts.length > 0">
+                  <tr v-for="item in filteredProducts" :key="item.products[0].productId">
+                    <td>{{ item.products[0].finPrdtNm }}</td>
+                    <td>
+                      <span v-if="item.rates[0].intrRateType === 'S'">예/적금</span>
+                      <span v-else-if="item.productType === 'B'">채권</span>
+                      <span v-else-if="item.productType === 'F'">펀드</span>
+                    </td>
+                    <td>
+                      <!-- 예/적금 타입일 때 상세 정보 표시 -->
+                      <div v-if="item.rates[0].intrRateType === 'S'">
+                        은행명: {{ item.products[0].korCoNm }}<br />
+                        상품명: {{ item.products[0].finPrdtNm }}<br />
+                        만기:
+                        <select v-model="item.selectedTerm" class="styled-select">
+                          <option v-for="rate in item.rates" :key="rate.saveTrm" :value="rate.saveTrm">
+                            {{ rate.saveTrm }}개월
+                          </option>
+                        </select><br />
+                        단리/복리: {{ item.rates[0].intrRateTypeNm }}<br />
+                        기본 금리: {{ getInterestRate(item, 'intrRate') }}%<br />
+                        최고 금리: {{ getInterestRate(item, 'intrRate2') }}%
+                      </div>
+                      <!-- 기타 상품 타입일 때 기본 정보 표시 -->
+                      <div v-else>
+                        제공자: {{ item.provider }}<br />
+                        기대 수익률: {{ item.expectedReturn }}%
+                      </div>
+                    </td>
+                    <td>
+                      <input
+                          type="number"
+                          v-model.number="item.investmentAmount"
+                          min="0"
+                          placeholder="투자액 입력"
+                          class="styled-input"
+                      />
+                    </td>
+                    <td>
+                      <button @click="removeItem(item)">삭제</button>
+                    </td>
+                  </tr>
+                </template>
+                <template v-else>
+                  <tr v-for="n in 3" :key="n">
+                    <td colspan="5" class="empty-row">빈 항목</td>
+                  </tr>
+                </template>
+                </tbody>
+              </table>
+            </div>
+
+
+
+          <!-- 장바구니 총 투자액 표시 -->
                 <div class="totalInvestmentAmount">
                     <h3>장바구니 총 투자액: {{ formatCurrency(cartTotalInvestment) }}원</h3>
                 </div>
@@ -188,7 +207,7 @@
 
             <!-- 주식 종류 섹션 -->
             <div class="MakePortfolio-stockList-section">
-                <h1>주식 종류</h1>
+                <h1>주식</h1>
                 <div class="MakePortfolio-btn">
                     <v-btn @click="openModal">{{ modalButtonLabel }}</v-btn>
                 </div>
@@ -214,10 +233,17 @@
                                 >
                                     <td>{{ stock.stockCode }}</td>
                                     <td>{{ stock.stockName }}</td>
-                                    <td>{{ stock.category }}</td>
+                                    <td>{{ stock.mrktCtg }}</td>
                                     <td>{{ stock.clpr }}</td>
-                                    <td>{{ stock.quantity }}</td>
-                                    <td>{{ stock.clpr * stock.quantity }}</td>
+                                    <td>
+                                      <input
+                                        type="number"
+                                        v-model.number="stock.quantity"
+                                        min="0"
+                                        placeholder="주식수"
+                                      >
+                                    </td>
+                                    <td>{{ isNaN(stock.clpr * stock.quantity) ? 0 : stock.clpr * stock.quantity }}</td>
                                 </tr>
                             </template>
                             <template v-else>
@@ -321,7 +347,6 @@ export default {
         // ModalCart에서 전달받은 상품들을 추가
         const addItemsToPortfolio = (items) => {
             items.forEach((item) => {
-                // 중복 추가 방지
                 if (
                     !selectedProducts.value.some((product) => product.productId === item.productId)
                 ) {
@@ -333,7 +358,21 @@ export default {
             });
         };
 
-        // 상품 삭제 함수
+
+
+        // 선택된 상품들에 대한 필터링
+        const filteredProducts = computed(() => {
+          return selectedCategory.value
+              ? selectedProducts.value.filter(product => product.rates[0].intrRateType === selectedCategory.value)
+              : selectedProducts.value;
+        });
+
+        const getInterestRate = (item, rateType) => {
+          const selectedRate = item.rates.find(rate => rate.saveTrm === item.selectedTerm);
+          return selectedRate ? selectedRate[rateType] : '정보 없음';
+        };
+
+      // 상품 삭제 함수
         const removeItem = (item) => {
             const index = selectedProducts.value.findIndex(
                 (product) => product.productId === item.productId
@@ -351,14 +390,6 @@ export default {
                 portfolioStocks.value.push(...stocks);
             }
         };
-
-        // 선택된 상품들에 대한 필터링
-        const filteredProducts = computed(() => {
-            return selectedProducts.value.filter(
-                (product) =>
-                    !selectedCategory.value || product.productType === selectedCategory.value
-            );
-        });
 
         const isEditMode = computed(() => portfolioStocks.value.length > 0);
         const modalButtonLabel = computed(() => (isEditMode.value ? '수정하기' : '추가하기'));
@@ -520,6 +551,7 @@ export default {
             tutorialStyles,
             confirmCancel,
             removeItem,
+            getInterestRate,
             cartTotalInvestment,
             stockTotalInvestment,
             totalInvestment,
@@ -668,5 +700,20 @@ export default {
     margin: 5px 0;
     display: flex;
     justify-content: space-between;
+}
+.styled-select {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: #ffffff;
+}
+.styled-input {
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 14px;
+  width: 100px;
+  background-color: #ffffff;
 }
 </style>
