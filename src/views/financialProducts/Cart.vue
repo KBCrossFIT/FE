@@ -30,11 +30,11 @@
               <v-row>
                 <v-col>
                   <v-checkbox
-                    :value="{ productId: item.productId, productType: item.productType }"
-                    v-model="selectedProducts"
-                    @change="handleSelectionChange(item)"
-                    class="product-checkbox"
-                    color="indigo"
+                      :value="{ productId: item.productId, productType: item.productType }"
+                      v-model="selectedProducts"
+                      @change="handleSelectionChange(item)"
+                      class="product-checkbox"
+                      color="indigo"
                   ></v-checkbox>
                 </v-col>
                 <v-col>
@@ -52,9 +52,9 @@
                 <v-col>{{ item.expectedReturn }}%</v-col>
                 <v-col>
                   <v-btn
-                    class="cart-trashcanBtn"
-                    @click="removeFromCart(item.cartId)"
-                    icon
+                      class="cart-trashcanBtn"
+                      @click="removeFromCart(item.cartId)"
+                      icon
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -62,40 +62,29 @@
               </v-row>
             </v-card-text>
           </v-card>
-        </div>
-        <v-pagination
-          v-model="currentPage"
-          :length="totalPages"
-          @input="updatePagination"
-          class="mt-4"
-        ></v-pagination>
-      </v-card-text>
 
-      <div class="Cart-Btn-Set mt-4">
-        <v-btn
-          class="cart-Btn-Gotocompare"
-          @click="goToCompare"
-          color="primary"
+
+          <div class="Cart-Btn-Set mt-4">
+
+          </div>
+        </div>
+        <v-btn class="cart-Btn-Gotocompare" @click="goToCompare" color="primary"
+        >상품 비교해보기
+        </v-btn
         >
-          상품 비교해보기
+        <v-btn class="cart-Btn-GotoPortfolio" @click="goToMakePortfolio" color="secondary"
+        >포트폴리오 구성하기
         </v-btn>
-        <v-btn
-          class="cart-Btn-GotoPortfolio"
-          @click="goToMakePortfolio"
-          color="secondary"
-        >
-          포트폴리오 구성하기
-        </v-btn>
-      </div>
+      </v-card-text>
     </v-card>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useCartStore } from '@/store/modules/cart';
-import { getCartList, deleteCartItem } from '@/api/cartApi';
+import {ref, computed, onMounted} from 'vue';
+import {useRouter} from 'vue-router';
+import {useCartStore} from '@/store/modules/cart';
+import {getCartList, deleteCartItem} from '@/api/cartApi';
 
 export default {
   name: 'Cart',
@@ -156,17 +145,17 @@ export default {
       const productTypes = selectedProducts.value.map(item => item.productType);
 
       // MakePortfolio 페이지로 이동
-        router.push({
-          name: 'MakePortfolio',
-          query: { productIds: JSON.stringify(productIds), productTypes: JSON.stringify(productTypes)}
-        });
+      router.push({
+        name: 'MakePortfolio',
+        query: {productIds: JSON.stringify(productIds), productTypes: JSON.stringify(productTypes)}
+      });
     };
 
     const handleSelectionChange = (item) => {
       if (selectedProducts.value.length > 3) {
         alert('최대 3개의 상품만 선택할 수 있습니다.');
         selectedProducts.value = selectedProducts.value.filter(
-          (product) => product.productId !== item.productId
+            (product) => product.productId !== item.productId
         );
       } else {
         console.log('선택된 상품 목록:', selectedProducts.value);
@@ -189,3 +178,58 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.Cart-container {
+  padding: 20px;
+}
+
+.empty-cart {
+  text-align: center;
+  margin: 20px 0;
+  color: #ff5722;
+  font-weight: bold;
+}
+
+.header-row {
+  font-weight: bold;
+  margin-bottom: 10px; /* 간격 추가 */
+}
+
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  margin-bottom: 15px; /* 각 카테고리 간격 추가 */
+}
+
+.cart-item-card {
+  padding: 15px;
+  transition: box-shadow 0.2s;
+}
+
+.cart-item-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.product-type-title {
+  font-weight: bold;
+  margin-bottom: 8px; /* 제목과 내용 간격 추가 */
+}
+
+.item-details {
+  margin-bottom: 10px; /* 세부 정보와 버튼 간격 추가 */
+}
+
+.cart-trashcanBtn {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.Cart-Btn-Set {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px; /* 버튼 간격 추가 */
+}
+</style>
+
