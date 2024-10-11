@@ -19,8 +19,10 @@
                             <td>{{ stock.stockCode }}</td>
                             <td>{{ stock.stockName }}</td>
                             <td>{{ stock.mrktCtg }}</td>
-                            <td>{{ formatCurrency(stock.clpr) }}</td>
-                            <td :style="getColorStyle(stock.vs)">{{ formatCurrency(stock.vs) }}</td>
+                            <td>{{ formatCurrency(stock.clpr) }}원</td>
+                            <td :style="getColorStyle(stock.vs)">
+                                {{ stock.vs > 0 ? '+' : '' }}{{ formatCurrency(stock.vs) }}원
+                            </td>
                             <td :style="getColorStyle(stock.fltRt)">{{ stock.fltRt }}%</td>
                         </tr>
 
@@ -67,31 +69,26 @@
         </div>
 
         <!-- Pagination Controls -->
-        <div v-if="totalPages > 1" class="pagination">
-            <button @click="prevPage" :disabled="currentPage === 1" class="pagination-btn">
-                이전
-            </button>
-            <span>페이지 {{ currentPage }} / {{ totalPages }}</span>
-            <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-btn">
-                다음
-            </button>
-        </div>
-
-        <!-- Page Navigation Input -->
-        <div class="page-input-container">
-            <input
-                v-model.number="inputPage"
-                type="number"
-                :min="1"
-                :max="totalPages"
-                class="page-input"
-                @keyup.enter="goToPage"
-                placeholder="이동할 페이지 입력"
-            />
-            <button @click="goToPage" class="go-btn">이동</button>
+        <div class="pagination-container">
+            <div class="page-navigation">
+                <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+                <span>{{ currentPage }} / {{ totalPages }}</span>
+                <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+            </div>
+            
+            <div class="page-selection">
+                <input 
+                    v-model.number="goToPage" 
+                    type="number" 
+                    min="1" 
+                    :max="totalPages"
+            >
+            <button @click="goToSpecificPage">이동</button>
+            </div>
         </div>
     </div>
 </template>
+
 
 <script>
 export default {
@@ -103,6 +100,7 @@ export default {
             totalPages: 0,
             inputPage: '',
             dropdownIndex: null, // 현재 열린 드롭다운 인덱스
+            goToPage: 1,
         };
     },
     computed: {
@@ -181,19 +179,18 @@ export default {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0 15px; /* 행 간격 증가 */
+    table-layout: fixed;
 }
 
 .table th,
 .table td {
-    padding: 20px 16px; /* 셀 내부 패딩 증가 */
-    text-align: right;
-    vertical-align: middle; /* 셀 내용 수직 가운데 정렬 */
+    padding: 20px 16px;
+    vertical-align: middle;
 }
 
 .table th {
     background-color: #f1f3f5;
     font-weight: bold;
-    text-align: center;
     color: #495057;
     font-size: 18px;
     padding: 15px 16px; /* 헤더 셀 패딩 조정 */
@@ -217,7 +214,90 @@ export default {
     border-bottom-left-radius: 8px;
 }
 
+/* 각 열의 정렬 조정 */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+    text-align: center; /* 주식 코드 */
+    width: 10%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    text-align: left; /* 주식명 */
+    width: 25%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    text-align: center; /* 시장 구분 */
+    width: 10%;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4),
+.table th:nth-child(5),
+.table td:nth-child(5),
+.table th:nth-child(6),
+.table td:nth-child(6) {
+    text-align: right; /* 종가, 전일비, 등락률 */
+    width: 15%
+}
+
 /* 페이지네이션 스타일 개선 */
+.pagination-container {
+  display: flex;
+  justify-content: center; /* 중앙 정렬로 변경 */
+  align-items: center;
+  margin-top: 20px;
+  gap: 20px; /* 요소들 사이의 간격 설정 */
+}
+
+.page-navigation {
+  display: flex;
+  align-items: center;
+}
+
+.page-navigation button,
+.page-selection button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.page-navigation button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.page-navigation span {
+  margin: 0 10px;
+}
+
+.page-selection {
+  display: flex;
+  align-items: center;
+}
+
+.page-selection input {
+  width: 50px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ced4da; /* 보더 추가 */
+  border-radius: 4px; /* 모서리 둥글게 */
+  font-size: 14px; /* 글자 크기 조정 */
+}
+
+.page-selection input:focus {
+  outline: none;
+  border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* 포커스 시 그림자 효과 */
+}
+
 .pagination {
     margin-top: 30px; /* 상단 여백 증가 */
     display: flex;
