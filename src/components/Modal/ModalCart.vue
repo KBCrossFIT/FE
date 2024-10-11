@@ -164,15 +164,20 @@ export default {
               if (item.productType === 'S') {
                 if (item.rsrvType === null) {
                   productDetails = await getDepositProductDetail(item.productId);
+                  productDetails.productType = 'S';
                 } else {
                   productDetails = await getSavingProductDetail(item.productId);
+                  productDetails.productType = 'S';
                 }
               } else if (item.productType === 'F') {
                 productDetails = await getFundProductDetail(item.productId);
+                productDetails.productType = 'F';
               } else if (item.productType === 'B') {
                 productDetails = await getBondProductDetail(item.productId);
+                productDetails.productType = 'B';
               }
 
+              console.log(productDetails);
               return { ...productDetails };
             })
         );

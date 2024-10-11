@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import {usePortfolioStore} from "@/store/modules/portfolio.js";
+import { usePortfolioStore } from '@/store/modules/portfolio.js';
 
 export default {
   name: 'PortfolioSection',
@@ -20,8 +20,11 @@ export default {
   },
   methods: {
     async openPortfolioList() {
-      const portfolioStore = usePortfolioStore()
-      if(localStorage.getItem('user') != null && !portfolioStore.portfolioListLoaded) {
+      const portfolioStore = usePortfolioStore();
+      if (
+        localStorage.getItem('user') != null &&
+        !portfolioStore.portfolioListLoaded
+      ) {
         await portfolioStore.fetchPortfolioListAction();
       }
       this.$emit('openSidePanel', {
@@ -46,12 +49,12 @@ export default {
   flex-direction: column;
   align-items: center;
   color: white;
-  padding: 15px;
+  padding: 10px;
   text-decoration: none;
   background-color: #575757;
   border-radius: 5px;
   width: 100%;
-  height: 5vh;
+  height: 6vh;
   position: relative;
   white-space: nowrap;
   overflow: hidden;
@@ -70,7 +73,7 @@ export default {
 }
 
 .menu-text {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   opacity: 1;
 }
 </style>
