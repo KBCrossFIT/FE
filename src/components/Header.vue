@@ -268,7 +268,6 @@ nav {
 .dropdown-section {
   display: flex;
   flex-direction: column;
-  flex: ;
   padding: 0 10px; /* 섹션 간의 여백 추가 */
   border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
 }
