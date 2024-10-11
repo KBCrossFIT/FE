@@ -109,13 +109,13 @@
                         >
                             <td>{{ product.korCoNm }}</td>
                             <td>{{ getRate(product.productId, 12).intrRate }}%</td>
-                            <td>{{ getRate(product.productId, 12).intrRate2 }}</td>
+                            <td>{{ getRate(product.productId, 12).intrRate2 }}%</td>
                         </template>
 
                         <!-- 채권 정보 -->
                         <template v-else-if="selectedCategory === 'bond'">
                             <td>{{ product.isinCdNm }}</td>
-                            <td>{{ product.bondIssuDt }}</td>
+                            <td>{{ formatDate(product.bondIssuDt) }}</td>
                             <td>{{ product.bondSrfcInrt }}</td>
                         </template>
 
@@ -221,7 +221,7 @@ export default {
         const cart = ref([]);
         const displayedProducts = ref([]);
         const currentPage = ref(1);
-        const pageSize = ref(10);
+        const pageSize = ref(8);
         const totalPages = ref(1);
         const isLoading = ref(false);
         const error = ref(null);
@@ -493,6 +493,16 @@ export default {
             });
         };
 
+        const formatDate = (dateStr) => {
+            if (typeof dateStr !== 'string' || dateStr.length !== 8) {
+                return dateStr; // 형식이 맞지 않으면 원래 문자열 반환
+            }
+            const year = dateStr.slice(0, 4);
+            const month = dateStr.slice(4, 6);
+            const day = dateStr.slice(6, 8);
+            return `${year}-${month}-${day}`;
+        };
+
         const visiblePages = computed(() => {
             const pages = [];
             const total = totalPages.value;
@@ -525,7 +535,7 @@ export default {
                 console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
                 selectedCategory.value = newCategory || 'all';
                 currentPage.value = parseInt(newPage) || 1;
-                pageSize.value = parseInt(newPageSize) || 10;
+                pageSize.value = parseInt(newPageSize) || 8;
 
                 loadProducts(currentPage.value);
             },
@@ -554,6 +564,7 @@ export default {
             visiblePages,
             toggleCartAndIncreaseHit,
             isSearched,
+            formatDate,
             // addCartItem,
         };
     },
