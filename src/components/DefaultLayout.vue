@@ -1,10 +1,11 @@
 <script setup>
-import Header from './Header.vue';
-import Footer from './Footer.vue';
-import SideBar from './Sidebar.vue';
+import Header from "./Header.vue";
+import Footer from "./Footer.vue";
+import SideBar from "./Sidebar.vue";
 </script>
 
 <template>
+
   <Header />
 
   <div class="container">
@@ -25,6 +26,7 @@ import SideBar from './Sidebar.vue';
 .container {
   display: flex;
   justify-content: center; /* 가로 중앙 정렬 */
+
   width: 100%;
   height: 100vh;
 }
