@@ -161,12 +161,11 @@ export default {
     async handleLogout() {
       const { cookies } = useCookies();
 
-      // await instance.post("/member/logout");
-
-      // Clear cookies and local storage
-      cookies.remove('Authorization');
-      cookies.remove('Refresh-Token');
-      localStorage.removeItem('user');
+            // await instance.post('/member/logout')
+            // Clear cookies and local storage
+            cookies.remove('Authorization');
+            cookies.remove('Refresh-Token');
+            localStorage.removeItem('user');
 
       // Update user profile state
       await this.updateUserProfile(); // Update the state
@@ -181,7 +180,6 @@ export default {
           storedUser.picture || this.userProfile.picture;
       } else {
         this.isLoggedIn = false;
-
         this.userProfile.username = '';
         this.userProfile.picture = 'path/to/default/profile/pic.png';
       }
@@ -222,11 +220,11 @@ export default {
 }
 
 .logo-img {
-  width: 163px;
+  width: 155px;
   height: auto;
   position: absolute;
-  top: -10px;
-  left: 96px;
+  top: -5px;
+  left: 266px;
 }
 
 nav {
@@ -244,7 +242,7 @@ nav {
 }
 
 .menu-item {
-  font-size: 18px;
+  font-size: 13px;
   font-weight: bold;
   padding: 0 10px;
 }
@@ -271,7 +269,6 @@ nav {
 .dropdown-section {
   display: flex;
   flex-direction: column;
-
   padding: 0 10px; /* 섹션 간의 여백 추가 */
   border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
 }
@@ -307,7 +304,6 @@ nav {
 
 .user-controls {
   display: flex;
-
   align-items: center;
 }
 
@@ -315,7 +311,6 @@ nav {
   display: flex;
   align-items: center;
   cursor: pointer;
-
   position: fixed;
   right: 10px;
 }
@@ -343,6 +338,6 @@ nav {
 }
 
 .in {
-  font-size: 18px;
+  font-size: 13px;
 }
 </style>
