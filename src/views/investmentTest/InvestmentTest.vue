@@ -19,7 +19,7 @@
             v-for="(option, index) in currentQuestion.options"
             :key="index"
             @click="selectAnswer(option, index)"
-            :class="{ selected: isSelected(option) }"
+            :class="{ selected: isSelected(option, index) }"
           >
             {{ index + 1 }}. {{ option }}
           </li>
@@ -42,6 +42,9 @@
 </template>
 
 <script>
+import axios from "axios"; // axios를 통해 API 요청을 보냅니다.
+import { useAuthStore } from "@/store/authStore"; // Pinia store에서 로그인된 사용자 정보를 가져옵니다.
+
 export default {
   data() {
     return {
@@ -150,6 +153,12 @@ export default {
       return this.selectedAnswers.every((answer) => answer !== null);
     },
   },
+  async mounted() {
+    const authStore = useAuthStore();
+
+    // checkAuth가 완료된 후에 memberNum을 사용
+    await authStore.checkAuth();
+  },
   methods: {
     selectAnswer(option, index) {
       // 선택된 답변을 저장하고 점수를 계산
@@ -176,15 +185,34 @@ export default {
       }
     },
     finishTest() {
-      // 총점 계산
       this.totalScore = this.selectedAnswers.reduce((acc, score) => acc + score, 0);
 
-      // 점수를 백분율로 환산하고 소수점 첫째 자리에서 반올림
-      const finalScore = ((this.totalScore / 51) * 100).toFixed(1);
+      // 점수를 백분율로 환산하고 정수로 변환
+      const finalScore = parseInt((this.totalScore / 51) * 100, 10);
 
-      // 결과 페이지로 이동 시, 점수와 성향 데이터를 함께 전달
-      this.$router.push({ path: "/investment-test-end", query: { score: finalScore } });
+      const authStore = useAuthStore();
+
+      axios
+        .post(
+          "http://localhost:8080/api/member/investPreference",
+          {
+            memberNum: authStore.memberNum,
+            investScore: finalScore,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json", // 헤더에 JSON 형식 명시
+            },
+          }
+        )
+        .then(() => {
+          this.$router.push({ path: "/investment-test-end", query: { score: finalScore } });
+        })
+        .catch((error) => {
+          console.error("데이터 전송 중 오류가 발생했습니다:", error);
+        });
     },
+
     closeTest() {
       this.$router.push("/"); // 취소 시 홈페이지로 이동
     },
