@@ -2,7 +2,14 @@
   <div class="MyInvestment-container">
     <div class="MyInvestment-header">
       <h1>내 투자성향 페이지</h1>
-
+      <!-- 테스트용 버튼(추후 삭제) -->
+      <div class="DevBtn-set">
+        <v-btn class="DevBtn-btn" @click="DevSetScore(81)"> 공격투자형 </v-btn>
+        <v-btn class="DevBtn-btn" @click="DevSetScore(61)"> 적극투자형 </v-btn>
+        <v-btn class="DevBtn-btn" @click="DevSetScore(41)"> 위험중립형 </v-btn>
+        <v-btn class="DevBtn-btn" @click="DevSetScore(21)"> 안정추구형 </v-btn>
+        <v-btn class="DevBtn-btn" @click="DevSetScore(1)"> 안정형 </v-btn>
+      </div>
     </div>
 
     <div class="MyInvestment-body">
@@ -12,30 +19,33 @@
             {{ preference_name }}
             <i v-if="preference_name === '공격투자형'" class="fas fa-fire"></i>
             <i v-if="preference_name === '적극투자형'" class="fas fa-bolt"></i>
-
-            <i v-if="preference_name === '위험중립형'" class="fas fa-balance-scale"></i>
-            <i v-if="preference_name === '안정추구형'" class="fas fa-shield-alt"></i>
-
+            <i
+              v-if="preference_name === '위험중립형'"
+              class="fas fa-balance-scale"
+            ></i>
+            <i
+              v-if="preference_name === '안정추구형'"
+              class="fas fa-shield-alt"
+            ></i>
             <i v-if="preference_name === '안정형'" class="fas fa-home"></i>
           </h2>
           <p>위험 회피 성향 점수 : {{ user_preference }}점</p>
           <p>{{ preference_text }}</p>
-
         </div>
-
         <div class="top-right">
-          <div class="influencers-header">
-            <span>나와 같은 투자성향 인플루언서</span>
-            <v-btn class="view-influencers-btn" @click="navigateTo('/influencer')">더 보러가기</v-btn>
-          </div>
+          나와 같은 투자성향 인플루언서
           <div class="influencer-cards">
-            <div v-for="(influencer, index) in influencers" :key="index" class="influencer-card">
-              <img :src="influencer.image" alt="Influencer Image" class="influencer-image" />
-              <h4>{{ influencer.persona_name }}</h4>
+            <div
+              v-for="(influencer, index) in influencers"
+              :key="index"
+              class="influencer-card"
+              @click="navigateToInfluencer(influencer)"
+            >
+              <h3>{{ influencer.name }}</h3>
+              <p>{{ influencer.info }}</p>
             </div>
           </div>
         </div>
-
 
         <div class="bottom-left">
           투자성향별 적합금융상품 분류표
@@ -47,9 +57,12 @@
             <div class="ProportionChart">
               {{ preference_name }} 추천 투자 비율
               <div id="chart">
-
-                <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
-
+                <apexchart
+                  type="pie"
+                  width="380"
+                  :options="chartOptions"
+                  :series="series"
+                ></apexchart>
               </div>
             </div>
           </div>
@@ -58,41 +71,50 @@
     </div>
 
     <div class="MyInvestment-btn-set">
-
-      <v-btn class="MyInvestment-btn" @click="navigateTo('/investment-test-start'), cancel()"> 다시 분석하기 </v-btn>
-      <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()"> 포트폴리오 작성하기 </v-btn>
-
+      <v-btn
+        class="MyInvestment-btn"
+        @click="navigateTo('/investment-test-start'), cancel()"
+      >
+        다시 분석하기
+      </v-btn>
+      <v-btn
+        class="MyInvestment-btn"
+        @click="navigateTo('/make-portfolio'), cancel()"
+      >
+        포트폴리오 작성하기
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script>
-import shinhanInvestChart from "@/assets/img/shinhanInvestChart.jpg";
-import VueApexCharts from "vue3-apexcharts";
-import axios from "axios";
+import shinhanInvestChart from '@/assets/img/shinhanInvestChart.jpg';
+import VueApexCharts from 'vue3-apexcharts';
+import axios from 'axios';
 
 export default {
-
-  name: "MyInvestmentAnalyze",
-
+  name: 'MyInvestmentAnalyze',
   components: {
     apexchart: VueApexCharts,
   },
   data() {
     return {
-
-      user_preference: 0,
-      preference_name: "",
-      preference_text: "",
+      user_preference: 0, // 초기에는 0점
+      preference_name: '',
+      preference_text: '',
       shinhanInvestChart,
-      influencers: [],
-      series: [],
+      influencers: [
+        { name: 'Influencer 1', info: 'Influencer 1 정보' },
+        { name: 'Influencer 2', info: 'Influencer 2 정보' },
+        { name: 'Influencer 3', info: 'Influencer 3 정보' },
+      ],
+      // 추가: 파이 차트 데이터 및 옵션
+      series: [], // 예시 데이터: 비율
       chartOptions: {
         chart: {
-          type: "pie",
+          type: 'pie',
         },
-        labels: ["예/적금", "채권", "펀드", "주식"],
-
+        labels: ['예/적금', '채권', '펀드', '주식'], // 각 섹션의 레이블
         responsive: [
           {
             breakpoint: 480,
@@ -101,9 +123,7 @@ export default {
                 width: 200,
               },
               legend: {
-
-                position: "bottom",
-
+                position: 'bottom',
               },
             },
           },
@@ -113,51 +133,27 @@ export default {
   },
 
   mounted() {
-
+    // InvestmentTest.vue에서 전달된 점수를 URL에서 받아옴
     const score = parseFloat(this.$route.query.score) || 0;
     this.user_preference = score;
 
+    // 받은 점수에 따라 투자 성향을 구분
     this.distinguish(this.user_preference);
-
-    axios
-      .get("http://localhost:8080/api/personas/get")
-      .then((response) => {
-        console.log("Received all persona data:", response.data);
-
-        let personaPreference = null;
-        if (this.preference_name === "공격투자형") {
-          personaPreference = 5;
-        } else if (this.preference_name === "적극투자형") {
-          personaPreference = 4;
-        } else if (this.preference_name === "위험중립형") {
-          personaPreference = 3;
-        } else if (this.preference_name === "안정추구형") {
-          personaPreference = 2;
-        } else if (this.preference_name === "안정형") {
-          personaPreference = 1;
-        }
-
-        this.influencers = response.data
-          .filter((persona) => persona.personaPreference === personaPreference)
-          .sort((a, b) => a.personaId - b.personaId)
-          .slice(0, 2)
-          .map((persona) => ({
-            persona_name: persona.personaName,
-            image: `http://localhost:8080/api/personas/${persona.imagePath}`,
-          }));
-
-        console.log("Filtered influencers:", this.influencers);
-      })
-      .catch((error) => {
-        console.error("Error fetching personas:", error);
-      });
   },
 
   methods: {
     navigateTo(path) {
       this.$router.push(path);
     },
+    navigateToInfluencer(influencer) {
+      // 예시: 인플루언서 이름을 쿼리 파라미터로 넘기는 방식
+      this.$router.push({
+        path: '/Influencer',
+        query: { name: influencer.name },
+      });
+    },
 
+    // 차트 데이터 시리즈 (예/적금, 채권, 펀드, 주식 순서)
     distinguish(user_preference) {
       if (user_preference >= 80) {
         this.preference_name = '공격투자형';
@@ -185,32 +181,30 @@ export default {
           '고객님께서는 안정형 성향을 보이십니다. 안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다. 현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.';
         this.series = [50, 30, 15, 5];
       }
-    }
-
-
     },
-  };
+  },
 
+  // 테스트용 메서드(추후 삭제)
+  DevSetScore(score) {
+    this.user_preference = score;
+    this.distinguish(this.user_preference);
+  },
+};
 </script>
 
 <style scoped>
 .MyInvestment-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  height: 100%;
-  padding: 20px;
-}
+  flex-direction: column; /* 세로 정렬 */
+  align-items: flex-start; /* 좌측 정렬 */
+  justify-content: space-between; /* 상단과 하단 요소 배치 */
 
-.MyInvestment-header {
-  display: flex;
-  align-items: center;
+  padding: 20px; /* 좌우 여백 */
 }
 
 .MyInvestment-body {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* 가운데 정렬 */
   margin-top: 20px;
   width: 100%;
   height: 540px;
@@ -218,69 +212,98 @@ export default {
 
 .body-content {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 20px;
-  width: 100%;
+  grid-template-columns: repeat(2, 1fr); /* 두 개의 열 */
+  grid-template-rows: repeat(2, 1fr); /* 두 개의 행 */
+  gap: 20px; /* 요소 사이의 간격 */
+  width: 100%; /* 가로 길이 전체 차지 */
+  padding: 20px; /* 여백 추가 */
+  background-color: #f0f0f0; /* 배경색 설정 */
+  border-radius: 8px; /* 모서리 둥글게 */
+}
+
+.top-left {
+  grid-column: 1;
+  grid-row: 1;
+  background-color: #e0f7fa; /* 부드러운 배경색 추가 */
   padding: 20px;
-  background-color: #f0f0f0;
   border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  color: #00796b; /* 텍스트 색상을 다크 톤의 녹색으로 변경 */
 }
 
-.influencers-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.top-left h2 {
+  font-size: 24px; /* 큰 제목 폰트 크기 */
+  font-weight: bold;
+  color: #004d40; /* 더 진한 녹색 */
+  margin-bottom: 10px;
 }
 
-.view-influencers-btn {
-  margin-left: 20px;
-  height: 40px;
+.top-left p {
+  font-size: 18px; /* 내용의 폰트 크기를 중간 정도로 설정 */
+  color: #004d40;
+  margin-bottom: 20px;
+  line-height: 1.5; /* 텍스트 간격을 넓게 설정 */
+}
+
+.top-left .preference-score {
+  font-size: 28px; /* 점수는 더 크게 표시 */
+  font-weight: bold;
+  color: #ff7043; /* 강조를 위한 밝은 주황색 */
+  margin-bottom: 10px;
+}
+
+.top-left .preference-icon {
+  font-size: 50px; /* 큰 아이콘으로 주목 */
+  color: #00796b;
+  margin-bottom: 15px;
+}
+
+/* 아이콘 스타일 추가 */
+.top-left .icon {
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 
 .influencer-cards {
   display: flex;
-  justify-content: flex-start;
-  gap: 10px;
+  justify-content: space-between; /* 카드 간의 간격 */
   margin-top: 10px;
 }
 
 .influencer-card {
-  width: 20%;
-  padding: 10px;
+  width: 30%; /* 카드의 너비를 3개가 가로로 배치되도록 설정 */
+  padding: 15px;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 기본 그림자 */
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* 텍스트와 카드 내용 가운데 정렬 */
   text-align: center;
-  transition: box-shadow 0.3s ease;
+  transition: box-shadow 0.3s ease; /* 부드러운 전환 효과 */
   cursor: pointer;
 }
 
-.influencer-image {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: 20%;
-  margin-bottom: 5px;
-}
-
 .influencer-card:hover {
-  box-shadow: 0 4px 15px #7bd5c3;
+  box-shadow: 0 4px 15px #7bd5c3; /* hover 시 그림자 확대 */
 }
 
 .influencer-card h4 {
   margin-bottom: 10px;
 }
 
+.influencer-card p {
+  font-size: 14px;
+  color: #666;
+}
+
 .recommendation-square {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
+  padding: 20px; /* 내부 여백 */
+  border: 1px solid #ccc; /* 테두리 색상 */
+  border-radius: 4px; /* 모서리 둥글게 */
+  background-color: white; /* 배경색 */
 }
 
 .investment-chart {
@@ -289,19 +312,19 @@ export default {
 }
 
 .ProportionChart {
-  text-align: center;
+  text-align: center; /* 가운데 정렬 */
 }
 
 .MyInvestment-btn-set {
   display: flex;
-  justify-content: space-between;
-  margin-top: 115px;
-  margin-left: auto;
-  gap: 20px;
+  justify-content: space-between; /* 버튼 사이 간격 설정 */
+  margin-top: 115px; /* 상단 여백 */
+  margin-left: auto; /* 왼쪽 여백을 자동으로 설정하여 오른쪽 끝으로 이동 */
+  gap: 20px; /* 버튼 사이의 간격 설정 */
 }
 
 .MyInvestment-btn-set v-btn {
-  margin: 0 10px;
+  margin: 0 10px; /* 버튼 사이에 좌우 10px 간격 추가 */
 }
 
 .fas.fa-fire {

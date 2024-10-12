@@ -230,7 +230,7 @@ export default {
   width: 155px;
   height: auto;
   position: relative;
-  top: 9px;
+  top: 20px;
   left: 40%;
 }
 
