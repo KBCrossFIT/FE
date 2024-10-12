@@ -4,9 +4,9 @@
   <!-- <DevBtnSection /> -->
   <CarouselSection />
   <ComparisonSection />
-
-  <ProductListSection />
   <FintainmentList />
+  <ProductListSection />
+
   <!-- </div> -->
   <!-- </div> -->
 </template>

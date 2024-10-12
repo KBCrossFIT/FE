@@ -2,8 +2,8 @@
   <div class="slider-container">
     <div class="slider-text">
       <h2 class="text1">날 선택해 줄 줄은 몰랐어!</h2>
-      <p class="text2">다양한 인플루언서들과 빠르게 만나보세요.</p>
-      <p class="text3">다양한 인플루언서들과 빠르게 만나보세요.</p>
+      <p class="text2">다양한 인플루언서들과</p>
+      <p class="text3">빠르게 만나보세요.</p>
       <div class="slider-controls">
         <button class="slider-btn prev-btn">&larr;</button>
         <button class="slider-btn next-btn">&rarr;</button>
@@ -31,9 +31,12 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 100%px;
+  max-width: 100%;
   padding: 20px;
   height: 319px;
+  background: linear-gradient(to right, #d3d3d35c 60%, white 70%);
+
+  border: 1px solid #ddd;
 }
 
 .slider-text {
@@ -48,7 +51,7 @@
 
 .slider-text p {
   color: gray;
-  margin-bottom: 20px; /* 문구와 버튼 사이의 간격 추가 */
+  margin-bottom: 20px;
 }
 
 .slider-controls {
