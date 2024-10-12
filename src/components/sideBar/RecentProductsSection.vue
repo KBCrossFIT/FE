@@ -37,10 +37,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: white;
+  color: black;
   padding: 10px;
   text-decoration: none;
-  background-color: #575757;
+  background-color: white;
   border-radius: 5px;
   width: 100%;
   height: 6vh;
@@ -52,7 +52,7 @@ export default {
 }
 
 .sidebar-link:hover {
-  background-color: #d7dbde;
+  background-color: #7bd5c3;
 }
 
 .icon {
