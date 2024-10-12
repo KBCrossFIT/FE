@@ -199,8 +199,9 @@
     </section>
 </template>
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/authStore';
 import {
     getTopProductsByAgeGroup,
     getTopProductsByPreference,
@@ -212,6 +213,10 @@ export default {
     name: 'ProductListSection',
     setup() {
         const router = useRouter();
+        const authStore = useAuthStore();
+
+        // isLoggedIn 계산된 속성 수정
+        const isLoggedIn = computed(() => authStore.isAuthenticated);
 
         // 상태 정의
         const state = reactive({
@@ -290,7 +295,7 @@ export default {
             state.hoverInvestment = null;
         };
 
-        const fetchAgeGroupProducts = async (ageGroup, skipAuth = false) => {
+        const fetchAgeGroupProducts = async (ageGroup, skipAuth = true) => {
             try {
                 const response = await getTopProductsBySelectedAgeGroup(ageGroup, skipAuth);
                 state.ageGroupProducts = response.slice(0, 3); // 최대 3개까지만 가져오기
@@ -299,7 +304,7 @@ export default {
             }
         };
 
-        const fetchInvestmentProducts = async (preference, skipAuth = false) => {
+        const fetchInvestmentProducts = async (preference, skipAuth = true) => {
             try {
                 const response = await getTopProductsBySelectedPreference(preference, skipAuth);
                 state.investmentProducts = response.slice(0, 3);
@@ -331,7 +336,9 @@ export default {
         };
 
         onMounted(async () => {
-            // 기본 연령대와 투자 성향에 맞는 데이터를 가져옴
+            await authStore.checkAuth();
+            if (isLoggedIn.value) {
+                // 기본 연령대와 투자 성향에 맞는 데이터를 가져옴
             try {
                 const ageResponse = await getTopProductsByAgeGroup();
                 const investmentResponse = await getTopProductsByPreference();
@@ -358,10 +365,17 @@ export default {
             } catch (error) {
                 console.error('Error during initial load:', error);
             }
+            } else {
+                state.activeAge = '20대';
+                state.activeInvestment = '공격투자형';
+                await fetchAgeGroupProducts(20, true);
+                await fetchInvestmentProducts(5, true);
+            }
         });
 
         return {
             state,
+            isLoggedIn,
             handleProductClick,
             setActiveAge,
             setHoverAge,
