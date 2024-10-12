@@ -61,7 +61,7 @@
 <script>
 import axios from 'axios'; // axios를 통해 API 요청을 보냅니다.
 import { useAuthStore } from '@/store/authStore'; // Pinia store에서 로그인된 사용자 정보를 가져옵니다.
-
+import instance from '@/api';
 export default {
   data() {
     return {
@@ -194,26 +194,15 @@ export default {
     currentQuestion() {
       return this.questions[this.currentQuestionIndex];
     },
-    computed: {
-      currentQuestion() {
-        return this.questions[this.currentQuestionIndex];
-      },
-      isLastQuestion() {
-        return this.currentQuestionIndex === this.questions.length - 1;
-      },
-      allQuestionsAnswered() {
-        return this.selectedAnswers.every((answer) => answer !== null);
-      },
+    isLastQuestion() {
+      return this.currentQuestionIndex === this.questions.length - 1;
     },
-    async mounted() {
-      const authStore = useAuthStore();
-      // checkAuth가 완료된 후에 memberNum을 사용
-      await authStore.checkAuth();
+    allQuestionsAnswered() {
+      return this.selectedAnswers.every((answer) => answer !== null);
     },
   },
   async mounted() {
     const authStore = useAuthStore();
-
     // checkAuth가 완료된 후에 memberNum을 사용
     await authStore.checkAuth();
   },
@@ -222,7 +211,6 @@ export default {
       // 선택된 답변을 저장하고 점수를 계산
       this.selectedAnswers[this.currentQuestionIndex] =
         this.currentQuestion.scores[index];
-
       // 다음 질문으로 자동 이동 (0.2초 딜레이)
       if (!this.isLastQuestion) {
         setTimeout(() => {
@@ -248,25 +236,13 @@ export default {
         (acc, score) => acc + score,
         0
       );
-
       // 점수를 백분율로 환산하고 정수로 변환
       const finalScore = parseInt((this.totalScore / 51) * 100, 10);
-
-      const authStore = useAuthStore();
-
-      axios
-        .post(
-          'http://localhost:8080/api/member/investPreference',
-          {
-            memberNum: authStore.memberNum,
-            investScore: finalScore,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json', // 헤더에 JSON 형식 명시
-            },
-          }
-        )
+      // instance 객체를 사용하여 post 요청
+      instance
+        .post('/member/investPreference', {
+          investScore: finalScore,
+        })
         .then(() => {
           this.$router.push({
             path: '/investment-test-end',
@@ -277,7 +253,6 @@ export default {
           console.error('데이터 전송 중 오류가 발생했습니다:', error);
         });
     },
-
     closeTest() {
       this.$router.push('/'); // 취소 시 홈페이지로 이동
     },
@@ -290,6 +265,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  height: 100%;
   padding: 20px;
 }
 .question-progress {

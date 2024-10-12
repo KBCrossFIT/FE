@@ -217,11 +217,10 @@ export default {
   position: relative;
   box-sizing: border-box;
   /* margin-top: 20px; */
-  border-bottom: 1px solid #7bd5c3;
+  border-bottom: 1px solid #ddd;
 
   z-index: 9999;
 }
-
 .logoBox:hover {
   cursor: pointer;
 }

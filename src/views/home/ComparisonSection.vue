@@ -1,46 +1,44 @@
 <template>
-  <div class="all">
-    <section class="comparison">
-      <div class="comparison-item">
-        <img
-          src="@/assets/img/mainicon-Lcongeek26.png"
-          alt="비교 이미지"
-          class="comparison-image1"
-        />
-        <h3>한눈에 상품 비교</h3>
-        <p>
-          국내 금융상품을 한눈에 보고 <br />
-          나에게 필요한 포트폴리오를<br />
-          작성해 보세요
-        </p>
-      </div>
-      <div class="comparison-item">
-        <img
-          src="@/assets/img/mainicon-VectorPortal.png"
-          alt="비교 이미지"
-          class="comparison-image2"
-        />
-        <h3>확실한 추천 서비스</h3>
-        <p>
-          광고 없이 다양한 금융상품을 추천받고<br />
-          나만의 포트폴리오를 작성해 보세요
-        </p>
-      </div>
-      <div class="comparison-item">
-        <img
-          src="@/assets/img/mainicon-Freepik.png"
-          alt="비교 이미지"
-          class="comparison-image3"
-        />
-        <h3>데이터 기반 투자 전략</h3>
-        <p>
-          나의 투자 성향을 확인하고 <br />
-          성향에 맞는 추천 서비스를 통해 <br />
-          다양한 전략을 세워 보세요
-        </p>
-      </div>
-    </section>
-  </div>
+  <section class="comparison">
+    <div class="comparison-item">
+      <img
+        src="@/assets/img/mainicon-Lcongeek26.png"
+        alt="비교 이미지"
+        class="comparison-image1"
+      />
+      <h3>한눈에 상품 비교</h3>
+      <p>
+        국내 금융상품을 한눈에 보고 <br />
+        나에게 필요한 포트폴리오를<br />
+        작성해 보세요
+      </p>
+    </div>
+    <div class="comparison-item">
+      <img
+        src="@/assets/img/mainicon-VectorPortal.png"
+        alt="비교 이미지"
+        class="comparison-image2"
+      />
+      <h3>확실한 추천 서비스</h3>
+      <p>
+        광고 없이 다양한 금융상품을 추천받고<br />
+        나만의 포트폴리오를 작성해 보세요
+      </p>
+    </div>
+    <div class="comparison-item">
+      <img
+        src="@/assets/img/mainicon-Freepik.png"
+        alt="비교 이미지"
+        class="comparison-image3"
+      />
+      <h3>데이터 기반 투자 전략</h3>
+      <p>
+        나의 투자 성향을 확인하고 <br />
+        성향에 맞는 추천 서비스를 통해 <br />
+        다양한 전략을 세워 보세요
+      </p>
+    </div>
+  </section>
 </template>
 
 <script>
@@ -55,11 +53,11 @@ export default {
   display: flex;
   gap: 146px;
   padding: 60px;
-  margin-top: 42px;
-  border-radius: 10px;
-  position: relative; /* 상대 위치 지정 */
-  top: 20px;
-  justify-content: center; /* 가로 가운데 정렬 */
+  position: relative;
+  top: -1px;
+  justify-content: center;
+  border: 1px solid #ddd;
+  height: 425px;
 }
 
 .comparison-item {
