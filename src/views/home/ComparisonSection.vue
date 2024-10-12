@@ -59,7 +59,7 @@ export default {
   border-radius: 10px;
   position: relative; /* 상대 위치 지정 */
   top: 20px;
-  left: 450px; /* 왼쪽으로 30px 이동 */
+  justify-content: center; /* 가로 가운데 정렬 */
 }
 
 .comparison-item {
