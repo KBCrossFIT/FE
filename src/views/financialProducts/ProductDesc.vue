@@ -229,6 +229,16 @@ export default {
             });
             return filteredProductDetails;
         },
+
+        formatDate(dateStr) {
+            if (typeof dateStr !== 'string' || dateStr.length !== 8) {
+                return dateStr; // 형식이 맞지 않으면 원래 문자열 반환
+            }
+            const year = dateStr.slice(0, 4);
+            const month = dateStr.slice(4, 6);
+            const day = dateStr.slice(6, 8);
+            return `${year}-${month}-${day}`;
+        },
     },
 };
 </script>
@@ -318,10 +328,10 @@ export default {
 .bond-layout {
     display: flex;
     flex-direction: column;
-    background-color: #e0f7fa;
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #cce5ff;
+    border: 1px solid #ddd;
 }
 
 .bond-layout h2 {
@@ -339,10 +349,10 @@ export default {
 .fund-layout {
     display: flex;
     flex-direction: column;
-    background-color: #e0f7fa;
+    background-color: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #cce5ff;
+    border: 1px solid #ddd;
 }
 
 .fund-layout h2 {
@@ -359,7 +369,7 @@ export default {
 /* 뒤로가기 버튼 */
 .v-btn.back-button {
     margin-top: 30px;
-    background-color: #3961e4;
+    background-color: #7bd5c3;
     color: white;
     display: block;
     width: 100%;
