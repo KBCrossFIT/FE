@@ -480,6 +480,7 @@ export default {
             searchQuery.value = '';
             filteredProducts.value = displayedProducts.value;
             isSearched.value = false; // 검색 상태 초기화
+            loadProducts(); // 지우기, 되돌리기 시 다시 로드
         };
 
         const selectTab = (category) => {
