@@ -30,13 +30,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  max-width: 100%;
   padding: 20px;
-  height: 319px;
-  background: linear-gradient(to right, #d3d3d35c 60%, white 70%);
-
-  border: 1px solid #ddd;
+  background: linear-gradient(
+    to right,
+    #d3d3d35c 10%,
+    white 30%,
+    white 70%,
+    #d3d3d35c 100%
+  );
 }
 
 .slider-text {

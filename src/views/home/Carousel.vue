@@ -120,7 +120,6 @@ export default {
 
 .image-container {
   display: flex;
-  transition: transform 0.5s ease-in-out;
   height: 100%;
 }
 

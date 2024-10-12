@@ -1,13 +1,8 @@
 <template>
-  <!-- <div class="portfolio-page"> -->
-  <!-- <div class="nonHeader"> -->
-  <!-- <DevBtnSection /> -->
   <CarouselSection />
   <ComparisonSection />
   <FintainmentList />
   <ProductListSection />
-  <!-- </div> -->
-  <!-- </div> -->
 </template>
 
 <script>
