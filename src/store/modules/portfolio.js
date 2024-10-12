@@ -38,7 +38,6 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     try {
       const data = await portfolioApi.postPortfolio(portfolioItems, portfolioName); // 새 포트폴리오 생성
       newPortfolio.value = data; // 상태에 저장
-      portfolioList.value.push(data); // 포트폴리오 목록에 새 항목 추가
     } catch (error) {
       console.error('Error posting portfolio:', error);
     }

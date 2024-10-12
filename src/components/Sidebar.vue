@@ -110,7 +110,7 @@ export default {
 }
 .uiNavAside {
   position: fixed;
-  right: -4px;
+  right: -9px;
   top: -2px;
   width: 90px;
   height: 100vh;

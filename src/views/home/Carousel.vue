@@ -116,7 +116,6 @@ export default {
   height: 450px;
   overflow: hidden;
   margin-bottom: 0px;
-  background-color: black;
 }
 
 .image-container {
