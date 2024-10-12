@@ -584,13 +584,18 @@ export default {
 
 .nav-button {
     text-align: center;
-    width: 20%; /* 각 탭 버튼이 동일한 너비를 가지도록 설정 */
+    width: 20%;
     margin: 0;
 }
 
 .active-button {
     background-color: #3961e4;
     color: white;
+}
+
+.v-btn--active {
+    background-color: #7bd5c3 !important;
+    color: white !important;
 }
 
 .search-box {
@@ -617,7 +622,7 @@ export default {
 .search-btn {
     padding: 10px 15px;
     margin-left: 10px;
-    background-color: #7BD5C3;
+    background-color: #7bd5c3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -668,11 +673,6 @@ export default {
     text-decoration: underline;
 }
 
-.v-btn--active {
-    background-color: #7BD5C3 !important;
-    color: white !important;
-}
-
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -693,7 +693,7 @@ export default {
 }
 
 .pagination-btn.active {
-    background-color: #7BD5C3;
+    background-color: #7bd5c3;
     color: white;
 }
 
