@@ -89,7 +89,8 @@
 
 <script>
 import shinhanInvestChart from '@/assets/img/shinhanInvestChart.jpg';
-import VueApexCharts from 'vue3-apexcharts'; // apexcharts 파이 차트 사용.
+import VueApexCharts from 'vue3-apexcharts';
+import axios from 'axios';
 
 export default {
   name: 'MyInvestmentAnalyze',
@@ -181,12 +182,12 @@ export default {
         this.series = [50, 30, 15, 5];
       }
     },
+  },
 
-    // 테스트용 메서드(추후 삭제)
-    DevSetScore(score) {
-      this.user_preference = score;
-      this.distinguish(this.user_preference);
-    },
+  // 테스트용 메서드(추후 삭제)
+  DevSetScore(score) {
+    this.user_preference = score;
+    this.distinguish(this.user_preference);
   },
 };
 </script>
@@ -269,6 +270,7 @@ export default {
   justify-content: space-between; /* 카드 간의 간격 */
   margin-top: 10px;
 }
+
 .influencer-card {
   width: 30%; /* 카드의 너비를 3개가 가로로 배치되도록 설정 */
   padding: 15px;
@@ -324,18 +326,23 @@ export default {
 .MyInvestment-btn-set v-btn {
   margin: 0 10px; /* 버튼 사이에 좌우 10px 간격 추가 */
 }
+
 .fas.fa-fire {
   color: red;
 }
+
 .fas.fa-bolt {
   color: #ffa500;
 }
+
 .fas.fa-balance-scale {
   color: gray;
 }
+
 .fas.fa-shield-alt {
   color: #2196f3;
 }
+
 .fas.fa-home {
   color: green;
 }

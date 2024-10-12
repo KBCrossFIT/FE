@@ -6,7 +6,6 @@
   <ComparisonSection />
   <FintainmentList />
   <ProductListSection />
-
   <!-- </div> -->
   <!-- </div> -->
 </template>
@@ -49,7 +48,7 @@ export default {
 .comparison-section {
   margin-bottom: 1px;
 }
-. .product-list-section {
+.product-list-section {
   margin-bottom: 20px;
 }
 
