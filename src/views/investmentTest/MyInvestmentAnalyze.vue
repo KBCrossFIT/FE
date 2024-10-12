@@ -2,14 +2,6 @@
   <div class="MyInvestment-container">
     <div class="MyInvestment-header">
       <h1>내 투자성향 페이지</h1>
-      <!-- 테스트용 버튼(추후 삭제) -->
-      <div class="DevBtn-set">
-        <v-btn class="DevBtn-btn" @click="DevSetScore(81)"> 공격투자형 </v-btn>
-        <v-btn class="DevBtn-btn" @click="DevSetScore(61)"> 적극투자형 </v-btn>
-        <v-btn class="DevBtn-btn" @click="DevSetScore(41)"> 위험중립형 </v-btn>
-        <v-btn class="DevBtn-btn" @click="DevSetScore(21)"> 안정추구형 </v-btn>
-        <v-btn class="DevBtn-btn" @click="DevSetScore(1)"> 안정형 </v-btn>
-      </div>
     </div>
 
     <div class="MyInvestment-body">
@@ -57,12 +49,7 @@
             <div class="ProportionChart">
               {{ preference_name }} 추천 투자 비율
               <div id="chart">
-                <apexchart
-                  type="pie"
-                  width="380"
-                  :options="chartOptions"
-                  :series="series"
-                ></apexchart>
+                <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
               </div>
             </div>
           </div>
@@ -71,37 +58,28 @@
     </div>
 
     <div class="MyInvestment-btn-set">
-      <v-btn
-        class="MyInvestment-btn"
-        @click="navigateTo('/investment-test-start'), cancel()"
-      >
-        다시 분석하기
-      </v-btn>
-      <v-btn
-        class="MyInvestment-btn"
-        @click="navigateTo('/make-portfolio'), cancel()"
-      >
-        포트폴리오 작성하기
-      </v-btn>
+      <v-btn class="MyInvestment-btn" @click="navigateTo('/investment-test-start'), cancel()"> 다시 분석하기 </v-btn>
+      <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()"> 포트폴리오 작성하기 </v-btn>
     </div>
   </div>
 </template>
 
 <script>
-import shinhanInvestChart from '@/assets/img/shinhanInvestChart.jpg';
-import VueApexCharts from 'vue3-apexcharts';
-import axios from 'axios';
+import shinhanInvestChart from "@/assets/img/shinhanInvestChart.jpg";
+import VueApexCharts from "vue3-apexcharts";
+import axios from "axios";
+import { useAuthStore } from "@/store/authStore"; // 사용자 인증 상태를 가져오기 위해 사용
 
 export default {
-  name: 'MyInvestmentAnalyze',
+  name: "MyInvestmentAnalyze",
   components: {
     apexchart: VueApexCharts,
   },
   data() {
     return {
-      user_preference: 0, // 초기에는 0점
-      preference_name: '',
-      preference_text: '',
+      user_preference: 0, // 초기 투자 성향 점수
+      preference_name: "",
+      preference_text: "",
       shinhanInvestChart,
       influencers: [
         { name: 'Influencer 1', info: 'Influencer 1 정보' },
@@ -114,7 +92,8 @@ export default {
         chart: {
           type: 'pie',
         },
-        labels: ['예/적금', '채권', '펀드', '주식'], // 각 섹션의 레이블
+
+        labels: ["예/적금", "채권", "펀드", "주식"],
         responsive: [
           {
             breakpoint: 480,
@@ -123,6 +102,39 @@ export default {
                 width: 200,
               },
               legend: {
+                position: "bottom",
+              },
+            },
+          },
+        ],
+      },
+    };
+  },
+
+  async mounted() {
+    const authStore = useAuthStore();
+    await authStore.checkAuth(); // 사용자 인증 정보 확인
+
+    const memberNum = authStore.memberNum;
+
+    // 백엔드에서 member의 invest_score 값을 가져오기
+    axios
+      .get(`http://localhost:8080/api/member/${memberNum}/investPreference`)
+      .then((response) => {
+        const investScore = response.data.investScore || 0;
+        this.user_preference = investScore;
+        this.distinguish(this.user_preference); // 점수에 맞는 투자 성향 구분
+
+        // 점수에 맞는 personaPreference 설정 후 persona 데이터 필터링
+        this.fetchPersonas();
+      })
+      .catch((error) => {
+        console.error("Error fetching invest score:", error);
+      });
+  },
+
+  methods: {
+    // 투자 성향 구분 및 personaPreference 설정
                 position: 'bottom',
               },
             },
@@ -154,40 +166,76 @@ export default {
     },
 
     // 차트 데이터 시리즈 (예/적금, 채권, 펀드, 주식 순서)
+
     distinguish(user_preference) {
       if (user_preference >= 80) {
-        this.preference_name = '공격투자형';
+        this.preference_name = "공격투자형";
         this.preference_text =
-          '고객님께서는 공격투자형 성향을 보이십니다. 공격투자형은 높은 수익을 추구하는 대신, 위험을 감수할 준비가 되어 있는 투자자입니다. 투자자금의 상당 부분을 주식, 고위험 펀드, 또는 기타 고수익 자산에 투자하며, 장기적인 성장 가능성을 최우선으로 생각하는 경향이 있습니다.';
+          "고객님께서는 공격투자형 성향을 보이십니다. 공격투자형은 높은 수익을 추구하는 대신, 위험을 감수할 준비가 되어 있는 투자자입니다. 투자자금의 상당 부분을 주식, 고위험 펀드, 또는 기타 고수익 자산에 투자하며, 장기적인 성장 가능성을 최우선으로 생각하는 경향이 있습니다.";
         this.series = [10, 10, 20, 60];
       } else if (user_preference >= 60) {
-        this.preference_name = '적극투자형';
+        this.preference_name = "적극투자형";
         this.preference_text =
-          '고객님께서는 적극투자형 성향을 보이십니다. 적극투자형은 수익을 추구하면서도 위험을 일부 감수하는 투자자입니다. 대부분의 자산을 주식이나 주식형 펀드에 투자하지만, 일부는 채권이나 안정적인 자산으로 분산하여 리스크를 관리하려는 성향이 있습니다.';
+          "고객님께서는 적극투자형 성향을 보이십니다. 적극투자형은 수익을 추구하면서도 위험을 일부 감수하는 투자자입니다. 대부분의 자산을 주식이나 주식형 펀드에 투자하지만, 일부는 채권이나 안정적인 자산으로 분산하여 리스크를 관리하려는 성향이 있습니다.";
         this.series = [15, 15, 20, 50];
       } else if (user_preference >= 40) {
-        this.preference_name = '위험중립형';
+        this.preference_name = "위험중립형";
         this.preference_text =
-          '고객님께서는 위험중립형 성향을 보이십니다. 위험중립형은 안정성과 수익성의 균형을 중요시하는 투자자입니다. 주식과 채권, 그리고 현금성 자산에 고루 투자하며, 장기적인 안정적인 수익을 추구하는 동시에, 시장 변동에 대한 리스크를 적당히 수용하는 성향을 가지고 있습니다.';
+          "고객님께서는 위험중립형 성향을 보이십니다. 위험중립형은 안정성과 수익성의 균형을 중요시하는 투자자입니다. 주식과 채권, 그리고 현금성 자산에 고루 투자하며, 장기적인 안정적인 수익을 추구하는 동시에, 시장 변동에 대한 리스크를 적당히 수용하는 성향을 가지고 있습니다.";
         this.series = [25, 25, 20, 30];
       } else if (user_preference >= 20) {
-        this.preference_name = '안정추구형';
+        this.preference_name = "안정추구형";
         this.preference_text =
-          '고객님께서는 안정추구형 성향을 보이십니다. 안정추구형은 원금 손실을 최소화하면서 적당한 수익을 기대하는 투자자입니다. 자산의 대부분을 채권이나 저위험 펀드에 투자하며, 수익보다는 자산의 안전성을 우선시하는 성향입니다.';
+          "고객님께서는 안정추구형 성향을 보이십니다. 안정추구형은 원금 손실을 최소화하면서 적당한 수익을 기대하는 투자자입니다. 자산의 대부분을 채권이나 저위험 펀드에 투자하며, 수익보다는 자산의 안전성을 우선시하는 성향입니다.";
         this.series = [35, 35, 20, 10];
       } else {
-        this.preference_name = '안정형';
+        this.preference_name = "안정형";
         this.preference_text =
-          '고객님께서는 안정형 성향을 보이십니다. 안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다. 현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.';
+          "고객님께서는 안정형 성향을 보이십니다. 안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다. 현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.";
         this.series = [50, 30, 15, 5];
       }
     },
-  },
 
-  // 테스트용 메서드(추후 삭제)
-  DevSetScore(score) {
-    this.user_preference = score;
-    this.distinguish(this.user_preference);
+    // Persona 데이터 가져오기
+    fetchPersonas() {
+      axios
+        .get("http://localhost:8080/api/personas/get")
+        .then((response) => {
+          console.log("Received all persona data:", response.data);
+
+          let personaPreference = null;
+          if (this.preference_name === "공격투자형") {
+            personaPreference = 5;
+          } else if (this.preference_name === "적극투자형") {
+            personaPreference = 4;
+          } else if (this.preference_name === "위험중립형") {
+            personaPreference = 3;
+          } else if (this.preference_name === "안정추구형") {
+            personaPreference = 2;
+          } else if (this.preference_name === "안정형") {
+            personaPreference = 1;
+          }
+
+          this.influencers = response.data
+            .filter((persona) => persona.personaPreference === personaPreference)
+            .sort((a, b) => a.personaId - b.personaId)
+            .slice(0, 2)
+            .map((persona) => ({
+              persona_name: persona.personaName,
+              image: `http://localhost:8080/api/personas/${persona.imagePath}`,
+            }));
+
+          console.log("Filtered influencers:", this.influencers);
+        })
+        .catch((error) => {
+          console.error("Error fetching personas:", error);
+        });
+    },
+
+    navigateTo(path) {
+      this.$router.push(path);
+    },
+
   },
 };
 </script>
