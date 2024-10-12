@@ -111,30 +111,22 @@ export default {
 .uiNavAside {
   position: fixed;
   right: -4px;
-  top: 120px;
+  top: -2px;
   width: 90px;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  z-index: 9999;
+  /* z-index: 9999; */
   /* border-radius: 5px; */
-  border: 1px solid #7bd5c3;
+  /* border: 1px solid #7bd5c3; */
   padding: 10px;
-  /* background-color: rgb(233, 233, 233); */
 }
+
 .button-container {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  position: relative;
+  top: 130px;
 }
-
-/* .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-} */
 </style>

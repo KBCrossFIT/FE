@@ -146,7 +146,7 @@ export default {
 }
 
 .search-btn {
-    background-color: #007bff;
+    background-color: #7bd5c3;
     color: white;
     padding: 8px 16px;
     border: none;
@@ -165,7 +165,7 @@ export default {
 }
 
 .search-btn:hover {
-    background-color: #0056b3;
+    background-color: #589f91;
 }
 
 .clear-btn:hover {

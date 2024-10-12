@@ -116,7 +116,7 @@
                         <template v-else-if="selectedCategory === 'bond'">
                             <td>{{ product.isinCdNm }}</td>
                             <td>{{ formatDate(product.bondIssuDt) }}</td>
-                            <td>{{ product.bondSrfcInrt }}</td>
+                            <td>{{ product.bondSrfcInrt }}%</td>
                         </template>
 
                         <!-- 장바구니 버튼 -->
@@ -480,6 +480,7 @@ export default {
             searchQuery.value = '';
             filteredProducts.value = displayedProducts.value;
             isSearched.value = false; // 검색 상태 초기화
+            loadProducts(); // 지우기, 되돌리기 시 다시 로드
         };
 
         const selectTab = (category) => {
@@ -588,11 +589,6 @@ export default {
     margin: 0;
 }
 
-.active-button {
-    background-color: #3961e4;
-    color: white;
-}
-
 .v-btn--active {
     background-color: #7bd5c3 !important;
     color: white !important;
@@ -630,7 +626,7 @@ export default {
 }
 
 .search-btn:hover {
-    background-color: #0056b3;
+    background-color: #589f91;
 }
 
 .erase-filter-btn {

@@ -11,7 +11,6 @@ import SideBar from './Sidebar.vue';
     <div class="main">
       <div class="leftside"></div>
       <SideBar />
-
       <div class="exceptSide">
         <slot></slot>
       </div>
@@ -37,7 +36,7 @@ import SideBar from './Sidebar.vue';
 }
 
 .leftside {
-  flex-basis: 4.5%; /* 사이드바가 30% 차지 */
+  flex-basis: 4.5%;
 }
 
 #sidebar {
@@ -48,5 +47,9 @@ import SideBar from './Sidebar.vue';
 .exceptSide {
   flex-basis: 91%; /* exceptSide가 70% 차지 */
   background-color: #ffffff; /* 배경색을 추가해서 확인 가능 */
+}
+
+.footer {
+  z-index: 9999;
 }
 </style>

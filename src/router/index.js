@@ -42,6 +42,7 @@ import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
 import recentView from '@/views/recentView/recentView.vue';
 import cartEx from '@/views/cart/CartEx.vue';
+import memo from '@/memo.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -118,11 +119,12 @@ const routes = [
   { path: '/stock-search', name: 'StockSearch', component: StockSearch },
   { path: '/recent-view', name: 'RecentView', component: recentView },
   { path: '/cart-ex', name: 'CartEx', component: cartEx },
+  { path: '/memo', name: 'memo', component: memo },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes,
+  history: createWebHistory(),
+  routes,
 });
 
 export default router;

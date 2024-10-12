@@ -1,13 +1,13 @@
 <template>
   <footer>
-      <span>&copy; 2024 ProPortFolio. All rights reserved.</span>
-      <span>고객센터 000-000-0000</span>
+    <span>&copy; 2024 ProPortFolio. All rights reserved.</span>
+    <span>고객센터 000-000-0000</span>
   </footer>
 </template>
 
 <script>
 export default {
-  name: 'Footer'
+  name: 'Footer',
 };
 </script>
 
@@ -15,6 +15,7 @@ export default {
 footer {
   background-color: #e9f5e9; /* Light minty green */
   padding: 40px 20px;
+  z-index: 9999;
 }
 
 .footer-links {

@@ -6,6 +6,7 @@
   <ComparisonSection />
 
   <ProductListSection />
+  <FintainmentList />
   <!-- </div> -->
   <!-- </div> -->
 </template>
@@ -15,6 +16,7 @@ import CarouselSection from './Carousel.vue';
 import DevBtnSection from './DevBtn.vue';
 import ComparisonSection from './ComparisonSection.vue';
 import ProductListSection from './ProductList.vue';
+import FintainmentList from './FintainmentList.vue';
 
 export default {
   name: 'HomePage',
@@ -23,6 +25,7 @@ export default {
     DevBtnSection,
     ComparisonSection,
     ProductListSection,
+    FintainmentList,
   },
 };
 </script>

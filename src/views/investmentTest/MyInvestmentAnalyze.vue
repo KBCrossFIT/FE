@@ -2,6 +2,7 @@
   <div class="MyInvestment-container">
     <div class="MyInvestment-header">
       <h1>내 투자성향 페이지</h1>
+
     </div>
 
     <div class="MyInvestment-body">
@@ -11,12 +12,15 @@
             {{ preference_name }}
             <i v-if="preference_name === '공격투자형'" class="fas fa-fire"></i>
             <i v-if="preference_name === '적극투자형'" class="fas fa-bolt"></i>
+
             <i v-if="preference_name === '위험중립형'" class="fas fa-balance-scale"></i>
             <i v-if="preference_name === '안정추구형'" class="fas fa-shield-alt"></i>
+
             <i v-if="preference_name === '안정형'" class="fas fa-home"></i>
           </h2>
           <p>위험 회피 성향 점수 : {{ user_preference }}점</p>
           <p>{{ preference_text }}</p>
+
         </div>
 
         <div class="top-right">
@@ -32,6 +36,7 @@
           </div>
         </div>
 
+
         <div class="bottom-left">
           투자성향별 적합금융상품 분류표
           <img :src="shinhanInvestChart" class="investment-chart" />
@@ -42,7 +47,9 @@
             <div class="ProportionChart">
               {{ preference_name }} 추천 투자 비율
               <div id="chart">
+
                 <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
+
               </div>
             </div>
           </div>
@@ -51,8 +58,10 @@
     </div>
 
     <div class="MyInvestment-btn-set">
+
       <v-btn class="MyInvestment-btn" @click="navigateTo('/investment-test-start'), cancel()"> 다시 분석하기 </v-btn>
       <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()"> 포트폴리오 작성하기 </v-btn>
+
     </div>
   </div>
 </template>
@@ -63,12 +72,15 @@ import VueApexCharts from "vue3-apexcharts";
 import axios from "axios";
 
 export default {
+
   name: "MyInvestmentAnalyze",
+
   components: {
     apexchart: VueApexCharts,
   },
   data() {
     return {
+
       user_preference: 0,
       preference_name: "",
       preference_text: "",
@@ -80,6 +92,7 @@ export default {
           type: "pie",
         },
         labels: ["예/적금", "채권", "펀드", "주식"],
+
         responsive: [
           {
             breakpoint: 480,
@@ -88,7 +101,9 @@ export default {
                 width: 200,
               },
               legend: {
+
                 position: "bottom",
+
               },
             },
           },
@@ -98,6 +113,7 @@ export default {
   },
 
   mounted() {
+
     const score = parseFloat(this.$route.query.score) || 0;
     this.user_preference = score;
 
@@ -144,29 +160,37 @@ export default {
 
     distinguish(user_preference) {
       if (user_preference >= 80) {
-        this.preference_name = "공격투자형";
-        this.preference_text = "고객님께서는 공격투자형 성향을 보이십니다.";
+        this.preference_name = '공격투자형';
+        this.preference_text =
+          '고객님께서는 공격투자형 성향을 보이십니다. 공격투자형은 높은 수익을 추구하는 대신, 위험을 감수할 준비가 되어 있는 투자자입니다. 투자자금의 상당 부분을 주식, 고위험 펀드, 또는 기타 고수익 자산에 투자하며, 장기적인 성장 가능성을 최우선으로 생각하는 경향이 있습니다.';
         this.series = [10, 10, 20, 60];
       } else if (user_preference >= 60) {
-        this.preference_name = "적극투자형";
-        this.preference_text = "고객님께서는 적극투자형 성향을 보이십니다.";
+        this.preference_name = '적극투자형';
+        this.preference_text =
+          '고객님께서는 적극투자형 성향을 보이십니다. 적극투자형은 수익을 추구하면서도 위험을 일부 감수하는 투자자입니다. 대부분의 자산을 주식이나 주식형 펀드에 투자하지만, 일부는 채권이나 안정적인 자산으로 분산하여 리스크를 관리하려는 성향이 있습니다.';
         this.series = [15, 15, 20, 50];
       } else if (user_preference >= 40) {
-        this.preference_name = "위험중립형";
-        this.preference_text = "고객님께서는 위험중립형 성향을 보이십니다.";
+        this.preference_name = '위험중립형';
+        this.preference_text =
+          '고객님께서는 위험중립형 성향을 보이십니다. 위험중립형은 안정성과 수익성의 균형을 중요시하는 투자자입니다. 주식과 채권, 그리고 현금성 자산에 고루 투자하며, 장기적인 안정적인 수익을 추구하는 동시에, 시장 변동에 대한 리스크를 적당히 수용하는 성향을 가지고 있습니다.';
         this.series = [25, 25, 20, 30];
       } else if (user_preference >= 20) {
-        this.preference_name = "안정추구형";
-        this.preference_text = "고객님께서는 안정추구형 성향을 보이십니다.";
+        this.preference_name = '안정추구형';
+        this.preference_text =
+          '고객님께서는 안정추구형 성향을 보이십니다. 안정추구형은 원금 손실을 최소화하면서 적당한 수익을 기대하는 투자자입니다. 자산의 대부분을 채권이나 저위험 펀드에 투자하며, 수익보다는 자산의 안전성을 우선시하는 성향입니다.';
         this.series = [35, 35, 20, 10];
       } else {
-        this.preference_name = "안정형";
-        this.preference_text = "고객님께서는 안정형 성향을 보이십니다.";
+        this.preference_name = '안정형';
+        this.preference_text =
+          '고객님께서는 안정형 성향을 보이십니다. 안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다. 현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.';
         this.series = [50, 30, 15, 5];
       }
+    }
+
+
     },
-  },
-};
+  };
+
 </script>
 
 <style scoped>
@@ -216,7 +240,7 @@ export default {
 
 .influencer-cards {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 10px;
   margin-top: 10px;
 }
@@ -242,5 +266,61 @@ export default {
   object-fit: cover;
   border-radius: 20%;
   margin-bottom: 5px;
+}
+
+.influencer-card:hover {
+  box-shadow: 0 4px 15px #7bd5c3;
+}
+
+.influencer-card h4 {
+  margin-bottom: 10px;
+}
+
+.recommendation-square {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.investment-chart {
+  width: 700px;
+  height: auto;
+}
+
+.ProportionChart {
+  text-align: center;
+}
+
+.MyInvestment-btn-set {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 115px;
+  margin-left: auto;
+  gap: 20px;
+}
+
+.MyInvestment-btn-set v-btn {
+  margin: 0 10px;
+}
+
+.fas.fa-fire {
+  color: red;
+}
+
+.fas.fa-bolt {
+  color: #ffa500;
+}
+
+.fas.fa-balance-scale {
+  color: gray;
+}
+
+.fas.fa-shield-alt {
+  color: #2196f3;
+}
+
+.fas.fa-home {
+  color: green;
 }
 </style>
