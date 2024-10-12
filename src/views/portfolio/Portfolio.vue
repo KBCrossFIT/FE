@@ -24,7 +24,7 @@
         <div class="portfolio-summary-info">
           <div class="summary-item">
             <p>총 투자금액</p>
-            <p>{{ portfolioDetail.total.toLocaleString() }}원</p>
+            <p>{{ portfolioDetail.total }}원</p>
           </div>
           <div class="summary-item">
             <p>예상 수익률</p>
@@ -65,10 +65,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'; // Composition API
-import { useRoute } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
-import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
-import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
+import { ref, computed, onMounted } from "vue"; // Composition API
+import { useRoute } from "vue-router"; // 라우트 정보 접근을 위한 useRoute import
+import { usePortfolioStore } from "@/store/modules/portfolio"; // Pinia 스토어 가져오기
+import VueApexCharts from "vue3-apexcharts"; // ApexCharts 컴포넌트 import
 
 // 현재 라우트에서 포트폴리오 ID를 가져옴
 const route = useRoute();
