@@ -673,6 +673,7 @@ export default {
       return [...formattedProducts, ...formattedStocks];
     };
 
+
     // 저장 함수
     const savePortfolio = () => {
       const newPortfolioItem = formatDataForSave();
