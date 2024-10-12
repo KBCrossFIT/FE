@@ -184,10 +184,13 @@ export default {
   border-radius: 8px;
   width: 85%;
   max-width: 1000px;
-  max-height: 95vh;
-  overflow-y: hidden;
+  max-height: 90vh; /* Adjusted for better fit */
+  overflow: hidden; /* Removed overflow-y here */
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
+
 
 .ModalStock-Header {
   text-align: center;
@@ -225,10 +228,9 @@ export default {
 }
 
 .table-container {
-  max-height: calc(100% - 180px);
+  flex: 1; /* Allow the table to take available space */
   overflow-y: auto;
 }
-
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -249,18 +251,18 @@ export default {
   background-color: #e0f7fa;
 }
 
-/* 페이지네이션과 버튼을 정렬 */
 .pagination-and-buttons {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 15px;
+  padding-top: 10px; /* Added padding for spacing */
+  border-top: 1px solid #ddd; /* Optional: border to separate from table */
 }
 
 .pagination-controls {
-  flex: 1;
   display: flex;
-  justify-content: center;
+  gap: 10px;
 }
 
 .ModalStock-btn {
