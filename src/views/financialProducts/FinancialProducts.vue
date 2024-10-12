@@ -116,7 +116,7 @@
                         <template v-else-if="selectedCategory === 'bond'">
                             <td>{{ product.isinCdNm }}</td>
                             <td>{{ formatDate(product.bondIssuDt) }}</td>
-                            <td>{{ product.bondSrfcInrt }}</td>
+                            <td>{{ product.bondSrfcInrt }}%</td>
                         </template>
 
                         <!-- 장바구니 버튼 -->

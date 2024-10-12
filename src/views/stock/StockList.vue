@@ -90,7 +90,6 @@
                 <span>{{ currentPage }} / {{ totalPages }}</span>
                 <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
             </div>
-
             <div class="page-selection">
                 <input v-model.number="goToPage" type="number" min="1" :max="totalPages" />
                 <button @click="goToSpecificPage">이동</button>
@@ -143,9 +142,9 @@ export default {
                 this.dropdownIndex = null; // 페이지 이동 시 드롭다운 닫기
             }
         },
-        goToPage() {
-            if (this.inputPage >= 1 && this.inputPage <= this.totalPages) {
-                this.currentPage = this.inputPage;
+        goToSpecificPage() {
+            if (this.goToPage >= 1 && this.goToPage <= this.totalPages) {
+                this.currentPage = this.goToPage;
                 this.dropdownIndex = null;
             } else {
                 alert(`1에서 ${this.totalPages} 사이의 유효한 페이지 번호를 입력하세요.`);

@@ -337,65 +337,204 @@
                                     </thead>
                                     <tbody>
                                         <!-- 예/적금 -->
-                                        <tr v-if="product.productType === 'S'">
-                                            <td>금융회사명</td>
-                                            <td>
-                                                {{
-                                                    detailedProducts[product.productId]?.products[0]
-                                                        ?.korCoNm || product.kor_co_nm
-                                                }}
-                                            </td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'S'">
-                                            <td>기본금리</td>
-                                            <td>
-                                                {{
-                                                    detailedProducts[product.productId]?.rates[0]
-                                                        ?.intrRate || '정보 없음'
-                                                }}%
-                                            </td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'S'">
-                                            <td>최고금리</td>
-                                            <td>
-                                                {{
-                                                    detailedProducts[product.productId]?.rates[0]
-                                                        ?.intrRate2 || '정보 없음'
-                                                }}%
-                                            </td>
-                                        </tr>
+                                        <template v-if="product.productType === 'S'">
+                                            <tr>
+                                                <td>금융사명</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.products[0]?.korCoNm || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>상품명</td>
+                                                <td>{{ product.productName || '정보 없음' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>가입 방법</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.products[0]?.joinWay || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>만기 후 이자율</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.rates[0]?.mtrtInt || '정보 없음'
+                                                    }}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>특별 조건</td>
+                                                <td class="ellipsis-text">
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.products[0]?.spclCnd || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>가입 제한</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.products[0]?.joinDeny || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>최대 한도</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.products[0]?.maxLimit || '정보 없음'
+                                                    }}
+                                                    원
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>조회수</td>
+                                                <td>{{ product.hit || 0 }}</td>
+                                            </tr>
+                                        </template>
 
                                         <!-- 채권 -->
-                                        <tr v-if="product.productType === 'B'">
-                                            <td>ISIN 코드명</td>
-                                            <td>{{ product.isinCdNm || '정보 없음' }}</td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'B'">
-                                            <td>채권발행일자</td>
-                                            <td>{{ product.bondIssuDt || '정보 없음' }}</td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'B'">
-                                            <td>채권금리</td>
-                                            <td>{{ product.bondSrfcInrt || 0 }}%</td>
-                                        </tr>
+                                        <template v-else-if="product.productType === 'B'">
+                                            <tr>
+                                                <td>채권명</td>
+                                                <td>{{ product.isinCdNm || '정보 없음' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>채권 발행자</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.bondIsurNm || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>발행일</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.bondIssuDt || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>만기 일자</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.bondExprDt || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>발행 금액</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.bondIssuAmt || '정보 없음'
+                                                    }}
+                                                    원
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>채권 금리</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.bondSrfcInrt || '정보 없음'
+                                                    }}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>조회수</td>
+                                                <td>{{ product.hit || 0 }}</td>
+                                            </tr>
+                                        </template>
 
                                         <!-- 펀드 -->
-                                        <tr v-if="product.productType === 'F'">
-                                            <td>회사명</td>
-                                            <td>{{ product.companyNm || '정보 없음' }}</td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'F'">
-                                            <td>펀드유형</td>
-                                            <td>{{ product.fundType || '정보 없음' }}</td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'F'">
-                                            <td>위험도</td>
-                                            <td>{{ product.riskLevel || '정보 없음' }}</td>
-                                        </tr>
-                                        <tr v-if="product.productType === 'F'">
-                                            <td>12개월 수익률</td>
-                                            <td>{{ product.yield12 || 0 }}%</td>
-                                        </tr>
+                                        <template v-else-if="product.productType === 'F'">
+                                            <tr>
+                                                <td>운용사</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.companyNm || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>상품명</td>
+                                                <td>{{ product.productName || '정보 없음' }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>펀드 유형</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.fundType || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>위험도</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.riskLevel || '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>1개월 수익률</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.yield1 || '정보 없음'
+                                                    }}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>3개월 수익률</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.yield3 || '정보 없음'
+                                                    }}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>6개월 수익률</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.yield6 || '정보 없음'
+                                                    }}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>12개월 수익률</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.yield12 || '정보 없음'
+                                                    }}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>조회수</td>
+                                                <td>{{ product.hit || 0 }}</td>
+                                            </tr>
+                                        </template>
                                     </tbody>
                                 </table>
 
@@ -1000,5 +1139,12 @@ const scrollToCandidatesPick = () => {
     font-weight: bold;
     text-align: right;
     flex: 1;
+}
+
+.ellipsis-text {
+    white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+    overflow: hidden; /* 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis; /* 넘치는 텍스트에 '...' 표시 */
+    max-width: 150px; /* 필요한 최대 너비 설정 (조정 가능) */
 }
 </style>
