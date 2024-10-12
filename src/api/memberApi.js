@@ -57,3 +57,11 @@ export async function updatePassword(userId, newPassword) {
         throw error; // Throw error for further handling
     }
 }
+// 로그아웃 기능 (토큰 삭제)
+export function logoutUser() {
+  try {
+    localStorage.removeItem('authToken'); // 토큰 삭제
+  } catch (error) {
+    console.error('Error during logout:', error);
+  }
+}

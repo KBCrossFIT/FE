@@ -21,9 +21,9 @@ export default {
     }
   },
 
-  async postPortfolio(portfolioReqDto) {
+  async postPortfolio(portfolioItems, portfolioName) {
     try {
-      const response = await instance.post('/portfolio', portfolioReqDto);
+      const response = await instance.post(`/portfolio?portfolioName=${encodeURIComponent(portfolioName)}`, portfolioItems);
       return response.data;
     } catch (error) {
       console.error('Error posting portfolio:', error);

@@ -1,13 +1,13 @@
 <template>
-  <div class="portfolio-page">
-    <div class="nonHeader">
-      <!-- <DevBtnSection /> -->
-      <CarouselSection />
-      <ComparisonSection />
+  <!-- <div class="portfolio-page"> -->
+  <!-- <div class="nonHeader"> -->
+  <!-- <DevBtnSection /> -->
+  <CarouselSection />
+  <ComparisonSection />
 
-      <ProductListSection />
-    </div>
-  </div>
+  <ProductListSection />
+  <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 <script>
@@ -28,15 +28,6 @@ export default {
 </script>
 
 <style scoped>
-/* .portfolio-page {
-  display: flex; 
-  margin: 0 220px 0 220px; 
-  padding: 20px;
-} */
-/* .nonHeader {
-    background-color: black;
-} */
-
 .home-header {
   background-color: #e9ecef;
   padding: 20px;

@@ -21,15 +21,17 @@
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </form>
       <div class="link-container">
-        <a href="#" class="link">비밀번호를 잊으셨나요?</a>
+        <router-link to="/find" class="link">ID/비밀번호를 잊으셨나요?</router-link>
       </div>
     </div>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
-import {fetchCartList} from "@/api/cartApi.js";
+import { fetchCartList } from "@/api/cartApi.js";
+
 export default {
   data() {
     return {
@@ -88,6 +90,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .background-container {
   background: linear-gradient(to bottom right, #A0E0D2, #FFFFFF); /* Minty gradient background */

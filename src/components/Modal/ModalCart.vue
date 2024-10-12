@@ -4,7 +4,7 @@
       <div class="ModalCart-Header">
         <h1>장바구니</h1>
       </div>
-      <hr />
+      <hr/>
 
       <!-- 상품 종류 필터 -->
       <div class="Cart-filter">
@@ -21,7 +21,11 @@
           <thead>
           <tr>
             <th style="width: 10%">
-              <input type="checkbox" @change="toggleAllSelect" :checked="allSelected" />
+              <input
+                  type="checkbox"
+                  @change="toggleAllSelect"
+                  :checked="allSelected"
+              />
             </th>
             <th style="width: 20%">제공</th>
             <th style="width: 30%">상품명</th>
@@ -37,19 +41,25 @@
               @click="toggleSelect(item)"
           >
             <td>
-              <input type="checkbox" :value="item.cartId" v-model="selected" />
+              <input type="checkbox" :value="item.cartId" v-model="selected"/>
             </td>
             <td>{{ item.provider }}</td>
             <td>{{ item.productName }}</td>
             <td>
-              <span v-if="item.productType === 'S'">{{ item.rsrvType === 'S' ? '적금' : '예금' }}</span>
+                                <span v-if="item.productType === 'S'">{{
+                                    item.rsrvType === 'S' ? '적금' : '예금'
+                                  }}</span>
               <span v-else-if="item.productType === 'B'">채권</span>
               <span v-else-if="item.productType === 'F'">펀드</span>
               <span v-else>기타</span>
             </td>
             <td :style="getColorStyle(item.expectedReturn)">
-              <span v-if="item.expectedReturn > 0">+{{ item.expectedReturn }}%</span>
-              <span v-else-if="item.expectedReturn < 0">{{ item.expectedReturn }}%</span>
+                                <span v-if="item.expectedReturn > 0"
+                                >+{{ item.expectedReturn }}%</span
+                                >
+              <span v-else-if="item.expectedReturn < 0"
+              >{{ item.expectedReturn }}%</span
+              >
               <span v-else>{{ item.expectedReturn }}%</span>
             </td>
           </tr>
@@ -74,13 +84,18 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
-import { getDepositProductDetail, getSavingProductDetail, getFundProductDetail, getBondProductDetail } from '@/api/financeApi.js';
-import { getCartList } from '@/api/cartApi';
+import {ref, computed, onMounted, watch} from 'vue';
+import {
+  getDepositProductDetail,
+  getSavingProductDetail,
+  getFundProductDetail,
+  getBondProductDetail,
+} from '@/api/financeApi.js';
+import {getCartList} from '@/api/cartApi';
 
 export default {
   name: 'ModalCart',
-  setup(props, { emit }) {
+  setup(props, {emit}) {
     const selected = ref([]);
     const selectedProductType = ref('');
     const cartItems = ref([]);
@@ -133,7 +148,10 @@ export default {
     };
 
     const allSelected = computed(() => {
-      return selected.value.length > 0 && selected.value.length === paginatedCartItems.value.length;
+      return (
+          selected.value.length > 0 &&
+          selected.value.length === paginatedCartItems.value.length
+      );
     });
 
     const changePage = (direction) => {
@@ -164,16 +182,20 @@ export default {
               if (item.productType === 'S') {
                 if (item.rsrvType === null) {
                   productDetails = await getDepositProductDetail(item.productId);
+                  productDetails.productType = 'S';
                 } else {
                   productDetails = await getSavingProductDetail(item.productId);
+                  productDetails.productType = 'S';
                 }
               } else if (item.productType === 'F') {
                 productDetails = await getFundProductDetail(item.productId);
+                productDetails.productType = 'F';
               } else if (item.productType === 'B') {
                 productDetails = await getBondProductDetail(item.productId);
+                productDetails.productType = 'B';
               }
 
-              return { ...productDetails };
+              return {...productDetails};
             })
         );
 

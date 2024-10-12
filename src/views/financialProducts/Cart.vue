@@ -15,12 +15,12 @@
       <v-divider></v-divider>
       <v-card-text>
         <v-row class="header-row">
+          <v-col class="text-h6">선택</v-col>
           <v-col class="text-h6">상품 종류</v-col>
           <v-col class="text-h6">제공자</v-col>
           <v-col class="text-h6">상품 이름</v-col>
           <v-col class="text-h6">기대 수익률</v-col>
           <v-col class="text-h6"></v-col>
-          <!-- For the delete button -->
         </v-row>
         <v-divider></v-divider>
 
@@ -28,6 +28,15 @@
           <v-card elevation="2" class="cart-item-card mb-2">
             <v-card-text>
               <v-row>
+                <v-col>
+                  <v-checkbox
+                      :value="{ productId: item.productId, productType: item.productType }"
+                      v-model="selectedProducts"
+                      @change="handleSelectionChange(item)"
+                      class="product-checkbox"
+                      color="indigo"
+                  ></v-checkbox>
+                </v-col>
                 <v-col>
                   <span>
                     <span v-if="item.productType === 'S'">
@@ -43,9 +52,9 @@
                 <v-col>{{ item.expectedReturn }}%</v-col>
                 <v-col>
                   <v-btn
-                    class="cart-trashcanBtn"
-                    @click="removeFromCart(item.cartId)"
-                    icon
+                      class="cart-trashcanBtn"
+                      @click="removeFromCart(item.cartId)"
+                      icon
                   >
                     <v-icon>mdi-delete</v-icon>
                   </v-btn>
@@ -53,34 +62,29 @@
               </v-row>
             </v-card-text>
           </v-card>
-        </div>
-        <v-pagination
-          v-model="currentPage"
-          :length="totalPages"
-          @input="updatePagination"
-          class="mt-4"
-        ></v-pagination>
-      </v-card-text>
 
-      <div class="Cart-Btn-Set mt-4">
+
+          <div class="Cart-Btn-Set mt-4">
+
+          </div>
+        </div>
         <v-btn class="cart-Btn-Gotocompare" @click="goToCompare" color="primary"
-          >상품 비교해보기</v-btn
+        >상품 비교해보기
+        </v-btn
         >
-        <v-btn
-          class="cart-Btn-GotoPortfolio"
-          @click="goToMakePortfolio"
-          color="secondary"
-          >포트폴리오 구성하기</v-btn
-        >
-      </div>
+        <v-btn class="cart-Btn-GotoPortfolio" @click="goToMakePortfolio" color="secondary"
+        >포트폴리오 구성하기
+        </v-btn>
+      </v-card-text>
     </v-card>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { getCartList, deleteCartItem } from '@/api/cartApi';
+import {ref, computed, onMounted} from 'vue';
+import {useRouter} from 'vue-router';
+import {useCartStore} from '@/store/modules/cart';
+import {getCartList, deleteCartItem} from '@/api/cartApi';
 
 export default {
   name: 'Cart',
@@ -89,40 +93,34 @@ export default {
     const cart = ref([]);
     const itemsPerPage = 5;
     const currentPage = ref(1);
-    const loading = ref(true); // 로딩 상태
+    const loading = ref(true);
+    const selectedProducts = ref([]);
+    const cartStore = useCartStore();
 
-    // 초기 장바구니 데이터 가져오기
     onMounted(async () => {
       try {
-        cart.value = await getCartList(); // 장바구니 데이터 가져오기
-        if(cart.value == null) {
-          alert("장바구니")
-        }
+        cart.value = await getCartList();
         cart.value.forEach((item) => {
-          item.showDetails = false; // 세부 정보의 초기 상태 설정
+          item.showDetails = false;
         });
       } catch (error) {
         console.error('장바구니 목록을 가져오는 데 실패했습니다:', error);
         alert('장바구니 정보를 불러오는 중 오류가 발생했습니다.');
       } finally {
-        loading.value = false; // 가져오기 후 로딩 중지
+        loading.value = false;
       }
     });
 
-    const totalPages = computed(() =>
-      Math.ceil(cart.value.length / itemsPerPage)
-    ); // 총 페이지 수 계산
-
+    const totalPages = computed(() => Math.ceil(cart.value.length / itemsPerPage));
     const paginatedCart = computed(() => {
-      const start = (currentPage.value - 1) * itemsPerPage; // 현재 페이지에 따른 시작 인덱스
-      return cart.value.slice(start, start + itemsPerPage); // 페이지에 맞게 슬라이스
+      const start = (currentPage.value - 1) * itemsPerPage;
+      return cart.value.slice(start, start + itemsPerPage);
     });
 
     const removeFromCart = async (cartId) => {
       try {
-        console.log(cartId);
-        await deleteCartItem(cartId); // 장바구니 항목 삭제
-        cart.value = cart.value.filter((item) => item.cartId !== cartId); // 삭제된 항목 필터링
+        await deleteCartItem(cartId);
+        cart.value = cart.value.filter((item) => item.cartId !== cartId);
       } catch (error) {
         console.error('장바구니에서 항목을 제거하는 데 실패했습니다:', error);
         alert('장바구니에서 항목을 제거하는 중 오류가 발생했습니다.');
@@ -130,15 +128,38 @@ export default {
     };
 
     const updatePagination = (page) => {
-      currentPage.value = page; // 페이지 업데이트
+      currentPage.value = page;
     };
 
     const goToCompare = () => {
-      router.push('/productcomparison'); // 상품 비교 페이지로 이동
+      router.push('/productcomparison');
     };
 
     const goToMakePortfolio = () => {
-      router.push('/make-portfolio'); // 포트폴리오 구성 페이지로 이동
+      if (selectedProducts.value.length === 0) {
+        alert('포트폴리오를 구성할 상품을 선택하세요.');
+        return;
+      }
+
+      const productIds = selectedProducts.value.map(item => item.productId);
+      const productTypes = selectedProducts.value.map(item => item.productType);
+
+      // MakePortfolio 페이지로 이동
+      router.push({
+        name: 'MakePortfolio',
+        query: {productIds: JSON.stringify(productIds), productTypes: JSON.stringify(productTypes)}
+      });
+    };
+
+    const handleSelectionChange = (item) => {
+      if (selectedProducts.value.length > 3) {
+        alert('최대 3개의 상품만 선택할 수 있습니다.');
+        selectedProducts.value = selectedProducts.value.filter(
+            (product) => product.productId !== item.productId
+        );
+      } else {
+        console.log('선택된 상품 목록:', selectedProducts.value);
+      }
     };
 
     return {
@@ -151,6 +172,8 @@ export default {
       goToCompare,
       goToMakePortfolio,
       loading,
+      selectedProducts,
+      handleSelectionChange,
     };
   },
 };

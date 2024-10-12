@@ -109,13 +109,13 @@
                         >
                             <td>{{ product.korCoNm }}</td>
                             <td>{{ getRate(product.productId, 12).intrRate }}%</td>
-                            <td>{{ getRate(product.productId, 12).intrRate2 }}</td>
+                            <td>{{ getRate(product.productId, 12).intrRate2 }}%</td>
                         </template>
 
                         <!-- 채권 정보 -->
                         <template v-else-if="selectedCategory === 'bond'">
                             <td>{{ product.isinCdNm }}</td>
-                            <td>{{ product.bondIssuDt }}</td>
+                            <td>{{ formatDate(product.bondIssuDt) }}</td>
                             <td>{{ product.bondSrfcInrt }}</td>
                         </template>
 
@@ -221,7 +221,7 @@ export default {
         const cart = ref([]);
         const displayedProducts = ref([]);
         const currentPage = ref(1);
-        const pageSize = ref(10);
+        const pageSize = ref(8);
         const totalPages = ref(1);
         const isLoading = ref(false);
         const error = ref(null);
@@ -430,13 +430,13 @@ export default {
                     cartItem.value.productType = 'B';
                     cartItem.value.provider = product.bondIsurNm;
                     cartItem.value.productName = product.isinCdNm;
-                    cartItem.value.expectedReturn = product.yield12;
+                    cartItem.value.expectedReturn = product.bondSrfcInrt;
                     break;
                 case 'fund':
                     cartItem.value.productType = 'F';
                     cartItem.value.provider = product.companyNm;
                     cartItem.value.productName = product.productNm;
-                    cartItem.value.expectedReturn = product.bondSrfcInrt;
+                    cartItem.value.expectedReturn = product.yield12;
                     break;
             }
 
@@ -493,6 +493,16 @@ export default {
             });
         };
 
+        const formatDate = (dateStr) => {
+            if (typeof dateStr !== 'string' || dateStr.length !== 8) {
+                return dateStr; // 형식이 맞지 않으면 원래 문자열 반환
+            }
+            const year = dateStr.slice(0, 4);
+            const month = dateStr.slice(4, 6);
+            const day = dateStr.slice(6, 8);
+            return `${year}-${month}-${day}`;
+        };
+
         const visiblePages = computed(() => {
             const pages = [];
             const total = totalPages.value;
@@ -525,7 +535,7 @@ export default {
                 console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
                 selectedCategory.value = newCategory || 'all';
                 currentPage.value = parseInt(newPage) || 1;
-                pageSize.value = parseInt(newPageSize) || 10;
+                pageSize.value = parseInt(newPageSize) || 8;
 
                 loadProducts(currentPage.value);
             },
@@ -554,6 +564,7 @@ export default {
             visiblePages,
             toggleCartAndIncreaseHit,
             isSearched,
+            formatDate,
             // addCartItem,
         };
     },
@@ -606,7 +617,7 @@ export default {
 .search-btn {
     padding: 10px 15px;
     margin-left: 10px;
-    background-color: #007bff;
+    background-color: #7BD5C3;
     color: white;
     border: none;
     border-radius: 5px;
@@ -658,7 +669,7 @@ export default {
 }
 
 .v-btn--active {
-    background-color: #3961e4 !important;
+    background-color: #7BD5C3 !important;
     color: white !important;
 }
 
@@ -682,7 +693,7 @@ export default {
 }
 
 .pagination-btn.active {
-    background-color: #3961e4;
+    background-color: #7BD5C3;
     color: white;
 }
 

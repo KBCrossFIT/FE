@@ -1,25 +1,27 @@
 <template>
   <div class="carousel">
     <!-- Left Arrow -->
-    <div class="carousel-arrow left" @click="prevImage">
-      &#10094;
-      <!-- Unicode left arrow -->
-    </div>
+    <div class="carousel-arrow left" @click="prevImage">&#10094;</div>
 
     <!-- Images -->
     <div class="carousel-images">
-      <img
-        :src="images[currentImage]"
-        alt="Carousel Image"
-        @click="handleImageClick"
-      />
+      <div
+        class="image-container"
+        :style="imageContainerStyle"
+        @transitionend="handleTransitionEnd"
+      >
+        <!-- 복제된 마지막 이미지 -->
+        <img
+          v-for="(image, index) in displayImages"
+          :key="index"
+          :src="image"
+          alt="Carousel Image"
+        />
+      </div>
     </div>
 
     <!-- Right Arrow -->
-    <div class="carousel-arrow right" @click="nextImage">
-      &#10095;
-      <!-- Unicode right arrow -->
-    </div>
+    <div class="carousel-arrow right" @click="nextImage">&#10095;</div>
 
     <!-- Dots for navigation -->
     <div class="carousel-nav">
@@ -29,59 +31,81 @@
         :key="index"
         :class="{ active: currentImage === index }"
         @click="changeImage(index)"
-      >
-      </span>
+      ></span>
     </div>
   </div>
 </template>
 
 <script>
-import image1 from '@/assets/img/1first.jpg'; // 포트폴리오
-import image2 from '@/assets/img/1second.jpg'; // 투자성향분석
-import image3 from '@/assets/img/1third.png'; //
+import image1 from '@/assets/img/1first.jpg';
+import image2 from '@/assets/img/1second.jpg';
+import image3 from '@/assets/img/1third.png';
 
 export default {
   data() {
     return {
       currentImage: 0,
       images: [image1, image2, image3],
+      isTransitioning: true, // 애니메이션 상태 확인
     };
   },
+  computed: {
+    displayImages() {
+      // 첫 번째와 마지막 이미지의 복제본 추가
+      return [
+        this.images[this.images.length - 1],
+        ...this.images,
+        this.images[0],
+      ];
+    },
+    imageContainerStyle() {
+      return {
+        transform: `translateX(-${(this.currentImage + 1) * 100}%)`,
+        transition: this.isTransitioning
+          ? 'transform 0.5s ease-in-out'
+          : 'none',
+      };
+    },
+  },
   methods: {
-    handleImageClick() {
-      switch (this.currentImage) {
-        case 0:
-          this.gotoPage('/my-portfolio'); // 0번째 이미지 클릭 시 '/portfolio'로 이동
-          break;
-        case 1:
-          this.gotoPage('/investment-test-start'); // 1번째 이미지 클릭 시 '/investment-test-start'로 이동
-          break;
-        case 2:
-          // 2번째 이미지 클릭 시 아무 동작도 하지 않음 (빈 공간으로)
-          break;
-        default:
-          break;
+    handleTransitionEnd() {
+      // 첫 번째에서 마지막으로 넘어갔을 때 애니메이션 없이 순간 이동
+      if (this.currentImage === -1) {
+        this.isTransitioning = false;
+        this.currentImage = this.images.length - 1;
+      }
+
+      // 마지막에서 첫 번째로 넘어갔을 때 애니메이션 없이 순간 이동
+      if (this.currentImage === this.images.length) {
+        this.isTransitioning = false;
+        this.currentImage = 0;
+      }
+      setTimeout(() => {
+        this.isTransitioning = true; // 애니메이션 재활성화
+      }, 0);
+    },
+    nextImage() {
+      if (this.currentImage < this.images.length) {
+        this.currentImage++;
+      } else {
+        this.currentImage = 0;
       }
     },
-    gotoPage(page) {
-      this.$router.push(page); // 지정된 페이지로 이동
+    prevImage() {
+      if (this.currentImage > -1) {
+        this.currentImage--;
+      } else {
+        this.currentImage = this.images.length - 1;
+      }
     },
     changeImage(index) {
       this.currentImage = index;
     },
-    nextImage() {
-      this.currentImage = (this.currentImage + 1) % this.images.length;
-    },
-    prevImage() {
-      this.currentImage =
-        (this.currentImage - 1 + this.images.length) % this.images.length;
-    },
   },
   mounted() {
-    // Automatically swap images every 10 seconds
     setInterval(() => {
       this.nextImage();
-    }, 10000);
+    }, 9000);
   },
 };
 </script>
@@ -92,22 +116,12 @@ export default {
   height: 450px;
   overflow: hidden;
   margin-bottom: 0px;
-  border-radius: 15px;
   background-color: black;
-  width: 700px;
-  left: 100px;
 }
-/* 
-.carousel-images {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-} */
 
 .image-container {
   display: flex;
-  transition: transform 0.5s ease-in-out; /* Smooth slide effect */
+  transition: transform 0.5s ease-in-out;
   height: 100%;
 }
 
@@ -119,25 +133,25 @@ export default {
 
 .carousel-arrow {
   position: absolute;
-  top: 0; /* 위쪽에 고정 */
-  bottom: 0; /* 아래쪽에 고정 */
-  width: 300px; /* 필요에 따라 너비를 조정 */
+  top: 50%; /* 수직 중앙에 배치 */
+  transform: translateY(-50%);
+  width: 50px;
   font-size: 30px;
-  color: transparent;
   cursor: pointer;
   padding: 10px;
   display: flex;
-  align-items: center; /* 수직으로 중앙 정렬 */
-  justify-content: center; /* 수평으로 중앙 정렬 */
+  align-items: center;
+  justify-content: center;
   user-select: none;
+  z-index: 10; /* 다른 요소들 위에 표시되도록 z-index 설정 */
 }
 
 .carousel-arrow.left {
-  left: 0; /* 왼쪽에 고정 */
+  left: 0; /* 왼쪽에 배치 */
 }
 
 .carousel-arrow.right {
-  right: 0; /* 오른쪽에 고정 */
+  right: 0; /* 오른쪽에 배치 */
 }
 
 .carousel-nav {
@@ -159,9 +173,5 @@ export default {
 
 .dot.active {
   background-color: #007bff;
-}
-
-.carousel:hover {
-  cursor: pointer;
 }
 </style>

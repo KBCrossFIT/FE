@@ -206,8 +206,8 @@ const closePanel = () => {
 <style scoped>
 .side-panel {
   position: fixed;
-  right: 89px;
-  top: 140px;
+  right: 87px;
+  top: 120px;
   width: 508px;
   height: 100vh;
   background-color: white;

@@ -18,22 +18,29 @@
           width="380"
           :options="chartOptions"
           :series="series"
-        ></VueApexCharts> -->
-      </section>
-      <section class="portfolio-summary-detail">
-        <h2>종합 예상 투자 결과</h2>
-        <div class="investment-results">
-          <div class="result-item">
-            <span>투자 금액</span>
-            <span>{{ portfolioDetail.total | currency }}원</span>
+        ></VueApexCharts>
+
+        <!-- 포트폴리오 요약 정보 -->
+        <div class="portfolio-summary-info">
+          <div class="summary-item">
+            <p>총 투자금액</p>
+            <p>{{ portfolioDetail.total.toLocaleString() }}원</p>
           </div>
-          <div class="result-item">
-            <span>예상 수익률</span>
-            <span>{{ portfolioDetail.expectedReturn }}%</span>
+          <div class="summary-item">
+            <p>예상 수익률</p>
+            <p>{{ portfolioDetail.expectedReturn }}%</p>
           </div>
-          <div class="result-item">
-            <span>위험도</span>
-            <span>{{ portfolioDetail.riskLevel }}</span>
+          <div class="summary-item">
+            <p>예상 투자손익</p>
+            <p>{{ expectedProfit.toLocaleString() }}원</p>
+          </div>
+          <div class="summary-item">
+            <p>위험도</p>
+            <p>{{ portfolioDetail.riskLevel }}</p>
+          </div>
+          <div class="summary-item">
+            <p>총 평가금액</p>
+            <p>{{ totalEvaluation.toLocaleString() }}원</p>
           </div>
         </div>
       </section>
@@ -58,10 +65,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"; // Composition API
-import { useRoute } from "vue-router"; // 라우트 정보 접근을 위한 useRoute import
-import { usePortfolioStore } from "@/store/modules/portfolio"; // Pinia 스토어 가져오기
-import VueApexCharts from "vue3-apexcharts"; // ApexCharts 컴포넌트 import
+import { ref, computed, onMounted } from 'vue'; // Composition API
+import { useRoute } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
+import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
+import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
 
 // 현재 라우트에서 포트폴리오 ID를 가져옴
 const route = useRoute();
@@ -74,6 +81,18 @@ const portfolioStore = usePortfolioStore();
 
 // 포트폴리오 상세 정보를 가져와 저장할 상태
 const portfolioDetail = ref({});
+
+// 예상 투자손익 계산
+const expectedProfit = computed(() => {
+  const total = portfolioDetail.value.total || 0;
+  const expectedReturn = portfolioDetail.value.expectedReturn || 0;
+  return Math.round((total * expectedReturn) / 100);
+});
+
+// 총 평가금액 계산
+const totalEvaluation = computed(() => {
+  return (portfolioDetail.value.total || 0) + expectedProfit.value;
+});
 
 const getPortfolioDetailAction = async (portfolioId) => {
   try {
@@ -194,6 +213,30 @@ const setChartData = () => {
   margin-top: 20px;
   margin-bottom: 15px;
   font-weight: 600;
+}
+
+.portfolio-summary-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f1f3f5;
+  border-radius: 8px;
+}
+
+.summary-item {
+  text-align: center;
+  flex: 1;
+}
+
+.summary-item p:first-child {
+  font-size: 1rem;
+  color: #495057;
+}
+
+.summary-item p:last-child {
+  font-size: 1.25rem;
+  color: #007bff;
+  font-weight: bold;
 }
 
 .portfolio-actions {

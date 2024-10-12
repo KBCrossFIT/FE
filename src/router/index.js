@@ -106,7 +106,7 @@ const routes = [
   { path: '/make-portfolio', name: 'MakePortfolio', component: MakePortfolio },
   { path: '/my-portfolio', name: 'MyPortfolio', component: MyPortfolio },
   {
-    path: '/product66comparison',
+    path: '/productcomparison',
     name: 'ProductComparison',
     component: ProductComparison,
   },
@@ -121,8 +121,8 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
+    history: createWebHistory(),
+    routes,
 });
 
 export default router;
