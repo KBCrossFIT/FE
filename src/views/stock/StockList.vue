@@ -15,7 +15,7 @@
 
                 <tbody>
                     <template v-for="(stock, idx) in paginatedStocks" :key="stock.stockCode">
-                        <tr @click="toggleDropdown(idx)">
+                        <tr @click="gotoNaverStock(stock.stockCode)">
                             <td>{{ stock.stockCode }}</td>
                             <td>
                                 <p class="stockname_font">{{ stock.stockName }}</p>
@@ -31,51 +31,6 @@
                             </td>
                             <td :style="getColorStyle(stock.fltRt)">{{ stock.fltRt }}%</td>
                         </tr>
-
-                        <transition name="fade-slide">
-                            <tr v-if="dropdownIndex === idx" class="dropdown-content">
-                                <td colspan="6">
-                                    <div class="dropdown-box">
-                                        <div class="dropdown-row">
-                                            <p>
-                                                <strong>시가:</strong>
-                                                {{ formatCurrency(stock.mkp) }} 원
-                                            </p>
-                                            <p>
-                                                <strong>최고가:</strong>
-                                                {{ formatCurrency(stock.hipr) }} 원
-                                            </p>
-                                        </div>
-                                        <div class="dropdown-row">
-                                            <p>
-                                                <strong>최저가:</strong>
-                                                {{ formatCurrency(stock.lopr) }} 원
-                                            </p>
-                                            <p>
-                                                <strong>거래량:</strong>
-                                                {{ formatCurrency(stock.trqu) }}
-                                            </p>
-                                        </div>
-                                        <div class="dropdown-row">
-                                            <p>
-                                                <strong>거래대금:</strong>
-                                                {{ formatCurrency(stock.trPrc) }} 원
-                                            </p>
-                                            <p>
-                                                <strong>상장주식수:</strong>
-                                                {{ Number(stock.istgStCnt).toLocaleString() }}
-                                            </p>
-                                        </div>
-                                        <div class="dropdown-row">
-                                            <p>
-                                                <strong>시가총액:</strong>
-                                                {{ formatCurrency(stock.mrktTotAmt) }} 원
-                                            </p>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </transition>
                     </template>
                 </tbody>
             </table>
@@ -159,9 +114,7 @@ export default {
                 return { color: 'black' };
             }
         },
-        toggleDropdown(index) {
-            this.dropdownIndex = this.dropdownIndex === index ? null : index;
-        },
+
         // 통화 형식으로 변환하는 함수
         formatCurrency(value) {
             if (!value || isNaN(value)) return '0';
@@ -187,6 +140,11 @@ export default {
 
             // 1백만 이상인 경우 소수점 포함 없이 전체 숫자 반환
             return Number(value).toLocaleString();
+        },
+
+        gotoNaverStock(stockCode) {
+            const url = `https://finance.naver.com/item/main.naver?code=${stockCode}`;
+            window.open(url, '_blank');
         },
     },
     created() {
@@ -355,62 +313,6 @@ export default {
 
 .stockname_font {
     font-size: 20px;
-}
-
-.dropdown-box {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 20px;
-    row-gap: 10px;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    background-color: #f9f9f9;
-    font-size: 16px;
-    color: #333;
-}
-
-.dropdown-row p {
-    margin: 0;
-    text-align: left;
-    display: flex;
-    justify-content: flex-start;
-}
-
-.dropdown-row strong {
-    min-width: 80px;
-}
-
-.dropdown-box p {
-    margin: 0;
-}
-
-.dropdown-box strong {
-    color: #495057;
-    font-weight: 600;
-}
-
-.dropdown-content {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-    transition: all 0.3s ease;
-}
-
-.fade-slide-enter-from,
-.fade-slide-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.fade-slide-enter-to,
-.fade-slide-leave-from {
-    opacity: 1;
-    transform: translateY(0);
 }
 
 button:disabled {
