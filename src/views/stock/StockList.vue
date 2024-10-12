@@ -17,9 +17,15 @@
                     <template v-for="(stock, idx) in paginatedStocks" :key="stock.stockCode">
                         <tr @click="toggleDropdown(idx)">
                             <td>{{ stock.stockCode }}</td>
-                            <td>{{ stock.stockName }}</td>
-                            <td>{{ stock.mrktCtg }}</td>
-                            <td>{{ formatCurrency(stock.clpr) }}원</td>
+                            <td>
+                                <p class="stockname_font">{{ stock.stockName }}</p>
+                            </td>
+                            <td>
+                                <b>{{ stock.mrktCtg }}</b>
+                            </td>
+                            <td>
+                                <b>{{ formatCurrency(stock.clpr) }}원</b>
+                            </td>
                             <td :style="getColorStyle(stock.vs)">
                                 {{ stock.vs > 0 ? '+' : '' }}{{ formatCurrency(stock.vs) }}원
                             </td>
@@ -30,33 +36,42 @@
                             <tr v-if="dropdownIndex === idx" class="dropdown-content">
                                 <td colspan="6">
                                     <div class="dropdown-box">
-                                        <p>
-                                            <strong>시가:</strong> {{ formatCurrency(stock.mkp) }}
-                                        </p>
-                                        <p>
-                                            <strong>최고가:</strong>
-                                            {{ formatCurrency(stock.hipr) }}
-                                        </p>
-                                        <p>
-                                            <strong>최저가:</strong>
-                                            {{ formatCurrency(stock.lopr) }}
-                                        </p>
-                                        <p>
-                                            <strong>거래량:</strong>
-                                            {{ formatCurrency(stock.trqu) }}
-                                        </p>
-                                        <p>
-                                            <strong>거래대금:</strong>
-                                            {{ formatCurrency(stock.trPrc) }}
-                                        </p>
-                                        <p>
-                                            <strong>상장주식수:</strong>
-                                            {{ formatCurrency(stock.istgStCnt) }}
-                                        </p>
-                                        <p>
-                                            <strong>시가총액:</strong>
-                                            {{ formatCurrency(stock.mrktTotAmt) }}
-                                        </p>
+                                        <div class="dropdown-row">
+                                            <p>
+                                                <strong>시가:</strong>
+                                                {{ formatCurrency(stock.mkp) }} 원
+                                            </p>
+                                            <p>
+                                                <strong>최고가:</strong>
+                                                {{ formatCurrency(stock.hipr) }} 원
+                                            </p>
+                                        </div>
+                                        <div class="dropdown-row">
+                                            <p>
+                                                <strong>최저가:</strong>
+                                                {{ formatCurrency(stock.lopr) }} 원
+                                            </p>
+                                            <p>
+                                                <strong>거래량:</strong>
+                                                {{ formatCurrency(stock.trqu) }}
+                                            </p>
+                                        </div>
+                                        <div class="dropdown-row">
+                                            <p>
+                                                <strong>거래대금:</strong>
+                                                {{ formatCurrency(stock.trPrc) }} 원
+                                            </p>
+                                            <p>
+                                                <strong>상장주식수:</strong>
+                                                {{ Number(stock.istgStCnt).toLocaleString() }}
+                                            </p>
+                                        </div>
+                                        <div class="dropdown-row">
+                                            <p>
+                                                <strong>시가총액:</strong>
+                                                {{ formatCurrency(stock.mrktTotAmt) }} 원
+                                            </p>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -75,20 +90,14 @@
                 <span>{{ currentPage }} / {{ totalPages }}</span>
                 <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
             </div>
-            
+
             <div class="page-selection">
-                <input 
-                    v-model.number="goToPage" 
-                    type="number" 
-                    min="1" 
-                    :max="totalPages"
-            >
-            <button @click="goToSpecificPage">이동</button>
+                <input v-model.number="goToPage" type="number" min="1" :max="totalPages" />
+                <button @click="goToSpecificPage">이동</button>
             </div>
         </div>
     </div>
 </template>
-
 
 <script>
 export default {
@@ -154,9 +163,30 @@ export default {
         toggleDropdown(index) {
             this.dropdownIndex = this.dropdownIndex === index ? null : index;
         },
-
         // 통화 형식으로 변환하는 함수
         formatCurrency(value) {
+            if (!value || isNaN(value)) return '0';
+
+            if (value < 1_000_000) {
+                // 백만 단위 이하의 경우 원래 값 반환
+                return Number(value).toLocaleString();
+            }
+
+            const units = [
+                { limit: 1_000_000_000_000_000, label: '경' }, // 조 위 단위는 경
+                { limit: 1_000_000_000_000, label: '조' },
+                { limit: 10_000_000, label: '억' },
+                { limit: 1_000_000, label: '백만' },
+            ];
+
+            for (const unit of units) {
+                if (value >= unit.limit) {
+                    const formattedValue = (value / unit.limit).toFixed(1);
+                    return `${Number(formattedValue)}${unit.label}`;
+                }
+            }
+
+            // 1백만 이상인 경우 소수점 포함 없이 전체 숫자 반환
             return Number(value).toLocaleString();
         },
     },
@@ -178,7 +208,7 @@ export default {
 .table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 15px; /* 행 간격 증가 */
+    border-spacing: 0 15px;
     table-layout: fixed;
 }
 
@@ -193,19 +223,19 @@ export default {
     font-weight: bold;
     color: #495057;
     font-size: 18px;
-    padding: 15px 16px; /* 헤더 셀 패딩 조정 */
+    padding: 15px 16px;
 }
 
 .table tr {
     background-color: #ffffff;
     transition: background-color 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* 각 행에 그림자 효과 추가 */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .table tr:hover {
     background-color: #f8f9fa;
-    transform: translateY(-2px); /* 호버 시 약간 위로 이동 */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 호버 시 그림자 강화 */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .table td:first-child,
@@ -214,22 +244,21 @@ export default {
     border-bottom-left-radius: 8px;
 }
 
-/* 각 열의 정렬 조정 */
 .table th:nth-child(1),
 .table td:nth-child(1) {
-    text-align: center; /* 주식 코드 */
+    text-align: center;
     width: 10%;
 }
 
 .table th:nth-child(2),
 .table td:nth-child(2) {
-    text-align: left; /* 주식명 */
+    text-align: left;
     width: 25%;
 }
 
 .table th:nth-child(3),
 .table td:nth-child(3) {
-    text-align: center; /* 시장 구분 */
+    text-align: center;
     width: 10%;
 }
 
@@ -239,76 +268,68 @@ export default {
 .table td:nth-child(5),
 .table th:nth-child(6),
 .table td:nth-child(6) {
-    text-align: right; /* 종가, 전일비, 등락률 */
-    width: 15%
+    text-align: right;
+    width: 15%;
 }
 
-/* 페이지네이션 스타일 개선 */
+/* 페이지네이션 스타일 */
 .pagination-container {
-  display: flex;
-  justify-content: center; /* 중앙 정렬로 변경 */
-  align-items: center;
-  margin-top: 20px;
-  gap: 20px; /* 요소들 사이의 간격 설정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
 }
 
 .page-navigation {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .page-navigation button,
 .page-selection button {
-  padding: 5px 10px;
-  margin: 0 5px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #7bd5c3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .page-navigation button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
 .page-navigation span {
-  margin: 0 10px;
+    margin: 0 10px;
 }
 
 .page-selection {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .page-selection input {
-  width: 50px;
-  padding: 5px;
-  margin-right: 5px;
-  border: 1px solid #ced4da; /* 보더 추가 */
-  border-radius: 4px; /* 모서리 둥글게 */
-  font-size: 14px; /* 글자 크기 조정 */
+    width: 50px;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 .page-selection input:focus {
-  outline: none;
-  border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
-  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* 포커스 시 그림자 효과 */
-}
-
-.pagination {
-    margin-top: 30px; /* 상단 여백 증가 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px; /* 버튼 간격 조정 */
+    outline: none;
+    border-color: #589f91;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .pagination-btn {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #7bd5c3;
     border: none;
     border-radius: 5px;
     color: white;
@@ -318,7 +339,7 @@ export default {
 }
 
 .pagination-btn:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: #589f91;
     transform: translateY(-2px);
 }
 
@@ -333,57 +354,49 @@ export default {
     font-weight: bold;
 }
 
-/* 페이지네이션 입력 박스 스타일 개선 */
-.page-input-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px; /* 상단 여백 조정 */
-    gap: 10px; /* 입력과 버튼 간격 조정 */
-}
-
-.page-input {
-    width: 100px;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    text-align: center;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-.page-input:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-.go-btn {
-    padding: 8px 16px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.go-btn:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-}
-
-.dropdown-content {
-    background-color: #f9f9f9;
+.stockname_font {
+    font-size: 20px;
 }
 
 .dropdown-box {
-    padding: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 10px;
+    padding: 10px;
     border-top: 1px solid #ddd;
-    background-color: #f0f0f0;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
 }
 
-/* 애니메이션 스타일 추가 */
+.dropdown-row p {
+    margin: 0;
+    text-align: left;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.dropdown-row strong {
+    min-width: 80px;
+}
+
+.dropdown-box p {
+    margin: 0;
+}
+
+.dropdown-box strong {
+    color: #495057;
+    font-weight: 600;
+}
+
+.dropdown-content {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .fade-slide-enter-active,
 .fade-slide-leave-active {
     transition: all 0.3s ease;

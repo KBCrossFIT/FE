@@ -589,11 +589,6 @@ export default {
     margin: 0;
 }
 
-.active-button {
-    background-color: #3961e4;
-    color: white;
-}
-
 .v-btn--active {
     background-color: #7bd5c3 !important;
     color: white !important;
@@ -631,7 +626,7 @@ export default {
 }
 
 .search-btn:hover {
-    background-color: #0056b3;
+    background-color: #589f91;
 }
 
 .erase-filter-btn {
