@@ -23,7 +23,7 @@
         <div class="portfolio-summary-info">
           <div class="summary-item">
             <p>총 투자금액</p>
-            <p>{{ portfolioDetail.total.toLocaleString() }}원</p>
+            <p>{{ portfolioDetail.total }}원</p>
           </div>
           <div class="summary-item">
             <p>예상 수익률</p>

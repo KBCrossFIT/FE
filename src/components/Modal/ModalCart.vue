@@ -38,31 +38,27 @@
               v-for="item in paginatedCartItems"
               :key="item.cartId"
               :class="{ 'selected-row': selected.includes(item.cartId) }"
-              @click="toggleSelect(item)"
           >
             <td>
-              <input type="checkbox" :value="item.cartId" v-model="selected"/>
+              <input type="checkbox" :value="item.cartId" v-model="selected" />
             </td>
             <td>{{ item.provider }}</td>
             <td>{{ item.productName }}</td>
             <td>
-                                <span v-if="item.productType === 'S'">{{
-                                    item.rsrvType === 'S' ? '적금' : '예금'
-                                  }}</span>
+    <span v-if="item.productType === 'S'">
+      {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+    </span>
               <span v-else-if="item.productType === 'B'">채권</span>
               <span v-else-if="item.productType === 'F'">펀드</span>
               <span v-else>기타</span>
             </td>
             <td :style="getColorStyle(item.expectedReturn)">
-                                <span v-if="item.expectedReturn > 0"
-                                >+{{ item.expectedReturn }}%</span
-                                >
-              <span v-else-if="item.expectedReturn < 0"
-              >{{ item.expectedReturn }}%</span
-              >
+              <span v-if="item.expectedReturn > 0">+{{ item.expectedReturn }}%</span>
+              <span v-else-if="item.expectedReturn < 0">{{ item.expectedReturn }}%</span>
               <span v-else>{{ item.expectedReturn }}%</span>
             </td>
           </tr>
+
           </tbody>
         </table>
       </div>
