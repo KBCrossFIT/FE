@@ -52,7 +52,6 @@
 import axios from 'axios'; // axios를 통해 API 요청을 보냅니다.
 import { useAuthStore } from '@/store/authStore'; // Pinia store에서 로그인된 사용자 정보를 가져옵니다.
 import instance from '@/api';
-import instance from '@/api';
 export default {
     data() {
         return {
