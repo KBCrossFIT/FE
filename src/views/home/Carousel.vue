@@ -135,7 +135,8 @@ export default {
   position: absolute;
   top: 50%; /* 수직 중앙에 배치 */
   transform: translateY(-50%);
-  width: 50px;
+  height: 100%;
+  width: 100px;
   font-size: 30px;
   cursor: pointer;
   padding: 10px;

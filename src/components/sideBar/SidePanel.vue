@@ -1,6 +1,5 @@
 <template>
   <div class="side-panel">
-    <button @click="closePanel" class="close-button">Close</button>
     <h2>{{ title }}</h2>
 
     <!-- 포트폴리오 섹션 -->
@@ -131,6 +130,7 @@
       </table>
       <p v-else>최근 본 상품이 없습니다.</p>
     </div>
+    <button @click="closePanel" class="close-button">닫기</button>
   </div>
 </template>
 
@@ -206,7 +206,7 @@ const closePanel = () => {
 <style scoped>
 .side-panel {
   position: fixed;
-  right: 87px;
+  right: 85px;
   top: 120px;
   width: 508px;
   height: 100vh;
@@ -215,10 +215,13 @@ const closePanel = () => {
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
   z-index: 2000;
   overflow-y: auto;
+  font-size: 13px;
 }
 
 .close-button {
   margin-bottom: 20px;
+  position: absolute;
+  right: 20px;
 }
 
 .data-table {
