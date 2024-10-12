@@ -109,8 +109,10 @@
                             <div class rate-item-a>
                                 <strong> 채권발행일자 </strong><br />
                                 {{
-                                    detailedProducts[product.productId]?.bondIssuDt ||
-                                    product.bondIssuDt
+                                    formatDate(
+                                        detailedProducts[product.productId]?.bondIssuDt ||
+                                            product.bondIssuDt
+                                    )
                                 }}
                             </div>
                             <div class rate-item-b>
@@ -215,33 +217,35 @@
                                 <div class rate-item-a>
                                     <strong> 기본금리 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.rates[0]?.intrRate ||
-                                        '정보 없음'
-                                    }}%
+                                        detailedProducts[product.productId]?.rates[0]?.intrRate +
+                                            '%' || '정보 없음'
+                                    }}
                                 </div>
 
                                 <div class rate-item-b>
                                     <strong> 최고금리 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.rates[0]?.intrRate2 ||
-                                        '정보 없음'
-                                    }}%
+                                        detailedProducts[product.productId]?.rates[0]?.intrRate2 +
+                                            '%' || '정보 없음'
+                                    }}
                                 </div>
                             </div>
                             <div class="rate-item" v-else-if="product.productType === 'B'">
                                 <div class rate-item-a>
                                     <strong> 채권발행일자 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.bondIssuDt ||
-                                        product.bondIssuDt
+                                        formatDate(
+                                            detailedProducts[product.productId]?.bondIssuDt ||
+                                                product.bondIssuDt
+                                        )
                                     }}
                                 </div>
                                 <div class rate-item-b>
                                     <strong> 채권금리 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.bondSrfcInrt ||
+                                        detailedProducts[product.productId]?.bondSrfcInrt + '%' ||
                                         product.bondSrfcInrt
-                                    }}%
+                                    }}
                                 </div>
                             </div>
 
@@ -257,9 +261,9 @@
                                 <div class rate-item-b>
                                     <strong> 12개월 수익률 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.yield12 ||
+                                        detailedProducts[product.productId]?.yield12 + '%' ||
                                         product.yield12
-                                    }}%
+                                    }}
                                 </div>
                             </div>
                         </div>
@@ -360,47 +364,61 @@
                                                     }}
                                                 </td>
                                             </tr>
+                                            <tr class rate-item-a>
+                                                <td>기본금리</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.rates[0]?.intrRate + '%' ||
+                                                        '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
+
+                                            <tr class rate-item-b>
+                                                <td>최고금리</td>
+                                                <td>
+                                                    {{
+                                                        detailedProducts[product.productId]
+                                                            ?.rates[0]?.intrRate2 + '%' ||
+                                                        '정보 없음'
+                                                    }}
+                                                </td>
+                                            </tr>
                                             <tr>
                                                 <td>만기 후 이자율</td>
                                                 <td>
                                                     {{
                                                         detailedProducts[product.productId]
-                                                            ?.rates[0]?.mtrtInt || '정보 없음'
-                                                    }}%
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>특별 조건</td>
-                                                <td class="ellipsis-text">
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.products[0]?.spclCnd || '정보 없음'
+                                                            ?.rates[0]?.mtrtInt
+                                                            ? detailedProducts[product.productId]
+                                                                  ?.rates[0]?.mtrtInt + '%'
+                                                            : '정보 없음'
                                                     }}
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>가입 제한</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.products[0]?.joinDeny || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
+
                                             <tr>
                                                 <td>최대 한도</td>
                                                 <td>
                                                     {{
                                                         detailedProducts[product.productId]
-                                                            ?.products[0]?.maxLimit || '정보 없음'
+                                                            ?.products[0]?.maxLimit
+                                                            ? formatCurrency(
+                                                                  detailedProducts[
+                                                                      product.productId
+                                                                  ]?.products[0]?.maxLimit
+                                                              ) + '원'
+                                                            : '정보 없음'
                                                     }}
-                                                    원
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>조회수</td>
-                                                <td>{{ product.hit || 0 }}</td>
-                                            </tr>
+                                            <br />
+                                            <div class="gotoDetailPage">
+                                                <a :href="productDetailUrl(product)" target="_blank"
+                                                    >자세히 보기</a
+                                                >
+                                            </div>
                                         </template>
 
                                         <!-- 채권 -->
@@ -422,8 +440,10 @@
                                                 <td>발행일</td>
                                                 <td>
                                                     {{
-                                                        detailedProducts[product.productId]
-                                                            ?.bondIssuDt || '정보 없음'
+                                                        formatDate(
+                                                            detailedProducts[product.productId]
+                                                                ?.bondIssuDt
+                                                        ) || '정보 없음'
                                                     }}
                                                 </td>
                                             </tr>
@@ -431,8 +451,10 @@
                                                 <td>만기 일자</td>
                                                 <td>
                                                     {{
-                                                        detailedProducts[product.productId]
-                                                            ?.bondExprDt || '정보 없음'
+                                                        formatDate(
+                                                            detailedProducts[product.productId]
+                                                                ?.bondExprDt
+                                                        ) || '정보 없음'
                                                     }}
                                                 </td>
                                             </tr>
@@ -441,9 +463,14 @@
                                                 <td>
                                                     {{
                                                         detailedProducts[product.productId]
-                                                            ?.bondIssuAmt || '정보 없음'
+                                                            ?.bondIssuAmt
+                                                            ? formatCurrency(
+                                                                  detailedProducts[
+                                                                      product.productId
+                                                                  ]?.bondIssuAmt
+                                                              ) + '원'
+                                                            : '정보 없음'
                                                     }}
-                                                    원
                                                 </td>
                                             </tr>
                                             <tr>
@@ -451,14 +478,19 @@
                                                 <td>
                                                     {{
                                                         detailedProducts[product.productId]
-                                                            ?.bondSrfcInrt || '정보 없음'
-                                                    }}%
+                                                            ?.bondSrfcInrt
+                                                            ? detailedProducts[product.productId]
+                                                                  ?.bondSrfcInrt + '%'
+                                                            : '정보 없음'
+                                                    }}
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>조회수</td>
-                                                <td>{{ product.hit || 0 }}</td>
-                                            </tr>
+                                            <br />
+                                            <div class="gotoDetailPage">
+                                                <a :href="productDetailUrl(product)" target="_blank"
+                                                    >자세히 보기</a
+                                                >
+                                            </div>
                                         </template>
 
                                         <!-- 펀드 -->
@@ -498,42 +530,52 @@
                                                 <td>1개월 수익률</td>
                                                 <td>
                                                     {{
-                                                        detailedProducts[product.productId]
-                                                            ?.yield1 || '정보 없음'
-                                                    }}%
+                                                        detailedProducts[product.productId]?.yield1
+                                                            ? detailedProducts[product.productId]
+                                                                  ?.yield1 + '%'
+                                                            : '정보 없음'
+                                                    }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>3개월 수익률</td>
                                                 <td>
                                                     {{
-                                                        detailedProducts[product.productId]
-                                                            ?.yield3 || '정보 없음'
-                                                    }}%
+                                                        detailedProducts[product.productId]?.yield3
+                                                            ? detailedProducts[product.productId]
+                                                                  ?.yield3 + '%'
+                                                            : '정보 없음'
+                                                    }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>6개월 수익률</td>
                                                 <td>
                                                     {{
-                                                        detailedProducts[product.productId]
-                                                            ?.yield6 || '정보 없음'
-                                                    }}%
+                                                        detailedProducts[product.productId]?.yield6
+                                                            ? detailedProducts[product.productId]
+                                                                  ?.yield6 + '%'
+                                                            : '정보 없음'
+                                                    }}
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>12개월 수익률</td>
                                                 <td>
                                                     {{
-                                                        detailedProducts[product.productId]
-                                                            ?.yield12 || '정보 없음'
-                                                    }}%
+                                                        detailedProducts[product.productId]?.yield12
+                                                            ? detailedProducts[product.productId]
+                                                                  ?.yield12 + '%'
+                                                            : '정보 없음'
+                                                    }}
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>조회수</td>
-                                                <td>{{ product.hit || 0 }}</td>
-                                            </tr>
+                                            <br />
+                                            <div class="gotoDetailPage">
+                                                <a :href="productDetailUrl(product)" target="_blank"
+                                                    >자세히 보기</a
+                                                >
+                                            </div>
                                         </template>
                                     </tbody>
                                 </table>
@@ -852,6 +894,58 @@ const scrollToCandidatesPick = () => {
         container.scrollIntoView({ behavior: 'smooth' });
     }
 };
+
+// 받아온 일자 데이터 표시형식 메서드
+const formatDate = (dateStr) => {
+    if (typeof dateStr !== 'string' || dateStr.length !== 8) {
+        return dateStr; // 형식이 맞지 않으면 원래 문자열 반환
+    }
+    const year = dateStr.slice(0, 4);
+    const month = dateStr.slice(4, 6);
+    const day = dateStr.slice(6, 8);
+    return `${year}-${month}-${day}`;
+};
+
+// 통화 형식으로 변환하는 함수
+const formatCurrency = (value) => {
+    if (!value || isNaN(value)) return '0';
+
+    if (value < 1_000_000) {
+        // 백만 단위 이하의 경우 원래 값 반환
+        return Number(value).toLocaleString();
+    }
+
+    const units = [
+        { limit: 1_000_000_000_000_000, label: '경' }, // 조 위 단위는 경
+        { limit: 1_000_000_000_000, label: '조' },
+        { limit: 10_000_000, label: '억' },
+        { limit: 1_000_000, label: '백만' },
+    ];
+
+    for (const unit of units) {
+        if (value >= unit.limit) {
+            const formattedValue = (value / unit.limit).toFixed(1);
+            return `${Number(formattedValue)}${unit.label}`;
+        }
+    }
+
+    // 1백만 이상인 경우 소수점 포함 없이 전체 숫자 반환
+    return Number(value).toLocaleString();
+};
+
+// 상품 상세 URL 생성
+const productDetailUrl = (product) => {
+    const productId = product.productId;
+    const productType =
+        product.productType === 'S'
+            ? 'deposit'
+            : product.productType === 'B'
+            ? 'bond'
+            : product.productType === 'F'
+            ? 'fund'
+            : '';
+    return `http://localhost:5173/list/${productId}?productType=${productType}`;
+};
 </script>
 
 <style scoped>
@@ -1139,12 +1233,5 @@ const scrollToCandidatesPick = () => {
     font-weight: bold;
     text-align: right;
     flex: 1;
-}
-
-.ellipsis-text {
-    white-space: nowrap; /* 텍스트를 한 줄로 유지 */
-    overflow: hidden; /* 넘치는 텍스트 숨김 */
-    text-overflow: ellipsis; /* 넘치는 텍스트에 '...' 표시 */
-    max-width: 150px; /* 필요한 최대 너비 설정 (조정 가능) */
 }
 </style>

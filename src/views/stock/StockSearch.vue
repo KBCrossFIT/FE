@@ -8,9 +8,11 @@
                 placeholder="주식명 또는 주식코드를 입력하시오"
                 @keydown.enter="searchStock"
             />
-            <button class="search-btn" @click="searchStock">검색</button>
+            <button class="search-btn" @click="searchStock">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
             <button class="clear-btn" @click="clearSearch">
-                {{ isSearched ? '닫기' : '지우기' }}
+                <i class="fa-solid fa-rotate-left"></i>
             </button>
         </div>
 
