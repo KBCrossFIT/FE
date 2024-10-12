@@ -311,7 +311,7 @@ nav {
   display: flex;
   align-items: center;
   cursor: pointer;
-  position: fixed;
+  position: absolute;
   right: 10px;
   gap: 5px;
 }
