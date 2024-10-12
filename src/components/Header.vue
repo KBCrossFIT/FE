@@ -164,7 +164,9 @@ export default {
     async handleLogout() {
       const { cookies } = useCookies();
 
-      // await instance.post('/member/logout')
+      //로그아웃 오류 잠시 주석
+      // await instance.post('/member/logout');
+
       // Clear cookies and local storage
       cookies.remove('Authorization');
       cookies.remove('Refresh-Token');
@@ -211,11 +213,13 @@ export default {
   background-color: #ffffff;
   color: rgb(10, 1, 1);
   width: 100%;
-  height: 100px;
+  height: 120px;
   position: relative;
   box-sizing: border-box;
-  margin-top: 20px;
+  /* margin-top: 20px; */
   border-bottom: 1px solid #7bd5c3;
+
+  z-index: 9999;
 }
 
 .logoBox:hover {
@@ -225,9 +229,9 @@ export default {
 .logo-img {
   width: 155px;
   height: auto;
-  position: absolute;
-  top: -5px;
-  left: 266px;
+  position: relative;
+  top: 9px;
+  left: 40%;
 }
 
 nav {
@@ -264,13 +268,19 @@ nav {
   padding: 10px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
   z-index: 10;
-  gap: 90px; /* 각 섹션 간격 */
+  gap: 70px; /* 각 섹션 간격 */
 }
 
 .dropdown-section {
   flex-direction: column;
-  padding: 0 10px; /* 섹션 간의 여백 추가 */
-  border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
+  padding: 0 10px;
+  /* border-left: 1px solid #ddd;  */
+  flex-grow: 1; /* 각 섹션이 동일한 크기로 늘어나도록 */
+  width: 160px;
+}
+
+.inn {
+  width: 160px;
 }
 
 .dropdown-section:first-child {
@@ -304,15 +314,17 @@ nav {
 
 .user-controls {
   display: flex;
-  align-items: center;
+  /* position: absolute; */
+  right: 4%;
 }
 
 .profile-info {
   display: flex;
   align-items: center;
   cursor: pointer;
+  margin-right: 10px;
   position: absolute;
-  right: 10px;
+  right: 4%;
   gap: 5px;
 }
 
@@ -360,6 +372,9 @@ nav {
 }
 
 .in {
-  font-size: 13px;
+  width: 160px;
+  text-align: center;
+  font-size: 15px;
+  text-align: left;
 }
 </style>

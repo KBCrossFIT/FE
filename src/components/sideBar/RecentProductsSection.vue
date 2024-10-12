@@ -49,6 +49,7 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   transition: background-color 0.3s ease;
+  font-size: 13px;
 }
 
 .sidebar-link:hover {
