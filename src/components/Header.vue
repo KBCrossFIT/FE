@@ -16,13 +16,13 @@
       >
         <span class="menu-item">포트폴리오</span>
         <span class="menu-item">금융상품</span>
-        <span class="menu-item">Insight</span>
-        <span class="menu-item">My Investment</span>
+        <span class="menu-item">핀테인먼트</span>
+        <span class="menu-item">투자성향</span>
 
         <!-- Unified Dropdown -->
         <div v-if="showDropdown" class="dropdown">
           <div class="dropdown-section">
-            <ul>
+            <ul class="inn">
               <li
                 class="in"
                 :class="{ active: isActive('/my-portfolio') }"
@@ -41,7 +41,7 @@
           </div>
 
           <div class="dropdown-section">
-            <ul>
+            <ul class="inn">
               <li
                 class="in"
                 :class="{ active: isActive('/products/deposit') }"
@@ -60,13 +60,13 @@
           </div>
 
           <div class="dropdown-section">
-            <ul>
+            <ul class="inn">
               <li
                 class="in"
-                :class="{ active: isActive('/news') }"
-                @click="$router.push('/news')"
+                :class="{ active: isActive('/influencer') }"
+                @click="$router.push('/influencer')"
               >
-                뉴스
+                인플루언서
               </li>
               <li
                 class="in"
@@ -75,18 +75,19 @@
               >
                 유튜브
               </li>
+
               <li
                 class="in"
-                :class="{ active: isActive('/influencer') }"
-                @click="$router.push('/influencer')"
+                :class="{ active: isActive('/news') }"
+                @click="$router.push('/news')"
               >
-                인플루언서
+                뉴스
               </li>
             </ul>
           </div>
 
           <div class="dropdown-section">
-            <ul>
+            <ul class="inn">
               <li
                 class="in"
                 :class="{ active: isActive('/my-investment-analyze') }"
@@ -110,8 +111,10 @@
     <div class="user-controls">
       <template v-if="isLoggedIn">
         <div class="profile-info" @click="navigateToProfile">
-          <i class="fa-solid fa-user-tie"></i>
-          <span class="username">{{ userProfile.username }}</span>
+          <div class="usernames">
+            <i class="fa-solid fa-user-tie"></i>
+            <span class="username">{{ userProfile.username }}</span>
+          </div>
           <button @click.stop="handleLogout">로그아웃</button>
         </div>
       </template>
@@ -161,11 +164,11 @@ export default {
     async handleLogout() {
       const { cookies } = useCookies();
 
-            // await instance.post('/member/logout')
-            // Clear cookies and local storage
-            cookies.remove('Authorization');
-            cookies.remove('Refresh-Token');
-            localStorage.removeItem('user');
+      // await instance.post('/member/logout')
+      // Clear cookies and local storage
+      cookies.remove('Authorization');
+      cookies.remove('Refresh-Token');
+      localStorage.removeItem('user');
 
       // Update user profile state
       await this.updateUserProfile(); // Update the state
@@ -212,7 +215,7 @@ export default {
   position: relative;
   box-sizing: border-box;
   margin-top: 20px;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 1px solid #7bd5c3;
 }
 
 .logoBox:hover {
@@ -238,7 +241,7 @@ nav {
   padding: 10px;
   cursor: pointer;
   display: flex;
-  gap: 90px;
+  gap: 160px;
 }
 
 .menu-item {
@@ -250,24 +253,21 @@ nav {
 .menu-item:hover {
   color: #3961e4;
 }
-
 .dropdown {
   display: flex;
   justify-content: space-between;
   position: absolute;
   top: 100%; /* 헤더 바로 아래 정렬 */
-  left: 0; /* 헤더 왼쪽 가장자리에 정렬 */
-  width: 100%; /* 헤더의 전체 너비 */
+  left: -5px; /* 헤더 왼쪽 가장자리에 정렬 */
+  width: 105%; /* 헤더의 전체 너비 */
   background-color: white;
   padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
   z-index: 10;
+  gap: 90px; /* 각 섹션 간격 */
 }
 
 .dropdown-section {
-  display: flex;
   flex-direction: column;
   padding: 0 10px; /* 섹션 간의 여백 추가 */
   border-left: 1px solid #ddd; /* 섹션 간의 수직선 */
@@ -313,6 +313,7 @@ nav {
   cursor: pointer;
   position: fixed;
   right: 10px;
+  gap: 5px;
 }
 
 .profile-picture {
@@ -327,14 +328,35 @@ nav {
   padding: 10px;
   margin-left: 10px;
   cursor: pointer;
-  background-color: #3961e4;
-  color: white;
+  background-color: #fcfcfc;
+  color: rgb(19, 18, 18);
   border-radius: 5px;
   transition: background-color 0.2s;
 }
 
 .user-controls button:hover {
-  background-color: #4d85ff;
+  background-color: #7bd5c3;
+  color: white;
+}
+
+.login-btn button:hover {
+  background-color: #7bd5c3;
+  color: white;
+}
+.signup-btn button:hover {
+  background-color: #7bd5c3;
+  color: white;
+}
+.usernames i {
+  margin-right: 6px; /* 아이콘과 텍스트 사이의 간격 설정 */
+}
+
+.usernames:hover {
+  background-color: #7bd5c3;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.2s;
 }
 
 .in {
