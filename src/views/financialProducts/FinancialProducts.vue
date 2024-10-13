@@ -186,7 +186,7 @@
                     <tr
                         v-for="product in sortedProducts"
                         :key="product.productId"
-                        :class="{ 'in-cart': isInCart(product.productId) }"
+                        :class="{ 'in-cart': isProductInCart(product.productId) }"
                     >
                         <!-- 회사명, 금융회사명 또는 발행자 -->
                         <template v-if="selectedCategory === 'fund'">
@@ -239,8 +239,13 @@
 
                         <!-- 장바구니 버튼 -->
                         <td>
-                            <v-btn icon @click="alertCartAndIncreaseHit(product)">
-                                <v-icon>mdi-cart</v-icon>
+                            <v-btn icon
+                                @click="toggleCartAndIncreaseHit(product)"
+                                :color="isProductInCart(product.productId) ? 'primary' : 'default'"
+                            >
+                                <v-icon>{{
+                                    isProductInCart(product.productId) ? 'mdi-cart-check' : 'mdi-cart'
+                                }}</v-icon>
                             </v-btn>
                         </td>
                     </tr>
@@ -327,6 +332,17 @@ export default {
 
         const searchQuery = ref('');
         const selectedCategory = ref('deposit');
+
+        const cartItem = ref({
+            productId: '',
+            productType: '',
+            provider: '',
+            productName: '',
+            expectedReturn: '',
+            rsrvType: '',
+        });
+
+        const cart = ref([]);
 
         const displayedProducts = ref([]);
         const currentPage = ref(1);
@@ -574,6 +590,10 @@ export default {
             });
         };
 
+        const isProductInCart = computed(() => (productId) => {
+            return cartStore.cartItems.some((item) => item.productId === productId);
+        });
+
         // 장바구니 버튼 누를 시 나오는 alert
         const alertCartAndIncreaseHit = async (product) => {
             const inCart = isInCart(product.productId); // 상품이 장바구니에 있는지 확인
@@ -590,92 +610,78 @@ export default {
 
         // 장바구니 담는 메서드
         const toggleCartAndIncreaseHit = async (product) => {
-            const index = cartStore.cartItems.findIndex(
-                (item) => item.productId === product.productId
-            );
-            if (index === -1) {
-                // 장바구니에 추가
-                cartStore.addCartItem({
-                    productId: product.productId,
-                    productType: getProductType(product),
-                    provider: getProvider(product),
-                    productName: getProductName(product),
-                    expectedReturn: getExpectedReturn(product),
-                    rsrvType: getRsrvType(product),
-                });
-                alert(`상품 ID ${product.productId}이 장바구니에 추가되었습니다.`);
-            } else {
-                // 장바구니에서 제거
-                cartStore.removeCartItem(product.cartId); // cartId가 아닌 productId인지 확인 필요
-                alert(`상품 ID ${product.productId}이 장바구니에서 제거되었습니다.`);
-            }
-
             try {
+                await updateCart();
+                const isInCart = isProductInCart.value(product.productId);
+                console.log('isInCart:', isInCart);
+
+                if (isInCart) {
+                    // 장바구니에서 제거
+                    const cartItemToRemove = cartStore.cartItems.find((item) => item.productId === product.productId);
+                    console.log('cartItemToRemove:', cartItemToRemove);
+
+
+                    if (cartItemToRemove && cartItemToRemove.cartId) {
+                        await cartStore.removeCartItem(cartItemToRemove.cartId);
+                        updateCart();
+                        alert(`상품 ID ${product.productId}이 장바구니에서 제거되었습니다.`);
+                    } else {
+                        console.error('cartItemToRemove가 존재하지 않습니다.');
+                    }
+                } else {
+                    // 장바구니에 추가
+                    const newCartItem = {
+                        productId: product.productId,
+                        productType: getProductType(product.type),
+                        provider: getProvider(product),
+                        productName: getProductName(product),
+                        expectedReturn: getExpectedReturn(product),
+                        rervType: product.type === 'saving' ? 'S' : '',
+                    }
+
+                    const addedItem = await cartStore.addCartItem(newCartItem);
+                    if (addedItem) {
+                        updateCart();
+                        alert(`상품 ID ${product.productId}이 장바구니에 추가되었습니다.`);
+                    }
+                }
+
+
+                // 조회수 증가
                 await increaseAgeGroupProductHit(product.productId);
                 await increasePreferenceProductHit(product.productId);
+
             } catch (error) {
-                console.error('조회수 증가 오류: ', error);
-                alert('조회수를 증가하는 중 오류가 발생했습니다.');
+                console.error('장바구니 상태 업데이트 또는 조회수 증가 오류 발생:', error);
+                alert('장바구니 작업 중 오류가 발생했습니다.');
             }
         };
 
         // 각 타입별 정보 추출 함수
-        const getProductType = (product) => {
-            switch (product.type) {
-                case 'saving':
-                    return 'S';
-                case 'deposit':
-                    return 'S';
-                case 'bond':
-                    return 'B';
-                case 'fund':
-                    return 'F';
-                default:
-                    return '';
-            }
+        const getProductType = (type) => {
+            const typeMap = { saving: 'S', deposit: 'S', bond: 'B', fund: 'F' };
+            return typeMap[type] || '';
         };
 
         const getProvider = (product) => {
-            switch (product.type) {
-                case 'saving':
-                case 'deposit':
-                    return product.korCoNm;
-                case 'bond':
-                    return product.bondIsurNm;
-                case 'fund':
-                    return product.companyNm;
-                default:
-                    return '';
-            }
+            const providerMap = {
+                saving: product.korCoNm,
+                deposit: product.korCoNm,
+                bond: product.bondIsurNm,
+                fund: product.companyNm,
+            };
+            return providerMap[product.type] || '';
         };
 
         const getExpectedReturn = (product) => {
-            switch (product.type) {
-                case 'saving':
-                case 'deposit':
-                    return getRate(product.productId, 12).intrRate2;
-                case 'bond':
-                    return product.bondSrfcInrt;
-                case 'fund':
-                    return product.yield12;
-                default:
-                    return '';
+            if (product.type === 'saving' || product.type === 'deposit') {
+                return getRate(product.productId, 12).intrRate2;
+            } else if (product.type === 'bond') {
+                return product.bondSrfcInrt;
+            } else if (product.type === 'fund') {
+                return product.yield12;
             }
-        };
-
-        const getRsrvType = (product) => {
-            switch (product.type) {
-                case 'saving':
-                    return 'S';
-                case 'deposit':
-                    return ''; // deposit 타입의 rsrvType이 필요 없을 경우
-                case 'bond':
-                    return '';
-                case 'fund':
-                    return '';
-                default:
-                    return '';
-            }
+            return '';
         };
 
         const filteredProducts = ref([]); // 필터링된 결과를 저장할 ref
@@ -746,10 +752,12 @@ export default {
             return pages;
         });
 
-        // 장바구니에 담긴 상품인지 확인하는 함수
-        const isInCart = (productId) => {
-            return cartStore.cartItems.some((item) => item.productId === productId);
-        };
+        const updateCart = async () => {
+            await cartStore.fetchCartItems();
+            console.log('cartStore.cartItems:', cartStore.cartItems);
+            cart.value = cartStore.cartItems;
+            console.log('cart:', cart.value);
+        }
 
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
@@ -760,15 +768,17 @@ export default {
         // 라우트 변경 감지 및 상품 로드
         watch(
             () => [route.params.category, route.query.page, route.query.pageSize],
-            ([newCategory, newPage, newPageSize]) => {
+            async ([newCategory, newPage, newPageSize]) => {
                 console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
                 selectedCategory.value = newCategory || 'all';
                 currentPage.value = parseInt(newPage) || 1;
                 pageSize.value = parseInt(newPageSize) || 8;
 
                 loadProducts(currentPage.value);
+                await updateCart();
             },
-            { immediate: true }
+            { immediate: true },
+
         );
 
         return {
@@ -799,7 +809,7 @@ export default {
             sortField, // SortIndicator용 sortField 반환
             sortDirection, // SortIndicator용 sortDirection 반환
             alertCartAndIncreaseHit, // 장바구니에 담을지 여부 묻는 창
-            isInCart, // 장바구니에 담긴 상품인지 확인하는 함수 반환
+            isProductInCart,
         };
     },
 };
