@@ -1,177 +1,62 @@
 <template>
-    <div class="CandidatesPick-container">
-        <h1>상품 비교 페이지</h1>
-        <hr />
-        <br />
-        <div class="search-filter">
-            <!-- 상품 필터 -->
-            <div class="button-group">
-                <v-btn :class="{ active: selectedCategory === 'S' }" @click="selectCategory('S')">
-                    예/적금
-                </v-btn>
-                <v-btn :class="{ active: selectedCategory === 'B' }" @click="selectCategory('B')">
-                    채권
-                </v-btn>
-                <v-btn :class="{ active: selectedCategory === 'F' }" @click="selectCategory('F')">
-                    펀드
-                </v-btn>
-            </div>
-        </div>
-
-        <!-- 경고창 컨테이너 -->
-        <div class="alert-container">
-            <!-- 경고 메세지 박스 -->
-            <div v-if="warningMessage" class="alert-warning">
-                {{ warningMessage }}
-            </div>
-
-            <!-- 확인 메세지 박스-->
-            <div v-else-if="confirmMessage" class="alert-confirm">
-                {{ confirmMessage }}
-            </div>
-
-            <!-- 일반 메시지 박스 -->
-            <div v-else class="alert-normal">
-                {{ normalMessage }}
-            </div>
-        </div>
-
-        <!-- 로딩 상태 표시 -->
-        <div v-if="loading" class="loading">로딩 중...</div>
-
-        <!-- 장바구니 상품 카드 표시 위치 -->
-        <div v-else class="product-list">
-            <div
-                v-for="product in paginatedProducts"
-                :key="product.productId"
-                :class="['product-card', { isInCompare: isProductInCompare(product) }]"
-            >
-                <div class="card-body" @click="addToCompare(product)">
-                    <!-- 카드 헤더(상품 유형, 제공자) -->
-                    <div class="card-header">
-                        <!-- 상품 유형 -->
-                        <span class="product-type">
-                            <span v-if="product.productType === 'S'">{{
-                                product.rsrvType === '' ? '예금' : '적금'
-                            }}</span>
-                            <span v-else-if="product.productType === 'B'">채권</span>
-                            <span v-else-if="product.productType === 'F'">펀드</span>
-                        </span>
-
-                        <!-- 제공자 명 -->
-                        <span class="korconm">
-                            <span v-if="product.productType === 'S'">
-                                {{
-                                    detailedProducts[product.productId]?.products[0]?.korCoNm ||
-                                    product.kor_co_nm
-                                }}
-                            </span>
-
-                            <span v-else-if="product.productType === 'F'">
-                                {{
-                                    detailedProducts[product.productId]?.companyNm ||
-                                    product.companyNm
-                                }}
-                            </span>
-
-                            <span v-else-if="product.productType === 'B'">
-                                {{
-                                    detailedProducts[product.productId]?.bondIsurNm ||
-                                    product.bondIsurNm
-                                }}
-                            </span>
-                        </span>
-                    </div>
-
-                    <!-- 상품명 -->
-                    <h5 class="card-title">{{ product.productName }}</h5>
-
-                    <!-- 기타 정보 (기본금리 및 최고금리 또는 기타 정보) -->
-                    <div class="rate-info">
-                        <div class="rate-item" v-if="product.productType === 'S'">
-                            <div class rate-item-a>
-                                <strong> 기본금리 </strong><br />
-                                {{
-                                    detailedProducts[product.productId]?.rates[0]?.intrRate ||
-                                    '정보 없음'
-                                }}%
-                            </div>
-
-                            <div class rate-item-b>
-                                <strong> 최고금리 </strong><br />
-                                {{
-                                    detailedProducts[product.productId]?.rates[0]?.intrRate2 ||
-                                    '정보 없음'
-                                }}%
-                            </div>
-                        </div>
-                        <div class="rate-item" v-else-if="product.productType === 'B'">
-                            <div class rate-item-a>
-                                <strong> 채권발행일자 </strong><br />
-                                {{
-                                    formatDate(
-                                        detailedProducts[product.productId]?.bondIssuDt ||
-                                            product.bondIssuDt
-                                    )
-                                }}
-                            </div>
-                            <div class rate-item-b>
-                                <strong> 채권금리 </strong><br />
-                                {{
-                                    detailedProducts[product.productId]?.bondSrfcInrt ||
-                                    product.bondSrfcInrt
-                                }}%
-                            </div>
-                        </div>
-
-                        <div class="rate-item" v-else-if="product.productType === 'F'">
-                            <div class rate-item-a>
-                                <strong> 펀드유형 </strong><br />
-                                {{
-                                    detailedProducts[product.productId]?.fundType ||
-                                    product.fundType
-                                }}
-                            </div>
-
-                            <div class rate-item-b>
-                                <strong> 12개월 수익률 </strong><br />
-                                {{
-                                    detailedProducts[product.productId]?.yield12 || product.yield12
-                                }}%
-                            </div>
-                        </div>
-                    </div>
+    <div class="total-container">
+        <div class="CandidatesPick-container">
+            <h1>상품 비교 페이지</h1>
+            <hr />
+            <br />
+            <div class="search-filter">
+                <!-- 상품 필터 -->
+                <div class="button-group">
+                    <v-btn
+                        :class="{ active: selectedCategory === 'S' }"
+                        @click="selectCategory('S')"
+                    >
+                        예/적금
+                    </v-btn>
+                    <v-btn
+                        :class="{ active: selectedCategory === 'B' }"
+                        @click="selectCategory('B')"
+                    >
+                        채권
+                    </v-btn>
+                    <v-btn
+                        :class="{ active: selectedCategory === 'F' }"
+                        @click="selectCategory('F')"
+                    >
+                        펀드
+                    </v-btn>
                 </div>
             </div>
-            <div v-if="paginatedProducts.length === 0" class="no-products">
-                <p>해당 카테고리에 상품이 없습니다.</p>
-            </div>
-        </div>
 
-        <div class="text-center" v-if="!loading && totalPages > 1">
-            <v-pagination v-model="page" :length="totalPages" :total-visible="4"></v-pagination>
-        </div>
-    </div>
-    <br /><br />
-    <!-- 3개 선택 상품 비교 카드 섹션 -->
-    <div class="CandidatesCompare-container">
-        <h1>비교군 목록</h1>
-        <hr />
-        <div class="CandidatesCompare-body">
-            <v-btn @click="clearAllProducts">일괄 비우기</v-btn>
-            <div class="compare-cards">
+            <!-- 경고창 컨테이너 -->
+            <div class="alert-container">
+                <!-- 경고 메세지 박스 -->
+                <div v-if="warningMessage" class="alert-warning">
+                    {{ warningMessage }}
+                </div>
+
+                <!-- 확인 메세지 박스-->
+                <div v-else-if="confirmMessage" class="alert-confirm">
+                    {{ confirmMessage }}
+                </div>
+
+                <!-- 일반 메시지 박스 -->
+                <div v-else class="alert-normal">
+                    {{ normalMessage }}
+                </div>
+            </div>
+
+            <!-- 로딩 상태 표시 -->
+            <div v-if="loading" class="loading">로딩 중...</div>
+
+            <!-- 장바구니 상품 카드 표시 위치 -->
+            <div v-else class="product-list">
                 <div
-                    v-for="(product, index) in compareWithEmptySlots"
-                    :key="index"
-                    :class="['compare-card', { 'empty-card': product.isEmpty }]"
-                    @click="!product.isEmpty && removeFromCompare(index)"
+                    v-for="product in paginatedProducts"
+                    :key="product.productId"
+                    :class="['product-card', { isInCompare: isProductInCompare(product) }]"
                 >
-                    <!-- 해당 박스가 비어있다면 빈 슬롯 표시 -->
-                    <template v-if="product.isEmpty">
-                        <p class="empty-placeholder" @click="scrollToCandidatesPick">빈 슬롯</p>
-                    </template>
-                    <!-- 비어있지 않다면 내용 표시 -->
-                    <template v-else>
+                    <div class="card-body" @click="addToCompare(product)">
                         <!-- 카드 헤더(상품 유형, 제공자) -->
                         <div class="card-header">
                             <!-- 상품 유형 -->
@@ -208,7 +93,7 @@
                             </span>
                         </div>
 
-                        <!-- 상품 명 -->
+                        <!-- 상품명 -->
                         <h5 class="card-title">{{ product.productName }}</h5>
 
                         <!-- 기타 정보 (기본금리 및 최고금리 또는 기타 정보) -->
@@ -217,17 +102,17 @@
                                 <div class rate-item-a>
                                     <strong> 기본금리 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.rates[0]?.intrRate +
-                                            '%' || '정보 없음'
-                                    }}
+                                        detailedProducts[product.productId]?.rates[0]?.intrRate ||
+                                        '정보 없음'
+                                    }}%
                                 </div>
 
                                 <div class rate-item-b>
                                     <strong> 최고금리 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.rates[0]?.intrRate2 +
-                                            '%' || '정보 없음'
-                                    }}
+                                        detailedProducts[product.productId]?.rates[0]?.intrRate2 ||
+                                        '정보 없음'
+                                    }}%
                                 </div>
                             </div>
                             <div class="rate-item" v-else-if="product.productType === 'B'">
@@ -243,9 +128,9 @@
                                 <div class rate-item-b>
                                     <strong> 채권금리 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.bondSrfcInrt + '%' ||
+                                        detailedProducts[product.productId]?.bondSrfcInrt ||
                                         product.bondSrfcInrt
-                                    }}
+                                    }}%
                                 </div>
                             </div>
 
@@ -261,329 +146,477 @@
                                 <div class rate-item-b>
                                     <strong> 12개월 수익률 </strong><br />
                                     {{
-                                        detailedProducts[product.productId]?.yield12 + '%' ||
+                                        detailedProducts[product.productId]?.yield12 ||
                                         product.yield12
-                                    }}
+                                    }}%
                                 </div>
                             </div>
                         </div>
-                    </template>
+                    </div>
+                </div>
+                <div v-if="paginatedProducts.length === 0" class="no-products">
+                    <p>해당 카테고리에 상품이 없습니다.</p>
                 </div>
             </div>
+
+            <div class="text-center" v-if="!loading && totalPages > 1">
+                <v-pagination v-model="page" :length="totalPages" :total-visible="4"></v-pagination>
+            </div>
         </div>
+
         <br /><br />
 
-        <!-- 그래프 위치  -->
-        <div class="CandidatesCompare-desc">
-            <h2>막대 그래프 비교</h2>
+        <!-- 3개 선택 상품 비교 카드 섹션 -->
+        <div class="CandidatesCompare-container">
+            <h1>비교군 목록</h1>
             <hr />
-            <br />
-            <div id="chart">
-                <VueApexCharts
-                    type="bar"
-                    height="350"
-                    :options="updatedChartOptions"
-                    :series="series"
-                ></VueApexCharts>
-            </div>
-
-            <!-- 비교한 상품들의 상세 정보 카드 -->
-            <h2>비교한 상품 상세 정보</h2>
-            <hr />
-            <div class="product-details-container">
-                <div class="card-container">
-                    <v-card
-                        v-for="(product, index) in descWithEmptySlots"
+            <div class="CandidatesCompare-body">
+                <v-btn @click="clearAllProducts">일괄 비우기</v-btn>
+                <div class="compare-cards">
+                    <div
+                        v-for="(product, index) in compareWithEmptySlots"
                         :key="index"
-                        :class="[{ 'empty-card': product.isEmpty }, 'desc-card']"
-                        elevation="3"
+                        :class="product.isEmpty ? 'empty-card' : 'compare-card'"
+                        @click="!product.isEmpty && removeFromCompare(index)"
                     >
-                        <!-- 빈 슬롯인 경우 -->
-                        <template v-if="product.isEmpty">
-                            <v-card-title @click="scrollToCandidatesPick">빈 슬롯</v-card-title>
-                        </template>
+                        <!-- 해당 박스가 비어있다면 빈 슬롯 표시 -->
+                        <template v-if="product.isEmpty"> </template>
 
-                        <!-- 상품 정보가 있는 경우 -->
+                        <!-- 비어있지 않다면 내용 표시 -->
                         <template v-else>
-                            <v-card-title>
-                                {{ product.productName }} (ID: {{ product.productId }})
-                            </v-card-title>
-                            <v-card-text>
-                                <p>
-                                    상품 종류:
-                                    {{
-                                        product.productType === 'S'
-                                            ? product.rsrvType === ''
-                                                ? '예금'
-                                                : '적금'
-                                            : product.productType === 'B'
-                                            ? '채권'
-                                            : product.productType === 'F'
-                                            ? '펀드'
-                                            : '기타'
-                                    }}
-                                </p>
+                            <!-- 카드 헤더(상품 유형, 제공자) -->
+                            <div class="card-header">
+                                <!-- 상품 유형 -->
+                                <span class="product-type">
+                                    <span v-if="product.productType === 'S'">{{
+                                        product.rsrvType === '' ? '예금' : '적금'
+                                    }}</span>
+                                    <span v-else-if="product.productType === 'B'">채권</span>
+                                    <span v-else-if="product.productType === 'F'">펀드</span>
+                                </span>
 
-                                <!-- 기본 정보 테이블 -->
-                                <table
-                                    v-if="
-                                        product.productType === 'S' ||
-                                        product.productType === 'B' ||
-                                        product.productType === 'F'
-                                    "
-                                    class="details-table"
-                                >
-                                    <thead>
-                                        <tr>
-                                            <th>항목</th>
-                                            <th>내용</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- 예/적금 -->
-                                        <template v-if="product.productType === 'S'">
-                                            <tr>
-                                                <td>금융사명</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.products[0]?.korCoNm || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>상품명</td>
-                                                <td>{{ product.productName || '정보 없음' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>가입 방법</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.products[0]?.joinWay || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr class rate-item-a>
-                                                <td>기본금리</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.rates[0]?.intrRate + '%' ||
-                                                        '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
+                                <!-- 제공자 명 -->
+                                <span class="korconm">
+                                    <span v-if="product.productType === 'S'">
+                                        {{
+                                            detailedProducts[product.productId]?.products[0]
+                                                ?.korCoNm || product.kor_co_nm
+                                        }}
+                                    </span>
 
-                                            <tr class rate-item-b>
-                                                <td>최고금리</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.rates[0]?.intrRate2 + '%' ||
-                                                        '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>만기 후 이자율</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.rates[0]?.mtrtInt
-                                                            ? detailedProducts[product.productId]
-                                                                  ?.rates[0]?.mtrtInt + '%'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
+                                    <span v-else-if="product.productType === 'F'">
+                                        {{
+                                            detailedProducts[product.productId]?.companyNm ||
+                                            product.companyNm
+                                        }}
+                                    </span>
 
-                                            <tr>
-                                                <td>최대 한도</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.products[0]?.maxLimit
-                                                            ? formatCurrency(
-                                                                  detailedProducts[
-                                                                      product.productId
-                                                                  ]?.products[0]?.maxLimit
-                                                              ) + '원'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <br />
-                                            <div class="gotoDetailPage">
-                                                <a :href="productDetailUrl(product)" target="_blank"
-                                                    >자세히 보기</a
-                                                >
-                                            </div>
-                                        </template>
+                                    <span v-else-if="product.productType === 'B'">
+                                        {{
+                                            detailedProducts[product.productId]?.bondIsurNm ||
+                                            product.bondIsurNm
+                                        }}
+                                    </span>
+                                </span>
+                            </div>
 
-                                        <!-- 채권 -->
-                                        <template v-else-if="product.productType === 'B'">
-                                            <tr>
-                                                <td>채권명</td>
-                                                <td>{{ product.isinCdNm || '정보 없음' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>채권 발행자</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.bondIsurNm || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>발행일</td>
-                                                <td>
-                                                    {{
-                                                        formatDate(
-                                                            detailedProducts[product.productId]
-                                                                ?.bondIssuDt
-                                                        ) || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>만기 일자</td>
-                                                <td>
-                                                    {{
-                                                        formatDate(
-                                                            detailedProducts[product.productId]
-                                                                ?.bondExprDt
-                                                        ) || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>발행 금액</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.bondIssuAmt
-                                                            ? formatCurrency(
-                                                                  detailedProducts[
-                                                                      product.productId
-                                                                  ]?.bondIssuAmt
-                                                              ) + '원'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>채권 금리</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.bondSrfcInrt
-                                                            ? detailedProducts[product.productId]
-                                                                  ?.bondSrfcInrt + '%'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <br />
-                                            <div class="gotoDetailPage">
-                                                <a :href="productDetailUrl(product)" target="_blank"
-                                                    >자세히 보기</a
-                                                >
-                                            </div>
-                                        </template>
+                            <!-- 상품 명 -->
+                            <h5 class="card-title">{{ product.productName }}</h5>
 
-                                        <!-- 펀드 -->
-                                        <template v-else-if="product.productType === 'F'">
-                                            <tr>
-                                                <td>운용사</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.companyNm || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>상품명</td>
-                                                <td>{{ product.productName || '정보 없음' }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>펀드 유형</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.fundType || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>위험도</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]
-                                                            ?.riskLevel || '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>1개월 수익률</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]?.yield1
-                                                            ? detailedProducts[product.productId]
-                                                                  ?.yield1 + '%'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>3개월 수익률</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]?.yield3
-                                                            ? detailedProducts[product.productId]
-                                                                  ?.yield3 + '%'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>6개월 수익률</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]?.yield6
-                                                            ? detailedProducts[product.productId]
-                                                                  ?.yield6 + '%'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>12개월 수익률</td>
-                                                <td>
-                                                    {{
-                                                        detailedProducts[product.productId]?.yield12
-                                                            ? detailedProducts[product.productId]
-                                                                  ?.yield12 + '%'
-                                                            : '정보 없음'
-                                                    }}
-                                                </td>
-                                            </tr>
-                                            <br />
-                                            <div class="gotoDetailPage">
-                                                <a :href="productDetailUrl(product)" target="_blank"
-                                                    >자세히 보기</a
-                                                >
-                                            </div>
-                                        </template>
-                                    </tbody>
-                                </table>
+                            <!-- 기타 정보 (기본금리 및 최고금리 또는 기타 정보) -->
+                            <div class="rate-info">
+                                <div class="rate-item" v-if="product.productType === 'S'">
+                                    <div class rate-item-a>
+                                        <strong> 기본금리 </strong><br />
+                                        {{
+                                            detailedProducts[product.productId]?.rates[0]
+                                                ?.intrRate + '%' || '정보 없음'
+                                        }}
+                                    </div>
 
-                                <p v-else>수익률 정보 없음</p>
-                            </v-card-text>
+                                    <div class rate-item-b>
+                                        <strong> 최고금리 </strong><br />
+                                        {{
+                                            detailedProducts[product.productId]?.rates[0]
+                                                ?.intrRate2 + '%' || '정보 없음'
+                                        }}
+                                    </div>
+                                </div>
+                                <div class="rate-item" v-else-if="product.productType === 'B'">
+                                    <div class rate-item-a>
+                                        <strong> 채권발행일자 </strong><br />
+                                        {{
+                                            formatDate(
+                                                detailedProducts[product.productId]?.bondIssuDt ||
+                                                    product.bondIssuDt
+                                            )
+                                        }}
+                                    </div>
+                                    <div class rate-item-b>
+                                        <strong> 채권금리 </strong><br />
+                                        {{
+                                            detailedProducts[product.productId]?.bondSrfcInrt +
+                                                '%' || product.bondSrfcInrt
+                                        }}
+                                    </div>
+                                </div>
+
+                                <div class="rate-item" v-else-if="product.productType === 'F'">
+                                    <div class rate-item-a>
+                                        <strong> 펀드유형 </strong><br />
+                                        {{
+                                            detailedProducts[product.productId]?.fundType ||
+                                            product.fundType
+                                        }}
+                                    </div>
+
+                                    <div class rate-item-b>
+                                        <strong> 12개월 수익률 </strong><br />
+                                        {{
+                                            detailedProducts[product.productId]?.yield12 + '%' ||
+                                            product.yield12
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
                         </template>
-                    </v-card>
+                    </div>
+                </div>
+            </div>
+            <br /><br />
+
+            <!-- 그래프 위치  -->
+            <div class="CandidatesCompare-desc">
+                <h2>막대 그래프 비교</h2>
+                <hr />
+                <br />
+                <div id="chart">
+                    <VueApexCharts
+                        type="bar"
+                        height="350"
+                        :options="updatedChartOptions"
+                        :series="series"
+                    ></VueApexCharts>
+                </div>
+
+                <!-- 비교한 상품들의 상세 정보 카드 -->
+                <h2>비교한 상품 상세 정보</h2>
+                <hr />
+                <div class="product-details-container">
+                    <div class="card-container">
+                        <v-card
+                            v-for="(product, index) in descWithEmptySlots"
+                            :key="index"
+                            :class="product.isEmpty ? 'empty-card-desc' : 'desc-card'"
+                            elevation="3"
+                        >
+                            <!-- 빈 슬롯인 경우 -->
+                            <template v-if="product.isEmpty"> </template>
+
+                            <!-- 상품 정보가 있는 경우 -->
+                            <template v-else>
+                                <v-card-title>
+                                    {{ product.productName }} (ID: {{ product.productId }})
+                                </v-card-title>
+                                <v-card-text>
+                                    <p>
+                                        상품 종류:
+                                        {{
+                                            product.productType === 'S'
+                                                ? product.rsrvType === ''
+                                                    ? '예금'
+                                                    : '적금'
+                                                : product.productType === 'B'
+                                                ? '채권'
+                                                : product.productType === 'F'
+                                                ? '펀드'
+                                                : '기타'
+                                        }}
+                                    </p>
+
+                                    <!-- 기본 정보 테이블 -->
+                                    <table
+                                        v-if="
+                                            product.productType === 'S' ||
+                                            product.productType === 'B' ||
+                                            product.productType === 'F'
+                                        "
+                                        class="details-table"
+                                    >
+                                        <thead>
+                                            <tr>
+                                                <th>항목</th>
+                                                <th>내용</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- 예/적금 -->
+                                            <template v-if="product.productType === 'S'">
+                                                <tr>
+                                                    <td>금융사명</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.products[0]?.korCoNm ||
+                                                            '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>상품명</td>
+                                                    <td>
+                                                        {{ product.productName || '정보 없음' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>가입 방법</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.products[0]?.joinWay ||
+                                                            '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr class rate-item-a>
+                                                    <td>기본금리</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.rates[0]?.intrRate + '%' ||
+                                                            '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+
+                                                <tr class rate-item-b>
+                                                    <td>최고금리</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.rates[0]?.intrRate2 + '%' ||
+                                                            '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>만기 후 이자율</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.rates[0]?.mtrtInt
+                                                                ? detailedProducts[
+                                                                      product.productId
+                                                                  ]?.rates[0]?.mtrtInt + '%'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>최대 한도</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.products[0]?.maxLimit
+                                                                ? formatCurrency(
+                                                                      detailedProducts[
+                                                                          product.productId
+                                                                      ]?.products[0]?.maxLimit
+                                                                  ) + '원'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <br />
+                                                <div class="gotoDetailPage">
+                                                    <a
+                                                        :href="productDetailUrl(product)"
+                                                        target="_blank"
+                                                        >자세히 보기</a
+                                                    >
+                                                </div>
+                                            </template>
+
+                                            <!-- 채권 -->
+                                            <template v-else-if="product.productType === 'B'">
+                                                <tr>
+                                                    <td>채권명</td>
+                                                    <td>{{ product.isinCdNm || '정보 없음' }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>채권 발행자</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.bondIsurNm || '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>발행일</td>
+                                                    <td>
+                                                        {{
+                                                            formatDate(
+                                                                detailedProducts[product.productId]
+                                                                    ?.bondIssuDt
+                                                            ) || '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>만기 일자</td>
+                                                    <td>
+                                                        {{
+                                                            formatDate(
+                                                                detailedProducts[product.productId]
+                                                                    ?.bondExprDt
+                                                            ) || '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>발행 금액</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.bondIssuAmt
+                                                                ? formatCurrency(
+                                                                      detailedProducts[
+                                                                          product.productId
+                                                                      ]?.bondIssuAmt
+                                                                  ) + '원'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>채권 금리</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.bondSrfcInrt
+                                                                ? detailedProducts[
+                                                                      product.productId
+                                                                  ]?.bondSrfcInrt + '%'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <br />
+                                                <div class="gotoDetailPage">
+                                                    <a
+                                                        :href="productDetailUrl(product)"
+                                                        target="_blank"
+                                                        >자세히 보기</a
+                                                    >
+                                                </div>
+                                            </template>
+
+                                            <!-- 펀드 -->
+                                            <template v-else-if="product.productType === 'F'">
+                                                <tr>
+                                                    <td>운용사</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.companyNm || '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>상품명</td>
+                                                    <td>
+                                                        {{ product.productName || '정보 없음' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>펀드 유형</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.fundType || '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>위험도</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.riskLevel || '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1개월 수익률</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.yield1
+                                                                ? detailedProducts[
+                                                                      product.productId
+                                                                  ]?.yield1 + '%'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3개월 수익률</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.yield3
+                                                                ? detailedProducts[
+                                                                      product.productId
+                                                                  ]?.yield3 + '%'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>6개월 수익률</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.yield6
+                                                                ? detailedProducts[
+                                                                      product.productId
+                                                                  ]?.yield6 + '%'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>12개월 수익률</td>
+                                                    <td>
+                                                        {{
+                                                            detailedProducts[product.productId]
+                                                                ?.yield12
+                                                                ? detailedProducts[
+                                                                      product.productId
+                                                                  ]?.yield12 + '%'
+                                                                : '정보 없음'
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <br />
+                                                <div class="gotoDetailPage">
+                                                    <a
+                                                        :href="productDetailUrl(product)"
+                                                        target="_blank"
+                                                        >자세히 보기</a
+                                                    >
+                                                </div>
+                                            </template>
+                                        </tbody>
+                                    </table>
+
+                                    <p v-else>수익률 정보 없음</p>
+                                </v-card-text>
+                            </template>
+                        </v-card>
+                    </div>
                 </div>
             </div>
         </div>
@@ -949,10 +982,18 @@ const productDetailUrl = (product) => {
 </script>
 
 <style scoped>
+.total-container {
+    width: 70%;
+    padding: 20px;
+    /* background-color: #f4f6f8; */
+    margin: 0 auto;
+}
+
 .CandidatesPick-container {
     width: 100%;
     padding: 20px;
     background-color: #f4f6f8;
+    margin: 0 auto;
 }
 
 .search-filter {
@@ -1029,9 +1070,9 @@ const productDetailUrl = (product) => {
     justify-content: center;
 }
 
+/* .empty-card 제외됨(빈슬롯 표시안되게 수정) */
 .product-card,
-.compare-card,
-.empty-card {
+.compare-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1043,6 +1084,40 @@ const productDetailUrl = (product) => {
     transition: box-shadow 0.3s, transform 0.3s;
     padding: 10px;
     cursor: pointer;
+}
+
+/* 비교군 목록 빈카드 */
+.empty-card {
+    all: unset;
+    width: 200px;
+    height: 250px;
+    cursor: default; /* 기본 커서 설정 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent; /* 배경 투명 */
+    border: none; /* 테두리 제거 */
+}
+
+/* 상품 상세 빈 카드 */
+.empty-card-desc {
+    flex: 1;
+}
+
+.desc-card {
+    flex: 1;
+    min-width: 30%;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.compare-card:hover {
+    background-color: #f7f9fc;
 }
 
 .card-body {
@@ -1123,28 +1198,10 @@ const productDetailUrl = (product) => {
     background-color: #f7f9fc;
 }
 
-.compare-card:hover {
-    background-color: #f7f9fc;
-}
-
-.empty-card:hover {
-    background-color: #f7f9fc;
-}
-
 .product-detail {
     margin-top: 10px;
     font-size: 14px;
     color: #777;
-}
-
-.empty-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #777;
-    font-size: 10px;
-    font-style: italic;
 }
 
 .product-detail strong {
@@ -1164,18 +1221,6 @@ const productDetailUrl = (product) => {
     display: flex;
     justify-content: space-between; /* 카드를 균등 간격으로 배치 */
     gap: 20px;
-}
-
-.desc-card {
-    flex: 1; /* 카드가 균등하게 공간을 차지하도록 설정 */
-    min-width: 30%; /* 최소 너비 설정 */
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 .details-table {
