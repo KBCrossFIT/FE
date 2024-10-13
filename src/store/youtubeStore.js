@@ -13,8 +13,8 @@ export const useYoutubeStore = defineStore('youtube', {
     async fetchAllYoutubeData() {
       try {
         const data = await getAllYoutubeData();
-        this.featuredVideos = data.slice(0, 3);
-        this.otherVideos = data.slice(3);
+        this.featuredVideos = data.slice(0, 2);
+        this.otherVideos = data.slice(2);
       } catch (error) {
         console.error('Error fetching all YouTube data:', error);
       }
