@@ -640,7 +640,7 @@ const selectedCategory = ref('S'); // 초기 값을 'S'로 변경
 const compare = ref([]);
 const currentProductType = ref(null); // 현재 선택된 상품의 타입 저장
 const page = ref(1);
-const itemsPerPage = ref(8); // 페이지당 아이템 수
+const itemsPerPage = ref(6); // 페이지당 아이템 수
 const warningMessage = ref('');
 const confirmMessage = ref('');
 const normalMessage = ref('각 카드를 클릭하여 비교해 볼 수 있습니다.');
@@ -982,20 +982,45 @@ const productDetailUrl = (product) => {
 </script>
 
 <style scoped>
+/* 기본 레이아웃 */
 .total-container {
-    width: 70%;
+    width: 50%;
     padding: 20px;
-    /* background-color: #f4f6f8; */
     margin: 0 auto;
 }
 
 .CandidatesPick-container {
     width: 100%;
     padding: 20px;
-    background-color: #f4f6f8;
     margin: 0 auto;
 }
 
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.product-details-container {
+    margin-top: 40px;
+    padding: 20px;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* 버튼 및 필터 */
 .search-filter {
     display: flex;
     justify-content: center;
@@ -1013,26 +1038,26 @@ const productDetailUrl = (product) => {
     transition: background-color 0.3s, color 0.3s;
 }
 
-.button-group .v-btn.active {
-    background-color: #3961e4;
-    color: white;
-}
-
+.button-group .v-btn.active,
 .button-group .v-btn:hover {
     background-color: #3961e4;
     color: white;
 }
 
+/* 메시지 창 */
 .alert-container {
     display: flex;
     justify-content: center;
+    width: 100%;
     margin-bottom: 20px;
 }
 
 .alert-warning {
-    color: #856404;
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
+    width: 100%;
+    color: #ffffff;
+    text-align: center;
+    background-color: #d9534f;
+    border: 1px solid #f5c6cb;
     font-size: 14px;
     padding: 10px 15px;
     border-radius: 4px;
@@ -1040,7 +1065,9 @@ const productDetailUrl = (product) => {
 }
 
 .alert-confirm {
+    width: 100%;
     color: #155724;
+    text-align: center;
     background-color: #d4edda;
     border: 1px solid #c3e6cb;
     font-size: 14px;
@@ -1049,28 +1076,25 @@ const productDetailUrl = (product) => {
     margin: 0 5px;
 }
 
+.alert-normal {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 15px;
+    text-align: center;
+    color: #31708f;
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    border-radius: 4px;
+}
+
+/* 로딩 표시 */
 .loading {
     text-align: center;
     font-size: 18px;
     color: #555;
 }
 
-.product-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.card-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-
-/* .empty-card 제외됨(빈슬롯 표시안되게 수정) */
+/* 카드 스타일 */
 .product-card,
 .compare-card {
     display: flex;
@@ -1086,44 +1110,13 @@ const productDetailUrl = (product) => {
     cursor: pointer;
 }
 
-/* 비교군 목록 빈카드 */
-.empty-card {
-    all: unset;
-    width: 200px;
-    height: 250px;
-    cursor: default; /* 기본 커서 설정 */
+.product-card .card-body,
+.compare-card .card-body {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background-color: transparent; /* 배경 투명 */
-    border: none; /* 테두리 제거 */
-}
-
-/* 상품 상세 빈 카드 */
-.empty-card-desc {
-    flex: 1;
-}
-
-.desc-card {
-    flex: 1;
-    min-width: 30%;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.compare-card:hover {
-    background-color: #f7f9fc;
-}
-
-.card-body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    gap: 10px;
+    transition: background-color 0.3s;
 }
 
 .card-header {
@@ -1132,17 +1125,14 @@ const productDetailUrl = (product) => {
     justify-content: space-between;
     align-items: center;
     padding: 5px 0;
-    flex: 1;
 }
 
 .card-title {
     width: 100%;
-    flex: 2;
     font-size: 18px;
     font-weight: bold;
     color: #333;
     text-align: center;
-    flex: 2;
 }
 
 .rate-info {
@@ -1151,7 +1141,6 @@ const productDetailUrl = (product) => {
     flex-direction: column;
     gap: 10px;
     justify-content: space-between;
-    flex: 3;
     color: #000000;
 }
 
@@ -1168,61 +1157,40 @@ const productDetailUrl = (product) => {
     font-size: 14px;
 }
 
-.compare-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    align-items: stretch;
-}
-
-.product-card:active {
-    transform: scale(0.9);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.compare-card:active {
-    transform: scale(0.95);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-}
-
-.product-card .card-body {
-    transition: background-color 0.3s;
-}
-
-.compare-card .card-body {
-    transition: background-color 0.3s;
-}
-
+.compare-card:hover,
 .product-card.card:hover {
     background-color: #f7f9fc;
 }
 
-.product-detail {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #777;
-}
-
-.product-detail strong {
-    color: #333;
-}
-
-.no-products {
-    text-align: center;
-    color: #777;
-    font-style: italic;
-}
-
-.product-details-container {
-    margin-top: 40px;
-    padding: 20px;
-    width: 100%;
+/* 빈 카드 */
+.empty-card,
+.empty-card-desc {
+    all: unset;
+    width: 200px;
+    height: 250px;
     display: flex;
-    justify-content: space-between; /* 카드를 균등 간격으로 배치 */
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    cursor: default;
 }
 
+.desc-card {
+    flex: 1;
+    min-width: 30%;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* 테이블 스타일 */
 .details-table {
     width: 100%;
     border-collapse: collapse;
@@ -1245,28 +1213,14 @@ const productDetailUrl = (product) => {
     text-align: left;
 }
 
-.alert-normal {
-    font-size: 14px;
-    padding: 10px 15px;
-    color: #31708f;
-    background-color: #d9edf7;
-    border: 1px solid #bce8f1;
-    border-radius: 4px;
-}
-
+/* 비교 상태 강조 */
 .isInCompare {
-    background-color: #e0f7fa; /* 강조 표시 색상 */
-    border: 2px solid #00796b; /* 테두리 색상 */
-    color: #00796b; /* 텍스트 색상 */
+    background-color: #e0f7fa;
+    border: 2px solid #00796b;
+    color: #00796b;
 }
 
-.product-card .card-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px; /* 요소 간격 */
-}
-
+/* 기타 스타일 */
 .product-type {
     font-size: 12px;
     font-weight: bold;
@@ -1277,6 +1231,5 @@ const productDetailUrl = (product) => {
     font-size: 10px;
     font-weight: bold;
     text-align: right;
-    flex: 1;
 }
 </style>

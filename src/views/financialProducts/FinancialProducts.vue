@@ -19,9 +19,7 @@
         <!-- 주식 리스트 -->
         <div class="stock-container">
             <stock-search v-if="selectedCategory === 'stock'" />
-            <p v-if="selectedCategory === 'stock'">
-                종목 선택 시 네이버 증권으로 연결됩니다.
-            </p>
+            <p v-if="selectedCategory === 'stock'">종목 선택 시 네이버 증권으로 연결됩니다.</p>
             <stock-list v-if="selectedCategory === 'stock'" />
         </div>
 
@@ -309,8 +307,11 @@
                     <button
                         v-for="page in visiblePages"
                         :key="page"
-                        @click="changePageWithScroll(page, $event)"
+                        @click="
+                            typeof page === 'number' ? changePageWithScroll(page, $event) : null
+                        "
                         :class="['pagination-btn', { active: currentPage === page }]"
+                        :disabled="page === '...'"
                     >
                         {{ page }}
                     </button>
@@ -1000,7 +1001,6 @@ export default {
 
 .pagination-btn:disabled {
     background-color: #ccc;
-    cursor: not-allowed;
 }
 
 /* 페이지네이션의 ... 표시 */
@@ -1008,6 +1008,7 @@ export default {
     margin: 0 8px;
     font-size: 16px;
     color: #333;
+    pointer-events: none; /* 클릭을 비활성화 */
 }
 
 /* 정렬 가능한 헤더 스타일 */
