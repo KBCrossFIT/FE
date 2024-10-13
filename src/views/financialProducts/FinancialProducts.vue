@@ -205,16 +205,16 @@
                         >
                             <td>
                                 <!-- 로고 데이터 존재 시 -->
-                                <!-- <div v-if="logoExists(product.korCoNm)" class="financial-logo-bank">
+                                <div v-if="logoExists(product.korCoNm)" class="financial-logo-bank">
                                     <img
                                         :src="getLogoPath(product.korCoNm)"
                                         alt="Logo"
                                         class="financial-logo"
                                     />
-                                </div> -->
+                                </div>
 
                                 <!-- 로고 데이터 없을 시 -->
-                                <div class="financal-nonlogo-bank">
+                                <div v-else class="financal-nonlogo-bank">
                                     <v-avatar size="22" class="mr-2">
                                         <i class="fas fa-wallet"></i>
                                     </v-avatar>
@@ -807,7 +807,7 @@ export default {
         // 은행 이름에 맞는 로고 경로를 가져오는 함수
         const getLogoPath = (financialInstitution) => {
             const bank = bankData.find((bank) => bank.name === financialInstitution);
-            const logoPath = bank ? `${logoBasePath}${bank.logo}` : '';
+            const logoPath = bank ? `${logoBasePath}/${bank.logo}` : '';
             console.log('logoBasePath:', logoBasePath);
             console.log('financialInstitution:', financialInstitution);
             console.log('logoPath:', logoPath);
@@ -1034,12 +1034,27 @@ th {
     align-items: center;
     justify-content: center;
     width: 100%; /* 테이블 셀 전체 너비 사용 */
-    height: 100%; /* 테이블 셀 전체 높이 사용 */
+    height: 60px; /* 고정 높이 설정 */
+    padding: 8px 0; /* 패딩 추가로 여백 확보 */
+    overflow: hidden; /* 부모 요소가 초과하는 내용 숨기기 */
 }
 
 .financial-logo {
-    width: 100%; /* 부모 컨테이너의 너비를 모두 차지 */
-    height: auto; /* 비율 유지하며 높이 조정 */
+    width: auto; /* 가로는 자동 조정 */
+    height: 100%; /* 부모 요소 높이에 맞추기 */
     object-fit: contain; /* 이미지가 잘 맞도록 설정 */
+    max-height: 40px; /* 로고의 최대 높이 설정 */
+}
+
+/* 로고가 없을 시 기본 아이콘 스타일 */
+.financal-nonlogo-bank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0; /* 여백 추가 */
+}
+
+.financal-nonlogo-bank v-avatar {
+    margin-right: 5px; /* 아이콘과 이름 간격 */
 }
 </style>
