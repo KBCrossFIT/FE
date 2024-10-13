@@ -103,6 +103,7 @@
                             </th>
                             <th></th>
                         </template>
+
                         <template
                             v-else-if="
                                 selectedCategory === 'deposit' || selectedCategory === 'saving'
@@ -142,6 +143,7 @@
                             </th>
                             <th></th>
                         </template>
+
                         <template v-else-if="selectedCategory === 'bond'">
                             <th @click="sortBy('bondIsurNm')">
                                 발행자
@@ -191,7 +193,9 @@
                         <!-- 회사명, 금융회사명 또는 발행자 -->
                         <template v-if="selectedCategory === 'fund'">
                             <td>
-                                <v-avatar size="22" class="mr-2"></v-avatar>{{ product.companyNm }}
+                                <v-avatar size="22" class="mr-2"
+                                    ><i class="fas fa-chart-line"></i></v-avatar
+                                >{{ product.companyNm }}
                             </td>
                         </template>
                         <template
@@ -200,12 +204,38 @@
                             "
                         >
                             <td>
-                                <v-avatar size="22" class="mr-2"></v-avatar>{{ product.korCoNm }}
+                                <!-- 로고 데이터 존재 시 -->
+                                <!-- <div v-if="logoExists(product.korCoNm)" class="financial-logo-bank">
+                                    <img
+                                        :src="getLogoPath(product.korCoNm)"
+                                        alt="Logo"
+                                        class="financial-logo"
+                                    />
+                                </div> -->
+
+                                <!-- 로고 데이터 없을 시 -->
+                                <div class="financal-nonlogo-bank">
+                                    <v-avatar size="22" class="mr-2">
+                                        <i class="fas fa-wallet"></i>
+                                    </v-avatar>
+                                    {{ product.korCoNm }}
+                                </div>
                             </td>
                         </template>
+
                         <template v-else-if="selectedCategory === 'bond'">
                             <td>
-                                <v-avatar size="22" class="mr-2"></v-avatar>{{ product.bondIsurNm }}
+                                <v-avatar
+                                    v-if="product.bondIsurNm === '대한민국'"
+                                    size="22"
+                                    class="mr-2"
+                                    ><i class="fas fa-landmark"></i>
+                                </v-avatar>
+                                <v-avatar v-else size="22"
+                                    ><i class="fas fa-puzzle-piece"></i
+                                ></v-avatar>
+
+                                {{ product.bondIsurNm }}
                             </td>
                         </template>
 
@@ -239,12 +269,15 @@
 
                         <!-- 장바구니 버튼 -->
                         <td>
-                            <v-btn icon
+                            <v-btn
+                                icon
                                 @click="toggleCartAndIncreaseHit(product)"
                                 :color="isProductInCart(product.productId) ? 'primary' : 'default'"
                             >
                                 <v-icon>{{
-                                    isProductInCart(product.productId) ? 'mdi-cart-check' : 'mdi-cart'
+                                    isProductInCart(product.productId)
+                                        ? 'mdi-cart-check'
+                                        : 'mdi-cart'
                                 }}</v-icon>
                             </v-btn>
                         </td>
@@ -316,6 +349,7 @@ import * as financeApi from '@/api/financeApi';
 import StockList from '@/views/stock/StockList.vue';
 import StockSearch from '@/views/stock/StockSearch.vue';
 import SortIndicator from '@/components/SortIndicator.vue'; // SortIndicator 컴포넌트 임포트
+import bankData from '@/assets/banks.json';
 
 export default {
     name: 'FinancialProducts',
@@ -367,6 +401,9 @@ export default {
             backgroundColor: '#3961e4',
             color: 'white',
         };
+
+        // 은행 로고 받아오기 경로
+        const logoBasePath = new URL('@/assets/img/bankLogo/', import.meta.url).href;
 
         // 정렬 상태 관리
         const sortField = ref(''); // 현재 정렬 기준 필드
@@ -593,7 +630,7 @@ export default {
         const isProductInCart = computed(() => {
             return (productId) => {
                 if (Array.isArray(cartStore.cartItems)) {
-                    return cartStore.cartItems.some(item => item.productId === productId);
+                    return cartStore.cartItems.some((item) => item.productId === productId);
                 }
                 return false;
             };
@@ -622,9 +659,10 @@ export default {
 
                 if (isInCart) {
                     // 장바구니에서 제거
-                    const cartItemToRemove = cartStore.cartItems.find((item) => item.productId === product.productId);
+                    const cartItemToRemove = cartStore.cartItems.find(
+                        (item) => item.productId === product.productId
+                    );
                     console.log('cartItemToRemove:', cartItemToRemove);
-
 
                     if (cartItemToRemove && cartItemToRemove.cartId) {
                         await cartStore.removeCartItem(cartItemToRemove.cartId);
@@ -642,7 +680,7 @@ export default {
                         productName: getProductName(product),
                         expectedReturn: getExpectedReturn(product),
                         rervType: product.type === 'saving' ? 'S' : '',
-                    }
+                    };
 
                     const addedItem = await cartStore.addCartItem(newCartItem);
                     if (addedItem) {
@@ -651,11 +689,9 @@ export default {
                     }
                 }
 
-
                 // 조회수 증가
                 await increaseAgeGroupProductHit(product.productId);
                 await increasePreferenceProductHit(product.productId);
-
             } catch (error) {
                 console.error('장바구니 상태 업데이트 또는 조회수 증가 오류 발생:', error);
                 alert('장바구니 작업 중 오류가 발생했습니다.');
@@ -762,7 +798,21 @@ export default {
             console.log('cartStore.cartItems:', cartStore.cartItems);
             cart.value = cartStore.cartItems;
             console.log('cart:', cart.value);
-        }
+        };
+
+        const logoExists = (financialInstitution) => {
+            return bankData.some((bank) => bank.name === financialInstitution);
+        };
+
+        // 은행 이름에 맞는 로고 경로를 가져오는 함수
+        const getLogoPath = (financialInstitution) => {
+            const bank = bankData.find((bank) => bank.name === financialInstitution);
+            const logoPath = bank ? `${logoBasePath}${bank.logo}` : '';
+            console.log('logoBasePath:', logoBasePath);
+            console.log('financialInstitution:', financialInstitution);
+            console.log('logoPath:', logoPath);
+            return logoPath;
+        };
 
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
@@ -782,8 +832,7 @@ export default {
                 loadProducts(currentPage.value);
                 await updateCart();
             },
-            { immediate: true },
-
+            { immediate: true }
         );
 
         return {
@@ -815,6 +864,8 @@ export default {
             sortDirection, // SortIndicator용 sortDirection 반환
             alertCartAndIncreaseHit, // 장바구니에 담을지 여부 묻는 창
             isProductInCart,
+            logoExists,
+            getLogoPath,
         };
     },
 };
@@ -975,5 +1026,20 @@ th {
 /* 장바구니 있는 상품 하이라이트 강조 */
 .in-cart {
     background-color: #ffeeba; /* 예: 연한 노란색 배경 */
+}
+
+/* 금융사 로고 스타일 */
+.financial-logo-bank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* 테이블 셀 전체 너비 사용 */
+    height: 100%; /* 테이블 셀 전체 높이 사용 */
+}
+
+.financial-logo {
+    width: 100%; /* 부모 컨테이너의 너비를 모두 차지 */
+    height: auto; /* 비율 유지하며 높이 조정 */
+    object-fit: contain; /* 이미지가 잘 맞도록 설정 */
 }
 </style>
