@@ -10,7 +10,7 @@
   
       <!-- 이달의 추천 영상 2개 -->
       <div class="featured-videos">
-        <div v-for="(video, index) in featuredVideos.slice(0, 2)" :key="index" class="video-card featured">
+        <div v-for="(video, index) in featuredVideos" :key="index" class="video-card featured">
           <div class="video-wrapper" @click="goToYoutubeDetail(video.youtubeNum)">
             <iframe
               :src="getYoutubeEmbedUrl(video.youtubeUrl)"
