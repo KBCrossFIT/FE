@@ -5,10 +5,10 @@
             <v-card class="pa-4" elevation="2" style="height: 100%">
                 <v-card-text>
                     <div class="list-container">
-                        <span @click="navigateTo('/Youtube')" class="list-item"> 금융 유튜브 </span>
                         <span @click="navigateTo('/Influencer')" class="list-item">
                             인플루언서
                         </span>
+                        <span @click="navigateTo('/Youtube')" class="list-item"> 유튜브 </span>
                         <span @click="navigateTo('/News')" class="list-item"> 뉴스 </span>
                     </div>
                 </v-card-text>

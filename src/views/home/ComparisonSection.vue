@@ -7,11 +7,11 @@
         class="comparison-image1"
       />
       <h3>한눈에 상품 비교</h3>
-      <p>
-        국내 금융상품을 한눈에 보고 <br />
-        나에게 필요한 포트폴리오를<br />
-        작성해 보세요
-      </p>
+      <div>
+        금융상품들을 장바구니에 담아서 <br />
+        나에게 맞는 상품은 무엇인지<br />
+        한눈에 비교해보세요.
+      </div>
     </div>
     <div class="comparison-item">
       <img
@@ -19,11 +19,12 @@
         alt="비교 이미지"
         class="comparison-image2"
       />
-      <h3>확실한 추천 서비스</h3>
-      <p>
-        광고 없이 다양한 금융상품을 추천받고<br />
-        나만의 포트폴리오를 작성해 보세요
-      </p>
+      <h3>투자성향 기반 포트폴리오 추천</h3>
+      <div>
+        나의 투자 성향을 확인하고 <br />
+        성향에 맞는 다양한 추천을 통해 <br />
+        나만의 포트폴리오를 만들어 보세요.
+      </div>
     </div>
     <div class="comparison-item">
       <img
@@ -31,12 +32,12 @@
         alt="비교 이미지"
         class="comparison-image3"
       />
-      <h3>데이터 기반 투자 전략</h3>
-      <p>
-        나의 투자 성향을 확인하고 <br />
-        성향에 맞는 추천 서비스를 통해 <br />
-        다양한 전략을 세워 보세요
-      </p>
+      <h3>페르소나 챗봇과의 투자 상담</h3>
+      <div>
+        나만의 투자 조언자를 만나보세요! <br />
+        페르소나 챗봇과 대화를 통해 유명 투자자들의<br />
+         전략과 팁을 쉽게 얻을 수 있습니다.
+      </div>
     </div>
   </section>
 </template>
@@ -53,6 +54,7 @@ export default {
   display: flex;
   gap: 146px;
   padding: 60px;
+  padding-left: 100px;
   position: relative;
   top: -1px;
   justify-content: center;
@@ -62,6 +64,7 @@ export default {
 
 .comparison-item {
   text-align: center;
+  flex: 1;
 }
 
 .comparison-item h3 {

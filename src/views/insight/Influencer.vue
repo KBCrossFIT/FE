@@ -5,11 +5,11 @@
       <v-card class="pa-4" elevation="2" style="height: 100%">
         <v-card-text>
           <div class="list-container">
-            <span @click="navigateTo('/Youtube')" class="list-item">
-              금융 유튜브
-            </span>
             <span @click="navigateTo('/Influencer')" class="list-item">
               인플루언서
+            </span>
+            <span @click="navigateTo('/Youtube')" class="list-item">
+              유튜브
             </span>
             <span @click="navigateTo('/News')" class="list-item"> 뉴스 </span>
           </div>
@@ -142,7 +142,7 @@ h1.sixth {
 
 h1.sixth:before,
 h1.sixth:after {
-  content: "금융 ";
+  content: "";
   display: inline-block;
   position: relative;
   top: 1px;

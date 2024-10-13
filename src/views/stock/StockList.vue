@@ -4,8 +4,8 @@
             <table v-if="paginatedStocks.length > 0" class="table">
                 <thead>
                     <tr>
-                        <th>주식 코드</th>
-                        <th>주식명</th>
+                        <th>종목코드</th>
+                        <th>종목명</th>
                         <th>시장 구분</th>
                         <th>종가</th>
                         <th>전일비</th>
@@ -35,7 +35,7 @@
                 </tbody>
             </table>
 
-            <p v-else>주식 데이터가 없습니다.</p>
+            <p v-else>종목이 없습니다.</p>
         </div>
 
         <!-- Pagination Controls -->

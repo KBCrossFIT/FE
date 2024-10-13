@@ -28,14 +28,14 @@
                 :class="{ active: isActive('/my-portfolio') }"
                 @click="$router.push('/my-portfolio')"
               >
-                내 포트폴리오
+              나의 포트폴리오
               </li>
               <li
                 class="in"
                 :class="{ active: isActive('/make-portfolio') }"
                 @click="$router.push('/make-portfolio')"
               >
-                포트폴리오 구성하기
+              포트폴리오 만들기
               </li>
             </ul>
           </div>
@@ -47,7 +47,7 @@
                 :class="{ active: isActive('/products/deposit') }"
                 @click="navigateToProductList('deposit')"
               >
-                상품 리스트
+                금융상품
               </li>
               <li
                 class="in"
@@ -93,7 +93,7 @@
                 :class="{ active: isActive('/my-investment-analyze') }"
                 @click="$router.push('/my-investment-analyze')"
               >
-                내 투자성향 분석
+                나의 투자성향
               </li>
               <li
                 class="in"
@@ -128,6 +128,7 @@
 
 <script>
 import { useCookies } from 'vue3-cookies';
+//import instance from '@/api/index';
 
 export default {
   name: 'Header',
@@ -165,7 +166,7 @@ export default {
       const { cookies } = useCookies();
 
       //로그아웃 오류 잠시 주석
-      // await instance.post('/member/logout');
+      //await instance.post('/member/logout');
 
       // Clear cookies and local storage
       cookies.remove('Authorization');

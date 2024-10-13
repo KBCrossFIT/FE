@@ -1,9 +1,9 @@
 <template>
     <div class="InvestmentTest-container">
-        <h1>투자성향분석 페이지</h1>
+        <h1>투자성향 분석</h1>
         <!-- 진행 상황 표시 -->
         <div class="question-progress">
-            질문 {{ currentQuestionIndex + 1 }} / {{ questions.length }}
+            {{ currentQuestionIndex + 1 }} / {{ questions.length }}
         </div>
         <!-- 진행 바 -->
         <div class="progress-bar">
@@ -42,7 +42,7 @@
         <!-- 완료 버튼과 취소 버튼 -->
         <div class="navigation-End-btn">
             <v-btn :disabled="!allQuestionsAnswered" class="InvestmentTest-btn" @click="finishTest">
-                테스트 완료
+                제출하기
             </v-btn>
             <v-btn class="InvestmentTest-btn" @click="closeTest">취소</v-btn>
         </div>

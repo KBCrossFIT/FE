@@ -1,6 +1,6 @@
 <template>
     <div class="financial-products-container">
-        <h1>금융상품 페이지</h1>
+        <h1>배너 넣을거 넣고 텍스트 빼죠</h1>
 
         <!-- 탭 버튼 -->
         <div class="tabs">
@@ -20,7 +20,7 @@
         <div class="stock-container">
             <stock-search v-if="selectedCategory === 'stock'" />
             <p v-if="selectedCategory === 'stock'">
-                주식 데이터 클릭 시 해당 종목 네이버 증권으로 연결됩니다.
+                종목 선택 시 네이버 증권으로 연결됩니다.
             </p>
             <stock-list v-if="selectedCategory === 'stock'" />
         </div>
@@ -62,7 +62,7 @@
                     <tr>
                         <template v-if="selectedCategory === 'fund'">
                             <th @click="sortBy('companyNm')">
-                                회사명
+                                금융회사
                                 <SortIndicator
                                     field="companyNm"
                                     :currentSortField="sortField"
@@ -70,7 +70,7 @@
                                 />
                             </th>
                             <th @click="sortBy('productNm')">
-                                상품명
+                                상품
                                 <SortIndicator
                                     field="productNm"
                                     :currentSortField="sortField"
@@ -109,7 +109,7 @@
                             "
                         >
                             <th @click="sortBy('korCoNm')">
-                                금융회사명
+                                금융회사
                                 <SortIndicator
                                     field="korCoNm"
                                     :currentSortField="sortField"
@@ -117,7 +117,7 @@
                                 />
                             </th>
                             <th @click="sortBy('finPrdtNm')">
-                                상품명
+                                상품
                                 <SortIndicator
                                     field="finPrdtNm"
                                     :currentSortField="sortField"
@@ -152,7 +152,7 @@
                                 />
                             </th>
                             <th @click="sortBy('isinCdNm')">
-                                상품명
+                                상품
                                 <SortIndicator
                                     field="isinCdNm"
                                     :currentSortField="sortField"
