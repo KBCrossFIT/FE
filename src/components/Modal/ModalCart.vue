@@ -6,15 +6,6 @@
       </div>
       <hr/>
 
-      <!-- 상품 종류 필터 -->
-      <div class="Cart-filter">
-        <select v-model="selectedProductType" class="product-type-filter">
-          <option value="S">예/적금</option>
-          <option value="B">채권</option>
-          <option value="F">펀드</option>
-        </select>
-      </div>
-
       <!-- 장바구니 목록 -->
       <div class="cartList">
         <table class="cartListTable">
@@ -45,9 +36,9 @@
             <td>{{ item.provider }}</td>
             <td>{{ item.productName }}</td>
             <td>
-    <span v-if="item.productType === 'S'">
-      {{ item.rsrvType === 'S' ? '적금' : '예금' }}
-    </span>
+              <span v-if="item.productType === 'S'">
+                {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+              </span>
               <span v-else-if="item.productType === 'B'">채권</span>
               <span v-else-if="item.productType === 'F'">펀드</span>
               <span v-else>기타</span>
@@ -65,9 +56,9 @@
 
       <!-- 페이지네이션 -->
       <div class="pagination-controls">
-        <button @click="changePage(-1)" :disabled="currentPage === 1">이전</button>
+        <button @click="() => { changePage(-1); selected = [];}" :disabled="currentPage === 1">이전</button>
         <span>{{ currentPage }} / {{ totalPages }}</span>
-        <button @click="changePage(1)" :disabled="currentPage === totalPages">다음</button>
+        <button @click="() => { changePage(1); selected = [];}" :disabled="currentPage === totalPages">다음</button>
       </div>
 
       <!-- 하단 버튼들 -->
@@ -93,10 +84,10 @@ export default {
   name: 'ModalCart',
   setup(props, {emit}) {
     const selected = ref([]);
-    const selectedProductType = ref('');
+    // const selectedProductType = ref('');
     const cartItems = ref([]);
     const currentPage = ref(1);
-    const itemsPerPage = ref(4);
+    const itemsPerPage = ref(7);
 
     onMounted(async () => {
       try {
@@ -107,23 +98,14 @@ export default {
       }
     });
 
-    const filteredCartItems = computed(() => {
-      return cartItems.value.filter((item) => {
-        const matchesType = selectedProductType.value
-            ? item.productType === selectedProductType.value
-            : true;
-        return matchesType;
-      });
-    });
-
     const paginatedCartItems = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage.value;
       const end = start + itemsPerPage.value;
-      return filteredCartItems.value.slice(start, end);
+      return cartItems.value.slice(start, end);
     });
 
     const totalPages = computed(() => {
-      return Math.ceil(filteredCartItems.value.length / itemsPerPage.value) || 1;
+      return Math.ceil(cartItems.value.length / itemsPerPage.value) || 1;
     });
 
     const toggleSelect = (item) => {
@@ -140,6 +122,7 @@ export default {
         selected.value = [];
       } else {
         selected.value = paginatedCartItems.value.map((item) => item.cartId);
+        console.log(selected.value)
       }
     };
 
@@ -153,11 +136,6 @@ export default {
     const changePage = (direction) => {
       currentPage.value += direction;
     };
-
-    watch(selectedProductType, () => {
-      currentPage.value = 1;
-      selected.value = [];
-    });
 
     const getColorStyle = (value) => ({
       color: value > 0 ? 'red' : value < 0 ? 'blue' : 'black',
@@ -193,14 +171,13 @@ export default {
 
               return {...productDetails};
             })
-        );
 
+        );
         emit('add-items', selectedProducts);
-        closeModal();
       } catch (error) {
-        console.error('상품 세부 정보를 가져오는 중 오류 발생:', error);
-        alert('상품 정보를 불러오는 중 오류가 발생했습니다.');
+        alert("중복된 상품을 추가하셨습니다!");
       }
+      closeModal();
     };
 
     const closeModal = () => {
@@ -209,7 +186,6 @@ export default {
 
     return {
       selected,
-      selectedProductType,
       paginatedCartItems,
       toggleSelect,
       toggleAllSelect,
