@@ -29,9 +29,9 @@ export const useCartStore = defineStore('cart', {
     // 장바구니에 새 아이템을 추가하는 메서드
     async addCartItem(cartItem) {
       try {
-        const data = await postCartItem(cartItem);
-        this.newCartItem = data;
-        this.cartItems.push(this.newCartItem); // 새 아이템 추가
+        const addedItem = await postCartItem(cartItem);
+        console.log('addedItem:', addedItem);
+        this.cartItems = addedItem;
       } catch (error) {
         console.error('Error adding cart item:', error);
       }
@@ -44,6 +44,7 @@ export const useCartStore = defineStore('cart', {
         this.cartItems = this.cartItems.filter(
           (item) => item.cartId !== cartId
         ); // cartId typo 수정
+        console.log(this.cartItems);
       } catch (error) {
         console.error('Error removing cart item:', error);
       }

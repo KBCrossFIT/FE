@@ -39,8 +39,23 @@ export async function postCartItem(cartItem) {
 export async function deleteCartItem(cartId) {
   try {
     await instance.delete(`/cart/items/${cartId}`);
+    return true;
   } catch (error) {
     console.error('Error deleting cart:', error);
     throw error; // 오류 발생 시 오류를 던져줌
+  }
+}
+
+export async function toggleCartItem(productId, isInCart) {
+  try {
+    if (isInCart) {
+      await deleteCartItem(productId);
+    } else {
+      await postCartItem(productId);
+    }
+    return !isInCart;
+  } catch (error) {
+    console.error('장바구니 항목 토글 중 오류 발생:', error);
+    throw error;
   }
 }
