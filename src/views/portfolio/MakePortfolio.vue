@@ -442,7 +442,7 @@ export default {
     const addItemsToPortfolio = (items) => {
       items.forEach((item) => {
         if (!selectedProducts.value.some((product) => product.productId === item.productId) ||
-            !selectedProducts.value.some((product) => product.productId === item.rates[0].productId)){
+            !selectedProducts.value.some((product) => product.productId === item.rates[0].productId)) {
           selectedProducts.value.push({
             ...item
           });
@@ -453,12 +453,10 @@ export default {
     // ModalStock에서 전달받은 주식들을 추가
     const addStocksToPortfolio = (stocks) => {
       stocks.forEach((item) => {
-          if (!portfolioStocks.value.some((product) => product.stockCode === item.stockCode)) {
-            portfolioStocks.value.push(...stocks);
-          } else {
-            throw new error("중복 주식이 있습니다!")
-          }
-        })
+        if (!portfolioStocks.value.some((product) => product.stockCode === item.stockCode)) {
+          portfolioStocks.value.push(...stocks);
+        }
+      })
     };
 
     // 상품 삭제 함수
