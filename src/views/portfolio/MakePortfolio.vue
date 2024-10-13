@@ -2,6 +2,10 @@
   <div id="wrap">
     <div id="wrap-center">
       <h1 class="header">포트폴리오 구성페이지</h1>
+      <div>
+        <label for="nameInput"><h3>포트폴리오 이름</h3></label>
+        <input type="text" v-model="portfolioName" id="nameInput" placeholder="포트폴리오 이름 입력">
+      </div>
       <v-btn @click="startTutorial">튜토리얼 시작</v-btn>
       <hr/>
 
@@ -318,6 +322,7 @@ export default {
     const chart = ref('char1');
     const isModalOpen = ref(false);
     const isModalCartOpen = ref(false);
+    const portfolioName = ref('');
 
     // 튜토리얼 관련 상태
     const isTutorialActive = ref(false);
@@ -678,17 +683,20 @@ export default {
     const savePortfolio = () => {
       const newPortfolioItem = formatDataForSave();
       console.log(newPortfolioItem);
-      if(newPortfolioItem.length > 0) {
-        portfolioStore.postPortfolioAction(formatDataForSave(), 'name1');
-        // 포트폴리오 데이터를 서버에 전달하거나 다른 저장 로직 처리
-        // 예시로 console에 출력
-        // const id = newPortfolio.value.portfolioId;
-        // console.log(id);
-        // 여기서 router를 이용해 이동하거나, 저장 완료 후 알림 표시 가능
-        // router.push('/portfolio/${id}');
-        router.push('/my-portfolio}');
-      } else {
+      if(newPortfolioItem.length === 0) {
         alert("아이템을 추가해주세요!!");
+      } else {
+        if(portfolioName.value === '') {
+          console.log(portfolioName.value);
+          alert("이름을 입력하세요!!");
+        } else {
+          portfolioStore.postPortfolioAction(formatDataForSave(), portfolioName.value);
+          // router.push('/my-portfolio');
+          console.log(newPortfolio.value)
+          const id = newPortfolio.value.portfolioId;
+          console.log(id);
+          router.push(`/portfolio/${id}`);
+        }
       }
     };
 
@@ -708,12 +716,17 @@ export default {
     watch(totalInvestment, (newTotal) => {
       if (newTotal > 0) {
         dynamicChartSeries.value = [
-          depositInvestment.value,
-          savingInvestment.value,
+          depositInvestment.value + savingInvestment.value,
           bondInvestment.value,
           fundInvestment.value,
           stockTotalInvestment.value,
         ];
+      }
+    });
+
+    watch(portfolioName, (newVal) => {
+      if (newVal.trim() === '') {
+        portfolioName.value = '';
       }
     });
 
@@ -756,6 +769,7 @@ export default {
       chartOption,
       dynamicChartSeries,
       removeStock,
+      portfolioName
     };
   },
 };
