@@ -99,7 +99,7 @@
       <!-- 상품 종류 섹션 -->
       <div class="ProductSelection">
         <h1>금융상품</h1>
-        <v-btn class="cart-btn" @click="openModalCart">장바구니에서 가져오기</v-btn>
+        <v-btn class="cart-btn" @click="openModalCart">장바구니</v-btn>
         <hr/>
         <div class="Product-filter">
           <select v-model="selectedCategory" class="styled-select">
@@ -143,8 +143,7 @@
                       >
                         {{ rate.saveTrm }}개월
                       </option>
-                    </select
-                    ><br/>
+                    </select><br/>
                     단리/복리: {{
                       getInterestRate(item, 'intrRateTypeNm')
                     }}<br/>
@@ -222,7 +221,7 @@
     <div class="MakePortfolio-stockList-section">
       <h1>주식</h1>
       <div class="MakePortfolio-btn">
-        <v-btn @click="openModal">{{ modalButtonLabel }}</v-btn>
+        <v-btn @click="openModal">주식검색</v-btn>
       </div>
       <hr/>
       <div class="table-container">
@@ -401,8 +400,6 @@ export default {
         const productType = productTypes[index];
         try {
           let productDetail;
-          console.log(productId);
-          console.log(productType);
           switch (productType) {
             case 'B':
               productDetail = await financeApi.getBondProductDetail(productId);
@@ -427,20 +424,6 @@ export default {
       }
     };
 
-    // ModalCart에서 전달받은 상품들을 추가
-    const addItemsToPortfolio = (items) => {
-      items.forEach((item) => {
-        if (
-            !selectedProducts.value.some((product) => product.productId === item.productId)
-        ) {
-          selectedProducts.value.push({
-            ...item,
-            // investmentAmount: item.investmentAmount || 0,
-          });
-        }
-      });
-    };
-
     // 선택된 상품들에 대한 필터링
     const filteredProducts = computed(() => {
       return selectedCategory.value
@@ -453,6 +436,29 @@ export default {
     const getInterestRate = (item, rateType) => {
       const selectedRate = item.rates.find((rate) => rate.saveTrm === item.selectedTerm);
       return selectedRate ? selectedRate[rateType] : '정보 없음';
+    };
+
+    // ModalCart에서 전달받은 상품들을 추가
+    const addItemsToPortfolio = (items) => {
+      items.forEach((item) => {
+        if (!selectedProducts.value.some((product) => product.productId === item.productId) ||
+            !selectedProducts.value.some((product) => product.productId === item.rates[0].productId)){
+          selectedProducts.value.push({
+            ...item
+          });
+        }
+      });
+    };
+
+    // ModalStock에서 전달받은 주식들을 추가
+    const addStocksToPortfolio = (stocks) => {
+      stocks.forEach((item) => {
+          if (!portfolioStocks.value.some((product) => product.stockCode === item.stockCode)) {
+            portfolioStocks.value.push(...stocks);
+          } else {
+            throw new error("중복 주식이 있습니다!")
+          }
+        })
     };
 
     // 상품 삭제 함수
@@ -474,18 +480,6 @@ export default {
         portfolioStocks.value.splice(index, 1);
       }
     };
-
-    // ModalStock에서 전달받은 주식들을 추가
-    const addStocksToPortfolio = (stocks) => {
-      if (isEditMode.value) {
-        portfolioStocks.value = stocks;
-      } else {
-        portfolioStocks.value.push(...stocks);
-      }
-    };
-
-    const isEditMode = computed(() => portfolioStocks.value.length > 0);
-    const modalButtonLabel = computed(() => (isEditMode.value ? '수정하기' : '추가하기'));
 
     // 장바구니 총 투자액 계산
     const cartTotalInvestment = computed(() => {
@@ -539,8 +533,7 @@ export default {
     const stockTotalInvestment = computed(() => {
       return portfolioStocks.value.reduce(
           (total, stock) =>
-              total + Number(stock.clpr) * Number(stock.quantity), 0
-      );
+              total + (isNaN(Number(stock.clpr) * Number(stock.quantity)) ? 0 : Number(stock.clpr) * Number(stock.quantity)), 0);
     });
 
     // 총 투자금액 계산 (장바구니 총 투자액 + 주식 총 투자액)
@@ -742,8 +735,6 @@ export default {
       addItemsToPortfolio,
       openModal,
       openModalCart,
-      isEditMode,
-      modalButtonLabel,
       isTutorialActive,
       currentStep,
       startTutorial,

@@ -79,7 +79,7 @@ export default {
     const products = ref([]);
     const filteredStocks = ref([]);
     const currentPage = ref(1);
-    const pageSize = ref(10);
+    const pageSize = ref(7);
 
     const totalPage = computed(() => {
       return Math.ceil(products.value.length / pageSize.value);

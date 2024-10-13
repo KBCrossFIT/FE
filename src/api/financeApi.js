@@ -42,7 +42,7 @@ export async function getBondProductDetail(productId) {
         const response = await bondApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching bond product detail:', error);
+        console.error('채권 상품의 정보를 불러올 수 없습니다!');
         throw error;
     }
 }
@@ -67,7 +67,7 @@ export async function getDepositProductDetail(productId) {
         const response = await savingApi.get(`/deposit/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching deposit product detail:', error);
+        console.error('예금 상품의 정보를 불러올 수 없습니다!');
         throw error;
     }
 }
@@ -91,7 +91,7 @@ export async function getSavingProductDetail(productId) {
         const response = await savingApi.get(`/deposit/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching saving product detail:', error);
+        console.error('적금 상품의 정보를 불러올 수 없습니다!');
         throw error;
     }
 }
@@ -115,7 +115,7 @@ export async function getFundProductDetail(productId) {
         const response = await fundApi.get(`/list/${productId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching fund product detail:', error);
+        console.error('펀드 상품의 정보를 불러올 수 없습니다!');
         throw error;
     }
 }

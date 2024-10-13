@@ -13,7 +13,6 @@ export async function fetchCartList() {
 export async function getCartList() {
   try {
     const response = await instance.get(`/cart/list`);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching cart detail:', error);
