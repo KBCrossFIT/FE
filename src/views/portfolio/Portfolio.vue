@@ -4,6 +4,10 @@
     <header class="portfolio-header">
       <h1>포트폴리오 상세정보</h1>
       <h2>{{ portfolioDetail.portfolioName }}</h2>
+      <div class="creation-date-container">
+        <h3> 생성일: </h3>
+        <span class="creation-date">({{  formattedCreationDate }})</span>
+      </div>
     </header>
 
     <main class="portfolio-main">
@@ -23,7 +27,7 @@
         <div class="portfolio-summary-info">
           <div class="summary-item">
             <p>총 투자금액</p>
-            <p>{{ portfolioDetail.total }}원</p>
+            <p>{{ formattedTotalInvestment }}원</p>
           </div>
           <div class="summary-item">
             <p>예상 수익률</p>
@@ -35,7 +39,10 @@
           </div>
           <div class="summary-item">
             <p>위험도</p>
-            <p>{{ portfolioDetail.riskLevel }}</p>
+            <p :class="getRiskLevelClass(portfolioDetail.riskLevel)">
+              {{ getRiskLevelLabel(portfolioDetail.riskLevel) }}
+              <span class="risk-grade">({{ portfolioDetail.riskLevel }}등급)</span>
+            </p>
           </div>
           <div class="summary-item">
             <p>총 평가금액</p>
@@ -45,10 +52,27 @@
       </section>
 
       <section class="portfolio-details">
-        <h2>상세 정보</h2>
-        <p>Expected return: {{ portfolioDetail }}</p>
-        <p>Investment duration: {{ portfolioDetail }} months</p>
-        <p>Investment type: {{ portfolioDetail }}</p>
+        <h2>포트폴리오 상세 내역</h2>
+        <div class="portfolio-items">
+          <div v-for="item in portfolioDetail.portfolioItems" :key="item.portfolioItemId" class="portfolio-item">
+            <span class="item-type">{{ getProductTypeLabel(item.productType) }}</span>
+            <span class="item-id">ID: {{ item.productId }}</span>
+            <span v-if="item.stockCode" class="item-code">{{ item.stockCode }}</span>
+            <span class="item-amount">
+              <span class="amount-label">투자 금액:</span>
+              {{ item.amount.toLocaleString() }}원
+            </span>
+            <span class="item-return">
+              <span class="return-label">예상 수익률:</span>
+              {{ item.expectedReturn }}%
+            </span>
+            <span class="item-risk" :class="getRiskLevelClass(item.riskLevel)">
+              <span class="risk-label">위험도:</span>
+              {{ getRiskLevelLabel(item.riskLevel) }}
+              <span class="risk-grade">({{ item.riskLevel }}등급)</span>
+            </span>
+          </div>
+        </div>
       </section>
 
       <section class="portfolio-actions">
@@ -91,6 +115,11 @@ const totalEvaluation = computed(() => {
   return (portfolioDetail.value.total || 0) + expectedProfit.value;
 });
 
+// 총 투자금액을 3자리마다 콤마로 표시
+const formattedTotalInvestment = computed(() => {
+  return (portfolioDetail.value.total || 0).toLocaleString();
+});
+
 const getPortfolioDetailAction = async (portfolioId) => {
   try {
     await portfolioStore.getPortfolioDetailAction(portfolioId);
@@ -101,10 +130,38 @@ const getPortfolioDetailAction = async (portfolioId) => {
   }
 };
 
+// 생성 날짜를 사람이 읽을 수 있는 형식으로 변환
+const formattedCreationDate = computed(() => {
+  if (!portfolioDetail.value.creationDate) return '';
+  const date = new Date(portfolioDetail.value.creationDate);
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+});
+
 // 컴포넌트가 마운트될 때 포트폴리오 데이터를 가져오기
 onMounted(() => {
   getPortfolioDetailAction(portfolioId); // 포트폴리오 데이터 가져오기
 });
+
+// 상품 종류를 라벨로 변환
+const getProductTypeLabel = (type) => {
+  switch (type) {
+    case 'S':
+      return '예/적금';
+    case 'B':
+      return '채권';
+    case 'F':
+      return '펀드';
+    default:
+      return '알 수 없음';
+  }
+};
 
 // 차트 설정
 const chartOptions = {
@@ -140,6 +197,32 @@ const editPortfolio = (id) => {
 const deletePortfolio = (id) => {
   console.log(`Deleting portfolio with ID: ${id}`);
 };
+
+// 위험도를 텍스트로 매핑하는 함수
+const getRiskLevelLabel = (riskLevel) => {
+  switch (riskLevel) {
+    case 6: return '매우 안전';
+    case 5: return '안전';
+    case 4: return '보통';
+    case 3: return '약간 위험';
+    case 2: return '위험';
+    case 1: return '매우 위험';
+    default: return '알 수 없음';
+  }
+};
+
+// 위험도에 따른 CSS 클래스를 반환하는 함수
+const getRiskLevelClass = (riskLevel) => {
+  switch (riskLevel) {
+    case 6: return 'risk-very-safe';
+    case 5: return 'risk-safe';
+    case 4: return 'risk-moderate';
+    case 3: return 'risk-slightly-dangerous';
+    case 2: return 'risk-dangerous';
+    case 1: return 'risk-very-dangerous';
+    default: return 'risk-unknown';
+  }
+};
 </script>
 
 <style scoped>
@@ -170,6 +253,7 @@ const deletePortfolio = (id) => {
 .portfolio-header h2 {
   font-size: 1.5rem; /* 서브 헤딩 */
   color: #6c757d; /* 회색 서브 텍스트 */
+  margin-bottom: 5px;
 }
 
 .portfolio-main {
@@ -229,6 +313,85 @@ const deletePortfolio = (id) => {
   font-weight: bold;
 }
 
+.portfolio-details h2 {
+  margin-bottom: 20px;
+}
+
+.portfolio-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.portfolio-item {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  flex-wrap: wrap;
+}
+
+.portfolio-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.portfolio-item span {
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.item-type {
+  font-weight: bold;
+  color: #007bff;
+  font-size: 1.1em;
+  min-width: 80px;
+}
+
+.item-id, .item-code {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.item-amount, .item-return, .item-risk {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.amount-label, .return-label, .risk-label {
+  color: #6c757d;
+  font-size: 0.9em;
+  margin-right: 5px;
+}
+
+.item-amount {
+  color: #28a745;
+}
+
+.item-return {
+  color: #ffc107;
+}
+
+.item-risk {
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.risk-label {
+  color: #6c757d;
+  font-size: 0.9em;
+  margin-right: 5px;
+}
+
+.risk-grade {
+  font-size: 0.8em;
+  color: #6c757d;
+  margin-left: 5px;
+}
+
 .portfolio-actions {
   display: flex;
   justify-content: flex-end;
@@ -257,6 +420,45 @@ const deletePortfolio = (id) => {
   cursor: pointer;
 }
 
+.creation-date-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.creation-date {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.risk-very-safe {
+  color: #28a745; /* 초록색 */
+}
+
+.risk-safe {
+  color: #20c997; /* 밝은 초록색 */
+}
+
+.risk-moderate {
+  color: #ffc107; /* 노란색 */
+}
+
+.risk-slightly-dangerous {
+  color: #fd7e14; /* 주황색 */
+}
+
+.risk-dangerous {
+  color: #e83e8c; /* 분홍색 (덜 빨간색) */
+}
+
+.risk-very-dangerous {
+  color: #dc3545; /* 빨간색 */
+}
+
+.risk-unknown {
+  color: #6c757d; /* 회색 */
+}
+
 @media (max-width: 768px) {
   .portfolio-container {
     padding: 15px;
@@ -268,6 +470,34 @@ const deletePortfolio = (id) => {
 
   .portfolio-header h2 {
     font-size: 1.25rem;
+  }
+
+  .portfolio-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .portfolio-item span {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .portfolio-item {
+    width: calc(33.33% - 15px); /* 3개씩 한 줄에 표시 */
+  }
+}
+
+@media (max-width: 900px) {
+  .portfolio-item {
+    width: calc(50% - 15px); /* 2개씩 한 줄에 표시 */
+  }
+}
+
+@media (max-width: 600px) {
+  .portfolio-item {
+    width: 100%; /* 1개씩 한 줄에 표시 */
   }
 }
 </style>
