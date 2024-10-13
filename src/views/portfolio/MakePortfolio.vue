@@ -621,6 +621,7 @@ export default {
     };
 
     const formatDataForSave = () => {
+
       const formattedProducts = selectedProducts.value
           .filter((product) => product.investmentAmount > 0)
           .map((product) => {
@@ -681,21 +682,18 @@ export default {
 
     // 저장 함수
     const savePortfolio = () => {
-      const newPortfolioItem = formatDataForSave();
-      console.log(newPortfolioItem);
-      if(newPortfolioItem.length === 0) {
-        alert("아이템을 추가해주세요!!");
+      if (portfolioName.value === '') {
+        alert("이름을 입력하세요!!");
       } else {
-        if(portfolioName.value === '') {
-          console.log(portfolioName.value);
-          alert("이름을 입력하세요!!");
+        if (selectedProducts.value.length === 0) {
+          alert("아이템을 추가해주세요!!");
         } else {
-          portfolioStore.postPortfolioAction(formatDataForSave(), portfolioName.value);
-          // router.push('/my-portfolio');
-          console.log(newPortfolio.value)
-          const id = newPortfolio.value.portfolioId;
-          console.log(id);
-          router.push(`/portfolio/${id}`);
+          const newPortfolioItem = formatDataForSave();
+          if (newPortfolioItem.length > 0) {
+            portfolioStore.postPortfolioAction(formatDataForSave(), portfolioName.value);
+            const id = newPortfolio.value.portfolioId;
+            router.push(`/portfolio/${id}`);
+          }
         }
       }
     };
