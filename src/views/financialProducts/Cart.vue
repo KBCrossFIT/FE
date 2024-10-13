@@ -65,9 +65,27 @@
                             </v-row>
                         </v-card-text>
                     </v-card>
-
-                    <div class="Cart-Btn-Set mt-4"></div>
                 </div>
+
+                <!-- 페이지네이션 컨트롤 -->
+                <div class="pagination" v-if="totalPages > 1">
+                    <v-btn
+                        @click="currentPage--"
+                        :disabled="currentPage === 1"
+                        icon
+                    >
+                        <v-icon>mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <span>{{ currentPage }} / {{ totalPages }}</span>
+                    <v-btn
+                        @click="currentPage++"
+                        :disabled="currentPage >= totalPages"
+                        icon
+                    >
+                        <v-icon>mdi-chevron-right</v-icon>
+                    </v-btn>
+                </div>
+
                 <v-btn class="cart-Btn-Gotocompare" @click="goToCompare" color="primary"
                     >상품 비교해보기
                 </v-btn>
@@ -80,7 +98,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/store/modules/cart';
 import { getCartList, deleteCartItem } from '@/api/cartApi';
@@ -102,29 +120,35 @@ export default {
 
         onMounted(async () => {
             await authStore.checkAuth();
+            await loadCartItems();
+        });
+
+        const loadCartItems = async () => {
             try {
-                cart.value = await getCartList();
-                cart.value.forEach((item) => {
-                    item.showDetails = false;
-                });
+                loading.value = true;
+                await cartStore.fetchCartItems();
+                cart.value = [...cartStore.cartItems];
+                console.log('loadCartItems:', cart.value);
             } catch (error) {
-                console.error('장바구니 목록을 가져오는 데 실패했습니다:', error);
-                alert('장바구니 정보를 불러오는 중 오류가 발생했습니다.');
+                console.error('장바구니 목록을 불러오는 데 실패했습니다:', error);
             } finally {
                 loading.value = false;
             }
+        };
+
+        const paginatedCart = computed(() => {
+            const start = (currentPage.value - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            console.log('paginatedCart:', cart.value.slice(start, end));
+            return cart.value.slice(start, end);
         });
 
         const totalPages = computed(() => Math.ceil(cart.value.length / itemsPerPage));
-        const paginatedCart = computed(() => {
-            const start = (currentPage.value - 1) * itemsPerPage;
-            return cart.value.slice(start, start + itemsPerPage);
-        });
 
         const removeFromCart = async (cartId) => {
             try {
-                await deleteCartItem(cartId);
-                cart.value = cart.value.filter((item) => item.cartId !== cartId);
+                await cartStore.removeCartItem(cartId);
+                await loadCartItems();
             } catch (error) {
                 console.error('장바구니에서 항목을 제거하는 데 실패했습니다:', error);
                 alert('장바구니에서 항목을 제거하는 중 오류가 발생했습니다.');
@@ -132,7 +156,9 @@ export default {
         };
 
         const updatePagination = (page) => {
-            currentPage.value = page;
+            if (page >= 1 && page <= totalPages.value) {
+                currentPage.value = page;
+            }
         };
 
         const goToCompare = () => {
@@ -183,6 +209,7 @@ export default {
             handleSelectionChange,
             isAuthenticated,
             authStore,
+            itemsPerPage,
         };
     },
 };

@@ -590,8 +590,13 @@ export default {
             });
         };
 
-        const isProductInCart = computed(() => (productId) => {
-            return cartStore.cartItems.some((item) => item.productId === productId);
+        const isProductInCart = computed(() => {
+            return (productId) => {
+                if (Array.isArray(cartStore.cartItems)) {
+                    return cartStore.cartItems.some(item => item.productId === productId);
+                }
+                return false;
+            };
         });
 
         // 장바구니 버튼 누를 시 나오는 alert
