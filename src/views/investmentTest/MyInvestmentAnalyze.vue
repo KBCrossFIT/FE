@@ -1,7 +1,7 @@
 <template>
   <div class="MyInvestment-container">
     <div class="MyInvestment-header">
-      <h1>내 투자성향 페이지</h1>
+      <h1>나의 투자성향</h1>
     </div>
 
     <div class="MyInvestment-body">
@@ -20,7 +20,7 @@
         </div>
 
         <div class="top-right">
-          나와 같은 투자성향 인플루언서
+          나와 성향이 같은 인플루언서
           <div class="influencer-cards">
             <div
               v-for="(influencer, index) in influencers"
@@ -43,7 +43,7 @@
         <div class="bottom-right">
           <div class="recommendation-square">
             <div class="ProportionChart">
-              {{ preference_name }} 추천 투자 비율
+              {{ preference_name }} 추천 포트폴리오
               <div id="chart">
                 <apexchart type="pie" width="380" :options="chartOptions" :series="series"></apexchart>
               </div>
@@ -55,7 +55,7 @@
 
     <div class="MyInvestment-btn-set">
       <v-btn class="MyInvestment-btn" @click="navigateTo('/investment-test-start'), cancel()"> 다시 분석하기 </v-btn>
-      <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()"> 포트폴리오 작성하기 </v-btn>
+      <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()"> 포트폴리오 만들기 </v-btn>
     </div>
   </div>
 </template>

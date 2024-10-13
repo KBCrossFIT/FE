@@ -1,7 +1,7 @@
 <template>
   <div class="InvestmentTest-container">
     <div class="MyInvestment-header">
-      <h1>투자성향분석 시작</h1>
+      <h1>투자성향 분석하기</h1>
     </div>
     <div class="InvestmentTest-body">
       <div class="InvestmentTest-content">
@@ -20,7 +20,7 @@
           class="InvestmentTest-btn center-btn"
           @click="navigateTo('/investment-test')"
         >
-          분석하기
+          시작하기
         </v-btn>
         <v-btn
           class="InvestmentTest-btn bottom-right-btn"

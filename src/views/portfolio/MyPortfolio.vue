@@ -1,14 +1,16 @@
 <template>
     <div class="MyPortfolio-container">
         <div v-if="!isAuthenticated" class="empty-myPortFolio">
-            비회원 고객은 접근할 수 없습니다.
+            <h1>만든 포트폴리오가 없습니다.</h1>
+            로그인하고 포트폴리오를 만들어보세요.
+            <br>
             <router-link to="/login">
                 <i class="fas fa-sign-in-alt icon"></i>
-                <span class="menu-text">로그인</span>
+                <span class="menu-text">로그인하러 가기</span>
             </router-link>
         </div>
         <v-card v-else>
-            <h1>내 포트폴리오 리스트 페이지</h1>
+            <h1>나의 포트폴리오</h1>
             <div class="MyPortfolio-DataTable">
                 <table>
                     <thead>
@@ -21,13 +23,13 @@
                                 />
                             </th>
                             <th @click="sortBy('portfolioName')">
-                                포트폴리오 이름
+                                포트폴리오
                                 <span v-if="sortKey === 'portfolioName'">
                                     {{ sortOrder === 'asc' ? '▲' : '▼' }}
                                 </span>
                             </th>
                             <th @click="sortBy('total')">
-                                투자 총액
+                                투자 금액
                                 <span v-if="sortKey === 'total'">
                                     {{ sortOrder === 'asc' ? '▲' : '▼' }}
                                 </span>
@@ -68,7 +70,7 @@
                 </table>
             </div>
             <div class="MyPortfolio-btn">
-                <button @click="goToCreatePortfolio">포트폴리오 만들러 가기</button>
+                <button @click="goToCreatePortfolio">포트폴리오 만들기</button>
                 <button @click="deleteSelectedPortfolios">삭제하기</button>
             </div>
         </v-card>

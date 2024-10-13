@@ -1,7 +1,7 @@
 <template>
   <div id="wrap">
     <div id="wrap-center">
-      <h1 class="header">포트폴리오 구성페이지</h1>
+      <h1 class="header">포트폴리오 만들기</h1>
       <div>
         <label for="nameInput"><h3>포트폴리오 이름</h3></label>
         <input type="text" v-model="portfolioName" id="nameInput" placeholder="포트폴리오 이름 입력">
@@ -25,7 +25,7 @@
         <div class="PortfolioChartsContainer">
           <!-- 추천 차트 (왼쪽) -->
           <div class="PortfolioChart">
-            <h3>추천 포트폴리오 구성 비율</h3>
+            <h3>추천 포트폴리오</h3>
             <div class="SelectionChar">
               <div class="CharCheck-radio">
                 <label>
@@ -85,7 +85,7 @@
 
           <!-- 현재 차트 (오른쪽) -->
           <div class="RealTimeProportionChart">
-            <h3>현재 포트폴리오 구성 비율</h3>
+            <h3>나의 포트폴리오 </h3>
             <apexchart
                 type="pie"
                 width="380"

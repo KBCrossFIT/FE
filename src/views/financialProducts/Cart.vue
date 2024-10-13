@@ -2,10 +2,12 @@
     <div class="Cart-container">
         <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
         <div v-else-if="cart.length === 0" class="empty-cart">
-            장바구니가 비어 있습니다.
+            <h1>장바구니가 비어 있습니다.</h1>
+            로그인하고 금융상품을 담아보세요.
+            <br>
             <router-link v-if="!authStore.isAuthenticated" to="/login" class="sidebar-link">
                 <i class="fas fa-sign-in-alt icon"></i>
-                <span class="menu-text">로그인</span>
+                <span class="menu-text">로그인하러 가기</span>
             </router-link>
         </div>
         <v-card v-else>
