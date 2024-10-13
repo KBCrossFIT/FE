@@ -56,7 +56,7 @@ import { ref, computed, onMounted, defineComponent } from "vue";
 
 export default defineComponent({
   name: "InfluencerList",
-  setup(props,{emit}) {
+  setup(props, { emit }) {
     const personas = ref([]);
     const loading = ref(true);
     const page = ref(1);
@@ -117,6 +117,9 @@ export default defineComponent({
 <style scoped>
 .influencer-list {
   padding: 20px;
+  background-color: #f9f9f9; /* 배경색 */
+  max-width: 1200px;
+  margin: 0 auto; /* 중앙 정렬 */
 }
 
 .influencer-card {
@@ -124,22 +127,34 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  transition: box-shadow 0.3s ease-in-out;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+  margin-bottom: 20px;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease; /* 호버 애니메이션 추가 */
 }
 
 .influencer-card:hover {
   box-shadow: 0 0 20px 10px #77e077;
   cursor: pointer;
+  transform: translateY(-5px); /* 마우스 오버 시 카드 살짝 위로 이동 */
 }
 
 .image-box {
-  object-fit: cover;
-  width: 150px;
-  height: 150px;
+  object-fit: cover; /* 이미지 비율을 유지하며 부모 요소에 맞게 채움 */
+  width: 150px; /* 고정된 너비 */
+  height: 150px; /* 고정된 높이 */
+  border-radius: 50%; /* 이미지 둥글게 처리 */
+  margin-bottom: 15px;
 }
 
 .card-title {
   text-align: center;
+  font-size: 1.4em;
+  margin-bottom: 10px;
+  color: #2a9d8f;
+  font-weight: bold;
 }
 
 .content {
@@ -150,11 +165,35 @@ export default defineComponent({
 .post-name {
   font-size: 1.2em;
   margin: 0;
+  font-weight: bold;
 }
 
 .post-field {
   font-size: 0.9em;
-  color: #000000;
+  color: #000;
   margin: 5px 0;
+}
+
+@media (max-width: 768px) {
+  .influencer-card {
+    padding: 15px;
+  }
+
+  .image-box {
+    width: 100px; /* 작은 화면에서 이미지 크기 줄임 */
+    height: 100px;
+  }
+
+  .card-title {
+    font-size: 1.3em;
+  }
+
+  .post-name {
+    font-size: 1.1em;
+  }
+
+  .post-field {
+    font-size: 0.85em;
+  }
 }
 </style>
