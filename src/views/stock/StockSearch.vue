@@ -5,7 +5,7 @@
             <input
                 type="text"
                 v-model="searchTerm"
-                placeholder="주식명 또는 주식코드를 입력하시오"
+                placeholder="주식명 검색..."
                 @keydown.enter="searchStock"
             />
             <button class="search-btn" @click="searchStock">
@@ -29,7 +29,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="stock in stocks" :key="stock.stockCode">
+                    <tr
+                        v-for="stock in stocks"
+                        :key="stock.stockCode"
+                        @click="gotoNaverStock(stock.stockCode)"
+                    >
                         <td>{{ stock.stockCode }}</td>
                         <td>{{ stock.stockName }}</td>
                         <td>{{ stock.clpr }}</td>
@@ -91,6 +95,11 @@ export default {
                 return { color: 'black' }; // 0인 경우 검정색
             }
         },
+
+        gotoNaverStock(stockCode) {
+            const url = `https://finance.naver.com/item/main.naver?code=${stockCode}`;
+            window.open(url, '_blank');
+        },
     },
 };
 </script>
@@ -135,10 +144,11 @@ export default {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    align-items: flex-start;
 }
 
 .search-box input[type='text'] {
-    width: 60%; /* 버튼과 나란히 배치되도록 너비 설정 */
+    width: 550px; /* 버튼과 나란히 배치되도록 너비 설정 */
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -148,13 +158,13 @@ export default {
 }
 
 .search-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
     background-color: #7bd5c3;
     color: white;
-    padding: 8px 16px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-left: 5px;
 }
 .clear-btn {
     padding: 10px 15px;

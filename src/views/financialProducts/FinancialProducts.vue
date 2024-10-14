@@ -1,7 +1,5 @@
 <template>
     <div class="financial-products-container">
-        <h1>배너 넣을거 넣고 텍스트 빼죠</h1>
-
         <!-- 탭 버튼 -->
         <div class="tabs">
             <v-btn
@@ -19,8 +17,8 @@
         <!-- 주식 리스트 -->
         <div class="stock-container">
             <stock-search v-if="selectedCategory === 'stock'" />
-            <p v-if="selectedCategory === 'stock'">종목 선택 시 네이버 증권으로 연결됩니다.</p>
             <stock-list v-if="selectedCategory === 'stock'" />
+            <p v-if="selectedCategory === 'stock'">종목 선택 시 네이버 증권으로 연결됩니다.</p>
         </div>
 
         <!-- 검색 및 필터링 -->
@@ -246,7 +244,7 @@
                         <template v-if="selectedCategory === 'fund'">
                             <td>{{ product.fundType }}</td>
                             <td>{{ product.riskLevel }}</td>
-                            <td>{{ product.yield12 }}%</td>
+                            <td :style="getColorStyle(product.yield12)">{{ product.yield12 }}%</td>
                         </template>
 
                         <!-- 예금 및 적금 정보 -->
@@ -255,14 +253,20 @@
                                 selectedCategory === 'deposit' || selectedCategory === 'saving'
                             "
                         >
-                            <td>{{ getRate(product.productId, 12).intrRate }}%</td>
-                            <td>{{ getRate(product.productId, 12).intrRate2 }}%</td>
+                            <td :style="getColorStyle(getRate(product.productId, 12).intrRate)">
+                                {{ getRate(product.productId, 12).intrRate }}%
+                            </td>
+                            <td :style="getColorStyle(getRate(product.productId, 12).intrRate2)">
+                                {{ getRate(product.productId, 12).intrRate2 }}%
+                            </td>
                         </template>
 
                         <!-- 채권 정보 -->
                         <template v-else-if="selectedCategory === 'bond'">
                             <td>{{ formatDate(product.bondIssuDt) }}</td>
-                            <td>{{ product.bondSrfcInrt }}%</td>
+                            <td :style="getColorStyle(product.bondSrfcInrt)">
+                                {{ product.bondSrfcInrt }}%
+                            </td>
                         </template>
 
                         <!-- 장바구니 버튼 -->
@@ -283,56 +287,49 @@
                 </tbody>
             </table>
 
-            <!-- 페이지네이션 -->
+            <!-- Pagination Controls -->
             <div id="Pagination" class="mt-4 pagination-buttons">
                 <div class="pagination-container">
-                    <button
-                        :disabled="currentPage === 1"
-                        @click="changePageWithScroll(1, $event)"
-                        class="pagination-btn"
-                    >
-                        처음
-                    </button>
-
-                    <button
-                        :disabled="currentPage === 1"
-                        @click="changePageWithScroll(currentPage - 1, $event)"
-                        class="pagination-btn"
-                    >
-                        이전
-                    </button>
-
-                    <span v-if="currentPage > 4" class="pagination-ellipsis">...</span>
-
-                    <button
-                        v-for="page in visiblePages"
-                        :key="page"
-                        @click="
-                            typeof page === 'number' ? changePageWithScroll(page, $event) : null
-                        "
-                        :class="['pagination-btn', { active: currentPage === page }]"
-                        :disabled="page === '...'"
-                    >
-                        {{ page }}
-                    </button>
-
-                    <span v-if="currentPage < totalPages - 3" class="pagination-ellipsis">...</span>
-
-                    <button
-                        :disabled="currentPage === totalPages"
-                        @click="changePageWithScroll(currentPage + 1, $event)"
-                        class="pagination-btn"
-                    >
-                        다음
-                    </button>
-
-                    <button
-                        :disabled="currentPage === totalPages"
-                        @click="changePageWithScroll(totalPages, $event)"
-                        class="pagination-btn"
-                    >
-                        끝
-                    </button>
+                    <div class="page-navigation">
+                        <button
+                            type="button"
+                            @click.prevent="prevPage"
+                            :disabled="currentPage === 1"
+                            class="pagination-btn"
+                            aria-label="이전 페이지로 이동"
+                        >
+                            이전
+                        </button>
+                        <span>{{ currentPage }} / {{ totalPages }}</span>
+                        <button
+                            type="button"
+                            @click.prevent="nextPage"
+                            :disabled="currentPage === totalPages"
+                            class="pagination-btn"
+                            aria-label="다음 페이지로 이동"
+                        >
+                            다음
+                        </button>
+                    </div>
+                    <div class="page-selection">
+                        <input
+                            v-model.number="goToPage"
+                            type="number"
+                            min="1"
+                            :max="totalPages"
+                            class="page-input"
+                            @keyup.enter.prevent="goToSpecificPage"
+                            placeholder="페이지 번호"
+                        />
+                        <button
+                            type="button"
+                            @click.prevent="goToSpecificPage"
+                            class="go-btn"
+                            aria-label="특정 페이지로 이동"
+                        >
+                            이동
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -381,7 +378,7 @@ export default {
 
         const displayedProducts = ref([]);
         const currentPage = ref(1);
-        const pageSize = ref(8);
+        const pageSize = ref(10);
         const totalPages = ref(1);
         const isLoading = ref(false);
         const error = ref(null);
@@ -409,6 +406,9 @@ export default {
         // 정렬 상태 관리
         const sortField = ref(''); // 현재 정렬 기준 필드
         const sortDirection = ref('asc'); // 현재 정렬 방향: 'asc' 또는 'desc'
+
+        // 페이지 이동을 위한 goToPage
+        const goToPage = ref(1);
 
         // 테이블 헤더 클릭 시 정렬 처리 함수
         const sortBy = (field) => {
@@ -585,6 +585,7 @@ export default {
             }
         };
 
+        // Page change method to handle route params
         const changePage = (page) => {
             if (page < 1 || page > totalPages.value) return;
 
@@ -601,10 +602,28 @@ export default {
                     console.error('라우터 변경 중 오류:', error);
                 });
         };
-        const changePageWithScroll = (page, event) => {
-            currentPage.value = page;
-            loadProducts();
-            event.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // 이전 페이지로 이동
+        const prevPage = () => {
+            if (currentPage.value > 1) {
+                changePage(currentPage.value - 1);
+            }
+        };
+
+        // 다음 페이지로 이동
+        const nextPage = () => {
+            if (currentPage.value < totalPages.value) {
+                changePage(currentPage.value + 1);
+            }
+        };
+
+        // 특정 페이지로 이동
+        const goToSpecificPage = () => {
+            if (goToPage.value >= 1 && goToPage.value <= totalPages.value) {
+                changePage(goToPage.value);
+            } else {
+                alert(`1에서 ${totalPages.value} 사이의 유효한 페이지 번호를 입력하세요.`);
+            }
         };
 
         const gotoDetail = (productId) => {
@@ -622,6 +641,13 @@ export default {
                 return;
             }
 
+            // 페이지를 맨 위로 스크롤
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth', // 부드럽게 스크롤
+            });
+
+            // 라우트 이동
             router.push({
                 path: `/list/${productId}`,
                 query: { productType },
@@ -639,7 +665,7 @@ export default {
 
         // 장바구니 버튼 누를 시 나오는 alert
         const alertCartAndIncreaseHit = async (product) => {
-            const inCart = isInCart(product.productId); // 상품이 장바구니에 있는지 확인
+            const inCart = isProductInCart.value(product.productId); // 상품이 장바구니에 있는지 확인
             const message = inCart
                 ? '장바구니에서 제거하시겠습니까?'
                 : '장바구니에 담으시겠습니까?';
@@ -647,7 +673,7 @@ export default {
             const userConfirmed = window.confirm(message);
             if (userConfirmed) {
                 await toggleCartAndIncreaseHit(product); // 장바구니 추가/제거 수행
-                window.location.reload(); // 페이지 새로고침
+                // window.location.reload(); // 페이지 새로고침 제거 또는 유지 (선택 사항)
             }
         };
 
@@ -768,32 +794,6 @@ export default {
             return `${year}-${month}-${day}`;
         };
 
-        const visiblePages = computed(() => {
-            const pages = [];
-            const total = totalPages.value;
-            const current = currentPage.value;
-
-            if (total <= 7) {
-                for (let i = 1; i <= total; i++) {
-                    pages.push(i);
-                }
-            } else {
-                pages.push(1);
-                if (current > 4) pages.push('...');
-                const startPage = Math.max(2, current - 2);
-                const endPage = Math.min(total - 1, current + 2);
-
-                for (let i = startPage; i <= endPage; i++) {
-                    pages.push(i);
-                }
-
-                if (current < total - 3) pages.push('...');
-                pages.push(total);
-            }
-
-            return pages;
-        });
-
         const updateCart = async () => {
             await cartStore.fetchCartItems();
             console.log('cartStore.cartItems:', cartStore.cartItems);
@@ -815,6 +815,16 @@ export default {
             return logoPath;
         };
 
+        const getColorStyle = (value) => {
+            if (value > 0) {
+                return { color: 'red' };
+            } else if (value < 0) {
+                return { color: 'blue' };
+            } else {
+                return { color: 'black' };
+            }
+        };
+
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
             await cartStore.fetchCartItems();
@@ -828,10 +838,13 @@ export default {
                 console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
                 selectedCategory.value = newCategory || 'all';
                 currentPage.value = parseInt(newPage) || 1;
-                pageSize.value = parseInt(newPageSize) || 8;
+                pageSize.value = parseInt(newPageSize) || 10;
 
-                loadProducts(currentPage.value);
+                await loadProducts(); // 상품 로드 완료 대기
                 await updateCart();
+
+                // 페이지네이션 섹션으로 스크롤
+                scrollToPage();
             },
             { immediate: true }
         );
@@ -846,7 +859,6 @@ export default {
             currentPage,
             totalPages,
             changePage,
-            changePageWithScroll,
             isLoading,
             error,
             handleSearch,
@@ -855,7 +867,6 @@ export default {
             getProductName, // getProductName 함수 반환
             getRate,
             cart: cartStore.cartItems, // Pinia Store의 cartItems
-            visiblePages,
             toggleCartAndIncreaseHit,
             isSearched,
             formatDate,
@@ -867,6 +878,12 @@ export default {
             isProductInCart,
             logoExists,
             getLogoPath,
+            // 새로 추가된 페이지네이션 관련 속성 및 메서드
+            goToPage,
+            prevPage,
+            nextPage,
+            goToSpecificPage,
+            getColorStyle,
         };
     },
 };
@@ -900,14 +917,17 @@ export default {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 40px;
+    align-items: flex-start;
 }
 
 .search-input {
-    width: 60%; /* 버튼과 나란히 배치되도록 너비 설정 */
+    width: 550px; /* 버튼과 나란히 배치되도록 너비 설정 */
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 16px;
+    margin-right: 10px;
     transition: border-color 0.3s ease;
 }
 
@@ -963,7 +983,7 @@ export default {
 
 .Detail-Link {
     cursor: pointer;
-    color: #007bff;
+    color: #000000;
 }
 
 .Detail-Link:hover {
@@ -974,18 +994,19 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 600px; /* 페이지네이션 너비 고정 */
-    margin: 0 auto;
+    margin-top: 20px;
+    gap: 20px;
 }
 
 .pagination-btn {
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #7bd5c3;
+    color: white;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    margin: 0 5px;
-    border-radius: 5px;
     transition: background-color 0.3s;
 }
 
@@ -995,7 +1016,7 @@ export default {
 }
 
 .pagination-btn:hover {
-    background-color: #007bff;
+    background-color: #42ceb2;
     color: white;
 }
 
@@ -1003,12 +1024,13 @@ export default {
     background-color: #ccc;
 }
 
-/* 페이지네이션의 ... 표시 */
-.pagination-ellipsis {
-    margin: 0 8px;
-    font-size: 16px;
-    color: #333;
-    pointer-events: none; /* 클릭을 비활성화 */
+.page-input {
+    width: 50px;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 /* 정렬 가능한 헤더 스타일 */
@@ -1026,7 +1048,7 @@ th {
 
 /* 장바구니 있는 상품 하이라이트 강조 */
 .in-cart {
-    background-color: #ffeeba; /* 예: 연한 노란색 배경 */
+    background-color: #f1f1f1; /* 예: 연한 노란색 배경 */
 }
 
 /* 금융사 로고 스타일 */

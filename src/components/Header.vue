@@ -294,7 +294,7 @@ nav {
 .menu {
     display: flex;
     justify-content: center;
-    gap: 120px;
+    gap: 100px;
     align-items: center;
     width: 100%;
 }
@@ -326,7 +326,7 @@ nav {
     display: flex;
     justify-content: space-around;
     max-width: 1200px;
-    width: 55%;
+    width: 65%;
     position: relative;
     left: 5px;
 }
@@ -336,10 +336,11 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 0;
     border-left: 1px solid #ddd;
     flex-grow: 1;
     flex-basis: 0;
+    width: 100%;
     gap: 20px;
 }
 
@@ -364,6 +365,7 @@ nav {
 }
 
 .dropdown-section ul li:hover {
+    width: 100%;
     background-color: #f0f0f0;
 }
 
@@ -378,6 +380,10 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.in:hover {
+    width: 100%;
 }
 
 /* 사용자 컨트롤 스타일 */
