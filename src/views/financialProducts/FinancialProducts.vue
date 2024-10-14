@@ -17,8 +17,7 @@
         <!-- 주식 리스트 -->
         <div class="stock-container">
             <stock-search v-if="selectedCategory === 'stock'" />
-            <stock-list v-if="selectedCategory === 'stock'" />
-            <p v-if="selectedCategory === 'stock'">종목 선택 시 네이버 증권으로 연결됩니다.</p>
+            <stock-list class="stock-list" v-if="selectedCategory === 'stock'" />
         </div>
 
         <!-- 검색 및 필터링 -->
@@ -179,8 +178,9 @@
                 </thead>
                 <tbody>
                     <tr v-if="sortedProducts.length === 0 && searchQuery.length >= 2 && !isLoading">
-                        <td colspan="6">검색 결과가 없습니다.</td>
+                        <td :colspan="columnCount">검색 결과가 없습니다.</td>
                     </tr>
+
                     <tr
                         v-for="product in sortedProducts"
                         :key="product.productId"
@@ -809,9 +809,6 @@ export default {
         const getLogoPath = (financialInstitution) => {
             const bank = bankData.find((bank) => bank.name === financialInstitution);
             const logoPath = bank ? `${logoBasePath}/${bank.logo}` : '';
-            console.log('logoBasePath:', logoBasePath);
-            console.log('financialInstitution:', financialInstitution);
-            console.log('logoPath:', logoPath);
             return logoPath;
         };
 
@@ -824,6 +821,19 @@ export default {
                 return { color: 'black' };
             }
         };
+
+        const columnCount = computed(() => {
+            switch (selectedCategory.value) {
+                case 'fund':
+                    return 6;
+                case 'deposit':
+                case 'saving':
+                case 'bond':
+                    return 5;
+                default:
+                    return 5; // 기본값 설정
+            }
+        });
 
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
@@ -842,9 +852,6 @@ export default {
 
                 await loadProducts(); // 상품 로드 완료 대기
                 await updateCart();
-
-                // 페이지네이션 섹션으로 스크롤
-                scrollToPage();
             },
             { immediate: true }
         );
@@ -884,6 +891,7 @@ export default {
             nextPage,
             goToSpecificPage,
             getColorStyle,
+            columnCount,
         };
     },
 };
@@ -891,9 +899,10 @@ export default {
 
 <style scoped>
 .financial-products-container {
-    width: 70%;
+    width: 80%;
     padding: 20px;
     margin: 0 auto;
+    margin-top: 40px;
 }
 
 .tabs {
@@ -922,7 +931,7 @@ export default {
 }
 
 .search-input {
-    width: 550px; /* 버튼과 나란히 배치되도록 너비 설정 */
+    width: 550px;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -968,6 +977,32 @@ export default {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    table-layout: fixed;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* 고정된 테이블 레이아웃 */
+}
+
+.table th:nth-child(1) {
+    width: 25%;
+}
+.table th:nth-child(2) {
+    width: 35%;
+}
+.table th:nth-child(3) {
+    width: 15%;
+}
+.table th:nth-child(4) {
+    width: 10%;
+}
+.table th:nth-child(5) {
+    width: 10%;
+}
+.table th:nth-child(6) {
+    width: 10%;
 }
 
 .table th,
@@ -975,6 +1010,9 @@ export default {
     padding: 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용은 생략부호로 표시 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 .table tbody tr:hover {
@@ -1033,13 +1071,6 @@ export default {
     font-size: 14px;
 }
 
-/* 정렬 가능한 헤더 스타일 */
-th {
-    cursor: pointer; /* 헤더가 클릭 가능함을 나타내기 위해 커서 변경 */
-    user-select: none; /* 텍스트 선택 방지 */
-    position: relative;
-}
-
 .sort-indicator {
     margin-left: 5px;
     font-size: 12px;
@@ -1048,17 +1079,17 @@ th {
 
 /* 장바구니 있는 상품 하이라이트 강조 */
 .in-cart {
-    background-color: #f1f1f1; /* 예: 연한 노란색 배경 */
+    background-color: rgb(123, 213, 195, 0.25);
 }
 
 /* 금융사 로고 스타일 */
 .financial-logo-bank {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     width: 100%; /* 테이블 셀 전체 너비 사용 */
     height: 60px; /* 고정 높이 설정 */
-    padding: 8px 0; /* 패딩 추가로 여백 확보 */
+
     overflow: hidden; /* 부모 요소가 초과하는 내용 숨기기 */
 }
 
@@ -1079,5 +1110,15 @@ th {
 
 .financal-nonlogo-bank v-avatar {
     margin-right: 5px; /* 아이콘과 이름 간격 */
+}
+
+.stock-list {
+    position: relative;
+    top: -20px;
+}
+
+.stock-container {
+    position: relative;
+    width: 100%; /* 부모 컨테이너의 너비를 100%로 설정 */
 }
 </style>

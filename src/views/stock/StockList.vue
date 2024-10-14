@@ -37,18 +37,20 @@
 
             <p v-else>종목이 없습니다.</p>
         </div>
+    </div>
 
-        <!-- Pagination Controls -->
-        <div class="pagination-container">
-            <div class="page-navigation">
-                <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-                <span>{{ currentPage }} / {{ totalPages }}</span>
-                <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
-            </div>
-            <div class="page-selection">
-                <input v-model.number="goToPage" type="number" min="1" :max="totalPages" />
-                <button @click="goToSpecificPage">이동</button>
-            </div>
+    <div class="info-message">※ 종목 선택 시 네이버 증권으로 이동합니다.</div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-container">
+        <div class="page-navigation">
+            <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+            <span>{{ currentPage }} / {{ totalPages }}</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+        </div>
+        <div class="page-selection">
+            <input v-model.number="goToPage" type="number" min="1" :max="totalPages" />
+            <button @click="goToSpecificPage">이동</button>
         </div>
     </div>
 </template>
@@ -159,80 +161,91 @@ export default {
 /* 전체 컨테이너 스타일 */
 .stock-list-container {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     color: #333;
     font-size: 16px;
+    position: relative;
 }
 
 /* 테이블 컨테이너 스타일 */
 .table-container {
-    max-height: 500px; /* 고정된 높이를 설정 */
-    overflow-y: auto; /* 세로 스크롤 */
-    overflow-x: hidden; /* 가로 스크롤 숨김 */
+    width: 100%;
 }
 
 /* 테이블 스타일 */
 .table {
     width: 100%;
-    border-collapse: collapse; /* 경계선 겹침 해제 */
-    margin-top: 20px; /* 상단 여백 */
+    min-width: 800px;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
 .table th,
 .table td {
-    padding: 15px; /* 패딩 조정 */
-    text-align: left; /* 텍스트 좌측 정렬 */
-    border-bottom: 1px solid #ddd; /* 하단 경계선 추가 */
-    font-size: 16px; /* 폰트 크기 일관성 */
-    color: #333333; /* 텍스트 색상 일관성 */
+    padding: 20px 30px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    color: #333333;
 }
 
 .table th {
-    font-weight: bold; /* 헤더 폰트 두께 */
-    color: #495057; /* 헤더 텍스트 색상 */
+    font-weight: bold;
+    color: #495057;
 }
 
 .table tbody tr:hover {
-    background-color: #f1f1f1; /* 호버 시 배경색 변경 */
-    cursor: pointer; /* 커서 포인터 변경 */
+    background-color: #f1f1f1;
+    cursor: pointer;
 }
 
 .table tr {
-    background-color: #ffffff; /* 기본 행 배경색 */
-    transition: background-color 0.3s ease, transform 0.3s ease; /* 전환 효과 */
+    background-color: #ffffff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .table tr:hover {
-    background-color: #f1f1f1; /* 호버 시 배경색 변경 */
-    transform: translateY(-2px); /* 호버 시 살짝 위로 이동 */
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
 }
 
+/* 열 너비 재조정 */
 .table td:first-child,
 .table th:first-child {
     text-align: center; /* 첫 번째 열 텍스트 중앙 정렬 */
-    width: 10%; /* 첫 번째 열 너비 조정 */
+    width: 15%; /* 첫 번째 열 너비를 10%에서 12%로 증가 */
 }
 
 .table td:nth-child(2),
 .table th:nth-child(2) {
-    text-align: left; /* 두 번째 열 텍스트 좌측 정렬 */
-    width: 25%; /* 두 번째 열 너비 조정 */
+    text-align: center; /* 두 번째 열 텍스트 좌측 정렬 */
+    width: 30%; /* 두 번째 열 너비를 25%에서 30%로 증가 */
 }
 
 .table td:nth-child(3),
 .table th:nth-child(3) {
     text-align: center; /* 세 번째 열 텍스트 중앙 정렬 */
-    width: 10%; /* 세 번째 열 너비 조정 */
+    width: 15%; /* 세 번째 열 너비를 10%에서 8%로 감소 */
 }
 
 .table td:nth-child(4),
-.table th:nth-child(4),
+.table th:nth-child(4) {
+    text-align: center; /* 네 번째, 다섯 번째, 여섯 번째 열 텍스트 우측 정렬 */
+    width: 20%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 유지 */
+}
+
 .table td:nth-child(5),
 .table th:nth-child(5),
 .table td:nth-child(6),
 .table th:nth-child(6) {
     text-align: right; /* 네 번째, 다섯 번째, 여섯 번째 열 텍스트 우측 정렬 */
-    width: 15%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 조정 */
+    width: 10%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 유지 */
+}
+
+.info-message {
+    text-align: right; /* 우측 정렬 */
+    font-size: 14px; /* 폰트 크기 조정 */
+    color: #666666; /* 색상 조정 (회색 계열) */
 }
 
 /* 페이지네이션 컨테이너 스타일 */
