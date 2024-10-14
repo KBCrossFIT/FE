@@ -5,13 +5,13 @@
             <v-card class="pa-4" elevation="2" style="height: 100%">
                 <v-card-text>
                     <div class="list-container">
-                        <span @click="navigateTo('/Influencer')" class="list-item" :class="{ active: $route.path === '/Influencer' }">
+                        <span @click="navigateTo('/influencer')" class="list-item" :class="{ active: $route.path === '/influencer' }">
                             인플루언서
                         </span>
-                        <span @click="navigateTo('/Youtube')" class="list-item" :class="{ active: $route.path === '/Youtube' }">
+                        <span @click="navigateTo('/youtube')" class="list-item" :class="{ active: $route.path === '/youtube' }">
                             유튜브
                         </span>
-                        <span @click="navigateTo('/News')" class="list-item" :class="{ active: $route.path === '/News' }">
+                        <span @click="navigateTo('/news')" class="list-item" :class="{ active: $route.path === '/news' }">
                             뉴스
                         </span>
                     </div>
@@ -115,19 +115,19 @@ export default {
 .list-item.active {
     background-color: #7bd5c3;
     color: white;
-    border-radius: 20px; /* active 상태에서 둥글게 설정 */
+    border-radius: 10px; /* active 상태에서 둥글게 설정 */
 }
 
 .list-item:hover {
     background-color: #5fc3b1;
     color: white;
-    border-radius: 20px; /* hover 상태에서 둥글게 설정 */
+    border-radius: 10px; /* hover 상태에서 둥글게 설정 */
 }
 
 .list-item.active:hover {
     background-color: #5fc3b1;
     color: white;
-    border-radius: 20px; /* active이면서 hover 상태일 때도 둥글게 유지 */
+    border-radius: 10px; /* active이면서 hover 상태일 때도 둥글게 유지 */
 }
 
 .search-container {
