@@ -23,7 +23,7 @@
                     <thead>
                         <tr>
                             <th style="width: 7%; text-align: center"></th>
-                            <th style="width: 15%; text-align: left">주식 코드</th>
+                            <th style="width: 15%; text-align: left">종목 코드</th>
                             <th style="width: 28%; text-align: left">종목명</th>
                             <th style="width: 15%; text-align: center">시장 구분</th>
                             <th style="width: 12%; text-align: right">전일비</th>
