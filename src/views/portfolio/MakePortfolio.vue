@@ -6,19 +6,6 @@
         <label for="nameInput"><h3>포트폴리오 이름</h3></label>
         <input type="text" v-model="portfolioName" id="nameInput" placeholder="포트폴리오 이름 입력">
       </div>
-      <v-btn @click="startTutorial">튜토리얼 시작</v-btn>
-      <hr/>
-
-      <div v-if="isTutorialActive" class="overlay"></div>
-
-      <!-- 튜토리얼 안내 박스 -->
-      <div v-if="isTutorialActive" class="tutorial-message" :style="tutorialStyles">
-        {{ currentStep.text }}
-        <div class="tutorial-buttons">
-          <v-btn @click="nextStep">다음</v-btn>
-          <v-btn @click="endTutorial">종료</v-btn>
-        </div>
-      </div>
 
       <!-- 추천 포트폴리오 구성 비율 -->
       <div class="recommendProportion">
@@ -124,10 +111,10 @@
             <template v-if="filteredProducts.length > 0">
               <!-- 단일 v-for로 필터링된 각 항목을 반복 -->
               <tr v-for="item in filteredProducts" :key="item.productId">
-                <!-- 예적금 타입 -->
-                <template v-if="item.productType === 'S'">
+                <!-- 예금 타입 -->
+                <template v-if="item.productType === 'S' && item.rates[0]?.rsrvType === 'null'">
                   <td>{{ item.products[0]?.finPrdtNm }}</td>
-                  <td>예/적금</td>
+                  <td>예금</td>
                   <td>
                     은행명: {{ item.products[0]?.korCoNm }}<br/>
                     <!-- 상품명 중복 제거 -->
@@ -145,15 +132,56 @@
                       </option>
                     </select>
                     <br/>
-                    단리/복리: {{getInterestRate(item, 'intrRateTypeNm') }}
+                    단리/복리: {{ getDepositInterestRate(item, 'intrRateTypeNm') }}
                     <br/>
-                    적립방식: {{ getInterestRate(item, 'rsrvTypeNm') }}
+                    기본 금리: {{ getDepositInterestRate(item, 'intrRate') }}%
                     <br/>
-                    기본 금리: {{ getInterestRate(item, 'intrRate') }}%
-                    <br/>
-                    최고 금리: {{ getInterestRate(item, 'intrRate2') }}%
+                    최고 금리: {{ getDepositInterestRate(item, 'intrRate2') }}%
                   </td>
                 </template>
+
+                <template v-if="item.productType === 'S' && item.rates[0]?.rsrvType != 'null'">
+                  <td>{{ item.products[0]?.finPrdtNm }}</td>
+                  <td>적금</td>
+                  <td>
+                    은행명: {{ item.products[0]?.korCoNm }}<br/>
+                    <!-- 상품명 중복 제거 -->
+                    만기:
+                    <select
+                        v-model="item.selectedTerm"
+                        class="styled-select"
+                    >
+                      <option
+                          v-for="saveTrm in getUniqueSaveTerms(item)"
+                          :key="saveTrm"
+                          :value="saveTrm"
+                      >
+                        {{ saveTrm }}개월
+                      </option>
+                    </select>
+                    <br/>
+                    적립방식:
+                    <select
+                        v-model="item.selectedrsrvTypeNm"
+                        class="styled-select"
+                    >
+                      <option
+                          v-for="rsrvType in getUniqueRsrvTypes(item)"
+                          :key="rsrvType"
+                          :value="rsrvType"
+                      >
+                        {{ rsrvType }}
+                      </option>
+                    </select>
+                    <br/>
+                    단리/복리: {{ getSavingInterestRate(item, 'intrRateTypeNm') }}
+                    <br/>
+                    기본 금리: {{ getSavingInterestRate(item, 'intrRate') }}%
+                    <br/>
+                    최고 금리: {{ getSavingInterestRate(item, 'intrRate2') }}%
+                  </td>
+                </template>
+
 
                 <!-- 펀드 타입 -->
                 <template v-if="item.productType === 'F'">
@@ -186,7 +214,7 @@
                       type="number"
                       v-model.number="item.investmentAmount"
                       min="0"
-                      placeholder="투자액 입력"
+                      :placeholder="getPlaceholder(item)"
                       class="styled-input"
                   />
                 </td>
@@ -325,75 +353,6 @@ export default {
     const isModalCartOpen = ref(false);
     const portfolioName = ref('');
 
-    // 튜토리얼 관련 상태
-    const isTutorialActive = ref(false);
-    const currentStepIndex = ref(0);
-    const tutorialStyles = ref({});
-
-    // 튜토리얼 단계 정의
-    const tutorialSteps = [
-      {
-        element: 'wrap-center',
-        text: '포트폴리오 구성페이지에 오신 것을 환영합니다! 이곳에서 포트폴리오를 구성할 수 있습니다.',
-      },
-      {
-        element: 'PortfolioChart',
-        text: '여기서는 추천 포트폴리오 구성 비율을 확인할 수 있습니다. 투자 유형을 선택하세요.',
-      },
-      {
-        element: 'presentProportion',
-        text: '현재 포트폴리오의 구성 비율을 확인할 수 있습니다.',
-      },
-      {
-        element: 'ProductSelection',
-        text: '상품종류 섹션에서는 장바구니에서 상품을 가져오거나, 카테고리에 따라 상품을 필터링할 수 있습니다.',
-      },
-      {
-        element: 'MakePortfolio-stockList-section',
-        text: '주식 종류 섹션에서는 주식을 추가하거나 수정할 수 있습니다.',
-      },
-      {
-        element: 'MakePortfolioEnd-btn',
-        text: '모든 구성이 완료되면 저장 버튼을 눌러 포트폴리오를 저장하세요.',
-      },
-    ];
-
-    const currentStep = computed(() => tutorialSteps[currentStepIndex.value]);
-
-    const startTutorial = () => {
-      isTutorialActive.value = true;
-      highlightElement(currentStep.value.element);
-    };
-
-    const highlightElement = (elementId) => {
-      const element = document.getElementById(elementId);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        tutorialStyles.value = {
-          top: `${rect.top + window.scrollY}px`,
-          left: `${rect.left + window.scrollX}px`,
-          width: `${rect.width}px`,
-          height: `${rect.height}px`,
-        };
-      }
-    };
-
-    const nextStep = () => {
-      if (currentStepIndex.value < tutorialSteps.length - 1) {
-        currentStepIndex.value++;
-        currentStep.value = tutorialSteps[currentStepIndex.value];
-        highlightElement(currentStep.value.element);
-      } else {
-        endTutorial();
-      }
-    };
-
-    const endTutorial = () => {
-      isTutorialActive.value = false;
-      currentStepIndex.value = 0;
-    };
-
-    //
     const fetchProductDetails = async () => {
       const productIds = JSON.parse(route.query.productIds);
       const productTypes = JSON.parse(route.query.productTypes);
@@ -435,10 +394,24 @@ export default {
           : selectedProducts.value;
     });
 
-    const getInterestRate = (item, rateType) => {
+    const getDepositInterestRate = (item, rateType) => {
       const selectedRate = item.rates.find((rate) => rate.saveTrm === item.selectedTerm);
       return selectedRate ? selectedRate[rateType] : '정보 없음';
     };
+
+    const getSavingInterestRate = (item, rateType) => {
+      const selectedRate = item.rates.find((rate) => rate.saveTrm === item.selectedTerm && rate.rsrvTypeNm === item.selectedrsrvTypeNm);
+      return selectedRate ? selectedRate[rateType] : '정보 없음';
+    }
+
+    const getUniqueSaveTerms = (item) => {
+      return [...new Set(item.rates.map((rate) => rate.saveTrm))];
+    };
+
+    const getUniqueRsrvTypes = (item) => {
+      return [...new Set(item.rates.map((rate) => rate.rsrvTypeNm))];
+    };
+
 
     // ModalCart에서 전달받은 상품들을 추가
     const addItemsToPortfolio = (items) => {
@@ -483,9 +456,11 @@ export default {
 
     // 장바구니 총 투자액 계산
     const cartTotalInvestment = computed(() => {
-      return selectedProducts.value.reduce(
-          (total, item) => total + (Number(item.investmentAmount) || 0),
-          0
+      return (
+          depositInvestment.value +
+          savingInvestment.value +
+          bondInvestment.value +
+          fundInvestment.value
       );
     });
 
@@ -495,9 +470,7 @@ export default {
           .filter(
               (item) =>
                   item.productType === 'S' &&
-                  (item.rates[0].rsrvType === null ||
-                      item.rates[0].rsrvType === undefined ||
-                      item.rates[0].rsrvType === '')
+                  item.rates[0].rsrvType === 'null'
           )
           .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
     });
@@ -508,9 +481,9 @@ export default {
           .filter(
               (item) =>
                   item.productType === 'S' &&
-                  item.rates[0].rsrvType !== null
+                  item.rates[0].rsrvType != 'null'
           )
-          .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
+          .reduce((total, item) => total + (Number(item.investmentAmount) * Number(item.selectedTerm) || 0), 0);
     });
 
     // 채권 총 투자액 계산
@@ -542,6 +515,19 @@ export default {
     // 통화 형식으로 변환하는 함수
     const formatCurrency = (value) => {
       return Number(value).toLocaleString();
+    };
+
+    const getPlaceholder = (item) => {
+      switch (item.productType) {
+        case 'S':
+          return item.rates[0]?.rsrvType === 'null' ? '총 납입액' : '월 납입액';
+        case 'B':
+          return '총 투자액';
+        case 'F':
+          return '총 투자액';
+        default:
+          return '투자액 입력';
+      }
     };
 
     // 투자 비율 계산
@@ -612,26 +598,39 @@ export default {
     };
 
     const formatDataForSave = () => {
-
       const formattedProducts = selectedProducts.value
           .filter((product) => product.investmentAmount > 0)
           .map((product) => {
             let info = {};
 
-
             info.productType = product.productType;
             info.amount = product.investmentAmount;
 
             if (product.productType === 'S') {
-              const selectedRate = product.rates.find(
-                  (rate) => rate.saveTrm === product.selectedTerm
-              );
+              // 예금 (rsrvType이 null)
+              if (product.rates[0]?.rsrvType === 'null') {
+                const selectedRate = product.rates.find(
+                    (rate) => rate.saveTrm === product.selectedTerm
+                );
+                info.productId = selectedRate ? selectedRate.productId : null;
+                info.rsrvType = '예금'; // 예금으로 표시
+                info.saveTerm = selectedRate ? selectedRate.saveTrm : null;
+                info.intrType = selectedRate ? selectedRate.intrRateTypeNm : null;
+                info.intrRate = selectedRate ? selectedRate.intrRate : null;
 
-              info.productId = selectedRate ? selectedRate.productId : null;
-              info.rsrvType = selectedRate ? selectedRate.rsrvType : null;
-              info.saveTerm = selectedRate ? selectedRate.saveTrm : null;
-              info.intrType = selectedRate ? selectedRate.intrRateTypeNm : null;
-              info.intrRate = selectedRate ? selectedRate.intrRate : null;
+                // 적금 (rsrvType이 null이 아닌 경우)
+              } else {
+                const selectedRate = product.rates.find(
+                    (rate) =>
+                        rate.saveTrm === product.selectedTerm &&
+                        rate.rsrvTypeNm === product.selectedrsrvTypeNm
+                );
+                info.productId = selectedRate ? selectedRate.productId : null;
+                info.rsrvType = selectedRate ? selectedRate.rsrvTypeNm : null;
+                info.saveTerm = selectedRate ? selectedRate.saveTrm : null;
+                info.intrType = selectedRate ? selectedRate.intrRateTypeNm : null;
+                info.intrRate = selectedRate ? selectedRate.intrRate : null;
+              }
             } else if (product.productType === 'B') {
               info.productId = product.productId;
               info.bondExprDt = product.bondExprDt;
@@ -675,18 +674,12 @@ export default {
       if (portfolioName.value === '') {
         alert("이름을 입력하세요!!");
       } else {
-        if (selectedProducts.value.length === 0) {
+        if (selectedProducts.value.length === 0 && portfolioStocks.value.length === 0) {
           alert("아이템을 추가해주세요!!");
         } else {
           const newPortfolioItem = formatDataForSave();
+          console.log(newPortfolioItem);
           if (newPortfolioItem.length > 0) {
-            //   const newit = portfolioStore.postPortfolioAction(newPortfolioItem, portfolioName.value);
-            //   console.log(newit);
-            //   newit.then((result) => {
-            //   const id = result.portfolioId;
-            //   router.push(`/portfolio/${id}`);
-            // });
-            // const id = newit.value.portfolioId;
             await portfolioStore.postPortfolioAction(formatDataForSave(), portfolioName.value);
             const id = newPortfolio.value.portfolioId;
             router.push(`/portfolio/${id}`);
@@ -739,19 +732,17 @@ export default {
       addItemsToPortfolio,
       openModal,
       openModalCart,
-      isTutorialActive,
-      currentStep,
-      startTutorial,
-      nextStep,
-      endTutorial,
-      tutorialStyles,
       confirmCancel,
       removeItem,
-      getInterestRate,
+      getDepositInterestRate,
+      getSavingInterestRate,
+      getUniqueSaveTerms,
+      getUniqueRsrvTypes,
       cartTotalInvestment,
       stockTotalInvestment,
       totalInvestment,
       formatCurrency,
+      getPlaceholder,
       depositInvestment,
       savingInvestment,
       bondInvestment,
