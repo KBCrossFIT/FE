@@ -1,4 +1,7 @@
 <template>
+  <div class="top">
+    <img src="@/assets/img/2first.jpg" alt="배너 이미지" class="banner" />
+  </div>
   <div id="All">
     <!-- 왼쪽 메뉴 바 -->
     <div id="left">
@@ -64,39 +67,6 @@
       </v-container>
     </div>
   </div>
-
-  <!-- 검색과 유튜브 콘텐츠 -->
-  <div id="right">
-    <v-container>
-      <div class="search-container">
-        <h1 class="titleYoutube">유튜브</h1>
-
-        <div id="search" class="search-filter">
-          <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
-          <input
-            v-model="searchQuery"
-            type="text"
-            class="form-control"
-            placeholder="검색어를 입력해 주세요"
-          />
-        </div>
-      </div>
-
-      <!-- 검색어와 페이지에 따라 Youtube_title 업데이트 -->
-      <Youtube_title :searchQuery="searchQuery" :page="page" />
-
-      <!-- 페이지네이션 -->
-      <div id="Pagination">
-        <v-container>
-          <v-pagination
-            v-model="page"
-            :length="5"
-            @input="onPageChange"
-          ></v-pagination>
-        </v-container>
-      </div>
-    </v-container>
-  </div>
 </template>
 
 <script>
@@ -126,6 +96,15 @@ export default {
 </script>
 
 <style scoped>
+.top {
+  width: 100%; /* 상단 영역의 너비를 전체 화면에 맞춤 */
+}
+
+.banner {
+  width: 100%;
+  height: 238px;
+}
+
 #All {
   display: flex;
   align-items: stretch;
@@ -193,65 +172,5 @@ export default {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-/* News.vue의 h1.sixth 스타일 */
-h1.sixth {
-  position: relative;
-  color: #333333;
-}
-
-h1.sixth:before,
-h1.sixth:after {
-  content: '금융 ';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-  transition: all 0.5s ease;
-}
-
-h1.sixth:after {
-  content: ' 뉴스';
-}
-
-h1.sixth:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.sixth:hover:after {
-  transform: translateX(5px);
-}
-
-/* Youtube.vue의 h1.titleYoutube 스타일 */
-h1.titleYoutube {
-  position: relative;
-  color: #333333;
-}
-
-h1.titleYoutube:before,
-h1.titleYoutube:after {
-  content: '금융 ';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-  transition: all 0.5s ease;
-}
-
-h1.titleYoutube:after {
-  content: '유튜브';
-}
-
-h1.titleYoutube:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.titleYoutube:hover:after {
-  transform: translateX(5px);
 }
 </style>

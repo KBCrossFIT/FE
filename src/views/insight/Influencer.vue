@@ -1,4 +1,7 @@
 <template>
+  <div class="top">
+    <img src="@/assets/img/2first.jpg" alt="배너 이미지" class="banner" />
+  </div>
   <div id="All">
     <!-- 왼쪽 메뉴 바 -->
     <div id="left">
@@ -119,6 +122,15 @@ export default {
 </script>
 
 <style scoped>
+.top {
+  width: 100%; /* 상단 영역의 너비를 전체 화면에 맞춤 */
+}
+
+.banner {
+  width: 100%;
+  height: 238px;
+}
+
 #All {
   display: flex;
   align-items: stretch;
@@ -157,36 +169,6 @@ export default {
 
 .erase-btn {
   margin-left: 10px;
-}
-
-h1.sixth {
-  position: relative;
-  color: #333333; /* 제목 색상 변경 */
-}
-
-h1.sixth:before,
-h1.sixth:after {
-  content: '';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-
-  transition: all 0.5s ease;
-}
-
-h1.sixth:after {
-  content: '인플루언서';
-}
-
-h1.sixth:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.sixth:hover:after {
-  transform: translateX(5px);
 }
 
 .list-container {

@@ -1,6 +1,6 @@
 <template>
   <div class="top">
-    <img src="@/assets/img/2first.png" alt="배너 이미지" class="banner" />
+    <img src="@/assets/img/2first.jpg" alt="배너 이미지" class="banner" />
   </div>
   <div class="All"></div>
   <div id="All">
@@ -160,65 +160,5 @@ export default {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-/* News.vue의 h1.sixth 스타일 */
-h1.sixth {
-  position: relative;
-  color: #333333;
-}
-
-h1.sixth:before,
-h1.sixth:after {
-  content: '금융 ';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-  transition: all 0.5s ease;
-}
-
-h1.sixth:after {
-  content: ' 뉴스';
-}
-
-h1.sixth:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.sixth:hover:after {
-  transform: translateX(5px);
-}
-
-/* Youtube.vue의 h1.titleYoutube 스타일 */
-h1.titleYoutube {
-  position: relative;
-  color: #333333;
-}
-
-h1.titleYoutube:before,
-h1.titleYoutube:after {
-  content: '금융 ';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-  transition: all 0.5s ease;
-}
-
-h1.titleYoutube:after {
-  content: '유튜브';
-}
-
-h1.titleYoutube:hover:before {
-  transform: translateX(-5px);
-}
-
-h1.titleYoutube:hover:after {
-  transform: translateX(5px);
 }
 </style>
