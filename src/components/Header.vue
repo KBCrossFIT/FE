@@ -91,25 +91,13 @@
                     <div class="dropdown-section">
                         <ul class="inn">
                             <li
+                                v-for="item in fintainmentItems"
+                                :key="item.route"
                                 class="in"
-                                :class="{ active: isActive('/influencer') }"
-                                @click="$router.push('/influencer')"
+                                :class="{ active: $route.path === item.route }"
+                                @click="navigateTo(item.route)"
                             >
-                                인플루언서
-                            </li>
-                            <li
-                                class="in"
-                                :class="{ active: isActive('/youtube') }"
-                                @click="$router.push('/youtube')"
-                            >
-                                유튜브
-                            </li>
-                            <li
-                                class="in"
-                                :class="{ active: isActive('/news') }"
-                                @click="$router.push('/news')"
-                            >
-                                뉴스
+                                {{ item.text }}
                             </li>
                         </ul>
                     </div>
@@ -172,6 +160,11 @@ export default {
                 username: '',
             },
             showDropdown: false,
+            fintainmentItems: [
+                { text: '인플루언서', route: '/influencer' },
+                { text: '유튜브', route: '/youtube' },
+                { text: '뉴스', route: '/news' },
+            ],
         };
     },
     methods: {
@@ -193,6 +186,9 @@ export default {
                 params: { category },
                 query: { page: 1, pageSize: 10 },
             });
+        },
+        navigateTo(route) {
+            this.$router.push(route);
         },
         async handleLogout() {
             const { cookies } = useCookies();

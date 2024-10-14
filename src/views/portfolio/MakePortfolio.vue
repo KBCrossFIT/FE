@@ -309,7 +309,7 @@
         </div>
         <!-- 주식 총 투자액 표시 -->
         <div class="totalInvestmentAmount">
-          <h3>투자 금액: {{ formatCurrency(totalInvestment) }}원</h3>
+          <h3>투자 금액: {{ formatCurrency(stockTotalInvestment) }}원</h3>
         </div>
       </div>
 
@@ -322,7 +322,7 @@
       />
     </div>
     <div class="totalInvestmentAmount">
-      <h3>투자 총액: {{ formatCurrency(stockTotalInvestment) }}원</h3>
+      <h3>투자 총액: {{ formatCurrency(totalInvestment) }}원</h3>
     </div>
 
     <!-- 하단 버튼들 -->
