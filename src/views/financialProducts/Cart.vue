@@ -187,14 +187,7 @@ export default {
         };
 
         const handleSelectionChange = (item) => {
-            if (selectedProducts.value.length > 3) {
-                alert('최대 3개의 상품만 선택할 수 있습니다.');
-                selectedProducts.value = selectedProducts.value.filter(
-                    (product) => product.productId !== item.productId
-                );
-            } else {
-                console.log('선택된 상품 목록:', selectedProducts.value);
-            }
+            console.log('선택된 상품 목록:', selectedProducts.value);
         };
 
         return {
