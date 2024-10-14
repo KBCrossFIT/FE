@@ -273,7 +273,7 @@
                         <td>
                             <v-btn
                                 icon
-                                @click="toggleCartAndIncreaseHit(product)"
+                                @click="alertCartAndIncreaseHit(product)"
                                 :color="isProductInCart(product.productId) ? 'primary' : 'default'"
                             >
                                 <v-icon>{{
@@ -283,6 +283,22 @@
                                 }}</v-icon>
                             </v-btn>
                         </td>
+                        <!-- 투자성향 분석 안내 대화상자 추가 -->
+                        <v-dialog v-model="showInvestmentTestDialog" max-width="400" overlay-opacity="0.5">
+                        <v-card class="investment-test-dialog">
+                        <v-card-title class="headline">투자성향 분석 필요</v-card-title>
+                        <v-card-text>투자성향 분석을 해야 장바구니에 상품을 담을 수 있습니다.</v-card-text>
+                        <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="primary" text @click="goToInvestmentTest">
+                            투자성향 분석하러 가기
+                            </v-btn>
+                            <v-btn color="grey darken-1" text @click="closeInvestmentTestDialog">
+                            다음에 하기
+                            </v-btn>
+                        </v-card-actions>
+                        </v-card>
+                    </v-dialog>
                     </tr>
                 </tbody>
             </table>
@@ -341,6 +357,7 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
 import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
 import { useCartStore } from '@/store/modules/cart.js'; // Pinia cart store 사용
+import { useAuthStore } from '@/store/authStore';
 import { useRouter, useRoute } from 'vue-router';
 import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
 import * as financeApi from '@/api/financeApi';
@@ -361,6 +378,8 @@ export default {
         const bondStore = useBondStore(); // Pinia bond store 호출
         const fundStore = useFundStore(); // Pinia fund store 호출
         const cartStore = useCartStore(); // Pinia cart store 호출
+        const authStore = useAuthStore();
+        const showInvestmentTestDialog = ref(false);
 
         const searchQuery = ref('');
         const selectedCategory = ref('deposit');
@@ -663,18 +682,20 @@ export default {
             };
         });
 
-        // 장바구니 버튼 누를 시 나오는 alert
+        // 수정된 alertCartAndIncreaseHit 함수
         const alertCartAndIncreaseHit = async (product) => {
-            const inCart = isProductInCart.value(product.productId); // 상품이 장바구니에 있는지 확인
-            const message = inCart
-                ? '장바구니에서 제거하시겠습니까?'
-                : '장바구니에 담으시겠습니까?';
-
-            const userConfirmed = window.confirm(message);
-            if (userConfirmed) {
-                await toggleCartAndIncreaseHit(product); // 장바구니 추가/제거 수행
-                // window.location.reload(); // 페이지 새로고침 제거 또는 유지 (선택 사항)
+            if (!authStore.isAuthenticated) {
+                alert('로그인이 필요한 서비스입니다.');
+                router.push('/login');
+                return;
             }
+
+            if (!authStore.isTested) {
+                showInvestmentTestDialog.value = true;
+                return;
+            }
+
+            toggleCartAndIncreaseHit(product);
         };
 
         // 장바구니 담는 메서드
@@ -716,7 +737,7 @@ export default {
                     }
                 }
 
-                // 조회수 증가
+                    // 조회수 증가
                 await increaseAgeGroupProductHit(product.productId);
                 await increasePreferenceProductHit(product.productId);
             } catch (error) {
@@ -835,6 +856,17 @@ export default {
             }
         });
 
+        // 투자성향 분석 페이지로 이동
+        const goToInvestmentTest = () => {
+            showInvestmentTestDialog.value = false;
+            router.push({ name: 'InvestmentTestStart'});
+        };
+
+        // 투자성향 분석 안내 대화상자 닫기
+        const closeInvestmentTestDialog = () => {
+            showInvestmentTestDialog.value = false;
+        }
+
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
             await cartStore.fetchCartItems();
@@ -852,6 +884,9 @@ export default {
 
                 await loadProducts(); // 상품 로드 완료 대기
                 await updateCart();
+
+                // 페이지네이션 섹션으로 스크롤
+                scrollToPage();
             },
             { immediate: true }
         );
@@ -892,6 +927,9 @@ export default {
             goToSpecificPage,
             getColorStyle,
             columnCount,
+            showInvestmentTestDialog,
+            goToInvestmentTest,
+            closeInvestmentTestDialog,
         };
     },
 };
@@ -944,6 +982,14 @@ export default {
     border-color: #5bc0de;
     outline: none;
 }
+
+/* 정렬 가능한 헤더 스타일 */
+th {
+    cursor: pointer; /* 헤더가 클릭 가능함을 나타내기 위해 커서 변경 */
+    user-select: none; /* 텍스트 선택 방지 */
+    position: relative;
+}
+
 
 .search-btn {
     padding: 10px 15px;
@@ -1120,5 +1166,25 @@ export default {
 .stock-container {
     position: relative;
     width: 100%; /* 부모 컨테이너의 너비를 100%로 설정 */
+}
+
+.custom-dialog {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.investment-test-dialog {
+  background-color: white !important;
+  border-radius: 8px;
+}
+
+.v-dialog > .v-overlay__content > .v-card {
+  box-shadow: none;
+  border: 1px solid;
+}
+/* 배경 블러 효과 수정 */
+::v-deep .v-overlay__scrim {
+  backdrop-filter: blur(2px);
+  background-color: rgba(255, 255, 255, 0.5) !important;
 }
 </style>

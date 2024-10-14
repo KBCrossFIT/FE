@@ -135,7 +135,6 @@
                 </div>
             </div>
         </div>
-
         <!-- 로그인/로그아웃 -->
         <div class="user-controls">
             <template v-if="isLoggedIn">
@@ -254,6 +253,9 @@ export default {
 
 .logoBox {
     z-index: 11;
+}
+
+.logoBox:hover {
     cursor: pointer;
 }
 
