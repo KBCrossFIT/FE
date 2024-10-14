@@ -24,6 +24,7 @@ import YoutubeDetail from '@/views/insight/YoutubeDetail.vue';
 import InvestmentTest from '@/views/investmentTest/InvestmentTest.vue';
 import InvestmentTestEnd from '@/views/investmentTest/InvestmentTestEnd.vue';
 import MyInvestmentAnalyze from '@/views/investmentTest/MyInvestmentAnalyze.vue';
+import InvestmentTestStart from '@/views/investmentTest/InvestmentTestStart.vue';
 
 // portfolio
 import Portfolio from '@/views/portfolio/Portfolio.vue';
@@ -89,6 +90,11 @@ const routes = [
         path: '/investment-test-end',
         name: 'InvestmentTestEnd',
         component: InvestmentTestEnd,
+    },
+    {
+        path: '/investment-test-start',
+        name: 'InvestmentTestStart',
+        component: InvestmentTestStart,
     },
     {
         path: '/my-investment-analyze',
