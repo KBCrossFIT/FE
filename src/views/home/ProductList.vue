@@ -217,6 +217,7 @@ export default {
 
     // isLoggedIn 계산된 속성 수정
     const isLoggedIn = computed(() => authStore.isAuthenticated);
+    const isTested = computed(() => authStore.isTested);
 
     // 상태 정의
     const state = reactive({
@@ -344,40 +345,49 @@ export default {
     onMounted(async () => {
       await authStore.checkAuth();
       if (isLoggedIn.value) {
-        // 기본 연령대와 투자 성향에 맞는 데이터를 가져옴
-        try {
-          const ageResponse = await getTopProductsByAgeGroup();
-          const investmentResponse = await getTopProductsByPreference();
-          state.activeAge = `${ageResponse[ageResponse.length - 1]}대`;
+        if (isTested.value) {
+          // 기본 연령대와 투자 성향에 맞는 데이터를 가져옴
+          try {
+            const ageResponse = await getTopProductsByAgeGroup();
+            const investmentResponse = await getTopProductsByPreference();
+            state.activeAge = `${ageResponse[ageResponse.length - 1]}대`;
 
-          if (investmentResponse[investmentResponse.length - 1] === 1) {
-            state.activeInvestment = '안전형';
-          } else if (investmentResponse[investmentResponse.length - 1] === 2) {
-            state.activeInvestment = '안전추구형';
-          } else if (investmentResponse[investmentResponse.length - 1] === 3) {
-            state.activeInvestment = '위험중립형';
-          } else if (investmentResponse[investmentResponse.length - 1] === 4) {
-            state.activeInvestment = '적극투자형';
-          } else {
-            state.activeInvestment = '공격투자형';
-          }
+            if (investmentResponse[investmentResponse.length - 1] === 1) {
+              state.activeInvestment = '안전형';
+            } else if (investmentResponse[investmentResponse.length - 1] === 2) {
+              state.activeInvestment = '안전추구형';
+            } else if (investmentResponse[investmentResponse.length - 1] === 3) {
+              state.activeInvestment = '위험중립형';
+            } else if (investmentResponse[investmentResponse.length - 1] === 4) {
+              state.activeInvestment = '적극투자형';
+            } else {
+              state.activeInvestment = '공격투자형';
+            }
 
-          if (ageResponse) {
-            state.ageGroupProducts = ageResponse.slice(0, 3);
+            if (ageResponse) {
+              state.ageGroupProducts = ageResponse.slice(0, 3);
+            }
+            if (investmentResponse) {
+              state.investmentProducts = investmentResponse.slice(0, 3);
+            }
+          } catch (error) {
+            console.error('Error during initial load:', error);
           }
-          if (investmentResponse) {
-            state.investmentProducts = investmentResponse.slice(0, 3);
-          }
-        } catch (error) {
-          console.error('Error during initial load:', error);
+        } else {
+          // 투자성향 분석이 완료되지 않은 경우
+          setDefaultValues();
         }
       } else {
-        state.activeAge = '20대';
-        state.activeInvestment = '공격투자형';
-        await fetchAgeGroupProducts(20, true);
-        await fetchInvestmentProducts(5, true);
+        setDefaultValues();
       }
     });
+
+    const setDefaultValues = async () => {
+      state.activeAge = '20대';
+      state.activeInvestment = '공격투자형';
+      await fetchAgeGroupProducts(20, true);
+      await fetchInvestmentProducts(5, true);
+    }
 
     return {
       state,

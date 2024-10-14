@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/store/authStore';
+
 export default {
   data() {
     return {
@@ -36,6 +38,9 @@ export default {
     };
   },
   mounted() {
+
+    const authStore = useAuthStore();
+
     // URL 쿼리에서 점수를 받아옴
     this.finalScore = parseFloat(this.$route.query.score) || 0;
 
@@ -51,6 +56,8 @@ export default {
     } else {
       this.resultMessage = '공격투자형';
     }
+
+    authStore.isTested = true;
   },
   methods: {
     navigateToMyInvestmentAnalyze() {

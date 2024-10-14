@@ -6,6 +6,7 @@ export const useAuthStore = defineStore("auth", {
     isAuthenticated: false,
     memberNum: null, // memberNum 추가
     userRole: null,
+    isTested: false, // 투자성향 분석 여부
   }),
   actions: {
     async checkAuth() {
@@ -29,8 +30,10 @@ export const useAuthStore = defineStore("auth", {
           const decodedToken = JSON.parse(jsonPayload);
           console.log("Decoded Token:", decodedToken); // JWT 토큰 디코딩 확인
 
+          console.log(this.isTested);
+
           this.isAuthenticated = true;
-          this.memberNum = decodedToken.sub; // JWT 토큰의 subject가 memberNum이라고 가정
+          this.memberNum = decodedToken.sub; // JWT 토큰의 subject가 memberNum
           console.log("memberNum:", this.memberNum); // memberNum이 제대로 설정되었는지 확인
         } catch (error) {
           console.error("Error decoding token:", error);

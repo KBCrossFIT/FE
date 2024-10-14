@@ -31,6 +31,7 @@
 import axios from 'axios';
 import { useCookies } from 'vue3-cookies';
 import { fetchCartList } from "@/api/cartApi.js";
+import { useAuthStore } from '@/store/authStore';
 
 export default {
   data() {
@@ -51,6 +52,7 @@ export default {
     },
     async handleLogin() {
       const { cookies } = useCookies();
+      const authStore = useAuthStore();
       this.errorMessage = ''; // Reset error message
       try {
         const response = await axios.post('http://localhost:8080/api/member/login', {
@@ -66,11 +68,15 @@ export default {
             response.headers['authorization'] || response.headers['Authorization'];
         const refreshToken =
             response.headers['refresh-token'] || response.headers['Refresh-Token'];
+
+        authStore.isTested = response.data.responseData.data.investScore > 0 && response.data.responseData.data.preference > 0;
+        
         if (authHeader && refreshToken) {
           cookies.set('Authorization', authHeader, { secure: true, sameSite: 'Lax' });
           cookies.set('Refresh-Token', refreshToken, { secure: true, sameSite: 'Lax' });
           localStorage.setItem('user', JSON.stringify(user));
           this.$emit('login', user);
+
           this.$router.push('/');
 
           await fetchCartList();
