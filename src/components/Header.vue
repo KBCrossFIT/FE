@@ -127,11 +127,11 @@
         <div class="user-controls">
             <template v-if="isLoggedIn">
                 <div class="profile-info">
-                    <div class="usernames" @click="navigateToProfile">
+                    <button class="usernames" @click="navigateToProfile">
                         <i class="fa-solid fa-user-tie"></i>
                         <span class="username">{{ userProfile.username }}</span>
-                    </div>
-                    <button @click.stop="handleLogout">로그아웃</button>
+                    </button>
+                    <button class="logout-btn" @click.stop="handleLogout">로그아웃</button>
                 </div>
             </template>
 
@@ -285,7 +285,7 @@ nav {
 .menu {
     display: flex;
     justify-content: center;
-    gap: 120px;
+    /* gap: 120px; */
     align-items: center;
     width: 100%;
 }
@@ -293,6 +293,8 @@ nav {
 .menu-item {
     font-size: 24px;
     font-weight: bold;
+    flex-basis: 20%;
+    text-align: center;
 }
 
 .menu-item:hover {
@@ -316,8 +318,8 @@ nav {
     justify-content: space-around;
     max-width: 1200px;
     width: 55%;
-    position: relative;
-    left: 5px;
+    /* position: relative;
+    left: 5px; */
 }
 
 .dropdown-section {
@@ -325,6 +327,7 @@ nav {
     flex-direction: column;
     align-items: center;
     padding: 0 10px;
+    flex-basis: 20%;
     border-left: 1px solid #ddd;
     flex-grow: 1;
     flex-basis: 0;
@@ -368,6 +371,16 @@ nav {
     width: 100%;
 }
 
+/* 모든 버튼의 기본 스타일 */
+button {
+    font-size: 16px; /* 모든 버튼의 텍스트 크기를 일관되게 설정 */
+    padding: 8px 16px; /* 텍스트 크기에 맞게 패딩 설정 */
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
 .user-controls {
     display: flex;
     align-items: center;
@@ -375,6 +388,7 @@ nav {
     position: absolute;
     right: 4%;
     width: 200px;
+    justify-content: flex-end;
 }
 
 .profile-info,
@@ -388,9 +402,11 @@ nav {
 
 .profile-info button,
 .login-btn,
-.signup-btn {
+.signup-btn,
+.logout-btn {
     padding: 8px 12px;
     height: 40px;
+    font-size: 16px;
     border-radius: 5px;
     border: none;
     cursor: pointer;
@@ -399,8 +415,13 @@ nav {
 
 .profile-info button:hover,
 .login-btn:hover,
-.signup-btn:hover {
+.signup-btn:hover,
+.logout-btn:hover {
     background-color: #7bd5c3;
     color: white;
+}
+
+.username {
+    font-size: 16px;
 }
 </style>

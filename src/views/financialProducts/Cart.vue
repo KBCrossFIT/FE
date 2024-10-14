@@ -31,18 +31,23 @@
 
             <div class="table-container">
                 <!-- 테이블 헤더 -->
-                <div class="header-row table-responsive">
-                    <div class="checkbox-column center">선택</div>
-                    <div class="sortable-header">상품 종류</div>
-                    <div class="sortable-header">상품 이름</div>
-                    <div class="sortable-header">제공자</div>
-                    <div class="sortable-header">기대 수익률</div>
-                    <div class="text-center"></div>
+                <div class="header-row">
+                    <div class="header-cell checkbox-column">선택</div>
+                    <div class="header-cell product-type">상품 종류</div>
+                    <div class="header-cell product-name">상품 이름</div>
+                    <div class="header-cell provider">제공자</div>
+                    <div class="header-cell expected-return">기대 수익률</div>
+                    <div class="header-cell text-center"></div>
                 </div>
                 <hr class="divider" />
 
                 <!-- 테이블 바디 -->
-                <div v-for="item in paginatedCart" :key="item.cartId" class="cart-item">
+                <div
+                    v-for="item in paginatedCart"
+                    :key="item.cartId"
+                    class="cart-item"
+                    @click="goToProductDetail(item.productId, item.productType, item.rsrvType)"
+                >
                     <div class="cart-item-row">
                         <div class="col checkbox-column">
                             <input
@@ -53,22 +58,20 @@
                             />
                         </div>
                         <div class="col product-type">
-                            <span>
-                                <span v-if="item.productType === 'S'">
-                                    {{ item.rsrvType === 'S' ? '적금' : '예금' }}
-                                </span>
-                                <span v-else-if="item.productType === 'B'">채권</span>
-                                <span v-else-if="item.productType === 'F'">펀드</span>
-                                <span v-else>기타</span>
-                            </span>
+                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
                         </div>
                         <div class="col product-name">{{ item.productName }}</div>
                         <div class="col provider">{{ item.provider }}</div>
-                        <div class="col expected-return">{{ item.expectedReturn }}%</div>
+                        <div
+                            class="col expected-return"
+                            :style="getColorStyle(item.expectedReturn)"
+                        >
+                            {{ item.expectedReturn }}%
+                        </div>
                         <div class="col text-center">
                             <button
                                 class="btn btn-danger cart-trashcanBtn"
-                                @click="removeFromCart(item.cartId)"
+                                @click.stop="removeFromCart(item.cartId)"
                                 aria-label="삭제"
                             >
                                 <i class="mdi mdi-delete mdi-24px"></i>
@@ -198,9 +201,7 @@ export default {
         };
 
         const isSelected = (item) => {
-            return selectedProducts.value.some(
-                (product) => product.productId === item.productId
-            );
+            return selectedProducts.value.some((product) => product.productId === item.productId);
         };
 
         const handleSelectionChange = (event, item) => {
@@ -219,6 +220,31 @@ export default {
             console.log('선택된 상품 목록:', selectedProducts.value);
         };
 
+        const goToProductDetail = (productId, productType, rsrvType = null) => {
+            const type = getProductTypeReturn(productType, rsrvType);
+            router.push(`/list/${productId}?productType=${type}`).then(() => {
+                window.location.reload();
+            });
+        };
+
+        const getProductTypeReturn = (productType, rsrvType) => {
+            switch (productType) {
+                case 'S':
+                    if (rsrvType != null) return 'saving';
+                    return 'deposit';
+                case 'F':
+                    return 'fund';
+                default:
+                    return 'bond';
+            }
+        };
+
+        function getColorStyle(value) {
+            return {
+                color: value > 0 ? 'red' : value < 0 ? 'blue' : 'black',
+            };
+        }
+
         return {
             cart,
             removeFromCart,
@@ -234,13 +260,16 @@ export default {
             authStore,
             itemsPerPage,
             isSelected,
+            goToProductDetail,
+            getProductTypeReturn,
+            getColorStyle,
         };
     },
 };
 </script>
 
 <style scoped>
-/* 전체 요소에 box-sizing 적용 */
+/* 기본 설정 */
 * {
     box-sizing: border-box;
 }
@@ -277,6 +306,7 @@ export default {
     }
 }
 
+/* 빈 장바구니 스타일 */
 .empty-cart {
     text-align: center;
     padding: 40px;
@@ -303,12 +333,13 @@ export default {
     text-decoration: underline;
 }
 
+/* 장바구니 카드 스타일 */
 .cart-card {
     padding: 40px;
     background-color: #fff;
     border: 1px solid #dee2e6;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 0; /* border-radius 제거 */
+    border-radius: 8px;
 }
 
 .card-title-container {
@@ -334,12 +365,49 @@ export default {
     width: 100%;
 }
 
-/* 테이블 헤더 */
+/* 테이블 바디,헤더 공통 스타일 */
+.header-row .checkbox-column,
+.header-row .product-type,
+.header-row .provider,
+.header-row .expected-return,
+.cart-item-row .checkbox-column,
+.cart-item-row .product-type,
+.cart-item-row .provider,
+.cart-item-row .expected-return {
+    text-align: center;
+}
+
+.header-row .product-name,
+.cart-item-row .product-name {
+    text-align: left;
+}
+
+.header-row,
+.cart-item-row {
+    display: flex;
+    padding: 15px 0;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 16px;
+    background-color: #f8f9fa;
+}
+
+.header-row .header-cell,
+.cart-item-row .col {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 테이블 헤더 스타일 */
 .header-row {
     display: flex;
     background-color: #f8f9fa;
     border-bottom: 2px solid #dee2e6;
-    padding: 20px 0; /* 행 높이 증가 */
+    padding: 20px 0;
     font-size: 18px;
     cursor: pointer;
 }
@@ -349,95 +417,68 @@ export default {
     align-items: center;
 }
 
-.header-row .checkbox-column {
-    flex: 0 0 15%; /* 1번째 열: 10% */
-    max-width: 15%;
+/* 열 너비 및 정렬 설정 */
+.header-row .checkbox-column,
+.cart-item-row .checkbox-column {
+    flex: 0 0 10%;
     text-align: center;
 }
 
-.header-row .sortable-header:nth-child(2) {
-    flex: 0 0 15%; /* 2번째 열: 15% */
-    max-width: 15%;
+.header-row .product-type,
+.cart-item-row .product-type {
+    flex: 0 0 15%;
     text-align: center;
 }
 
-.header-row .sortable-header:nth-child(3) {
-    flex: 0 0 30%; /* 3번째 열: 35% */
-    max-width: 30%;
+.header-row .product-name,
+.cart-item-row .product-name {
+    flex: 1; /* 가장 넓게 설정하여 남은 공간을 활용 */
+    text-align: left;
+}
+
+.header-row .provider,
+.cart-item-row .provider {
+    flex: 0 0 20%;
     text-align: center;
 }
 
-.header-row .sortable-header:nth-child(4) {
-    flex: 0 0 15%; /* 4번째 열: 15% */
-    max-width: 15%;
+.header-row .expected-return,
+.cart-item-row .expected-return {
+    flex: 0 0 15%;
+    text-align: right;
+}
+
+.header-row .text-center,
+.cart-item-row .text-center {
+    flex: 0 0 10%;
     text-align: center;
 }
 
-.header-row .sortable-header:nth-child(5) {
-    flex: 0 0 15%; /* 5번째 열: 15% */
-    max-width: 15%;
-    text-align: center;
-}
-
-.header-row .text-center {
-    flex: 0 0 10%; /* 6번째 열: 10% */
-    max-width: 10%;
-    text-align: center;
-}
-
-/* 테이블 바디 */
+/* 테이블 바디 스타일 */
 .cart-item-row {
     display: flex;
     padding: 20px 0;
     align-items: center;
     background-color: #fff;
-    border-radius: 0;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .cart-item-row .col {
-    flex: 1;
     font-size: 16px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* 수정된 데이터 컬럼 너비: 헤더와 동일하게 설정 */
-.cart-item-row .checkbox-column {
-    flex: 0 0 15%; /* 헤더와 일치 */
-    max-width: 15%;
-    text-align: center;
-}
-
-.cart-item-row .product-type {
-    flex: 0 0 15%; /* 헤더와 일치 */
-    max-width: 15%;
-}
-
-.cart-item-row .product-name {
-    flex: 0 0 30%; /* 헤더와 일치 */
-    max-width: 30%;
-}
-
-.cart-item-row .provider {
-    flex: 0 0 15%; /* 헤더와 일치 */
-    max-width: 15%;
-}
-
-.cart-item-row .expected-return {
-    flex: 0 0 15%; /* 헤더와 일치 */
-    max-width: 15%;
-}
-
-.cart-item-row .text-center {
-    flex: 0 0 10%; /* 헤더와 일치 */
-    max-width: 10%;
-    text-align: center;
+/* 상품 이름 hover 효과 */
+.product-name:hover {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 /* 버튼 스타일 */
 .btn {
-    padding: 10px 20px; /* 버튼 높이 조정 */
+    padding: 10px 20px;
     font-size: 16px;
     border: none;
     border-radius: 4px;
@@ -450,21 +491,9 @@ export default {
     margin-right: 8px;
 }
 
-.pagination-btn {
-    background-color: #007bff;
-    color: white;
-}
-
-.pagination-btn:hover {
-    background-color: #0056b3;
-}
-
-.btn-primary:hover {
-    scale: 1.3;
-}
-
+.btn-primary:hover,
 .btn-secondary:hover {
-    scale: 1.3;
+    transform: scale(1.1);
 }
 
 .btn-danger {
@@ -476,28 +505,25 @@ export default {
     background-color: #c82333;
 }
 
+/* 삭제 버튼 스타일 */
 .cart-trashcanBtn {
-    width: 40px; /* 버튼의 너비 조정 */
-    height: 40px; /* 버튼의 높이 조정 */
-    display: flex; /* Flexbox 사용 */
-    justify-content: center; /* 수평 중앙 정렬 */
-    align-items: center; /* 수직 중앙 정렬 */
-    padding: 0; /* 패딩 제거 */
-    border: none; /* 테두리 제거 */
-    background-color: #dc3545; /* btn-danger 색상 */
-    color: white; /* 아이콘 색상 */
-    cursor: pointer; /* 마우스 포인터 변경 */
-    border-radius: 4px; /* 버튼의 둥근 모서리 */
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .cart-trashcanBtn .mdi-delete {
-    font-size: 24px; /* 아이콘 크기 조정 */
-    margin: 0; /* 불필요한 마진 제거 */
-    padding: 0; /* 불필요한 패딩 제거 */
-    line-height: 1; /* 라인 높이 조정 */
+    font-size: 24px;
 }
 
-/* 페이지네이션 버튼 */
+/* 페이지네이션 스타일 */
 .pagination {
     display: flex;
     justify-content: center;
@@ -507,7 +533,7 @@ export default {
 }
 
 .pagination-btn {
-    padding: 10px 20px; /* 버튼 높이 조정 */
+    padding: 10px 20px;
     font-size: 16px;
     border: none;
     border-radius: 4px;
@@ -537,7 +563,7 @@ export default {
     .header-row,
     .cart-item-row {
         font-size: 16px;
-        padding: 15px 0; /* 행 높이 조정 */
+        padding: 15px 0;
     }
 
     .btn,
@@ -547,7 +573,7 @@ export default {
     }
 
     .cart-item-row .col {
-        padding: 0 15px; /* 데이터 레이블 간 간격 조정 */
+        padding: 0 15px;
     }
 }
 
@@ -559,7 +585,7 @@ export default {
     .header-row,
     .cart-item-row {
         font-size: 14px;
-        padding: 10px 0; /* 행 높이 조정 */
+        padding: 10px 0;
     }
 
     .btn,
@@ -569,7 +595,7 @@ export default {
     }
 
     .cart-item-row .col {
-        padding: 0 10px; /* 데이터 레이블 간 간격 조정 */
+        padding: 0 10px;
     }
 }
 </style>

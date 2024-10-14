@@ -2,16 +2,17 @@
     <div id="wrap">
         <div id="wrap-center">
             <h1 class="header">포트폴리오 만들기</h1>
-            <div class="portfolio-name-container">
-                <label for="nameInput"><h3>포트폴리오 이름 :</h3></label>
-                <input
-                    type="text"
-                    v-model="portfolioName"
-                    id="nameInput"
-                    placeholder="포트폴리오 이름을 입력해주세요."
-                />
+            <div class="PortfolioNameProportion">
+                <div class="portfolio-name-container">
+                    <label for="nameInput"><h3>포트폴리오 이름 :</h3></label>
+                    <input
+                        type="text"
+                        v-model="portfolioName"
+                        id="nameInput"
+                        placeholder="포트폴리오 이름을 입력해주세요."
+                    />
+                </div>
             </div>
-
             <!-- 추천 포트폴리오 구성 비율 -->
             <div class="recommendProportion">
                 <div class="PortfolioChartsContainer">
@@ -104,7 +105,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>
+                                <th style="width: 10%">
                                     <div class="Product-filter">
                                         <select v-model="selectedCategory" class="styled-select">
                                             <option value="">상품 종류</option>
@@ -114,11 +115,11 @@
                                         </select>
                                     </div>
                                 </th>
-                                <th>상품명</th>
-                                <th>상품 정보</th>
-                                <th>수익률</th>
-                                <th>투자액</th>
-                                <th></th>
+                                <th style="width: 25%">상품명</th>
+                                <th style="width: 20%">상품 정보</th>
+                                <th style="width: 20%">수익률</th>
+                                <th style="width: 15%">투자액</th>
+                                <th style="width: 10%"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,20 +133,10 @@
                                             item.rates[0]?.rsrvType === 'null'
                                         "
                                     >
-                                        <td class="product-type-cell">
-                                            예금
-                                            <span
-                                                class="info-icon"
-                                                v-tooltip="
-                                                    '예금/적금의 경우 투자금액은 개월수 * 투자액으로 계산됩니다.'
-                                                "
-                                                >●</span
-                                            >
-                                        </td>
+                                        <td class="product-type-cell">예금</td>
                                         <td>{{ item.products[0]?.finPrdtNm }}</td>
                                         <td>
                                             은행명: {{ item.products[0]?.korCoNm }}<br />
-                                            <!-- 상품명 중복 제거 -->
                                             만기:
                                             <select
                                                 v-model="item.selectedTerm"
@@ -165,33 +156,40 @@
                                             {{ getDepositInterestRate(item, 'intrRateTypeNm') }}
                                             <br />
                                             기본 금리:
-                                            {{ getDepositInterestRate(item, 'intrRate') }}%
+                                            <span
+                                                :style="
+                                                    getColorStyle(
+                                                        getDepositInterestRate(item, 'intrRate')
+                                                    )
+                                                "
+                                            >
+                                                {{ getDepositInterestRate(item, 'intrRate') }}%
+                                            </span>
                                             <br />
                                             최고 금리:
-                                            {{ getDepositInterestRate(item, 'intrRate2') }}%
+                                            <span
+                                                :style="
+                                                    getColorStyle(
+                                                        getDepositInterestRate(item, 'intrRate2')
+                                                    )
+                                                "
+                                            >
+                                                {{ getDepositInterestRate(item, 'intrRate2') }}%
+                                            </span>
                                         </td>
                                     </template>
 
+                                    <!-- 적금 타입 -->
                                     <template
                                         v-if="
                                             item.productType === 'S' &&
                                             item.rates[0]?.rsrvType != 'null'
                                         "
                                     >
-                                        <td class="product-type-cell">
-                                            적금
-                                            <span
-                                                class="info-icon"
-                                                v-tooltip="
-                                                    '예금/적금의 경우 투자금액은 개월수 * 투자액으로 계산됩니다.'
-                                                "
-                                                >●</span
-                                            >
-                                        </td>
+                                        <td class="product-type-cell">적금</td>
                                         <td>{{ item.products[0]?.finPrdtNm }}</td>
                                         <td>
                                             은행명: {{ item.products[0]?.korCoNm }}<br />
-                                            <!-- 상품명 중복 제거 -->
                                             만기:
                                             <select
                                                 v-model="item.selectedTerm"
@@ -221,15 +219,30 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <br />
                                             단리/복리:
                                             {{ getSavingInterestRate(item, 'intrRateTypeNm') }}
                                             <br />
                                             기본 금리:
-                                            {{ getSavingInterestRate(item, 'intrRate') }}%
+                                            <span
+                                                :style="
+                                                    getColorStyle(
+                                                        getSavingInterestRate(item, 'intrRate')
+                                                    )
+                                                "
+                                            >
+                                                {{ getSavingInterestRate(item, 'intrRate') }}%
+                                            </span>
                                             <br />
                                             최고 금리:
-                                            {{ getSavingInterestRate(item, 'intrRate2') }}%
+                                            <span
+                                                :style="
+                                                    getColorStyle(
+                                                        getSavingInterestRate(item, 'intrRate2')
+                                                    )
+                                                "
+                                            >
+                                                {{ getSavingInterestRate(item, 'intrRate2') }}%
+                                            </span>
                                         </td>
                                     </template>
 
@@ -239,10 +252,22 @@
                                         <td>{{ item.productNm }}</td>
                                         <td>회사명: {{ item.companyNm }}<br /></td>
                                         <td>
-                                            1개월 수익률: {{ item.yield1 }}%<br />
-                                            3개월 수익률: {{ item.yield3 }}%<br />
-                                            6개월 수익률: {{ item.yield6 }}%<br />
-                                            12개월 수익률: {{ item.yield12 }}%<br />
+                                            1개월 수익률:
+                                            <span :style="getColorStyle(item.yield1)"
+                                                >{{ item.yield1 }}%</span
+                                            ><br />
+                                            3개월 수익률:
+                                            <span :style="getColorStyle(item.yield3)"
+                                                >{{ item.yield3 }}%</span
+                                            ><br />
+                                            6개월 수익률:
+                                            <span :style="getColorStyle(item.yield6)"
+                                                >{{ item.yield6 }}%</span
+                                            ><br />
+                                            12개월 수익률:
+                                            <span :style="getColorStyle(item.yield12)"
+                                                >{{ item.yield12 }}%</span
+                                            ><br />
                                         </td>
                                     </template>
 
@@ -254,7 +279,13 @@
                                             발행: {{ item.bondIsurNm }}<br />
                                             만기일: {{ item.bondExprDt }}<br />
                                         </td>
-                                        <td>이자 지급 방식: {{ item.intPayCyclCtt }}<br /></td>
+                                        <td>
+                                            채권 금리:
+                                            <span :style="getColorStyle(item.bondSrfcInrt)"
+                                                >{{ item.bondSrfcInrt }} %</span
+                                            ><br />
+                                            이자 지급 방식: {{ item.intPayCyclCtt }}
+                                        </td>
                                     </template>
 
                                     <td>
@@ -265,6 +296,18 @@
                                             :placeholder="getPlaceholder(item)"
                                             class="styled-input"
                                         />
+                                        <span
+                                            v-if="
+                                                item.productType === 'S' &&
+                                                item.rates[0]?.rsrvType !== 'null'
+                                            "
+                                            class="info-icon"
+                                            v-tooltip="
+                                                '적금의 경우 투자금액은 (개월수 * 투자액)으로 계산됩니다.'
+                                            "
+                                        >
+                                            ●
+                                        </span>
                                     </td>
                                     <td>
                                         <button @click="removeItem(item)">삭제</button>
@@ -304,13 +347,13 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>주식 코드</th>
-                                <th>주식명</th>
-                                <th>카테고리</th>
-                                <th>종가</th>
-                                <th>수량</th>
-                                <th>총액</th>
-                                <th></th>
+                                <th style="width: 10%; text-align: center">종목 코드</th>
+                                <th style="width: 20%; text-align: center">종목명</th>
+                                <th style="width: 10%; text-align: center">카테고리</th>
+                                <th style="width: 10%; text-align: center">종가</th>
+                                <th style="width: 15%; text-align: center">수량</th>
+                                <th style="width: 25%; text-align: center">총액</th>
+                                <th style="width: 10%; text-align: center"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -320,11 +363,17 @@
                                     :key="stock.stockCode"
                                     class="stock-row"
                                 >
-                                    <td>{{ stock.stockCode }}</td>
-                                    <td>{{ stock.stockName }}</td>
-                                    <td>{{ stock.mrktCtg }}</td>
-                                    <td>{{ stock.clpr }}</td>
-                                    <td>
+                                    <td style="width: 10%; text-align: center">
+                                        {{ stock.stockCode }}
+                                    </td>
+                                    <td style="width: 20%; text-align: center">
+                                        {{ stock.stockName }}
+                                    </td>
+                                    <td style="width: 10%; text-align: center">
+                                        {{ stock.mrktCtg }}
+                                    </td>
+                                    <td style="width: 10%; text-align: center">{{ stock.clpr }}</td>
+                                    <td style="width: 15%; text-align: center">
                                         <input
                                             type="number"
                                             v-model.number="stock.quantity"
@@ -332,14 +381,16 @@
                                             placeholder="주식수"
                                         />
                                     </td>
-                                    <td>
+                                    <td style="width: 25%; text-align: center">
                                         {{
-                                            isNaN(stock.clpr * stock.quantity)
-                                                ? 0
-                                                : stock.clpr * stock.quantity
+                                            formatCurrency(
+                                                isNaN(stock.clpr * stock.quantity)
+                                                    ? 0
+                                                    : stock.clpr * stock.quantity
+                                            )
                                         }}원
                                     </td>
-                                    <td>
+                                    <td style="width: 10%; text-align: center">
                                         <button @click="removeStock(stock)">삭제</button>
                                     </td>
                                 </tr>
@@ -641,6 +692,13 @@ export default {
             return Number(value).toLocaleString();
         };
 
+        // 양수, 음수, 0 색깔 지정
+        function getColorStyle(value) {
+            return {
+                color: value > 0 ? 'red' : value < 0 ? 'blue' : 'black',
+            };
+        }
+
         const getPlaceholder = (item) => {
             switch (item.productType) {
                 case 'S':
@@ -887,12 +945,14 @@ export default {
             distinguish,
             user_preference,
             newPortfolio,
+            getColorStyle,
         };
     },
 };
 </script>
 
 <style scoped>
+/* Wrapper Styles */
 #wrap {
     width: 90%;
     background-color: #fff;
@@ -908,14 +968,21 @@ export default {
     border-radius: 8px;
 }
 
+/* Header Styles */
 .header {
+    width: 260px;
+    border-radius: 8px;
+    background-color: #b3ebe0;
     text-align: center;
     margin-bottom: 20px;
     font-weight: bold;
     font-size: 24px;
+    margin: 0 auto;
 }
 
+/* Portfolio Name Container */
 .portfolio-name-container {
+    width: 600px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -929,6 +996,11 @@ export default {
     flex: 1;
 }
 
+#nameInput {
+    width: 500px;
+}
+
+/* Button Styles */
 .v-btn {
     background-color: #4db6ac;
     color: white;
@@ -941,17 +1013,20 @@ export default {
     margin-top: 15px;
 }
 
+/* Section Styles */
 .recommendProportion,
 .ProductSelection,
-.MakePortfolio-stockList-section {
-    max-width: 1200px; /* 좌우 폭을 동일하게 설정 */
-    margin: 20px auto; /* 가운데 정렬 */
+.MakePortfolio-stockList-section,
+.PortfolioNameProportion {
+    max-width: 1200px;
+    margin: 20px auto;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     border: 1px solid #ddd;
 }
 
+/* Filter and Radio Button Styles */
 .Product-filter,
 .CharCheck-radio {
     display: flex;
@@ -960,8 +1035,10 @@ export default {
     margin-bottom: 15px;
 }
 
+/* Table Styles */
 .table-container {
-    max-height: 300px;
+    width: 100%;
+    max-height: 450px;
     overflow-y: auto;
 }
 
@@ -1003,10 +1080,7 @@ export default {
     border-radius: 4px;
 }
 
-.cart-btn {
-    margin-top: 20px;
-}
-
+/* Table Button Styles */
 .table button {
     padding: 5px 10px;
     background-color: #f44336;
@@ -1019,6 +1093,7 @@ export default {
     background-color: #d32f2f;
 }
 
+/* Investment Amount and Proportion Calculations */
 .totalInvestmentAmount {
     margin-top: 20px;
     text-align: right;
@@ -1032,6 +1107,7 @@ export default {
     justify-content: space-between;
 }
 
+/* Styled Select and Input */
 .styled-select,
 .styled-input {
     padding: 5px;
@@ -1039,12 +1115,13 @@ export default {
     border-radius: 4px;
 }
 
+/* Portfolio Chart and Real-Time Proportion Chart */
 .PortfolioChartsContainer {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 20px; /* 차트 간 간격 조정 */
+    gap: 20px;
 }
 
 .PortfolioChart,
@@ -1057,7 +1134,7 @@ export default {
 
 .title-container {
     width: 100%;
-    text-align: left; /* 제목만 왼쪽 정렬 */
+    text-align: left;
 }
 
 .chart-container {
@@ -1070,6 +1147,7 @@ export default {
     flex: 1;
 }
 
+/* Additional Layouts */
 .last-row {
     display: flex;
 }
@@ -1078,8 +1156,9 @@ export default {
     margin-top: 20px;
 }
 
+/* Tooltip Styles */
 .info-icon {
-    font-size: 0.9em; /* 작은 동그라미 크기 설정 */
+    font-size: 0.9em;
     color: #bb3434;
     margin-left: 5px;
     cursor: pointer;
