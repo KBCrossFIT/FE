@@ -225,7 +225,7 @@ export default {
 .table td:nth-child(3),
 .table th:nth-child(3) {
     text-align: center; /* 세 번째 열 텍스트 중앙 정렬 */
-    width: 15%; /* 세 번째 열 너비를 10%에서 8%로 감소 */
+    width: 10%; /* 세 번째 열 너비를 10%에서 8%로 감소 */
 }
 
 .table td:nth-child(4),
@@ -239,7 +239,7 @@ export default {
 .table td:nth-child(6),
 .table th:nth-child(6) {
     text-align: right; /* 네 번째, 다섯 번째, 여섯 번째 열 텍스트 우측 정렬 */
-    width: 10%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 유지 */
+    width: 15%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 유지 */
 }
 
 .info-message {
