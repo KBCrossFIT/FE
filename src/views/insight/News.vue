@@ -8,16 +8,15 @@
     <div id="left">
       <v-card class="pa-4" elevation="2" style="height: 100%">
         <v-card-text>
-          <span @click="navigateTo('/Influencer')" class="list-item">
-            인플루언서
-          </span>
-          <div class="list-container">
-            <span @click="navigateTo('/Youtube')" class="list-item">
-              유튜브
-            </span>
-
-            <span @click="navigateTo('/News')" class="list-item"> 뉴스 </span>
-          </div>
+            <div class="list-container">
+                <span
+                  v-for="item in menuItems"
+                  :key="item.path"
+                  @click="navigateTo(item.path)"
+                  :class="['list-item', { active: isActive(item.path) }]">
+                  {{ item.text }}
+                </span>
+            </div>
         </v-card-text>
       </v-card>
     </div>
@@ -64,20 +63,19 @@ export default {
     return {
       searchQuery: '', // 검색어 데이터
       page: 1, // 현재 페이지
+      menuItems: [
+        { text: '인플루언서', path: '/influencer' },
+        { text: '유튜브', path: '/youtube' },
+        { text: '뉴스', path: '/news' },
+      ],
     };
   },
   methods: {
     navigateTo(path) {
       this.$router.push(path);
     },
-    methods: {
-      navigateTo(path) {
-        this.$router.push(path);
-      },
-      onPageChange(newPage) {
-        this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-        console.log(`Current page: ${newPage}`);
-      },
+    isActive(path) {
+      return this.$route.path.toLowerCase() === path.toLowerCase();
     },
   },
 };
