@@ -58,10 +58,11 @@
     </div>
   </div>
 </template>
+
 <script>
-import axios from 'axios'; // axios를 통해 API 요청을 보냅니다.
-import { useAuthStore } from '@/store/authStore'; // Pinia store에서 로그인된 사용자 정보를 가져옵니다.
-import instance from '@/api';
+import instance from '@/api'; // 서버 요청을 위한 instance
+import { useAuthStore } from '@/store/authStore'; // Pinia store에서 사용자 정보를 가져옵니다.
+
 export default {
   data() {
     return {
@@ -268,18 +269,22 @@ export default {
   height: 100%;
   padding: 20px;
 }
+
 .question-progress {
   font-size: 16px;
   margin-bottom: 20px;
 }
+
 .InvestmentTest-query p {
   font-size: 18px;
   margin: 10px 0;
 }
+
 .answers ul {
   list-style-type: none;
   padding: 0;
 }
+
 .answers li {
   padding: 10px;
   cursor: pointer;
@@ -287,10 +292,17 @@ export default {
   background-color: #f0f0f0;
   margin-bottom: 10px;
 }
+
+.answers li:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-3px);
+}
+
 .answers li.selected {
   background-color: #4caf50;
   color: white;
 }
+
 .progress-bar {
   width: 100%;
   height: 10px;
@@ -298,20 +310,24 @@ export default {
   margin: 20px 0;
   border-radius: 5px;
 }
+
 .progress {
   height: 100%;
   background-color: #3f51b5;
   border-radius: 5px;
   transition: width 0.3s ease;
 }
+
 .navigation {
   margin-top: 20px;
 }
+
 .v-btn {
   margin: 5px;
   background-color: #4caf50;
   color: white;
 }
+
 .v-btn:hover {
   background-color: #388e3c;
 }

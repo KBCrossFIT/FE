@@ -51,6 +51,5 @@ import SideBar from './Sidebar.vue';
 
 .footer {
   z-index: 9999;
-  margin-top: 80px;
 }
 </style>
