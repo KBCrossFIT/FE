@@ -17,10 +17,10 @@
         <!-- 투자 비중 파이 차트 -->
         <h4>포트폴리오 투자 비중</h4>
         <VueApexCharts
-          type="pie"
-          width="380"
-          :options="chartOptions"
-          :series="series"
+            type="pie"
+            width="380"
+            :options="chartOptions"
+            :series="series"
         ></VueApexCharts>
 
         <!-- 포트폴리오 요약 정보 -->
@@ -77,10 +77,10 @@
 
       <section class="portfolio-actions">
         <v-btn color="primary" @click="editPortfolio(portfolioId)"
-          >수정하기</v-btn
+        >수정하기</v-btn
         >
         <v-btn color="red" @click="deletePortfolio(portfolioId)"
-          >삭제하기</v-btn
+        >삭제하기</v-btn
         >
       </section>
     </main>
