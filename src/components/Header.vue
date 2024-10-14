@@ -144,7 +144,7 @@
                         <i class="fa-solid fa-user-tie"></i>
                         <span class="username">{{ userProfile.username }}</span>
                     </div>
-                    <button @click.stop="handleLogout">로그아웃</button>
+                    <but유튜브ton @click.stop="handleLogout">로그아웃</but유튜브ton>
                 </div>
             </template>
 
@@ -252,11 +252,11 @@ export default {
     border-bottom: 1px solid #ddd;
     position: relative;
     box-sizing: border-box;
-    z-index: 9999;
+    z-index: 10;
 }
 
 .logoBox {
-    z-index: 10000;
+    z-index: 11;
 }
 
 .logoBox:hover {
@@ -264,13 +264,12 @@ export default {
 }
 
 .logo-img {
-    width: 155px;
+    width: 201px;
     height: auto;
     position: relative;
-    top: 20px;
-    left: 40%;
+    top: 5px;
+    left: 38%;
 }
-
 /* 메뉴 컨테이너와 네비게이션 스타일 */
 .menu-container {
     display: flex;

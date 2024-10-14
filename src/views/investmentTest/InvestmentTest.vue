@@ -1,5 +1,6 @@
 <template>
   <div class="InvestmentTest-container">
+
     <h1>투자성향 분석</h1>
     <!-- 진행 상황 표시 -->
     <div class="question-progress">{{ currentQuestionIndex + 1 }} / {{ questions.length }}</div>
@@ -12,6 +13,7 @@
         }"
       ></div>
     </div>
+
     <!-- 질문과 답변 표시 -->
     <div class="InvestmentTest-query">
       <p>{{ currentQuestion.question }}</p>
@@ -21,7 +23,9 @@
             v-for="(option, index) in currentQuestion.options"
             :key="index"
             @click="selectAnswer(option, index)"
+
             :class="{ selected: isSelected(option) }"
+
           >
             {{ index + 1 }}. {{ option }}
           </li>
@@ -30,12 +34,14 @@
     </div>
     <!-- 네비게이션 버튼 -->
     <div class="navigation">
+
       <v-btn v-if="currentQuestionIndex > 0" class="InvestmentTest-btn" @click="prevQuestion">이전 질문</v-btn>
       <v-btn v-if="!isLastQuestion" class="InvestmentTest-btn" @click="nextQuestion">다음 질문</v-btn>
     </div>
     <!-- 완료 버튼과 취소 버튼 -->
     <div class="navigation-End-btn">
       <v-btn :disabled="!allQuestionsAnswered" class="InvestmentTest-btn" @click="finishTest"> 제출하기 </v-btn>
+
       <v-btn class="InvestmentTest-btn" @click="closeTest">취소</v-btn>
     </div>
   </div>
@@ -50,6 +56,7 @@ export default {
     return {
       questions: [
         {
+
           question: "1. 고객님의 연령대가 어떻게 되십니까?",
           options: ["19세 이하", "20세~40세", "41세~50세", "51세~64세", "65세 이상"],
           scores: [4, 4, 3, 2, 1], // 각 답변의 점수
@@ -65,10 +72,12 @@ export default {
             "현재 일정한 소득이 발생하고 있으며, 미래에도 현재 수준을 유지하거나 늘어날 것으로 예상",
             "현재 일정한 소득이 발생하고 있으나, 미래에는 줄어들거나 불안정할 것으로 예상",
             "현재 일정한 소득이 없으며, 연금이 주 소득임",
+
           ],
           scores: [3, 2, 1],
         },
         {
+
           question: "4. 연간소득 금액이 어떻게 되십니까?",
           options: ["1천만원 미만", "3천만원 이하", "5천만원 이하", "1억원 이하", "1억원 초과"],
           scores: [1, 2, 3, 4, 5],
@@ -141,11 +150,13 @@ export default {
       selectedAnswers: Array(12).fill(null), // 선택된 답변을 저장
       selectedScores: Array(12).fill(null), // 각 질문의 점수를 저장
       totalScore: 0, // 총 점수
+
     };
   },
   computed: {
     currentQuestion() {
       return this.questions[this.currentQuestionIndex];
+
     },
     isLastQuestion() {
       return this.currentQuestionIndex === this.questions.length - 1;
@@ -207,21 +218,25 @@ export default {
     closeTest() {
       this.$router.push("/"); // 취소 시 메인 페이지로 이동
     },
+
   },
 };
 </script>
 <style scoped>
 .InvestmentTest-container {
+
   /* 화면의 중앙에 배치 */
   position: absolute;
   top: 25%;
   left: 50%;
   transform: translate(-50%, -50%); /* 중앙 정렬을 위해 사용 */
 
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+
   height: auto; /* 필요에 따라 높이 변경 */
   padding: 40px; /* 내부 여백 */
   background-color: #f0f0f0;
@@ -232,30 +247,37 @@ export default {
   width: 100%; /* 너비를 100%로 설정하여 반응형 적용 */
   max-width: 1500px; /* 최대 너비를 800px로 제한 */
   min-width: 500px; /* 최소 너비를 300px로 설정 */
+
 }
 
 .question-progress {
+
   font-size: 18px;
   margin-bottom: 30px;
   color: #3f51b5;
+
 }
 
 .InvestmentTest-query p {
+
   font-size: 20px;
   margin-top: 60px;
   margin-bottom: 0px;
 
   color: #2e2e2e;
   text-align: center;
+
 }
 
 .answers ul {
   list-style-type: none;
   padding: 0;
   width: 100%;
+
 }
 
 .answers li {
+
   padding: 15px;
   cursor: pointer;
   border-radius: 8px;
@@ -270,32 +292,39 @@ export default {
 .answers li:hover {
   background-color: #e0e0e0;
   transform: translateY(-3px);
+
 }
 
 .answers li.selected {
+
   background-color: #2a9d8f; /* 선택된 항목에 진한 배경색 */
   color: white;
   box-shadow: 0 4px 12px rgba(37, 66, 38, 0.3); /* 선택된 항목 강조 */
   border: 1px solid #2a9d8f;
+
 }
 
 .progress-bar {
+
   width: 50%;
   height: 10px;
   background-color: #ddd;
   margin: 2px;
   border-radius: 6px;
   overflow: hidden;
+
 }
 
 .progress {
   height: 100%;
   background-color: #3f51b5;
+
   border-radius: 6px;
   transition: width 0.4s ease;
 
   /* 아래에 간격을 주기 위해 margin-bottom 추가 */
   margin-bottom: 20px; /* 원하는 간격 크기로 설정 */
+
 }
 
 .navigation {
@@ -303,9 +332,11 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 50%;
+
 }
 
 .v-btn {
+
   margin: 10px;
   padding: 10px 20px;
   font-size: 16px;
@@ -314,10 +345,12 @@ export default {
   border-radius: 6px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
 }
 
 .v-btn:hover {
   background-color: #1f7268;
   box-shadow: 0 4px 14px rgba(56, 142, 60, 0.3);
+
 }
 </style>

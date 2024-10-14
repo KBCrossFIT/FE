@@ -37,7 +37,7 @@
             <td>{{ item.productName }}</td>
             <td>
               <span v-if="item.productType === 'S'">
-                {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                {{ item.rsrvType === null ? '예금' : '적금' }}
               </span>
               <span v-else-if="item.productType === 'B'">채권</span>
               <span v-else-if="item.productType === 'F'">펀드</span>

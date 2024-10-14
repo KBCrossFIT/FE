@@ -1,57 +1,50 @@
 <template>
-    <div class="MyPortfolio-container">
-        <div v-if="!isAuthenticated" class="empty-myPortFolio">
+    <div class="my-portfolio-container">
+        <div v-if="!isAuthenticated" class="empty-my-portfolio">
             <h1>만든 포트폴리오가 없습니다.</h1>
-            로그인하고 포트폴리오를 만들어보세요.
-            <br>
-            <router-link to="/login">
+            <p>로그인하고 포트폴리오를 만들어보세요.</p>
+            <router-link to="/login" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt icon"></i>
                 <span class="menu-text">로그인하러 가기</span>
             </router-link>
         </div>
-        <v-card v-else>
-            <h1>나의 포트폴리오</h1>
-            <div class="MyPortfolio-DataTable">
-                <table>
+        <v-card v-else class="portfolio-card">
+            <h1 class="card-title">나의 포트폴리오</h1>
+            <div class="table-responsive">
+                <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>
+                            <th class="checkbox-column">
                                 <input
                                     type="checkbox"
                                     v-model="allSelected"
                                     @change="toggleSelectAll"
                                 />
                             </th>
-                            <th @click="sortBy('portfolioName')">
+                            <th @click="sortBy('portfolioName')" class="sortable-header text-left">
                                 포트폴리오
-                                <span v-if="sortKey === 'portfolioName'">
-                                    {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                                </span>
+                                <i v-if="sortKey === 'portfolioName'" :class="sortIconClass"></i>
                             </th>
-                            <th @click="sortBy('total')">
+                            <th @click="sortBy('total')" class="sortable-header text-right">
                                 투자 금액
-                                <span v-if="sortKey === 'total'">
-                                    {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                                </span>
+                                <i v-if="sortKey === 'total'" :class="sortIconClass"></i>
                             </th>
-                            <th @click="sortBy('expectedReturn')">
+                            <th
+                                @click="sortBy('expectedReturn')"
+                                class="sortable-header text-right"
+                            >
                                 기대 수익률
-                                <span v-if="sortKey === 'expectedReturn'">
-                                    {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                                </span>
+                                <i v-if="sortKey === 'expectedReturn'" :class="sortIconClass"></i>
                             </th>
-                            <th @click="sortBy('riskLevel')">
+                            <th @click="sortBy('riskLevel')" class="sortable-header text-center">
                                 위험도
-                                <span v-if="sortKey === 'riskLevel'">
-                                    {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                                </span>
+                                <i v-if="sortKey === 'riskLevel'" :class="sortIconClass"></i>
                             </th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <tr v-for="item in sortedPortfolioList" :key="item.id">
-                            <td>
+                            <td class="checkbox-column">
                                 <input
                                     type="checkbox"
                                     v-model="selected"
@@ -59,19 +52,26 @@
                                     @change="updateSelectAllState"
                                 />
                             </td>
-                            <td class="NameCursor" @click="goToPortfolioDetail(item.portfolioId)">
+                            <td
+                                class="portfolio-name text-left"
+                                @click="goToPortfolioDetail(item.portfolioId)"
+                            >
                                 {{ item.portfolioName }}
                             </td>
-                            <td>{{ item.total }}원</td>
-                            <td>{{ item.expectedReturn }}%</td>
-                            <td>{{ item.riskLevel }}등급</td>
+                            <td class="text-right">{{ item.total.toLocaleString() }}원</td>
+                            <td class="text-right">{{ item.expectedReturn }}%</td>
+                            <td class="text-center">{{ item.riskLevel }}등급</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="MyPortfolio-btn">
-                <button @click="goToCreatePortfolio">포트폴리오 만들기</button>
-                <button @click="deleteSelectedPortfolios">삭제하기</button>
+            <div class="button-group">
+                <button @click="goToCreatePortfolio" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> 포트폴리오 만들기
+                </button>
+                <button @click="deleteSelectedPortfolios" class="btn btn-danger">
+                    <i class="fas fa-trash"></i> 삭제하기
+                </button>
             </div>
         </v-card>
     </div>
@@ -80,7 +80,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { usePortfolioStore } from '@/store/modules/portfolio';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useAuthStore } from '@/store/authStore.js';
 
 const router = useRouter();
@@ -169,46 +169,167 @@ const sortedPortfolioList = computed(() => {
     });
 });
 
-// 컴포넌트가 마운트될 때 포트폴리오 리스트를 불러옴
+// 컴포넌트가 마운트될 때와 라우트가 변경될 때 포트폴리오 리스트를 불러옴
 onMounted(async () => {
     await authStore.checkAuth();
-    fetchPortfolioListAction();
+    await portfolioStore.fetchPortfolioListAction(true); // 강제로 새로고침
+});
+
+watch(() => router.currentRoute.value, async () => {
+    await portfolioStore.fetchPortfolioListAction(true); // 강제로 새로고침
+}, { immediate: true });
+
+// 정렬 아이콘 클래스 계산
+const sortIconClass = computed(() => {
+    return sortOrder.value === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
 });
 </script>
 
 <style scoped>
-.MyPortfolio-container {
+.my-portfolio-container {
     padding: 20px;
+    max-width: 80%;
+    margin: 0 auto;
 }
 
-.MyPortfolio-DataTable {
-    margin-top: 20px;
+.empty-my-portfolio {
+    text-align: center;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.empty-my-portfolio h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+.empty-my-portfolio p {
+    margin-bottom: 20px;
+    color: #6c757d;
+}
+
+.portfolio-card {
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    margin-bottom: 40px;
+    color: #343a40;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.table {
+    margin-bottom: 30px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
     width: 100%;
-    border-collapse: collapse;
 }
 
-.MyPortfolio-DataTable table {
-    width: 100%;
-    border: 1px solid #ccc;
+.table th,
+.table td {
+    padding: 20px;
+    vertical-align: middle;
 }
 
-.MyPortfolio-DataTable th,
-.MyPortfolio-DataTable td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    font-size: 18px;
+}
+
+.sortable-header {
     cursor: pointer;
 }
 
-.MyPortfolio-btn {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
+.sortable-header i {
+    margin-left: 10px;
 }
 
-.NameCursor:hover {
+.checkbox-column {
+    width: 60px;
+    text-align: center;
+}
+
+.portfolio-name {
+    color: #007bff;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.portfolio-name:hover {
     text-decoration: underline;
-    color: blue;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.button-group {
+    margin-top: 40px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.btn-primary:hover,
+.btn-danger:hover {
+    scale: 1.3;
+}
+
+.btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 8px;
+}
+
+.btn i {
+    margin-right: 10px;
+}
+
+/* 반응형 디자인을 위한 미디어 쿼리 */
+@media (max-width: 1200px) {
+    .portfolio-card {
+        padding: 30px;
+    }
+
+    .table th,
+    .table td {
+        padding: 15px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .portfolio-card {
+        padding: 20px;
+    }
+
+    .table th,
+    .table td {
+        padding: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
 }
 </style>

@@ -1,4 +1,5 @@
 <template>
+
   <div class="MyInvestment-container">
     <div class="MyInvestment-header">
       <h1>나의 투자성향</h1>
@@ -123,6 +124,7 @@
       <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()"> 포트폴리오 만들기 </v-btn>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -133,12 +135,14 @@ import { useAuthStore } from "@/store/authStore"; // 사용자 인증 상태를 
 
 export default {
   name: "MyInvestmentAnalyze",
+
   components: {
     apexchart: VueApexCharts,
   },
   data() {
     return {
       user_preference: 0, // 초기 투자 성향 점수
+
       preference_name: "",
       preference_text: "",
       shinhanInvestChart,
@@ -177,11 +181,13 @@ export default {
             enabled: false,
           },
         },
+
         responsive: [
           {
             breakpoint: 480,
             options: {
               chart: {
+
                 width: 400,
               },
               legend: {
@@ -307,11 +313,14 @@ export default {
           } else if (this.preference_name === "안정추구형") {
             personaPreference = 2;
           } else if (this.preference_name === "안정형") {
+
             personaPreference = 1;
           }
 
           this.influencers = response.data
+
             .filter((persona) => persona.personaPreference === personaPreference)
+
             .sort((a, b) => a.personaId - b.personaId)
             .slice(0, 2)
             .map((persona) => ({
@@ -321,7 +330,9 @@ export default {
             }));
         })
         .catch((error) => {
+
           console.error("Error fetching personas:", error);
+
         });
     },
   },
@@ -329,6 +340,7 @@ export default {
 </script>
 
 <style scoped>
+
 .MyInvestment-container {
   display: flex;
   flex-direction: column;
@@ -381,11 +393,13 @@ export default {
 
 .top-left p {
   font-size: 18px;
+
   line-height: 1.5;
 }
 
 .influencer-cards {
   display: flex;
+
   justify-content: center;
   gap: 1rem;
   flex-wrap: wrap;
@@ -398,6 +412,7 @@ export default {
   padding: 1rem;
   width: calc(30% - 1rem);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
   text-align: center;
   transition: box-shadow 0.3s ease;
   cursor: pointer;
@@ -452,6 +467,7 @@ export default {
   width: 100%;
   max-width: 100%;
   height: 20%;
+
 }
 
 .MyInvestment-btn-set {
@@ -561,5 +577,6 @@ export default {
 
 .investment-risk-table td {
   vertical-align: middle;
+
 }
 </style>

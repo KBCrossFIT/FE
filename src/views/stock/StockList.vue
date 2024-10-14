@@ -37,18 +37,20 @@
 
             <p v-else>종목이 없습니다.</p>
         </div>
+    </div>
 
-        <!-- Pagination Controls -->
-        <div class="pagination-container">
-            <div class="page-navigation">
-                <button @click="prevPage" :disabled="currentPage === 1">이전</button>
-                <span>{{ currentPage }} / {{ totalPages }}</span>
-                <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
-            </div>
-            <div class="page-selection">
-                <input v-model.number="goToPage" type="number" min="1" :max="totalPages" />
-                <button @click="goToSpecificPage">이동</button>
-            </div>
+    <div class="info-message">※ 종목 선택 시 네이버 증권으로 이동합니다.</div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-container">
+        <div class="page-navigation">
+            <button @click="prevPage" :disabled="currentPage === 1">이전</button>
+            <span>{{ currentPage }} / {{ totalPages }}</span>
+            <button @click="nextPage" :disabled="currentPage === totalPages">다음</button>
+        </div>
+        <div class="page-selection">
+            <input v-model.number="goToPage" type="number" min="1" :max="totalPages" />
+            <button @click="goToSpecificPage">이동</button>
         </div>
     </div>
 </template>
@@ -97,6 +99,7 @@ export default {
                 this.dropdownIndex = null; // 페이지 이동 시 드롭다운 닫기
             }
         },
+
         goToSpecificPage() {
             if (this.goToPage >= 1 && this.goToPage <= this.totalPages) {
                 this.currentPage = this.goToPage;
@@ -105,6 +108,7 @@ export default {
                 alert(`1에서 ${this.totalPages} 사이의 유효한 페이지 번호를 입력하세요.`);
             }
         },
+
         getColorStyle(value) {
             if (value > 0) {
                 return { color: 'red' };
@@ -154,82 +158,97 @@ export default {
 </script>
 
 <style scoped>
+/* 전체 컨테이너 스타일 */
 .stock-list-container {
     width: 100%;
-    padding: 20px;
-    background-color: #f8f9fa;
+    padding: 10px;
     color: #333;
     font-size: 16px;
+    position: relative;
 }
 
+/* 테이블 컨테이너 스타일 */
+.table-container {
+    width: 100%;
+}
+
+/* 테이블 스타일 */
 .table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 15px;
-    table-layout: fixed;
+    min-width: 800px;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
 .table th,
 .table td {
-    padding: 20px 16px;
-    vertical-align: middle;
+    padding: 20px 30px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+    color: #333333;
 }
 
 .table th {
-    background-color: #f1f3f5;
     font-weight: bold;
     color: #495057;
-    font-size: 18px;
-    padding: 15px 16px;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
 }
 
 .table tr {
     background-color: #ffffff;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .table tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f1f1f1;
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* 열 너비 재조정 */
 .table td:first-child,
 .table th:first-child {
-    border-top-left-radius: 8px;
-    border-bottom-left-radius: 8px;
+    text-align: center; /* 첫 번째 열 텍스트 중앙 정렬 */
+    width: 15%; /* 첫 번째 열 너비를 10%에서 12%로 증가 */
 }
 
-.table th:nth-child(1),
-.table td:nth-child(1) {
-    text-align: center;
-    width: 10%;
+.table td:nth-child(2),
+.table th:nth-child(2) {
+    text-align: center; /* 두 번째 열 텍스트 좌측 정렬 */
+    width: 30%; /* 두 번째 열 너비를 25%에서 30%로 증가 */
 }
 
-.table th:nth-child(2),
-.table td:nth-child(2) {
-    text-align: left;
-    width: 25%;
+.table td:nth-child(3),
+.table th:nth-child(3) {
+    text-align: center; /* 세 번째 열 텍스트 중앙 정렬 */
+    width: 15%; /* 세 번째 열 너비를 10%에서 8%로 감소 */
 }
 
-.table th:nth-child(3),
-.table td:nth-child(3) {
-    text-align: center;
-    width: 10%;
-}
-
-.table th:nth-child(4),
 .table td:nth-child(4),
-.table th:nth-child(5),
-.table td:nth-child(5),
-.table th:nth-child(6),
-.table td:nth-child(6) {
-    text-align: right;
-    width: 15%;
+.table th:nth-child(4) {
+    text-align: center; /* 네 번째, 다섯 번째, 여섯 번째 열 텍스트 우측 정렬 */
+    width: 20%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 유지 */
 }
 
-/* 페이지네이션 스타일 */
+.table td:nth-child(5),
+.table th:nth-child(5),
+.table td:nth-child(6),
+.table th:nth-child(6) {
+    text-align: right; /* 네 번째, 다섯 번째, 여섯 번째 열 텍스트 우측 정렬 */
+    width: 10%; /* 네 번째, 다섯 번째, 여섯 번째 열 너비 유지 */
+}
+
+.info-message {
+    text-align: right; /* 우측 정렬 */
+    font-size: 14px; /* 폰트 크기 조정 */
+    color: #666666; /* 색상 조정 (회색 계열) */
+}
+
+/* 페이지네이션 컨테이너 스타일 */
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -238,6 +257,7 @@ export default {
     gap: 20px;
 }
 
+/* 페이지 네비게이션 스타일 */
 .page-navigation {
     display: flex;
     align-items: center;
@@ -245,25 +265,37 @@ export default {
 
 .page-navigation button,
 .page-selection button {
-    padding: 5px 10px;
-    margin: 0 5px;
-    background-color: #7bd5c3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
+    padding: 10px 15px; /* 버튼 패딩 조정 */
+    margin: 0 5px; /* 버튼 간 간격 */
+    background-color: #7bd5c3; /* 버튼 배경색 */
+    color: white; /* 버튼 텍스트 색상 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 버튼 테두리 반경 */
+    cursor: pointer; /* 커서 포인터 변경 */
+    font-size: 14px; /* 버튼 폰트 크기 */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* 전환 효과 */
 }
 
-.page-navigation button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
+.page-navigation button:disabled,
+.page-selection button:disabled {
+    background-color: #cccccc; /* 비활성화된 버튼 배경색 */
+    cursor: not-allowed; /* 비활성화된 버튼 커서 */
+}
+
+.page-navigation button:hover:not(:disabled),
+.page-selection button:hover:not(:disabled) {
+    background-color: #589f91; /* 호버 시 버튼 배경색 변경 */
+    transform: translateY(-2px); /* 호버 시 버튼 위로 이동 */
 }
 
 .page-navigation span {
     margin: 0 10px;
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
 }
 
+/* 페이지 선택 스타일 */
 .page-selection {
     display: flex;
     align-items: center;
@@ -276,12 +308,13 @@ export default {
     border: 1px solid #ced4da;
     border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .page-selection input:focus {
     outline: none;
     border-color: #589f91;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(88, 159, 145, 0.25);
 }
 
 .pagination-btn {
@@ -305,12 +338,6 @@ export default {
     cursor: not-allowed;
 }
 
-.pagination span {
-    font-size: 16px;
-    color: #333;
-    font-weight: bold;
-}
-
 .stockname_font {
     font-size: 20px;
 }
@@ -319,5 +346,31 @@ button:disabled {
     background-color: #f1f3f5;
     cursor: not-allowed;
     color: #adb5bd;
+}
+
+/* 검색 및 정렬 버튼 스타일 */
+.search-btn,
+.clear-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #7bd5c3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.clear-btn {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.search-btn:hover {
+    background-color: #589f91;
+}
+
+.clear-btn:hover {
+    background-color: #ddd;
 }
 </style>

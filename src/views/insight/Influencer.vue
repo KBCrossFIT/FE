@@ -5,13 +5,27 @@
       <v-card class="pa-4" elevation="2" style="height: 100%">
         <v-card-text>
           <div class="list-container">
-            <span @click="navigateTo('/Influencer')" class="list-item">
+            <span
+              @click="navigateTo('/influencer')"
+              class="list-item"
+              :class="{ active: $route.path === '/influencer' }"
+            >
               인플루언서
             </span>
-            <span @click="navigateTo('/Youtube')" class="list-item">
+            <span
+              @click="navigateTo('/youtube')"
+              class="list-item"
+              :class="{ active: $route.path === '/youtube' }"
+            >
               유튜브
             </span>
-            <span @click="navigateTo('/News')" class="list-item"> 뉴스 </span>
+            <span
+              @click="navigateTo('/news')"
+              class="list-item"
+              :class="{ active: $route.path === '/news' }"
+            >
+              뉴스
+            </span>
           </div>
         </v-card-text>
       </v-card>
@@ -57,12 +71,12 @@
 </template>
 
 <script>
-import Influencer_title from "./Influencer_title.vue";
-import ModalInfluencer from "@/components/Modal/ModalInfluencer.vue";
-import ModalPersona from "@/components/Modal/ModalPersona.vue";
+import Influencer_title from './Influencer_title.vue';
+import ModalInfluencer from '@/components/Modal/ModalInfluencer.vue';
+import ModalPersona from '@/components/Modal/ModalPersona.vue';
 
 export default {
-  name: "Influencer",
+  name: 'Influencer',
   components: {
     Influencer_title,
     ModalInfluencer, // 모달 컴포넌트 추가
@@ -70,7 +84,7 @@ export default {
   },
   data() {
     return {
-      searchQuery: "", // 검색어 데이터
+      searchQuery: '', // 검색어 데이터
       page: 1, // 현재 페이지
       isModalOpen: false, // 모달 상태 관리
       selectedPersona: null, // 선택된 인플루언서 데이터
@@ -85,20 +99,20 @@ export default {
       console.log(`Current page: ${newPage}`);
     },
     openModal(persona) {
-      console.log("Opening modal with persona:", persona);
-      document.body.style.overflow = "hidden";
+      console.log('Opening modal with persona:', persona);
+      document.body.style.overflow = 'hidden';
       this.selectedPersona = persona;
       this.isModalOpen = true;
     },
     closeModal() {
       this.isModalOpen = false;
       this.selectedPersona = null;
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     },
 
     // 검색창 지우기 기능
     eraseSearch() {
-      this.searchQuery = ""; // 검색어를 빈 문자열로 설정하여 검색창을 초기화
+      this.searchQuery = ''; // 검색어를 빈 문자열로 설정하여 검색창을 초기화
     },
   },
 };
@@ -107,42 +121,52 @@ export default {
 <style scoped>
 #All {
   display: flex;
-  align-items: stretch; /* 왼쪽과 오른쪽 영역을 세로로 늘림 */
-  padding-left: 100px;
+  align-items: stretch;
+  padding-left: 0; /* 왼쪽 패딩 제거 */
 }
+
 #left {
-  width: 300px; /* 고정된 너비 (300px) */
+  width: 250px; /* 너비 조정 */
+  background-color: #f0f0f0; /* 배경색 변경 */
 }
+
 #right {
-  flex: 1; /* 오른쪽 영역은 남은 공간을 모두 차지 */
+  flex: 1;
+  padding-left: 20px; /* 오른쪽 컨텐츠에 왼쪽 패딩 추가 */
 }
+
 .search-container {
   display: flex;
-  align-items: center; /* 수직 정렬 */
-  margin-bottom: 20px; /* 아래 여백 추가 */
+  align-items: center;
+  margin-bottom: 20px;
   justify-content: space-between;
 }
+
 #search {
-  display: flex; /* 아이콘과 인풋을 나란히 배치 */
-  align-items: center; /* 수직 중앙 정렬 */
-  gap: 10px; /* 아이콘과 인풋 간격 */
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
 .form-control {
-  flex: 1; /* 인풋 필드를 남은 공간에 맞게 확장 */
+  flex: 1;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
 .erase-btn {
   margin-left: 10px;
 }
+
 h1.sixth {
   position: relative;
+  color: #333333; /* 제목 색상 변경 */
 }
 
 h1.sixth:before,
 h1.sixth:after {
-  content: "";
+  content: '';
   display: inline-block;
   position: relative;
   top: 1px;
@@ -154,7 +178,7 @@ h1.sixth:after {
 }
 
 h1.sixth:after {
-  content: "인플루언서";
+  content: '인플루언서';
 }
 
 h1.sixth:hover:before {
@@ -172,13 +196,29 @@ h1.sixth:hover:after {
 
 .list-item {
   display: block;
-  padding: 10px 0;
+  padding: 15px 20px;
   cursor: pointer;
-  color: #3f51b5; /* Vuetify 기본 색상 중 하나 */
+  color: #333333;
   font-size: 16px;
+  transition: background-color 0.2s, color 0.2s, border-radius 0.2s;
+  border-radius: 0; /* 기본 상태에서는 둥글지 않게 설정 */
+}
+
+.list-item.active {
+  background-color: #7bd5c3;
+  color: white;
+  border-radius: 10px; /* active 상태에서 둥글게 설정 */
 }
 
 .list-item:hover {
-  background-color: #f0f0f0;
+  background-color: #5fc3b1;
+  color: white;
+  border-radius: 10px; /* hover 상태에서 둥글게 설정 */
+}
+
+.list-item.active:hover {
+  background-color: #5fc3b1;
+  color: white;
+  border-radius: 10px; /* active이면서 hover 상태일 때도 둥글게 유지 */
 }
 </style>

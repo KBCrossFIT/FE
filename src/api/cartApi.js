@@ -37,6 +37,7 @@ export async function postCartItem(cartItem) {
 
 export async function deleteCartItem(cartId) {
   try {
+    console.log(cartId);
     await instance.delete(`/cart/items/${cartId}`);
     return true;
   } catch (error) {

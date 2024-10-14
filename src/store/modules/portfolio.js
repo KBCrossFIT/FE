@@ -11,8 +11,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const newPortfolioItems = ref([]); // 새로운 포트폴리오 항목
 
   // 포트폴리오 목록을 가져오는 함수
-  const fetchPortfolioListAction = async () => {
-    if (!portfolioListLoaded.value) {
+  const fetchPortfolioListAction = async (forceRefresh = false) => {
+    if (!portfolioListLoaded.value || forceRefresh) {
       try {
         const data = await portfolioApi.fetchPortfolioList(); // API 호출
         portfolioList.value = data; // 목록 저장
@@ -37,7 +37,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const postPortfolioAction = async (portfolioItems, portfolioName) => {
     try {
       const data = await portfolioApi.postPortfolio(portfolioItems, portfolioName); // 새 포트폴리오 생성
-      newPortfolio.value = data; // 상태에 저장
+      newPortfolio.value = data;
+      // return data;
     } catch (error) {
       console.error('Error posting portfolio:', error);
     }
@@ -58,6 +59,20 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
   };
 
+  // 새로운 포트폴리오를 목록에 추가하는 함수
+  const addPortfolioToList = async (portfolio) => {
+    // 이미 목록에 있는지 확인
+    const existingIndex = portfolioList.value.findIndex(p => p.portfolioId === portfolio.portfolioId);
+    if (existingIndex !== -1) {
+      // 이미 존재하면 업데이트
+      portfolioList.value[existingIndex] = portfolio;
+    } else {
+      // 존재하지 않으면 새로 추가
+      portfolioList.value.push(portfolio);
+    }
+    portfolioListLoaded.value = true;
+  };
+
   return {
     portfolioList,
     portfolioListLoaded,
@@ -68,6 +83,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     getPortfolioDetailAction,
     postPortfolioAction,
     deletePortfolioAction,
+    addPortfolioToList,
   };
 });
+
 export default usePortfolioStore; // 추가된 default export
