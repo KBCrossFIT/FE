@@ -478,7 +478,7 @@ export default {
 
 /* 컨테이너 스타일 */
 .product-desc-container {
-    width: 70%;
+    width: 80%;
     max-width: 1200px;
     margin: auto;
     border: 1px solid #ddd;

@@ -29,7 +29,10 @@
                                 투자 금액
                                 <i v-if="sortKey === 'total'" :class="sortIconClass"></i>
                             </th>
-                            <th @click="sortBy('expectedReturn')" class="sortable-header text-right">
+                            <th
+                                @click="sortBy('expectedReturn')"
+                                class="sortable-header text-right"
+                            >
                                 기대 수익률
                                 <i v-if="sortKey === 'expectedReturn'" :class="sortIconClass"></i>
                             </th>
@@ -49,7 +52,10 @@
                                     @change="updateSelectAllState"
                                 />
                             </td>
-                            <td class="portfolio-name text-left" @click="goToPortfolioDetail(item.portfolioId)">
+                            <td
+                                class="portfolio-name text-left"
+                                @click="goToPortfolioDetail(item.portfolioId)"
+                            >
                                 {{ item.portfolioName }}
                             </td>
                             <td class="text-right">{{ item.total.toLocaleString() }}원</td>
@@ -182,7 +188,7 @@ const sortIconClass = computed(() => {
 <style scoped>
 .my-portfolio-container {
     padding: 20px;
-    max-width: 100%;
+    max-width: 80%;
     margin: 0 auto;
 }
 
@@ -191,7 +197,7 @@ const sortIconClass = computed(() => {
     padding: 40px;
     background-color: #f8f9fa;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .empty-my-portfolio h1 {
@@ -207,7 +213,7 @@ const sortIconClass = computed(() => {
 .portfolio-card {
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card-title {
@@ -224,7 +230,8 @@ const sortIconClass = computed(() => {
     width: 100%;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 20px;
     vertical-align: middle;
 }
@@ -278,6 +285,11 @@ const sortIconClass = computed(() => {
     gap: 20px;
 }
 
+.btn-primary:hover,
+.btn-danger:hover {
+    scale: 1.3;
+}
+
 .btn {
     padding: 15px 30px;
     font-size: 18px;
@@ -294,7 +306,8 @@ const sortIconClass = computed(() => {
         padding: 30px;
     }
 
-    .table th, .table td {
+    .table th,
+    .table td {
         padding: 15px;
     }
 
@@ -309,7 +322,8 @@ const sortIconClass = computed(() => {
         padding: 20px;
     }
 
-    .table th, .table td {
+    .table th,
+    .table td {
         padding: 10px;
     }
 
