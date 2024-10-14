@@ -263,6 +263,7 @@ export default {
     left: 38%;
 }
 
+/* 메뉴 컨테이너 */
 .menu-container {
     display: flex;
     flex-direction: column;
@@ -284,8 +285,7 @@ nav {
 
 .menu {
     display: flex;
-    justify-content: center;
-    /* gap: 120px; */
+    justify-content: space-around; /* 메뉴 항목 간 간격 균일 */
     align-items: center;
     width: 100%;
 }
@@ -293,14 +293,15 @@ nav {
 .menu-item {
     font-size: 24px;
     font-weight: bold;
-    flex-basis: 20%;
     text-align: center;
+    flex: 1; /* 각 항목이 같은 비율로 공간을 차지하도록 */
 }
 
 .menu-item:hover {
     color: #3961e4;
 }
 
+/* 드롭다운 */
 .dropdown {
     display: flex;
     justify-content: center;
@@ -318,19 +319,15 @@ nav {
     justify-content: space-around;
     max-width: 1200px;
     width: 55%;
-    /* position: relative;
-    left: 5px; */
 }
 
 .dropdown-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0 10px;
     flex-basis: 20%;
     border-left: 1px solid #ddd;
     flex-grow: 1;
-    flex-basis: 0;
     gap: 20px;
 }
 
@@ -422,6 +419,7 @@ button {
 }
 
 .username {
-    font-size: 16px;
+    font-size: 18px; /* 원하는 크기로 설정 */
+    font-weight: bold; /* 필요 시 추가 */
 }
 </style>
