@@ -1,76 +1,82 @@
 <template>
-    <div class="MyInvestment-container">
-        <div class="MyInvestment-header">
-            <h1>나의 투자성향</h1>
+  <div class="main">
+    <h1>내 투자성향 페이지</h1>
+    <div class="first">
+      <div class="recommendation-square">
+        <div class="ProportionChart">
+          <div id="chart">
+            <apexchart
+              type="pie"
+              width="380"
+              :options="chartOptions"
+              :series="series"
+            ></apexchart>
+          </div>
         </div>
-
-        <div class="MyInvestment-body">
-            <div class="body-content">
-                <div class="top-left">
-                    <h2>
-                        {{ preference_name }}
-                        <i v-if="preference_name === '공격투자형'" class="fas fa-fire"></i>
-                        <i v-if="preference_name === '적극투자형'" class="fas fa-bolt"></i>
-                        <i v-if="preference_name === '위험중립형'" class="fas fa-balance-scale"></i>
-                        <i v-if="preference_name === '안정추구형'" class="fas fa-shield-alt"></i>
-                        <i v-if="preference_name === '안정형'" class="fas fa-home"></i>
-                    </h2>
-                    <p>위험 회피 성향 점수 : {{ user_preference }}점</p>
-                    <p>{{ preference_text }}</p>
-                </div>
-
-                <div class="top-right">
-                    나와 성향이 같은 인플루언서
-                    <div class="influencer-cards">
-                        <div
-                            v-for="(influencer, index) in influencers"
-                            :key="index"
-                            class="influencer-card"
-                            @click="navigateToInfluencer(influencer)"
-                        >
-                            <img
-                                :src="influencer.image"
-                                alt="Influencer Image"
-                                class="influencer-image"
-                            />
-                            <h3>{{ influencer.name }}</h3>
-                            <p>{{ influencer.info }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bottom-left">
-                    투자성향별 적합금융상품 분류표
-                    <img :src="shinhanInvestChart" class="investment-chart" />
-                </div>
-
-                <div class="bottom-right">
-                    <div class="recommendation-square">
-                        <div class="ProportionChart">
-                            {{ preference_name }} 추천 포트폴리오
-                            <div id="chart">
-                                <apexchart
-                                    type="pie"
-                                    width="380"
-                                    :options="chartOptions"
-                                    :series="series"
-                                ></apexchart>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="classification-table">
+          <img :src="shinhanInvestChart" class="investment-chart" />
         </div>
-
-        <div class="MyInvestment-btn-set">
-            <v-btn class="MyInvestment-btn" @click="navigateTo('/investment-test-start'), cancel()">
-                다시 분석하기
-            </v-btn>
-            <v-btn class="MyInvestment-btn" @click="navigateTo('/make-portfolio'), cancel()">
-                포트폴리오 만들기
-            </v-btn>
-        </div>
+      </div>
     </div>
+    <div class="second">
+      <h2>
+        <i v-if="preference_name === '공격투자형'" class="fas fa-fire">
+          {{ preference_name }}
+        </i>
+        <i v-if="preference_name === '적극투자형'" class="fas fa-bolt">
+          {{ preference_name }}
+        </i>
+        <i v-if="preference_name === '위험중립형'" class="fas fa-balance-scale">
+          {{ preference_name }}
+        </i>
+        <i v-if="preference_name === '안정추구형'" class="fas fa-shield-alt">
+          {{ preference_name }}
+        </i>
+        <i v-if="preference_name === '안정형'" class="fas fa-home">
+          {{ preference_name }}
+        </i>
+      </h2>
+      <p>위험 회피 성향 점수 : {{ user_preference }}점</p>
+      <p>{{ preference_text1 }}</p>
+      <p>{{ preference_text2 }}</p>
+      <p>{{ preference_text3 }}</p>
+    </div>
+    <div class="top-right">
+      나와 같은 투자성향 인플루언서
+      <div class="influencer-cards">
+        <div
+          v-for="(influencer, index) in influencers"
+          :key="index"
+          class="influencer-card"
+          @click="navigateToInfluencer(influencer)"
+        >
+          <img
+            :src="influencer.image"
+            alt="Influencer Image"
+            class="influencer-image"
+          />
+          <h3>{{ influencer.name }}</h3>
+          <p>{{ influencer.info }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="MyInvestment-btn-set">
+    <v-btn
+      class="MyInvestment-btn"
+      @click="navigateTo('/investment-test-start'), cancel()"
+    >
+      다시 분석하기
+    </v-btn>
+    <v-btn
+      class="MyInvestment-btn"
+      @click="navigateTo('/make-portfolio'), cancel()"
+    >
+      포트폴리오 작성하기
+    </v-btn>
+  </div>
+  <!-- </div> -->
 </template>
 
 <script>
@@ -80,318 +86,256 @@ import axios from 'axios';
 import { useAuthStore } from '@/store/authStore'; // 사용자 인증 상태를 가져오기 위해 사용
 
 export default {
-    name: 'MyInvestmentAnalyze',
-    components: {
-        apexchart: VueApexCharts,
-    },
-    data() {
-        return {
-            user_preference: 0, // 초기 투자 성향 점수
-            preference_name: '',
-            preference_text: '',
-            shinhanInvestChart,
-            influencers: [], // influencers 데이터를 비워둠
-            series: [], // 차트 데이터: 비율
+  name: 'MyInvestmentAnalyze',
+  components: {
+    apexchart: VueApexCharts,
+  },
+  data() {
+    return {
+      user_preference: 0, // 초기 투자 성향 점수
+      preference_name: '',
+      preference_text1: '',
+      preference_text2: '',
 
-            chartOptions: {
-                chart: {
-                    type: 'pie',
-                },
-                labels: [], // 초기에는 빈 배열로 설정
-                legend: {
-                    position: 'bottom',
-                    horizontalAlign: 'center',
-                    fontSize: '14px',
-                    labels: {
-                        useSeriesColors: true,
-                    },
-                    formatter: function (label, seriesIndex, opts) {
-                        // 두 개씩 줄바꿈 처리: 홀수 인덱스는 그대로, 짝수 인덱스는 줄바꿈 추가
-                        const isEven = seriesIndex % 2 === 0;
-                        return isEven ? `${label}, ` : `${label}<br>`;
-                    },
-                },
-                dataLabels: {
-                    enabled: true,
-                    formatter: function (val) {
-                        return val.toFixed(1) + '%';
-                    },
-                    style: {
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        colors: ['#333'],
-                    },
-                    dropShadow: {
-                        enabled: false,
-                    },
-                },
-                responsive: [
-                    {
-                        breakpoint: 480,
-                        options: {
-                            chart: {
-                                width: 200,
-                            },
-                            legend: {
-                                position: 'bottom',
-                            },
-                        },
-                    },
-                ],
+      preference_text3: '',
+      shinhanInvestChart,
+      influencers: [], // influencers 데이터를 비워둠
+      series: [], // 차트 데이터: 비율
+      chartOptions: {
+        chart: {
+          type: 'pie',
+        },
+        labels: ['예/적금', '채권', '펀드', '주식'],
+        responsive: [
+          {
+            breakpoint: 480,
+            options: {
+              chart: {
+                width: 200,
+              },
+              legend: {
+                position: 'bottom',
+              },
             },
-        };
+          },
+        ],
+      },
+    };
+  },
+
+  async mounted() {
+    const authStore = useAuthStore();
+    await authStore.checkAuth(); // 사용자 인증 정보 확인
+
+    const memberNum = authStore.memberNum;
+
+    // 백엔드에서 member의 invest_score 값을 가져오기
+    axios
+      .get(`http://localhost:8080/api/member/${memberNum}/investPreference`)
+      .then((response) => {
+        const investScore = response.data.investScore || 0;
+        this.user_preference = investScore;
+        this.distinguish(this.user_preference); // 점수에 맞는 투자 성향 구분
+
+        // 점수에 맞는 personaPreference 설정 후 persona 데이터 필터링
+        this.fetchPersonas();
+      })
+      .catch((error) => {
+        console.error('Error fetching invest score:', error);
+      });
+  },
+
+  methods: {
+    navigateTo(path) {
+      this.$router.push(path);
+    },
+    navigateToInfluencer(influencer) {
+      this.$router.push({
+        path: '/Influencer',
+        query: { name: influencer.name },
+      });
     },
 
-    async mounted() {
-        const authStore = useAuthStore();
-        await authStore.checkAuth(); // 사용자 인증 정보 확인
+    // 차트 데이터 시리즈 (예/적금, 채권, 펀드, 주식 순서)
+    distinguish(user_preference) {
+      if (user_preference >= 80) {
+        this.preference_name = '공격투자형';
+        this.preference_text1 = '고객님께서는 공격투자형 성향을 보이십니다.';
+        this.preference_text2 =
+          '공격투자형은 높은 수익을 추구하는 대신, 위험을 감수할 준비가 되어 있는 투자자입니다.';
+        this.preference_text3 =
+          '투자자금의 상당 부분을 주식, 고위험 펀드, 또는 기타 고수익 자산에 투자하며, 장기적인 성장 가능성을 최우선으로 생각하는 경향이 있습니다.';
+        this.series = [10, 10, 20, 60];
+      } else if (user_preference >= 60) {
+        this.preference_name = '적극투자형';
+        this.preference_text1 = '고객님께서는 적극투자형 성향을 보이십니다.';
+        this.preference_text2 =
+          '적극투자형은 수익을 추구하면서도 위험을 일부 감수하는 투자자입니다. ';
+        this.preference_text3 =
+          '대부분의 자산을 주식이나 주식형 펀드에 투자하지만, 일부는 채권이나 안정적인 자산으로 분산하여 리스크를 관리하려는 성향이 있습니다.';
+        this.series = [15, 15, 20, 50];
+      } else if (user_preference >= 40) {
+        this.preference_name = '위험중립형';
+        this.preference_text1 = '고객님께서는 위험중립형 성향을 보이십니다.';
+        this.preference_text2 =
+          ' 위험중립형은 안정성과 수익성의 균형을 중요시하는 투자자입니다. ';
+        this.preference_text3 =
+          '주식과 채권, 그리고 현금성 자산에 고루 투자하며, 장기적인 안정적인 수익을 추구하는 동시에, 시장 변동에 대한 리스크를 적당히 수용하는 성향을 가지고 있습니다.';
+        this.series = [25, 25, 20, 30];
+      } else if (user_preference >= 20) {
+        this.preference_name = '안정추구형';
+        this.preference_text1 = '고객님께서는 안정추구형 성향을 보이십니다.';
+        this.preference_text2 =
+          '안정추구형은 원금 손실을 최소화하면서 적당한 수익을 기대하는 투자자입니다.';
+        this.preference_text3 =
+          '자산의 대부분을 채권이나 저위험 펀드에 투자하며, 수익보다는 자산의 안전성을 우선시하는 성향입니다.';
 
-        const memberNum = authStore.memberNum;
-
-        // 백엔드에서 member의 invest_score 값을 가져오기
-        axios
-            .get(`http://localhost:8080/api/member/${memberNum}/investPreference`)
-            .then((response) => {
-                const investScore = response.data.investScore || 0;
-                this.user_preference = investScore;
-                this.distinguish(this.user_preference); // 점수에 맞는 투자 성향 구분
-
-                // 점수에 맞는 personaPreference 설정 후 persona 데이터 필터링
-                this.fetchPersonas();
-            })
-            .catch((error) => {
-                console.error('Error fetching invest score:', error);
-            });
+        this.series = [35, 35, 20, 10];
+      } else {
+        this.preference_name = '안정형';
+        this.preference_text1 = '고객님께서는 안정형 성향을 보이십니다.';
+        this.preference_text2 =
+          '안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다.';
+        this.preference_text3 =
+          '현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.';
+        this.series = [50, 30, 15, 5];
+      }
     },
 
-    // 차트 하단 데이터 레이블 표시.
-    computed: {
-        computedLabels() {
-            // series의 총합 계산 후 값이 숫자형인지 확인
-            const total = this.series.reduce((sum, value) => sum + (parseFloat(value) || 0), 0);
-            return ['예/적금', '채권', '펀드', '주식'].map((label, index) => {
-                const value = parseFloat(this.series[index]) || 0; // 숫자 변환
-                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                return `${label} (${percentage}%)`;
-            });
-        },
+    // Persona 데이터 가져오기
+    fetchPersonas() {
+      axios
+        .get('http://localhost:8080/api/personas/get')
+        .then((response) => {
+          let personaPreference = null;
+          if (this.preference_name === '공격투자형') {
+            personaPreference = 5;
+          } else if (this.preference_name === '적극투자형') {
+            personaPreference = 4;
+          } else if (this.preference_name === '위험중립형') {
+            personaPreference = 3;
+          } else if (this.preference_name === '안정추구형') {
+            personaPreference = 2;
+          } else if (this.preference_name === '안정형') {
+            personaPreference = 1;
+          }
+
+          this.influencers = response.data
+            .filter(
+              (persona) => persona.personaPreference === personaPreference
+            )
+            .sort((a, b) => a.personaId - b.personaId)
+            .slice(0, 2)
+            .map((persona) => ({
+              name: persona.personaName,
+              info: persona.description,
+              image: `http://localhost:8080/api/personas/${persona.imagePath}`, // 이미지 경로 추가
+            }));
+        })
+        .catch((error) => {
+          console.error('Error fetching personas:', error);
+        });
     },
-    watch: {
-        series: {
-            immediate: true,
-            handler() {
-                // series 배열 변경 시 labels 업데이트
-                this.chartOptions = {
-                    ...this.chartOptions,
-                    labels: this.computedLabels,
-                };
-            },
-        },
-    },
-
-    methods: {
-        navigateTo(path) {
-            this.$router.push(path);
-        },
-        navigateToInfluencer(influencer) {
-            this.$router.push({
-                path: '/Influencer',
-                query: { name: influencer.name },
-            });
-        },
-
-        // 차트 데이터 시리즈 (예/적금, 채권, 펀드, 주식 순서)
-        distinguish(user_preference) {
-            if (user_preference >= 80) {
-                this.preference_name = '공격투자형';
-                this.preference_text =
-                    '고객님께서는 공격투자형 성향을 보이십니다. 공격투자형은 높은 수익을 추구하는 대신, 위험을 감수할 준비가 되어 있는 투자자입니다. 투자자금의 상당 부분을 주식, 고위험 펀드, 또는 기타 고수익 자산에 투자하며, 장기적인 성장 가능성을 최우선으로 생각하는 경향이 있습니다.';
-                this.series = [10, 10, 20, 60].map(Number);
-            } else if (user_preference >= 60) {
-                this.preference_name = '적극투자형';
-                this.preference_text =
-                    '고객님께서는 적극투자형 성향을 보이십니다. 적극투자형은 수익을 추구하면서도 위험을 일부 감수하는 투자자입니다. 대부분의 자산을 주식이나 주식형 펀드에 투자하지만, 일부는 채권이나 안정적인 자산으로 분산하여 리스크를 관리하려는 성향이 있습니다.';
-                this.series = [15, 15, 20, 50].map(Number);
-            } else if (user_preference >= 40) {
-                this.preference_name = '위험중립형';
-                this.preference_text =
-                    '고객님께서는 위험중립형 성향을 보이십니다. 위험중립형은 안정성과 수익성의 균형을 중요시하는 투자자입니다. 주식과 채권, 그리고 현금성 자산에 고루 투자하며, 장기적인 안정적인 수익을 추구하는 동시에, 시장 변동에 대한 리스크를 적당히 수용하는 성향을 가지고 있습니다.';
-                this.series = [25, 25, 20, 30].map(Number);
-            } else if (user_preference >= 20) {
-                this.preference_name = '안정추구형';
-                this.preference_text =
-                    '고객님께서는 안정추구형 성향을 보이십니다. 안정추구형은 원금 손실을 최소화하면서 적당한 수익을 기대하는 투자자입니다. 자산의 대부분을 채권이나 저위험 펀드에 투자하며, 수익보다는 자산의 안전성을 우선시하는 성향입니다.';
-                this.series = [35, 35, 20, 10].map(Number);
-            } else {
-                this.preference_name = '안정형';
-                this.preference_text =
-                    '고객님께서는 안정형 성향을 보이십니다. 안정형은 자산 보호를 최우선으로 하며, 투자 리스크를 거의 감수하지 않는 투자자입니다. 현금성 자산이나 저위험 채권에 주로 투자하며, 자산의 장기적인 보전을 중요하게 생각하는 성향입니다.';
-                this.series = [50, 30, 15, 5].map(Number);
-            }
-        },
-
-        // Persona 데이터 가져오기
-        fetchPersonas() {
-            axios
-                .get('http://localhost:8080/api/personas/get')
-                .then((response) => {
-                    let personaPreference = null;
-                    if (this.preference_name === '공격투자형') {
-                        personaPreference = 5;
-                    } else if (this.preference_name === '적극투자형') {
-                        personaPreference = 4;
-                    } else if (this.preference_name === '위험중립형') {
-                        personaPreference = 3;
-                    } else if (this.preference_name === '안정추구형') {
-                        personaPreference = 2;
-                    } else if (this.preference_name === '안정형') {
-                        personaPreference = 1;
-                    }
-
-                    this.influencers = response.data
-                        .filter((persona) => persona.personaPreference === personaPreference)
-                        .sort((a, b) => a.personaId - b.personaId)
-                        .slice(0, 2)
-                        .map((persona) => ({
-                            name: persona.personaName,
-                            info: persona.description,
-                            image: `http://localhost:8080/api/personas/${persona.imagePath}`, // 이미지 경로 추가
-                        }));
-                })
-                .catch((error) => {
-                    console.error('Error fetching personas:', error);
-                });
-        },
-    },
+  },
 };
 </script>
 
 <style scoped>
-.MyInvestment-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 20px;
+.main {
+  width: 1300px;
+  background-color: #e0f7fa;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+
+  max-width: 70%;
+  height: 1000px;
+}
+.main h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #004d40;
+  margin-bottom: 10px;
 }
 
-.MyInvestment-body {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    width: 100%;
-    height: 540px;
-}
-
-.body-content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 20px;
-    width: 100%;
-    padding: 20px;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-}
-
-.top-left {
-    grid-column: 1;
-    grid-row: 1;
-    background-color: #e0f7fa;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    color: #00796b;
-}
-
-.top-left h2 {
-    font-size: 24px;
-    font-weight: bold;
-    color: #004d40;
-    margin-bottom: 10px;
-}
-
-.top-left p {
-    font-size: 18px;
-    color: #004d40;
-    margin-bottom: 20px;
-    line-height: 1.5;
+.main p {
+  font-size: 18px;
+  color: #004d40;
+  margin-bottom: 20px;
+  line-height: 1.5;
 }
 
 .influencer-cards {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
 
 .influencer-card {
-    width: 30%;
-    padding: 10px;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: box-shadow 0.3s ease;
-    cursor: pointer;
+  width: 30%;
+  padding: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
 }
 
 .influencer-card:hover {
-    box-shadow: 0 4px 15px #7bd5c3;
+  box-shadow: 0 4px 15px #7bd5c3;
 }
 
 .influencer-image {
-    width: 35%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
+  width: 35%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .recommendation-square {
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  height: 330px;
 }
 
 .investment-chart {
-    width: 700px;
-    height: auto;
+  width: 700px;
+  height: auto;
 }
 
 .MyInvestment-btn-set {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 115px;
-    margin-left: auto;
-    gap: 20px;
-}
-
-.MyInvestment-btn-set v-btn {
-    margin: 0 10px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 115px;
+  margin-left: auto;
+  gap: 20px;
 }
 
 .fas.fa-fire {
-    color: red;
+  color: red;
 }
 
 .fas.fa-bolt {
-    color: #ffa500;
+  color: #ffa500;
 }
 
 .fas.fa-balance-scale {
-    color: gray;
+  color: gray;
 }
 
 .fas.fa-shield-alt {
-    color: #2196f3;
+  color: #2196f3;
 }
 
 .fas.fa-home {
-    color: green;
+  color: green;
 }
 </style>

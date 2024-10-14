@@ -23,7 +23,7 @@ import SideBar from './Sidebar.vue';
 .container {
   display: flex;
   width: 100%;
-  height: 200vh;
+  height: 100%;
 }
 
 .main {
@@ -51,5 +51,6 @@ import SideBar from './Sidebar.vue';
 
 .footer {
   z-index: 9999;
+  margin-top: 80px;
 }
 </style>

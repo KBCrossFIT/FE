@@ -2,7 +2,7 @@
   <section class="comparison">
     <div class="comparison-item">
       <img
-        src="@/assets/img/mainicon-Lcongeek26.png"
+        src="@/assets/img/mainicon-Freepik3.png"
         alt="비교 이미지"
         class="comparison-image1"
       />
@@ -19,7 +19,7 @@
         alt="비교 이미지"
         class="comparison-image2"
       />
-      <h3>투자성향 기반 포트폴리오 추천</h3>
+      <h3>투자성향 기반 포트폴리오</h3>
       <div>
         나의 투자 성향을 확인하고 <br />
         성향에 맞는 다양한 추천을 통해 <br />
@@ -28,15 +28,15 @@
     </div>
     <div class="comparison-item">
       <img
-        src="@/assets/img/mainicon-Freepik.png"
+        src="@/assets/img/mainicon-Freepik2.png"
         alt="비교 이미지"
         class="comparison-image3"
       />
-      <h3>페르소나 챗봇과의 투자 상담</h3>
+      <h3>챗봇과의 투자 상담</h3>
       <div>
         나만의 투자 조언자를 만나보세요! <br />
         페르소나 챗봇과 대화를 통해 유명 투자자들의<br />
-         전략과 팁을 쉽게 얻을 수 있습니다.
+        전략과 팁을 쉽게 얻을 수 있습니다.
       </div>
     </div>
   </section>
@@ -52,14 +52,14 @@ export default {
 <style scoped>
 .comparison {
   display: flex;
-  gap: 146px;
+  gap: 0px;
   padding: 60px;
   padding-left: 100px;
   position: relative;
   top: -1px;
   justify-content: center;
   border: 1px solid #ddd;
-  height: 425px;
+  height: 424px;
 }
 
 .comparison-item {
