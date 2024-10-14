@@ -132,34 +132,102 @@ export default {
 
 <style scoped>
 .modal-card {
-    padding: 20px;
-    background-color: #f9f9f9;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.v-card-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 16px;
+}
+
+.v-card-subtitle {
+    margin-top: 8px;
+    color: #757575;
 }
 
 .persona-details {
-    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.persona-details p {
+    margin: 0;
+    font-size: 1rem;
+    color: #424242;
 }
 
 .preference {
-    font-weight: bold;
+    font-weight: 600;
+    color: #1976d2;
 }
 
 .preference-number {
     font-style: italic;
-    color: #999;
+    color: #9e9e9e;
+    margin-left: 4px;
 }
 
 .portfolio-title {
-    margin-top: 20px;
-    font-size: 1.2rem;
+    margin-top: 16px;
+    font-size: 1.25rem;
+    color: #424242;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
+}
+
+.portfolio-rates {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
 }
 
 .portfolio-rates p {
-    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 8px 12px;
+    border-radius: 8px;
 }
 
 .rate {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #424242;
+}
+
+.portfolio-pie-chart {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portfolio-pie-chart div {
+    margin-bottom: 16px;
     font-size: 1.1rem;
-    color: #333;
+    color: #424242;
+}
+
+.v-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 24px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.v-btn {
+    padding: 8px 24px;
+    font-size: 1rem;
+    border-radius: 8px;
 }
 </style>
