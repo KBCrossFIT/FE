@@ -125,8 +125,8 @@
                             </li>
                             <li
                                 class="in"
-                                :class="{ active: isActive('/investment-test') }"
-                                @click="$router.push('/investment-test')"
+                                :class="{ active: isActive('/investment-test-start') }"
+                                @click="$router.push('/investment-test-start')"
                             >
                                 투자성향 분석하기
                             </li>
