@@ -143,12 +143,14 @@
                       >
                         {{ rate.saveTrm }}개월
                       </option>
-                    </select><br/>
-                    단리/복리: {{
-                      getInterestRate(item, 'intrRateTypeNm')
-                    }}<br/>
-                    기본 금리:
-                    {{ getInterestRate(item, 'intrRate') }}%<br/>
+                    </select>
+                    <br/>
+                    단리/복리: {{getInterestRate(item, 'intrRateTypeNm') }}
+                    <br/>
+                    적립방식: {{ getInterestRate(item, 'rsrvTypeNm') }}
+                    <br/>
+                    기본 금리: {{ getInterestRate(item, 'intrRate') }}%
+                    <br/>
                     최고 금리: {{ getInterestRate(item, 'intrRate2') }}%
                   </td>
                 </template>
@@ -493,9 +495,9 @@ export default {
           .filter(
               (item) =>
                   item.productType === 'S' &&
-                  (item.rsrvType === null ||
-                      item.rsrvType === undefined ||
-                      item.rsrvType === '')
+                  (item.rates[0].rsrvType === null ||
+                      item.rates[0].rsrvType === undefined ||
+                      item.rates[0].rsrvType === '')
           )
           .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
     });
@@ -506,9 +508,7 @@ export default {
           .filter(
               (item) =>
                   item.productType === 'S' &&
-                  item.rsrvType !== null &&
-                  item.rsrvType !== undefined &&
-                  item.rsrvType !== ''
+                  item.rates[0].rsrvType !== null
           )
           .reduce((total, item) => total + (Number(item.investmentAmount) || 0), 0);
     });
@@ -670,9 +670,8 @@ export default {
       return [...formattedProducts, ...formattedStocks];
     };
 
-
     // 저장 함수
-    const savePortfolio = () => {
+    const savePortfolio = async () => {
       if (portfolioName.value === '') {
         alert("이름을 입력하세요!!");
       } else {
@@ -681,7 +680,14 @@ export default {
         } else {
           const newPortfolioItem = formatDataForSave();
           if (newPortfolioItem.length > 0) {
-            portfolioStore.postPortfolioAction(formatDataForSave(), portfolioName.value);
+            //   const newit = portfolioStore.postPortfolioAction(newPortfolioItem, portfolioName.value);
+            //   console.log(newit);
+            //   newit.then((result) => {
+            //   const id = result.portfolioId;
+            //   router.push(`/portfolio/${id}`);
+            // });
+            // const id = newit.value.portfolioId;
+            await portfolioStore.postPortfolioAction(formatDataForSave(), portfolioName.value);
             const id = newPortfolio.value.portfolioId;
             router.push(`/portfolio/${id}`);
           }

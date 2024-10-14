@@ -680,7 +680,7 @@ export default {
                         provider: getProvider(product),
                         productName: getProductName(product),
                         expectedReturn: getExpectedReturn(product),
-                        rervType: product.type === 'saving' ? 'S' : '',
+                        rsrvType: product.type === 'saving' ? 'S' : null,
                     };
 
                     const addedItem = await cartStore.addCartItem(newCartItem);
@@ -817,7 +817,7 @@ export default {
 
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
-            await cartStore.getCartItems();
+            await cartStore.fetchCartItems();
             await loadProducts();
         });
 
