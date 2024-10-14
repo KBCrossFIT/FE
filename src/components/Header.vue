@@ -119,24 +119,26 @@
             </ul>
           </div>
 
-          <div class="dropdown-section">
-            <ul class="inn">
-              <li
-                class="in"
-                :class="{ active: isActive('/my-investment-analyze') }"
-                @click="$router.push('/my-investment-analyze')"
-              >
-                나의 투자성향
-              </li>
-              <li
-                class="in"
-                :class="{ active: isActive('/investment-test-start') }"
-                @click="$router.push('/investment-test-start')"
-              >
-                투자성향 분석하기
-              </li>
-            </ul>
-          </div>
+                    <div class="dropdown-section">
+                        <ul class="inn">
+                            <li
+                                class="in"
+                                :class="{ active: isActive('/my-investment-analyze') }"
+                                @click="$router.push('/my-investment-analyze')"
+                            >
+                                나의 투자성향
+                            </li>
+                            <li
+                                class="in"
+                                :class="{ active: isActive('/investment-test') }"
+                                @click="$router.push('/investment-test')"
+                            >
+                                투자성향 분석하기
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- 로그인/로그아웃 -->
         <div class="user-controls">
@@ -313,9 +315,8 @@ nav {
 }
 
 .menu-item {
-  font-size: 24px;
-  font-weight: bold;
-  padding: 0 10px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .menu-item:hover {

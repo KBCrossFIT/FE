@@ -89,7 +89,7 @@
                                 />
                             </th>
                             <th @click="sortBy('yield12')">
-                                12개월 수익률
+                                수익률
                                 <SortIndicator
                                     field="yield12"
                                     :currentSortField="sortField"
@@ -1114,7 +1114,7 @@ export default {
 
 .stock-list {
     position: relative;
-    top: -20px;
+    top: -0px;
 }
 
 .stock-container {
