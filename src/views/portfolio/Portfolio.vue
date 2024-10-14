@@ -76,8 +76,8 @@
       </section>
 
       <section class="portfolio-actions">
-        <v-btn color="primary" @click="editPortfolio(portfolioId)"
-        >수정하기</v-btn
+        <v-btn color="primary" @click="goToPortfolioList"
+        >다른 포트폴리오 보러 가기</v-btn
         >
         <v-btn color="red" @click="deletePortfolio(portfolioId)"
         >삭제하기</v-btn
@@ -89,7 +89,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'; // Composition API
-import { useRoute } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
+import { useRoute, useRouter } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
 import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
 import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
 
@@ -99,6 +99,7 @@ const portfolioId = route.params.id; // 라우트 파라미터에서 포트폴�
 
 // Pinia 스토어 가져오기
 const portfolioStore = usePortfolioStore();
+const router = useRouter();
 
 // 포트폴리오 상세 정보를 가져와 저장할 상태
 const portfolioDetail = ref({});
@@ -238,6 +239,12 @@ const getRiskLevelClass = (riskLevel) => {
 watch(() => portfolioDetail.value, () => {
   series.value = chartData.value;
 }, { deep: true });
+
+const goToPortfolioList = async () => {
+  // 현재 포트폴리오 데이터를 스토어에 추가
+  await portfolioStore.addPortfolioToList(portfolioDetail.value);
+  router.push({ name: 'MyPortfolio' });
+};
 </script>
 
 <style scoped>

@@ -74,7 +74,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { usePortfolioStore } from '@/store/modules/portfolio';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useAuthStore } from '@/store/authStore.js';
 
 const router = useRouter();
@@ -163,11 +163,15 @@ const sortedPortfolioList = computed(() => {
     });
 });
 
-// 컴포넌트가 마운트될 때 포트폴리오 리스트를 불러옴
+// 컴포넌트가 마운트될 때와 라우트가 변경될 때 포트폴리오 리스트를 불러옴
 onMounted(async () => {
     await authStore.checkAuth();
-    fetchPortfolioListAction();
+    await portfolioStore.fetchPortfolioListAction(true); // 강제로 새로고침
 });
+
+watch(() => router.currentRoute.value, async () => {
+    await portfolioStore.fetchPortfolioListAction(true); // 강제로 새로고침
+}, { immediate: true });
 
 // 정렬 아이콘 클래스 계산
 const sortIconClass = computed(() => {
