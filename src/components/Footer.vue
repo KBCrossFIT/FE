@@ -15,8 +15,9 @@ export default {
 footer {
   background-color: #e9f5e9; /* Light minty green */
   padding: 40px 20px;
-  z-index: 9999;
+  z-index: 100;
   margin-top: 80px;
+
 }
 
 .footer-links {

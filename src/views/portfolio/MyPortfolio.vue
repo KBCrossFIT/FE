@@ -188,7 +188,7 @@ const sortIconClass = computed(() => {
 <style scoped>
 .my-portfolio-container {
     padding: 20px;
-    max-width: 80%;
+    max-width: 90%;
     margin: 0 auto;
 }
 
