@@ -347,7 +347,7 @@ nav {
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
     border-radius: 4px;
-    text-align: left;
+    text-align: center;
     width: 100%;
 }
 
@@ -365,6 +365,7 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .user-controls {
