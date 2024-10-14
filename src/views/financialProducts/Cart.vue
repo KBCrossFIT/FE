@@ -47,11 +47,7 @@
                         <div class="col checkbox-column">
                             <input
                                 type="checkbox"
-                                :value="{
-                                    productId: item.productId,
-                                    productType: item.productType,
-                                }"
-                                v-model="selectedProducts"
+                                :checked="isSelected(item)"
                                 @change="handleSelectionChange($event, item)"
                                 class="product-checkbox"
                             />
@@ -201,12 +197,20 @@ export default {
             });
         };
 
+        const isSelected = (item) => {
+            return selectedProducts.value.some(
+                (product) => product.productId === item.productId
+            );
+        };
+
         const handleSelectionChange = (event, item) => {
             if (event.target.checked) {
-                selectedProducts.value.push({
-                    productId: item.productId,
-                    productType: item.productType,
-                });
+                if (!isSelected(item)) {
+                    selectedProducts.value.push({
+                        productId: item.productId,
+                        productType: item.productType,
+                    });
+                }
             } else {
                 selectedProducts.value = selectedProducts.value.filter(
                     (product) => product.productId !== item.productId
@@ -229,6 +233,7 @@ export default {
             isAuthenticated,
             authStore,
             itemsPerPage,
+            isSelected,
         };
     },
 };
