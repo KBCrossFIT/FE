@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'; // Composition API
+import { ref, computed, onMounted, watch } from 'vue'; // Composition API
 import { useRoute } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
 import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
 import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
@@ -159,12 +159,12 @@ const getProductTypeLabel = (type) => {
     case 'F':
       return '펀드';
     default:
-      return '알 수 없음';
+      return '주식';
   }
 };
 
 // 차트 설정
-const chartOptions = {
+const chartOptions = ref({
   chart: {
     width: 380,
     type: 'pie',
@@ -183,10 +183,21 @@ const chartOptions = {
       },
     },
   ],
-};
+});
 
-// 예시 데이터
-const series = [30, 40, 20, 10];
+// 차트 시리즈 데이터
+const series = ref([]);
+
+// 차트 데이터를 위한 computed 속성
+const chartData = computed(() => {
+  if (!portfolioDetail.value.portion) return [];
+  return [
+    portfolioDetail.value.portion.totalSaving || 0,
+    portfolioDetail.value.portion.totalBond || 0,
+    portfolioDetail.value.portion.totalFund || 0,
+    portfolioDetail.value.portion.totalStock || 0
+  ];
+});
 
 // 포트폴리오 수정 함수
 const editPortfolio = (id) => {
@@ -223,6 +234,10 @@ const getRiskLevelClass = (riskLevel) => {
     default: return 'risk-unknown';
   }
 };
+
+watch(() => portfolioDetail.value, () => {
+  series.value = chartData.value;
+}, { deep: true });
 </script>
 
 <style scoped>
