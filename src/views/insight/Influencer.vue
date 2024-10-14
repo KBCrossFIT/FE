@@ -5,13 +5,25 @@
       <v-card class="pa-4" elevation="2" style="height: 100%">
         <v-card-text>
           <div class="list-container">
-            <span @click="navigateTo('/influencer')" class="list-item" :class="{ active: $route.path === '/influencer' }">
+            <span
+              @click="navigateTo('/influencer')"
+              class="list-item"
+              :class="{ active: $route.path === '/influencer' }"
+            >
               인플루언서
             </span>
-            <span @click="navigateTo('/youtube')" class="list-item" :class="{ active: $route.path === '/youtube' }">
+            <span
+              @click="navigateTo('/youtube')"
+              class="list-item"
+              :class="{ active: $route.path === '/youtube' }"
+            >
               유튜브
             </span>
-            <span @click="navigateTo('/news')" class="list-item" :class="{ active: $route.path === '/news' }">
+            <span
+              @click="navigateTo('/news')"
+              class="list-item"
+              :class="{ active: $route.path === '/news' }"
+            >
               뉴스
             </span>
           </div>
@@ -59,12 +71,12 @@
 </template>
 
 <script>
-import Influencer_title from "./Influencer_title.vue";
-import ModalInfluencer from "@/components/Modal/ModalInfluencer.vue";
-import ModalPersona from "@/components/Modal/ModalPersona.vue";
+import Influencer_title from './Influencer_title.vue';
+import ModalInfluencer from '@/components/Modal/ModalInfluencer.vue';
+import ModalPersona from '@/components/Modal/ModalPersona.vue';
 
 export default {
-  name: "Influencer",
+  name: 'Influencer',
   components: {
     Influencer_title,
     ModalInfluencer, // 모달 컴포넌트 추가
@@ -72,7 +84,7 @@ export default {
   },
   data() {
     return {
-      searchQuery: "", // 검색어 데이터
+      searchQuery: '', // 검색어 데이터
       page: 1, // 현재 페이지
       isModalOpen: false, // 모달 상태 관리
       selectedPersona: null, // 선택된 인플루언서 데이터
@@ -87,20 +99,20 @@ export default {
       console.log(`Current page: ${newPage}`);
     },
     openModal(persona) {
-      console.log("Opening modal with persona:", persona);
-      document.body.style.overflow = "hidden";
+      console.log('Opening modal with persona:', persona);
+      document.body.style.overflow = 'hidden';
       this.selectedPersona = persona;
       this.isModalOpen = true;
     },
     closeModal() {
       this.isModalOpen = false;
       this.selectedPersona = null;
-      document.body.style.overflow = "";
+      document.body.style.overflow = '';
     },
 
     // 검색창 지우기 기능
     eraseSearch() {
-      this.searchQuery = ""; // 검색어를 빈 문자열로 설정하여 검색창을 초기화
+      this.searchQuery = ''; // 검색어를 빈 문자열로 설정하여 검색창을 초기화
     },
   },
 };
@@ -154,7 +166,7 @@ h1.sixth {
 
 h1.sixth:before,
 h1.sixth:after {
-  content: "";
+  content: '';
   display: inline-block;
   position: relative;
   top: 1px;
@@ -166,7 +178,7 @@ h1.sixth:after {
 }
 
 h1.sixth:after {
-  content: "인플루언서";
+  content: '인플루언서';
 }
 
 h1.sixth:hover:before {

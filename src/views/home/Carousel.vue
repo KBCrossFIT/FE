@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import image1 from '@/assets/img/1first.jpg';
-import image2 from '@/assets/img/1second.jpg';
+import image1 from '@/assets/img/1second.png';
+import image2 from '@/assets/img/1second.png';
 import image3 from '@/assets/img/1third.png';
 
 export default {
