@@ -130,34 +130,25 @@
               </li>
               <li
                 class="in"
-                :class="{ active: isActive('/investment-test-start') }"
-                @click="$router.push('/investment-test-start')"
+                :class="{ active: isActive('/investment-test') }"
+                @click="$router.push('/investment-test')"
               >
                 투자성향 분석하기
               </li>
             </ul>
           </div>
         </div>
-        <!-- 로그인/로그아웃 -->
-        <div class="user-controls">
-            <template v-if="isLoggedIn">
-                <div class="profile-info">
-                    <div class="usernames" @click="navigateToProfile">
-                        <i class="fa-solid fa-user-tie"></i>
-                        <span class="username">{{ userProfile.username }}</span>
-                    </div>
-                    <but유튜브ton @click.stop="handleLogout">로그아웃</but유튜브ton>
-                </div>
-            </template>
-
-            <template v-else>
-                <div class="nonLogin">
-                    <button class="login-btn" @click="navigateToLogin">
-                        <i class="fa-solid fa-key"></i> 로그인
-                    </button>
-                    <button class="signup-btn" @click="navigateToSignup">회원가입</button>
-                </div>
-            </template>
+      </div>
+    </div>
+    <!-- 로그인/로그아웃 -->
+    <div class="user-controls">
+      <template v-if="isLoggedIn">
+        <div class="profile-info">
+          <div class="usernames" @click="navigateToProfile">
+            <i class="fa-solid fa-user-tie"></i>
+            <span class="username">{{ userProfile.username }}</span>
+          </div>
+          <button @click.stop="handleLogout">로그아웃</button>
         </div>
       </template>
 
@@ -255,22 +246,22 @@ export default {
 <style scoped>
 /* 헤더 스타일 */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #ffffff;
-    color: rgb(10, 1, 1);
-    width: 100%;
-    height: 120px;
-    border-bottom: 1px solid #ddd;
-    position: relative;
-    box-sizing: border-box;
-    z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ffffff;
+  color: rgb(10, 1, 1);
+  width: 100%;
+  height: 120px;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 .logoBox {
-    z-index: 11;
+  z-index: 11;
 }
 
 .logoBox:hover {
@@ -278,11 +269,11 @@ export default {
 }
 
 .logo-img {
-    width: 201px;
-    height: auto;
-    position: relative;
-    top: 5px;
-    left: 38%;
+  width: 201px;
+  height: auto;
+  position: relative;
+  top: 5px;
+  left: 38%;
 }
 /* 메뉴 컨테이너와 네비게이션 스타일 */
 .menu-container {
@@ -315,7 +306,6 @@ nav {
 .menu-item {
   font-size: 24px;
   font-weight: bold;
-  padding: 0 10px;
 }
 
 .menu-item:hover {
