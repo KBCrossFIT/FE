@@ -77,7 +77,7 @@
 
       <section class="portfolio-actions">
         <v-btn color="primary" @click="goToPortfolioList"
-        >다른 포트폴리오 보러 가기</v-btn
+        >프토폴리오 리스트</v-btn
         >
         <v-btn color="red" @click="deletePortfolio(portfolioId)"
         >삭제하기</v-btn
@@ -89,17 +89,17 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'; // Composition API
-import { useRoute, useRouter } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
+import {useRoute, useRouter} from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
 import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
 import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
 
 // 현재 라우트에서 포트폴리오 ID를 가져옴
 const route = useRoute();
+const router = useRouter();
 const portfolioId = route.params.id; // 라우트 파라미터에서 포트폴리오 ID 추출
 
 // Pinia 스토어 가져오기
 const portfolioStore = usePortfolioStore();
-const router = useRouter();
 
 // 포트폴리오 상세 정보를 가져와 저장할 상태
 const portfolioDetail = ref({});

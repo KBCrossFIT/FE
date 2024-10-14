@@ -20,7 +20,6 @@ export const useCartStore = defineStore('cart', {
       try {
         const data = await getCartList();
         this.cartItems = data;
-        console.log(this.cartItems);
       } catch (error) {
         console.error('Error fetching cart items:', error);
       }
