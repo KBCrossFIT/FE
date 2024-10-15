@@ -13,37 +13,15 @@
                         <div class="persona-comment">
                             <PersonaComment :persona="persona" />
                         </div>
-                    </div>
-
-                    <!-- Persona Info and Contact Info in a Single Row -->
-                    <div class="info-row">
-                        <!-- Persona Info Section -->
                         <div class="persona-info">
                             <p><strong>직업:</strong> {{ persona.job || '직업 정보 없음' }}</p>
-                            <p>
-                                <strong>투자 성향:</strong>
-                                <span class="preference">{{
-                                    getPreferenceText(persona.personaPreference)
-                                }}</span>
-                                <span class="preference-number"
-                                    >({{ persona.personaPreference }})</span
-                                >
-                            </p>
-                        </div>
-
-                        <!-- Contact Info Section -->
-                        <div class="contact-info">
-                            <h3 class="section-title">투자 정보</h3>
-                            <p><strong>예/적금:</strong> {{ persona.savingsRate || 'N/A' }}%</p>
-                            <p><strong>펀드:</strong> {{ persona.fundRate || 'N/A' }}%</p>
-                            <p><strong>채권:</strong> {{ persona.bondRate || 'N/A' }}%</p>
-                            <p><strong>주식:</strong> {{ persona.stockRate || 'N/A' }}%</p>
                         </div>
                     </div>
 
-                    <!-- Persona Chart Positioned Below -->
-                    <div class="persona-chart">
-                        <PersonaChart :persona="persona" />
+                    <div class="info-row">
+                        <div class="persona-chart">
+                            <PersonaChart :persona="persona" />
+                        </div>
                     </div>
                 </div>
 
@@ -79,7 +57,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, nextTick } from 'vue';
+import { defineComponent, ref, nextTick } from 'vue';
 import sendMessageToChatbot from '@/api/chatbot';
 import PersonaImage from '@/components/persona/PersonaImage.vue';
 import PersonaComment from '@/components/persona/PersonaComment.vue';
@@ -139,39 +117,12 @@ export default defineComponent({
             emit('close');
         };
 
-        watch(
-            () => props.isOpen,
-            (newVal) => {
-                if (!newVal) {
-                    messages.value = [];
-                }
-            }
-        );
-
-        const getPreferenceText = (preference) => {
-            switch (preference) {
-                case 1:
-                    return '위험 투자';
-                case 2:
-                    return '적극 투자';
-                case 3:
-                    return '위험 중립';
-                case 4:
-                    return '안정 추구';
-                case 5:
-                    return '안정형';
-                default:
-                    return '정보 없음';
-            }
-        };
-
         return {
             closeModal,
             sendMessage,
             userMessage,
             messages,
             messageContainer,
-            getPreferenceText,
         };
     },
 });
@@ -192,137 +143,176 @@ export default defineComponent({
     justify-content: center;
     z-index: 999;
 }
+
 .white-bg {
-    height: 80vh;
-    width: 75vw;
+    height: 90vh;
+    width: 70vw;
     background: white;
     border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .content-wrapper {
     display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
 }
 
 .details {
-    flex: 6.5;
-    padding-right: 0.3vw;
-    border-right: 1px solid #ddd;
-    margin-top: 20px;
-}
-
-.persona-comment {
-    margin: 0 auto;
-    width: 60%;
-    text-align: center;
-    font-size: 1.3rem;
-}
-
-.info-row {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-top: 1vh;
-    margin-bottom: 1vh;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    flex: 6.5;
+    padding-right: 1vw;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    padding-top: 2vh; /* 부모 컨테이너의 시작 위치 고정 */
 }
 
-.persona-info,
-.contact-info {
-    flex: 1;
-    padding: 0.5vw;
+.box1 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    gap: 0.5vh;
+    padding: 1.5vh 0;
+    padding-bottom: 2vh; /* 아래쪽으로만 확장 */
+    margin: 0 auto; /* 중앙 정렬 */
 }
 
 .section-title {
-    font-size: 1.25rem;
-    color: #424242;
-    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1vh;
 }
 
-.preference {
-    font-weight: 600;
-    color: #1976d2;
+.persona-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1vh;
+    overflow: hidden;
 }
 
-.preference-number {
+.persona-comment {
+    font-size: 1.1rem;
     font-style: italic;
-    color: #9e9e9e;
-    margin-left: 4px;
+    color: #555;
+    max-width: 80%;
+    margin-bottom: 1vh;
+    line-height: 1.5;
 }
 
-/* Persona Chart Section */
-.persona-chart {
-    margin-top: 2vh;
+.persona-info {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 1.5vh;
+}
+
+/* Center alignment for info-row */
+.info-row {
     display: flex;
-    justify-content: left;
-    margin-left: 40px;
+    justify-content: flex-start; /* Aligns contents to the left */
+    align-items: flex-start;
+    margin: 0 auto;
+    width: 60%;
+    padding: 1vw;
+
+    box-sizing: border-box;
+    flex-direction: column; /* Stack contents vertically */
 }
 
-/* Chatbot styling */
+.persona-chart {
+    display: flex;
+    justify-content: flex-start; /* Aligns the chart to the left */
+    align-items: center;
+    width: auto; /* Ensures chart size fits within the container */
+    max-width: 200px;
+    margin: 0;
+    padding: 1vh 0; /* Adds vertical padding */
+    text-align: left;
+}
+
+/* Chatbot styling remains unchanged */
 .chatbot {
     flex: 3.5;
-    padding-right: 1vw;
-    padding-left: 1vw;
+    height: 100%;
+    padding: 1vw;
     font-family: 'Nanum Gothic', sans-serif;
+    overflow-y: auto;
 }
+
 .chatbotName {
-    font-size: 2rem;
-    font-weight: 900;
+    font-size: 1.8rem;
+    font-weight: 700;
     color: #333;
     text-align: center;
-    margin: 1.5vh 0 0.2vh;
+    margin: 1.5vh 0;
 }
 
 .chatbox {
     display: flex;
     flex-direction: column;
-    height: 88%;
+    height: 85%;
 }
 
 .messages {
     flex: 1;
-    overflow-y: scroll;
-    padding: 1vw;
+    overflow-y: auto;
+    padding: 1vh;
     display: flex;
     flex-direction: column;
+    gap: 0.8vh;
 }
 
 .bot-message {
     align-self: flex-start;
     background-color: #7bd5c3;
-    border-radius: 1rem;
-    padding: 0.6vw;
+    border-radius: 10px;
+    padding: 1vh 2vw;
     color: white;
-    margin: 0.5vh 0;
-    margin-right: 20%;
+    max-width: 80%;
 }
 
 .user-message {
     align-self: flex-end;
     background-color: #e0e0e0;
-    border-radius: 1rem;
-    padding: 0.6vw;
-    margin: 0.5vh 0;
-    margin-left: 20%;
+    border-radius: 10px;
+    padding: 1vh 2vw;
+    max-width: 80%;
 }
 
 .input-box {
     display: flex;
+    margin-top: 1vh;
 }
 
 .input-box input {
-    flex: 8.5;
-    padding: 0.6vw;
+    flex: 8;
+    padding: 1vh;
     border: 1px solid #ddd;
-    border-radius: 0.5rem;
+    border-radius: 8px;
 }
 
 .input-box button {
-    flex: 1.5;
-    padding: 0.6vw;
-    margin-left: 0.5vw;
+    flex: 2;
+    padding: 1vh;
+    margin-left: 1vw;
     background-color: #61cafa;
     color: white;
+    font-weight: bold;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.input-box button:hover {
+    background-color: #42b0e8;
 }
 </style>

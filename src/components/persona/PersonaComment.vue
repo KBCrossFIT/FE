@@ -1,5 +1,5 @@
 <template>
-    <div class="persona-comments">
+    <div class="persona-comments" v-if="persona.comments">
         <p>"{{ persona.comments }}"</p>
     </div>
 </template>
