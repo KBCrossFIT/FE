@@ -294,7 +294,7 @@
                       type="number"
                       v-model.number="item.investmentAmount"
                       min="0"
-                      :placeholder="getPlaceholder(item)"
+                      placeholder="투자액 입력"
                       class="styled-input"
                   />
                   <span
@@ -526,6 +526,8 @@ export default {
         const productType = productTypes[index];
         try {
           let productDetail;
+          console.log(productId);
+          console.log(productType);
           switch (productType) {
             case 'B':
               productDetail = await financeApi.getBondProductDetail(productId);
@@ -550,6 +552,7 @@ export default {
       }
     };
 
+
     // 선택된 상품들에 대한 필터링
     const filteredProducts = computed(() => {
       return selectedCategory.value
@@ -559,7 +562,7 @@ export default {
           : selectedProducts.value;
     });
 
-    const getDepositInterestRate = (item, rateType) => {
+    const getInterestRate = (item, rateType) => {
       const selectedRate = item.rates.find((rate) => rate.saveTrm === item.selectedTerm);
       return selectedRate ? selectedRate[rateType] : '정보 없음';
     };
@@ -599,6 +602,7 @@ export default {
       });
     };
 
+
     // ModalStock에서 전달받은 주식들을 추가
     const addStocksToPortfolio = (stocks) => {
       stocks.forEach((item) => {
@@ -609,6 +613,8 @@ export default {
         }
       });
     };
+
+    
 
     // 상품 삭제 함수
     const removeItem = (item) => {
@@ -630,13 +636,15 @@ export default {
       }
     };
 
+
+    const isEditMode = computed(() => portfolioStocks.value.length > 0);
+    const modalButtonLabel = computed(() => (isEditMode.value ? '수정하기' : '추가하기'));
+
     // 장바구니 총 투자액 계산
     const cartTotalInvestment = computed(() => {
-      return (
-          depositInvestment.value +
-          savingInvestment.value +
-          bondInvestment.value +
-          fundInvestment.value
+      return selectedProducts.value.reduce(
+          (total, item) => total + (Number(item.investmentAmount) || 0),
+          0
       );
     });
 
@@ -787,34 +795,20 @@ export default {
           .map((product) => {
             let info = {};
 
+
             info.productType = product.productType;
             info.amount = product.investmentAmount;
 
             if (product.productType === 'S') {
-              // 예금 (rsrvType이 null)
-              if (product.rates[0]?.rsrvType === 'null') {
-                const selectedRate = product.rates.find(
-                    (rate) => rate.saveTrm === product.selectedTerm
-                );
-                info.productId = selectedRate ? selectedRate.productId : null;
-                info.rsrvType = '예금'; // 예금으로 표시
-                info.saveTerm = selectedRate ? selectedRate.saveTrm : null;
-                info.intrType = selectedRate ? selectedRate.intrRateTypeNm : null;
-                info.intrRate = selectedRate ? selectedRate.intrRate : null;
+              const selectedRate = product.rates.find(
+                  (rate) => rate.saveTrm === product.selectedTerm
+              );
 
-                // 적금 (rsrvType이 null이 아닌 경우)
-              } else {
-                const selectedRate = product.rates.find(
-                    (rate) =>
-                        rate.saveTrm === product.selectedTerm &&
-                        rate.rsrvTypeNm === product.selectedrsrvTypeNm
-                );
-                info.productId = selectedRate ? selectedRate.productId : null;
-                info.rsrvType = selectedRate ? selectedRate.rsrvTypeNm : null;
-                info.saveTerm = selectedRate ? selectedRate.saveTrm : null;
-                info.intrType = selectedRate ? selectedRate.intrRateTypeNm : null;
-                info.intrRate = selectedRate ? selectedRate.intrRate : null;
-              }
+              info.productId = selectedRate ? selectedRate.productId : null;
+              info.rsrvType = selectedRate ? selectedRate.rsrvType : null;
+              info.saveTerm = selectedRate ? selectedRate.saveTrm : null;
+              info.intrType = selectedRate ? selectedRate.intrRateTypeNm : null;
+              info.intrRate = selectedRate ? selectedRate.intrRate : null;
             } else if (product.productType === 'B') {
               info.productId = product.productId;
               info.bondExprDt = product.bondExprDt;
@@ -852,6 +846,7 @@ export default {
 
       return [...formattedProducts, ...formattedStocks];
     };
+
 
     // 저장 함수
     const savePortfolio = async () => {
@@ -898,17 +893,12 @@ export default {
     watch(totalInvestment, (newTotal) => {
       if (newTotal > 0) {
         dynamicChartSeries.value = [
-          depositInvestment.value + savingInvestment.value,
+          depositInvestment.value,
+          savingInvestment.value,
           bondInvestment.value,
           fundInvestment.value,
           stockTotalInvestment.value,
         ];
-      }
-    });
-
-    watch(portfolioName, (newVal) => {
-      if (newVal.trim() === '') {
-        portfolioName.value = '';
       }
     });
 
@@ -927,17 +917,21 @@ export default {
       addItemsToPortfolio,
       openModal,
       openModalCart,
+      isEditMode,
+      modalButtonLabel,
+      isTutorialActive,
+      currentStep,
+      startTutorial,
+      nextStep,
+      endTutorial,
+      tutorialStyles,
       confirmCancel,
       removeItem,
-      getDepositInterestRate,
-      getSavingInterestRate,
-      getUniqueSaveTerms,
-      getUniqueRsrvTypes,
+      getInterestRate,
       cartTotalInvestment,
       stockTotalInvestment,
       totalInvestment,
       formatCurrency,
-      getPlaceholder,
       depositInvestment,
       savingInvestment,
       bondInvestment,
@@ -1181,3 +1175,4 @@ export default {
   white-space: nowrap;
 }
 </style>
+
