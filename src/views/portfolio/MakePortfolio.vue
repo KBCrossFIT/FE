@@ -858,30 +858,27 @@ export default {
             if (isSaving.value) return;
             isSaving.value = true;
 
-            if (portfolioName.value === '') {
-                alert('이름을 입력하세요!!');
-            } else {
-                if (selectedProducts.value.length === 0 && portfolioStocks.value.length === 0) {
-                    alert('아이템을 추가해주세요!!');
-                } else {
-                    const newPortfolioItem = formatDataForSave();
-                    console.log(newPortfolioItem);
-                    if (newPortfolioItem.length > 0) {
-                        try {
-                            await portfolioStore.postPortfolioAction(
-                                formatDataForSave(),
-                                portfolioName.value
-                            );
-                            const id = newPortfolio.value.portfolioId;
-                            router.push(`/portfolio/${id}`);
-                        } catch (error) {
-                            console.error('Error while saving the portfolio:', error);
-                        }
-                    }
-                }
-            }
-            isSaving.value = false; // 작업 완료 후 isSaving을 항상 false로 설정
-        };
+      if (portfolioName.value === '') {
+        alert('이름을 입력하세요!!');
+        isSaving.value = false;
+      } else if (selectedProducts.value.length === 0 && portfolioStocks.value.length === 0) {
+        alert('아이템을 추가해주세요!!');
+        isSaving.value = false;
+      } else {
+        const newPortfolioItem = formatDataForSave();
+        console.log(newPortfolioItem);
+        if (newPortfolioItem.length > 0) {
+          await portfolioStore.postPortfolioAction(
+              formatDataForSave(),
+              portfolioName.value
+          );
+          const id = newPortfolio.value.portfolioId;
+          router.push(`/portfolio/${id}`);
+        }
+        isSaving.value = false;
+      }
+    };
+
 
         onMounted(() => {
             fetchProductDetails();

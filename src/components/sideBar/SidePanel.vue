@@ -154,7 +154,7 @@ const goToPortfolioDetail = (portfolioId) => {
 
 const goToProductDetail = (productId, productType) => {
   router.push(`/list/${productId}?productType=${productType}`).then(() => {
-    window.location.reload();
+
   });
 };
 
