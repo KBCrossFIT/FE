@@ -1,5 +1,7 @@
 <template>
+    <!-- 모달 뒷배경(검정색) -->
     <div class="black-bg" v-if="isOpen" @click="closeModal">
+        <!-- 본 모달 페이지(흰배경) -->
         <div class="white-bg" @click.stop>
             <div class="content-wrapper">
                 <div class="details">
@@ -26,7 +28,6 @@
 
                 <!-- Chatbot Interaction Section -->
                 <div class="chatbot">
-                    <!-- Icon and Name aligned inline -->
                     <div class="chatbot-header">
                         <div class="icon-wrapper">
                             <PersonaImage :persona="persona" />
@@ -36,13 +37,19 @@
 
                     <div class="chatbox">
                         <div class="messages" ref="messageContainer">
+                            <!-- 메시지 표시 영역 -->
                             <p
                                 v-for="(msg, index) in messages"
                                 :key="index"
                                 :class="msg.isBot ? 'bot-message' : 'user-message'"
-                                v-html="msg.text"
-                            ></p>
+                            >
+                                <!-- 로딩 중일 때 LoadingDots 컴포넌트를 표시하고 아니면 메시지를 표시 -->
+                                <span v-if="!msg.isLoading" v-html="msg.text"></span>
+                                <LoadingDots v-else />
+                            </p>
                         </div>
+
+                        <!-- 메시지 입력 영역 -->
                         <div class="input-box">
                             <input
                                 v-model="userMessage"
@@ -65,6 +72,7 @@ import sendMessageToChatbot from '@/api/chatbot';
 import PersonaImage from '@/components/persona/PersonaImage.vue';
 import PersonaComment from '@/components/persona/PersonaComment.vue';
 import PersonaChart from '@/components/persona/PersonaChart.vue';
+import LoadingDots from '@/components/LoadingDots.vue';
 
 export default defineComponent({
     name: 'ModalPersona',
@@ -72,6 +80,7 @@ export default defineComponent({
         PersonaImage,
         PersonaComment,
         PersonaChart,
+        LoadingDots,
     },
     props: {
         isOpen: {
@@ -116,17 +125,29 @@ export default defineComponent({
         const sendMessage = async () => {
             if (!userMessage.value.trim()) return;
 
+            // 사용자 메시지 추가
             const message = userMessage.value;
             messages.value.push({ text: message, isBot: false });
             userMessage.value = '';
 
+            // 로딩 중 메시지 박스 추가
+            const botMessageIndex = messages.value.length;
+            messages.value.push({ isBot: true, isLoading: true, text: '' });
+
             await scrollToBottom();
 
             try {
+                // 실제 봇의 응답 가져오기
                 const response = await sendMessageToChatbot(props.persona.personaName, message);
-                messages.value.push({ text: response, isBot: true });
+
+                // 응답을 로딩 메시지 박스에 대체
+                messages.value[botMessageIndex] = { text: response, isBot: true, isLoading: false };
             } catch (error) {
-                messages.value.push({ text: '응답을 받을 수 없습니다.', isBot: true });
+                messages.value[botMessageIndex] = {
+                    text: '응답을 받을 수 없습니다.',
+                    isBot: true,
+                    isLoading: false,
+                };
             }
 
             await scrollToBottom();
