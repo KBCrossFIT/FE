@@ -47,6 +47,9 @@
         </tbody>
       </table>
       <p v-else>포트폴리오 데이터가 없습니다.</p>
+      <a href="/cart" class="gotomain">
+        <button>바로가기</button>
+      </a>
     </div>
 
     <!-- 장바구니 섹션 -->
@@ -105,6 +108,9 @@
         </tbody>
       </table>
       <p v-else>장바구니가 비어 있습니다.</p>
+      <a href="/my-portfolio" class="gotomain">
+        <button>바로가기</button>
+      </a>
     </div>
 
     <!-- 최근 본 상품 섹션 -->
@@ -153,9 +159,7 @@ const goToPortfolioDetail = (portfolioId) => {
 };
 
 const goToProductDetail = (productId, productType) => {
-  router.push(`/list/${productId}?productType=${productType}`).then(() => {
-
-  });
+  router.push(`/list/${productId}?productType=${productType}`).then(() => {});
 };
 
 const emit = defineEmits(['close']);
@@ -272,5 +276,17 @@ const closePanel = () => {
 
 .negative-return {
   color: blue;
+}
+
+.gotomain {
+  margin-left: 9px;
+  margin-top: 17px;
+  color: black;
+}
+
+.gotomain2 {
+  margin-left: 9px;
+  margin-top: 17px;
+  color: black;
 }
 </style>
