@@ -35,11 +35,12 @@ a,
 } */
 
 @font-face {
-  font-family: 'RixXladywatermelonR';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-4@1.0/RixXladywatermelonR.woff2')
-    format('woff2');
+  font-family: 'BMDOHYEON';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
 * {
-  font-family: 'RixXladywatermelonR', sans-serif;
+  font-family: 'BMDOHYEON', sans-serif;
 }
