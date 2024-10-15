@@ -263,7 +263,7 @@ export default defineComponent({
 .chatbot {
     flex: 3.5;
     height: 100%;
-    /* padding: 1vw; */
+    width: 100%;
     font-family: 'Nanum Gothic', sans-serif;
     overflow-y: auto;
     display: flex;
@@ -297,6 +297,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     height: 85%;
+    width: 90%;
 }
 
 .messages {

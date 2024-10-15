@@ -1,5 +1,6 @@
 <template>
     <div class="my-portfolio-container">
+        <!-- 로그인하지 않은 상태 -->
         <div v-if="!isAuthenticated" class="empty_login_data">
             <h1>로그인 정보가 없습니다.</h1>
             <p>로그인하고 포트폴리오를 만들어보세요.</p>
@@ -8,6 +9,8 @@
                 <span class="menu-text">로그인하러 가기</span>
             </router-link>
         </div>
+
+        <!-- 로그인한 상태에서 포트폴리오 카드 표시 -->
         <v-card v-else class="portfolio-card">
             <h1 class="card-title">나의 포트폴리오</h1>
             <div class="table-responsive">
@@ -94,8 +97,7 @@ const allSelected = ref(false); // 전체 선택 체크박스 상태
 const sortKey = ref('portfolioName'); // 정렬할 컬럼
 const sortOrder = ref('asc'); // 오름차순('asc') 또는 내림차순('desc')
 const authStore = useAuthStore(); //로그인 정보
-const loading = ref(true);
-const isAuthenticated = computed(() => authStore.isAuthenticated);
+const isAuthenticated = computed(() => authStore.isAuthenticated); // computed 사용
 
 // 전체 선택 처리
 const toggleSelectAll = () => {
@@ -110,7 +112,7 @@ const toggleSelectAll = () => {
 
 // 체크박스 상태 변경 시 전체 선택 체크박스 상태 업데이트
 const updateSelectAllState = () => {
-    allSelected.value = selected.value.length === portfolioList.value.length; // 전체 선택 여부 업데이트
+    allSelected.value = selected.value.length === portfolioList.value.length;
 };
 
 // 포트폴리오 상세 페이지로 이동
@@ -123,36 +125,26 @@ const goToCreatePortfolio = () => {
     router.push({ name: 'MakePortfolio' });
 };
 
-// 선택된 포트폴리오 데이터를 사이드패널로 전달
-const openPortfolioInSidePanel = (portfolio) => {
-    emit('openSidePanel', {
-        title: '포트폴리오 상세',
-        section: 'PortfolioSection',
-        data: [portfolio], // 선택된 포트폴리오 데이터 전달
-    });
-};
-
 // 선택된 포트폴리오 삭제
 const deleteSelectedPortfolios = async () => {
     for (const portfolioId of selected.value) {
         try {
-            await deletePortfolioAction(portfolioId); // 비동기 요청 대기
+            await deletePortfolioAction(portfolioId);
         } catch (error) {
             console.error('Error deleting portfolio:', error.response?.data || error.message);
         }
     }
-    selected.value = []; // 선택 해제
-    window.location.reload();
+    selected.value = [];
+    await portfolioStore.fetchPortfolioListAction(true); // 포트폴리오 목록 새로 고침
 };
 
 // 정렬 기준과 방향 변경 함수
 const sortBy = (key) => {
     if (sortKey.value === key) {
-        // 동일한 키를 클릭했을 때 방향 변경
         sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
     } else {
         sortKey.value = key;
-        sortOrder.value = 'asc'; // 기본은 오름차순
+        sortOrder.value = 'asc';
     }
 };
 
@@ -169,19 +161,13 @@ const sortedPortfolioList = computed(() => {
     });
 });
 
-// 컴포넌트가 마운트될 때와 라우트가 변경될 때 포트폴리오 리스트를 불러옴
+// 컴포넌트가 마운트될 때 포트폴리오 리스트를 불러옴
 onMounted(async () => {
     await authStore.checkAuth();
-    await portfolioStore.fetchPortfolioListAction(true); // 강제로 새로고침
+    if (isAuthenticated.value) {
+        await portfolioStore.fetchPortfolioListAction(true);
+    }
 });
-
-watch(
-    () => router.currentRoute.value,
-    async () => {
-        await portfolioStore.fetchPortfolioListAction(true); // 강제로 새로고침
-    },
-    { immediate: true }
-);
 
 // 정렬 아이콘 클래스 계산
 const sortIconClass = computed(() => {

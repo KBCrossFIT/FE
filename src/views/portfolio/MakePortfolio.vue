@@ -328,7 +328,7 @@
                             <!-- 빈 항목 표시 -->
                             <template v-else>
                                 <tr v-for="n in 1" :key="n">
-                                    <td colspan="5" class="empty-row"><br /></td>
+                                    <td colspan="6" class="empty-row"><br /></td>
                                 </tr>
                             </template>
                         </tbody>
@@ -407,7 +407,7 @@
                             </template>
                             <template v-else>
                                 <tr v-for="n in 1" :key="n">
-                                    <td colspan="6" class="empty-row"><br /></td>
+                                    <td colspan="7" class="empty-row"><br /></td>
                                 </tr>
                             </template>
                         </tbody>
@@ -1172,7 +1172,8 @@ export default {
     display: flex;
 }
 
-.MakePortfolio-btn {
+.MakePortfolio-btn,
+.cart-btn {
     margin-top: 20px;
 }
 
