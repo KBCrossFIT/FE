@@ -16,13 +16,14 @@
 
                 <!-- 투자 비중 파이 차트 -->
                 <h4>포트폴리오 투자 비중</h4>
-                <VueApexCharts
-                    type="pie"
-                    width="380"
-                    :options="chartOptions"
-                    :series="series"
-                ></VueApexCharts>
-
+                <div class="chart-container">
+                    <VueApexCharts
+                        type="pie"
+                        width="380"
+                        :options="chartOptions"
+                        :series="series"
+                    ></VueApexCharts>
+                </div>
                 <!-- 포트폴리오 요약 정보 -->
                 <div class="portfolio-summary-info">
                     <div class="summary-item">
@@ -288,6 +289,8 @@ const goToPortfolioList = async () => {
     font-size: 2.5rem; /* 큰 헤딩 */
     color: #343a40; /* 진한 텍스트 색상 */
     margin-bottom: 10px;
+    text-align: left; /* 왼쪽 정렬 */
+    width: 100%;
 }
 
 .portfolio-header h2 {
@@ -310,10 +313,22 @@ const goToPortfolioList = async () => {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
 }
 
+.chart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px; /* 차트와 제목 간격 조정 */
+}
+
 .portfolio-summary h2,
 .portfolio-details h2 {
     font-size: 1.75rem;
     color: #495057;
+    margin-bottom: 15px;
+}
+
+.portfolio-summary h4 {
+    text-align: center;
     margin-bottom: 15px;
 }
 
