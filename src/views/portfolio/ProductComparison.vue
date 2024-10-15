@@ -55,8 +55,9 @@
                     v-for="product in paginatedProducts"
                     :key="product.productId"
                     :class="['product-card', { isInCompare: isProductInCompare(product) }]"
+                    @click="addToCompare(product)"
                 >
-                    <div class="card-body" @click="addToCompare(product)">
+                    <div class="card-body">
                         <!-- 카드 헤더(상품 유형, 제공자) -->
                         <div class="card-header">
                             <!-- 상품 유형 -->
@@ -160,7 +161,7 @@
             </div>
 
             <div class="text-center" v-if="!loading && totalPages > 1">
-                <v-pagination v-model="page" :length="totalPages" :total-visible="4"></v-pagination>
+                <v-pagination v-model="page" :length="totalPages" :total-visible="6"></v-pagination>
             </div>
         </div>
 
@@ -1095,13 +1096,21 @@ const productDetailUrl = (product) => {
 }
 
 /* 카드 스타일 */
+.compare-cards {
+    display: flex;
+    gap: 20px; /* 카드 간격 설정 */
+    justify-content: center; /* 카드들을 가운데 정렬 */
+    flex-wrap: wrap; /* 카드가 화면 너비에 맞춰서 자동으로 줄 바꿈 */
+}
+
 .product-card,
 .compare-card {
+    width: 200px; /* 각 카드의 너비 */
+    height: 250px; /* 각 카드의 높이 */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 200px;
-    height: 250px;
+    align-items: center;
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);

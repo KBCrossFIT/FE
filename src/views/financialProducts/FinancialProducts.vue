@@ -286,21 +286,32 @@
                             </v-btn>
                         </td>
                         <!-- 투자성향 분석 안내 대화상자 추가 -->
-                        <v-dialog v-model="showInvestmentTestDialog" max-width="400" overlay-opacity="0.5">
-                        <v-card class="investment-test-dialog">
-                        <v-card-title class="headline">투자성향 분석 필요</v-card-title>
-                        <v-card-text>투자성향 분석을 해야 장바구니에 상품을 담을 수 있습니다.</v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="primary" text @click="goToInvestmentTest">
-                            투자성향 분석하러 가기
-                            </v-btn>
-                            <v-btn color="grey darken-1" text @click="closeInvestmentTestDialog">
-                            다음에 하기
-                            </v-btn>
-                        </v-card-actions>
-                        </v-card>
-                    </v-dialog>
+                        <v-dialog
+                            v-model="showInvestmentTestDialog"
+                            max-width="400"
+                            overlay-opacity="0.5"
+                        >
+                            <v-card class="investment-test-dialog">
+                                <v-card-title class="headline">투자성향 분석 필요</v-card-title>
+                                <v-card-text
+                                    >투자성향 분석을 해야 장바구니에 상품을 담을 수
+                                    있습니다.</v-card-text
+                                >
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="primary" text @click="goToInvestmentTest">
+                                        투자성향 분석하러 가기
+                                    </v-btn>
+                                    <v-btn
+                                        color="grey darken-1"
+                                        text
+                                        @click="closeInvestmentTestDialog"
+                                    >
+                                        다음에 하기
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
                     </tr>
                 </tbody>
             </table>
@@ -739,7 +750,7 @@ export default {
                     }
                 }
 
-                    // 조회수 증가
+                // 조회수 증가
                 await increaseAgeGroupProductHit(product.productId);
                 await increasePreferenceProductHit(product.productId);
             } catch (error) {
@@ -861,37 +872,37 @@ export default {
         // 투자성향 분석 페이지로 이동
         const goToInvestmentTest = () => {
             showInvestmentTestDialog.value = false;
-            router.push({ name: 'InvestmentTestStart'});
+            router.push({ name: 'InvestmentTestStart' });
         };
 
         // 투자성향 분석 안내 대화상자 닫기
         const closeInvestmentTestDialog = () => {
             showInvestmentTestDialog.value = false;
-        }
+        };
 
         // 채권 위험도 매핑
         const mapRiskLevel = (level) => {
-        const riskLevels = {
-            1: '매우 높은 위험',
-            2: '높은 위험',
-            3: '다소 높은 위험',
-            4: '보통 위험',
-            5: '낮은 위험',
-            6: '매우 낮은 위험'
-        };
-        return riskLevels[level] || `알 수 없음 (${level}등급)`;
+            const riskLevels = {
+                1: '매우 높음',
+                2: '높음',
+                3: '다소 높음',
+                4: '보통',
+                5: '낮음',
+                6: '매우 낮음',
+            };
+            return riskLevels[level] || `알 수 없음 (${level}등급)`;
         };
 
         const getRiskLevelStyle = (level) => {
-        const colors = {
-            1: '#FF0000', // 빨간색
-            2: '#FF6600', // 주황색
-            3: '#FFCC00', // 노란색
-            4: '#CCFF00', // 연두색
-            5: '#66FF00', // 연한 초록색
-            6: '#00FF00'  // 초록색
-        };
-        return { color: colors[level] || 'black' };
+            const colors = {
+                1: '#FF0000', // 빨간색
+                2: '#FF6600', // 주황색
+                3: '#FFCC00', // 노란색
+                4: '#CCFF00', // 연두색
+                5: '#66FF00', // 연한 초록색
+                6: '#00FF00', // 초록색
+            };
+            return { color: colors[level] || 'black' };
         };
 
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
@@ -1018,7 +1029,6 @@ th {
     user-select: none; /* 텍스트 선택 방지 */
     position: relative;
 }
-
 
 .search-btn {
     padding: 10px 15px;
@@ -1199,22 +1209,22 @@ th {
 }
 
 .custom-dialog {
-  background-color: transparent !important;
-  box-shadow: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .investment-test-dialog {
-  background-color: white !important;
-  border-radius: 8px;
+    background-color: white !important;
+    border-radius: 8px;
 }
 
 .v-dialog > .v-overlay__content > .v-card {
-  box-shadow: none;
-  border: 1px solid;
+    box-shadow: none;
+    border: 1px solid;
 }
 /* 배경 블러 효과 수정 */
 ::v-deep .v-overlay__scrim {
-  backdrop-filter: blur(2px);
-  background-color: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.5) !important;
 }
 </style>
