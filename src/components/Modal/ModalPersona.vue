@@ -5,17 +5,16 @@
                 <div class="details">
                     <div class="box1">
                         <h3 class="section-title">{{ persona.personaName || '이름 없음' }}</h3>
-                        <!-- Persona Image -->
-                        <div class="persona_image">
-                            <PersonaImage :persona="persona" />
-                        </div>
-                        <!-- Persona Comment -->
                         <div class="persona-comment">
                             <PersonaComment :persona="persona" />
                         </div>
                         <div class="persona-info">
                             <p><strong>직업:</strong> {{ persona.job || '직업 정보 없음' }}</p>
                         </div>
+                        <span class="preference-inline">
+                            투자성향: {{ getPreferenceText(persona.personaPreference) }}
+                            <span class="preference-number">({{ persona.personaPreference }})</span>
+                        </span>
                     </div>
 
                     <div class="info-row">
@@ -25,18 +24,22 @@
                     </div>
                 </div>
 
-                <!-- Right Section for Chatbot Interaction -->
+                <!-- Chatbot Interaction Section -->
                 <div class="chatbot">
-                    <h4 class="chatbotName">{{ persona.personaName }}</h4>
+                    <!-- Icon and Name aligned inline -->
+                    <div class="chatbot-header">
+                        <div class="icon-wrapper">
+                            <PersonaImage :persona="persona" />
+                        </div>
+                        <span class="chatbotName">{{ persona.personaName }}</span>
+                    </div>
+
                     <div class="chatbox">
                         <div class="messages" ref="messageContainer">
                             <p
                                 v-for="(msg, index) in messages"
                                 :key="index"
-                                :class="{
-                                    'bot-message': msg.isBot,
-                                    'user-message': !msg.isBot,
-                                }"
+                                :class="msg.isBot ? 'bot-message' : 'user-message'"
                                 v-html="msg.text"
                             ></p>
                         </div>
@@ -93,6 +96,23 @@ export default defineComponent({
             }
         };
 
+        const getPreferenceText = (preference) => {
+            switch (preference) {
+                case 1:
+                    return '위험 투자';
+                case 2:
+                    return '적극 투자';
+                case 3:
+                    return '위험 중립';
+                case 4:
+                    return '안정 추구';
+                case 5:
+                    return '안정형';
+                default:
+                    return '정보 없음';
+            }
+        };
+
         const sendMessage = async () => {
             if (!userMessage.value.trim()) return;
 
@@ -123,6 +143,7 @@ export default defineComponent({
             userMessage,
             messages,
             messageContainer,
+            getPreferenceText,
         };
     },
 });
@@ -149,7 +170,7 @@ export default defineComponent({
     width: 70vw;
     background: white;
     border-radius: 1rem;
-    overflow: hidden;
+    overflow-y: auto;
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -168,8 +189,6 @@ export default defineComponent({
     flex: 6.5;
     padding-right: 1vw;
     border-right: 1px solid #ddd;
-    overflow-y: auto;
-    padding-top: 2vh; /* 부모 컨테이너의 시작 위치 고정 */
 }
 
 .box1 {
@@ -178,12 +197,12 @@ export default defineComponent({
     align-items: center;
     width: 80%;
     text-align: center;
+    justify-content: center;
     border: 1px solid #ccc;
     border-radius: 8px;
     gap: 0.5vh;
     padding: 1.5vh 0;
-    padding-bottom: 2vh; /* 아래쪽으로만 확장 */
-    margin: 0 auto; /* 중앙 정렬 */
+    margin: 2vh auto 0 auto; /* 상단에 여유를 줘 페르소나 이름이 잘리지 않도록 */
 }
 
 .section-title {
@@ -194,10 +213,11 @@ export default defineComponent({
 }
 
 .persona-image {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 1vh;
-    overflow: hidden;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border: 1px solid #7bd5c3;
 }
 
 .persona-comment {
@@ -243,17 +263,34 @@ export default defineComponent({
 .chatbot {
     flex: 3.5;
     height: 100%;
-    padding: 1vw;
+    /* padding: 1vw; */
     font-family: 'Nanum Gothic', sans-serif;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 수평 중앙 정렬 */
+    justify-content: center; /* 수직 중앙 정렬 */
+}
+
+.chatbot-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 1vh;
+}
+
+.icon-wrapper {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .chatbotName {
     font-size: 1.8rem;
     font-weight: 700;
     color: #333;
-    text-align: center;
-    margin: 1.5vh 0;
 }
 
 .chatbox {
@@ -290,11 +327,13 @@ export default defineComponent({
 
 .input-box {
     display: flex;
+    width: 100%; /* 전체 너비 차지 */
     margin-top: 1vh;
 }
 
 .input-box input {
     flex: 8;
+    width: 100%; /* input 필드도 부모의 전체 너비 사용 */
     padding: 1vh;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -302,6 +341,7 @@ export default defineComponent({
 
 .input-box button {
     flex: 2;
+    width: 100%; /* 버튼도 100% 너비 */
     padding: 1vh;
     margin-left: 1vw;
     background-color: #61cafa;
@@ -314,5 +354,14 @@ export default defineComponent({
 
 .input-box button:hover {
     background-color: #42b0e8;
+}
+
+.preference-inline {
+    font-style: italic;
+}
+
+.preference-number {
+    color: #21a8e6;
+    margin-left: 4px;
 }
 </style>
