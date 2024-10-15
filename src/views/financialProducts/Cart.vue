@@ -224,9 +224,7 @@ export default {
 
         const goToProductDetail = (productId, productType, rsrvType = null) => {
             const type = getProductTypeReturn(productType, rsrvType);
-            router.push(`/list/${productId}?productType=${type}`).then(() => {
-                window.location.reload();
-            });
+            router.push(`/list/${productId}?productType=${type}`);
         };
 
         const getProductTypeReturn = (productType, rsrvType) => {
