@@ -25,25 +25,13 @@
                     <div class="dropdown-section">
                         <ul class="inn">
                             <li
+                                v-for="item in portfolioItems"
+                                :key="item.route"
                                 class="in"
-                                :class="{ active: isActive('/my-portfolio') }"
-                                @click="$router.push('/my-portfolio')"
+                                :class="{ active: $route.path === item.route }"
+                                @click="checkInvestmentTestAndNavigate(item.route)"
                             >
-                                나의 포트폴리오
-                            </li>
-                            <li
-                                class="in"
-                                :class="{ active: isActive('/make-portfolio') }"
-                                @click="$router.push('/make-portfolio')"
-                            >
-                                포트폴리오 만들기
-                            </li>
-                            <li
-                                class="in"
-                                :class="{ active: isActive('/cart') }"
-                                @click="$router.push('/cart')"
-                            >
-                                장바구니
+                                {{ item.label }}
                             </li>
                         </ul>
                     </div>
@@ -145,14 +133,66 @@
             </template>
         </div>
     </header>
+
+    <!-- 투자성향 분석 안내 대화상자 -->
+    <v-dialog v-model="showInvestmentTestDialog" max-width="400" overlay-opacity="0.5">
+        <v-card class="investment-test-dialog">
+            <v-card-title class="headline">투자성향 분석 필요</v-card-title>
+            <v-card-text>포트폴리오 기능을 사용하기 위해서는 투자성향 분석이 필요합니다.</v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="goToInvestmentTest">
+                    투자성향 분석하러 가기
+                </v-btn>
+                <v-btn color="grey darken-1" text @click="closeInvestmentTestDialog">
+                    다음에 하기
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
 import { useCookies } from 'vue3-cookies';
 import instance from '@/api';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store/authStore';
 
 export default {
     name: 'Header',
+    setup() {
+        const router = useRouter();
+        const authStore = useAuthStore();
+        const showInvestmentTestDialog = ref(false);
+
+        const checkInvestmentTestAndNavigate = (route) => {
+            if (authStore.isAuthenticated && authStore.isTested) {
+                router.push(route);
+            } else if (authStore.isAuthenticated && !authStore.isTested) {
+                showInvestmentTestDialog.value = true;
+            } else {
+                // 로그인되지 않은 경우
+                router.push('/login');
+            }
+        };
+
+        const goToInvestmentTest = () => {
+            showInvestmentTestDialog.value = false;
+            router.push('/investment-test-start');
+        };
+
+        const closeInvestmentTestDialog = () => {
+            showInvestmentTestDialog.value = false;
+        };
+
+        return {
+            checkInvestmentTestAndNavigate,
+            showInvestmentTestDialog,
+            goToInvestmentTest,
+            closeInvestmentTestDialog,
+        };
+    },
     data() {
         return {
             isLoggedIn: false,
@@ -164,6 +204,11 @@ export default {
                 { text: '인플루언서', route: '/influencer' },
                 { text: '유튜브', route: '/youtube' },
                 { text: '뉴스', route: '/news' },
+            ],
+            portfolioItems: [
+                { label: '나의 포트폴리오', route: '/my-portfolio' },
+                { label: '포트폴리오 만들기', route: '/make-portfolio' },
+                { label: '장바구니', route: '/cart' },
             ],
         };
     },
@@ -421,5 +466,20 @@ button {
 .username {
     font-size: 18px; /* 원하는 크기로 설정 */
     font-weight: bold; /* 필요 시 추가 */
+}
+
+.investment-test-dialog {
+    background-color: white !important;
+    border-radius: 8px;
+}
+
+.v-dialog > .v-overlay__content > .v-card {
+    box-shadow: none;
+    border: 1px solid;
+}
+
+::v-deep .v-overlay__scrim {
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.5) !important;
 }
 </style>
