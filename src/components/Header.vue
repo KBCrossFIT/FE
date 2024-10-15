@@ -384,7 +384,7 @@ button {
     gap: 10px;
     position: absolute;
     right: 4%;
-    width: 200px;
+    width: 300px;
     justify-content: flex-end;
 }
 
