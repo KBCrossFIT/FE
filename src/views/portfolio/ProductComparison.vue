@@ -1175,6 +1175,7 @@ const productDetailUrl = (product) => {
 .empty-card,
 .empty-card-desc {
     all: unset;
+    visibility: hidden;
     width: 200px;
     height: 250px;
     display: flex;

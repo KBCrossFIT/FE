@@ -516,7 +516,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
+    padding: 0; /* 내부 여백 제거 */
     background-color: #dc3545;
     color: white;
     border-radius: 4px;
@@ -525,6 +525,7 @@ export default {
 
 .cart-trashcanBtn .mdi-delete {
     font-size: 24px;
+    margin: 0; /* 아이콘의 여백을 제거 */
 }
 
 /* 페이지네이션 스타일 */
