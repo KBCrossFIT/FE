@@ -317,7 +317,7 @@
                             <!-- 상품 정보가 있는 경우 -->
                             <template v-else>
                                 <v-card-title>
-                                    {{ product.productName }} (ID: {{ product.productId }})
+                                    {{ product.productName }}
                                 </v-card-title>
                                 <v-card-text>
                                     <p>

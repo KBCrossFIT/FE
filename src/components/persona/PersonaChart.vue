@@ -1,13 +1,7 @@
 <template>
     <div class="ProportionChart">
         <!-- Single line title with preference info in smaller text -->
-        <h3 class="chart-title">
-            추천 투자비율
-            <span class="preference-inline">
-                투자성향: {{ getPreferenceText(persona.personaPreference) }}
-                <span class="preference-number">({{ persona.personaPreference }})</span>
-            </span>
-        </h3>
+        <h3 class="chart-title">추천 투자비율</h3>
         <div id="chart">
             <apexchart type="pie" width="360" :options="chartOptions" :series="series"></apexchart>
         </div>
@@ -70,22 +64,6 @@ export default {
                 this.persona.bondRate,
                 this.persona.stockRate,
             ];
-        },
-        getPreferenceText(preference) {
-            switch (preference) {
-                case 1:
-                    return '위험 투자';
-                case 2:
-                    return '적극 투자';
-                case 3:
-                    return '위험 중립';
-                case 4:
-                    return '안정 추구';
-                case 5:
-                    return '안정형';
-                default:
-                    return '정보 없음';
-            }
         },
     },
 };
