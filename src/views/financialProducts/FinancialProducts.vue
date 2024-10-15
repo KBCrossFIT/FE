@@ -243,7 +243,9 @@
                         <!-- 펀드 정보 -->
                         <template v-if="selectedCategory === 'fund'">
                             <td>{{ product.fundType }}</td>
-                            <td>{{ product.riskLevel }}</td>
+                            <td :style="getRiskLevelStyle(product.riskLevel)">
+                                {{ mapRiskLevel(product.riskLevel) }}
+                            </td>
                             <td :style="getColorStyle(product.yield12)">{{ product.yield12 }}%</td>
                         </template>
 
@@ -867,6 +869,31 @@ export default {
             showInvestmentTestDialog.value = false;
         }
 
+        // 채권 위험도 매핑
+        const mapRiskLevel = (level) => {
+        const riskLevels = {
+            1: '매우 높은 위험',
+            2: '높은 위험',
+            3: '다소 높은 위험',
+            4: '보통 위험',
+            5: '낮은 위험',
+            6: '매우 낮은 위험'
+        };
+        return riskLevels[level] || `알 수 없음 (${level}등급)`;
+        };
+
+        const getRiskLevelStyle = (level) => {
+        const colors = {
+            1: '#FF0000', // 빨간색
+            2: '#FF6600', // 주황색
+            3: '#FFCC00', // 노란색
+            4: '#CCFF00', // 연두색
+            5: '#66FF00', // 연한 초록색
+            6: '#00FF00'  // 초록색
+        };
+        return { color: colors[level] || 'black' };
+        };
+
         // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
         onMounted(async () => {
             await cartStore.fetchCartItems();
@@ -930,6 +957,8 @@ export default {
             showInvestmentTestDialog,
             goToInvestmentTest,
             closeInvestmentTestDialog,
+            mapRiskLevel,
+            getRiskLevelStyle,
         };
     },
 };
@@ -1058,7 +1087,8 @@ th {
     border-bottom: 1px solid #ddd;
     overflow: hidden; /* 내용이 넘칠 경우 숨김 */
     text-overflow: ellipsis; /* 넘치는 내용은 생략부호로 표시 */
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    white-space: normal; /* 텍스트 줄바꿈 방지 */
+    word-wrap: break-word;
 }
 
 .table tbody tr:hover {
