@@ -56,10 +56,10 @@ export default {
   padding: 60px;
   padding-left: 100px;
   position: relative;
-  top: -1px;
+  top: 28px;
   justify-content: center;
-  border: 1px solid #ddd;
-  height: 424px;
+  /* border: 1px solid #ddd; */
+  height: 430px;
 }
 
 .comparison-item {
