@@ -731,7 +731,7 @@ export default {
                     if (cartItemToRemove && cartItemToRemove.cartId) {
                         await cartStore.removeCartItem(cartItemToRemove.cartId);
                         updateCart();
-                        alert(`상품 ID ${product.productId}이 장바구니에서 제거되었습니다.`);
+                        alert(`상품이 장바구니에서 제거되었습니다.`);
                     } else {
                         console.error('cartItemToRemove가 존재하지 않습니다.');
                     }

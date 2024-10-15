@@ -73,6 +73,8 @@ export default {
                     response.data.responseData.data.investScore > 0 &&
                     response.data.responseData.data.preference > 0;
 
+                console.log(authStore.isTested);
+
                 if (authHeader && refreshToken) {
                     cookies.set('Authorization', authHeader, { secure: true, sameSite: 'Lax' });
                     cookies.set('Refresh-Token', refreshToken, { secure: true, sameSite: 'Lax' });
