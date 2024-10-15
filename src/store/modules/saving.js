@@ -1,6 +1,6 @@
 // store/saving.js
 import { defineStore } from 'pinia';
-import { fetchSavingProducts, searchSavingProduct } from '@/api/financeApi';
+import { fetchSavingProducts, searchSavingProduct,getSavingProductDetail } from '@/api/financeApi';
 
 export const useSavingStore = defineStore('saving', {
   state: () => ({
@@ -46,17 +46,9 @@ export const useSavingStore = defineStore('saving', {
     async fetchSavingProductDetail(productId) {
       console.log('배열 확인', this.savingProducts);
 
-      const productsArray = this.savingProducts;
+      const searchResult = await getSavingProductDetail(productId);
 
-      if (!Array.isArray(productsArray)) {
-        console.error('savingProducts가 배열이 아닙니다:', productsArray);
-        return null; // Return null or handle error appropriately
-      }
-
-      // Find the product by ID
-      return (
-        productsArray.find((product) => product.productID === productId) || null
-      );
+      return searchResult.data;
     },
 
     async fetchSavingProducts() {

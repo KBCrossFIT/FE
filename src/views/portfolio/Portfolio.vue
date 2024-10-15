@@ -28,26 +28,34 @@
                 <div class="portfolio-summary-info">
                     <div class="summary-item">
                         <p>총 투자금액</p>
-                        <p>{{ formattedTotalInvestment }}원</p>
+                        <p style="color: black;">{{ formattedTotalInvestment }}원</p>
                     </div>
                     <div class="summary-item">
                         <p>예상 수익률</p>
-                        <p>{{ portfolioDetail.expectedReturn }}%</p>
+                        <p :style="{ color: portfolioDetail.expectedReturn < 0 ? 'blue' : 'red' }">
+                            {{ portfolioDetail.expectedReturn }}%
+                        </p>
                     </div>
                     <div class="summary-item">
                         <p>예상 투자손익</p>
-                        <p>{{ expectedProfit.toLocaleString() }}원</p>
+                        <p :style="{ color: expectedProfit < 0 ? 'blue' : 'red' }">
+                            {{ expectedProfit.toLocaleString() }}원
+                        </p>
                     </div>
                     <div class="summary-item">
                         <p>위험도</p>
-                        <p :class="getRiskLevelClass(portfolioDetail.riskLevel)">
-                            {{ getRiskLevelLabel(portfolioDetail.riskLevel) }}
+                        <p>
+                            <span :class="getRiskLevelClass(portfolioDetail.riskLevel)">
+                                {{ getRiskLevelLabel(portfolioDetail.riskLevel) }}
+                            </span>
                             <span class="risk-grade">({{ portfolioDetail.riskLevel }}등급)</span>
                         </p>
                     </div>
                     <div class="summary-item">
                         <p>총 평가금액</p>
-                        <p>{{ totalEvaluation.toLocaleString() }}원</p>
+                        <p :style="{ color: totalEvaluation > portfolioDetail.total ? 'red' : 'blue' }">
+                            {{ totalEvaluation.toLocaleString() }}원
+                        </p>
                     </div>
                 </div>
             </section>
@@ -55,26 +63,25 @@
             <section class="portfolio-details">
                 <h2>포트폴리오 상세 내역</h2>
                 <div class="portfolio-items">
-                    <div
-                        v-for="item in portfolioDetail.portfolioItems"
-                        :key="item.portfolioItemId"
-                        class="portfolio-item"
-                    >
+                    <div v-for="item in portfolioItemsWithNames" :key="item.portfolioItemId" class="portfolio-item">
                         <span class="item-type">{{ getProductTypeLabel(item.productType) }}</span>
-                        <span class="item-id">ID: {{ item.productId }}</span>
-                        <span v-if="item.stockCode" class="item-code">{{ item.stockCode }}</span>
+                        <span class="item-name"><strong>{{ item.productName || stockDetails[item.stockCode] || '로딩 중...' }}</strong></span>
                         <span class="item-amount">
-                            <span class="amount-label">투자 금액:</span>
-                            {{ item.amount.toLocaleString() }}원
+                            <span class="label">투자 금액:</span>
+                            <span class="value">{{ item.amount.toLocaleString() }}원</span>
                         </span>
                         <span class="item-return">
-                            <span class="return-label">예상 수익률:</span>
-                            {{ item.expectedReturn }}%
+                            <span class="label">예상 수익률:</span>
+                            <span class="value" :style="{ color: item.expectedReturn < 0 ? 'blue' : 'red' }">
+                                {{ item.expectedReturn }}%
+                            </span>
                         </span>
-                        <span class="item-risk" :class="getRiskLevelClass(item.riskLevel)">
-                            <span class="risk-label">위험도:</span>
-                            {{ getRiskLevelLabel(item.riskLevel) }}
-                            <span class="risk-grade">({{ item.riskLevel }}등급)</span>
+                        <span class="item-risk">
+                            <span class="label">위험도:</span>
+                            <span class="value" :class="getRiskLevelClass(item.riskLevel)">
+                                {{ getRiskLevelLabel(item.riskLevel) }}
+                                <span class="risk-grade">({{ item.riskLevel }}등급)</span>
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -92,7 +99,17 @@
 import { ref, computed, onMounted, watch } from 'vue'; // Composition API
 import { useRoute, useRouter } from 'vue-router'; // 라우트 정보 접근을 위한 useRoute import
 import { usePortfolioStore } from '@/store/modules/portfolio'; // Pinia 스토어 가져오기
+import { useBondStore } from '@/store/modules/bond';
+import { useFundStore } from '@/store/modules/fund';
+import { useSavingStore } from '@/store/modules/saving';
+import { useDepositStore } from '@/store/modules/deposit';
 import VueApexCharts from 'vue3-apexcharts'; // ApexCharts 컴포넌트 import
+import {
+    getBondProductDetail,
+    getSavingProductDetail,
+    getFundProductDetail
+} from '@/api/financeApi';
+import { searchStock } from '@/api/stock';
 
 // 현재 라우트에서 포트폴리오 ID를 가져옴
 const route = useRoute();
@@ -101,6 +118,12 @@ const portfolioId = route.params.id; // 라우트 파라미터에서 포트폴�
 
 // Pinia 스토어 가져오기
 const portfolioStore = usePortfolioStore();
+const bondStore = useBondStore();
+const fundStore = useFundStore();
+const savingStore = useSavingStore();
+const depositStore = useDepositStore();
+const portfolioItemsWithNames = ref([]);
+const stockDetails = ref({});
 
 // 포트폴리오 상세 정보를 가져와 저장할 상태
 const portfolioDetail = ref({});
@@ -132,6 +155,55 @@ const getPortfolioDetailAction = async (portfolioId) => {
     }
 };
 
+const fetchStockDetails = async () => {
+    for (const item of portfolioItemsWithNames.value) {
+        if (item.stockCode) {
+            stockDetails.value[item.stockCode] = await getStockDetail(item.stockCode);
+        }
+    }
+}
+
+const getProductName = async (productId, productType) => {
+    try {
+        let productDetail;
+        let productName;
+        switch (productType) {
+            case 'S':
+                productDetail = await getSavingProductDetail(productId);
+                productName = productDetail.products[0].finPrdtNm;
+                break;
+            case 'B':
+                productDetail = await getBondProductDetail(productId);
+                console.log(productDetail);
+                productName = productDetail.isinCdNm; // 채권 상품명 필드에 맞게 수정
+                break;
+            case 'F':
+                productDetail = await getFundProductDetail(productId);
+                console.log(productDetail);
+                productName = productDetail.productNm; // 펀드 상품명 필드에 맞게 수정
+                break;
+            default:
+                productDetail = null;
+        }
+
+        console.log('Product Name:', productName);
+        return productName; // 상품 이름 반환
+    } catch (error) {
+        console.error('Error fetching product name:', error);
+        return '���품명 조회 실패'; // 에러 발생 시 기본값 반환
+    }
+}
+
+const getStockDetail = async (searchTerm) => {
+    try {
+        const stockDetail = await searchStock(searchTerm);
+        return stockDetail[0].stockName;
+    } catch (error) {
+        console.error('주식 정보 조회 중 오류 발생 : ', error);
+        return '주식 정보 조회 실패';
+    }
+}
+
 // 생성 날짜를 사람이 읽을 수 있는 형식으로 변환
 const formattedCreationDate = computed(() => {
     if (!portfolioDetail.value.creationDate) return '';
@@ -149,6 +221,7 @@ const formattedCreationDate = computed(() => {
 // 컴포넌트가 마운트될 때 포트폴리오 데이터를 가져오기
 onMounted(() => {
     getPortfolioDetailAction(portfolioId); // 포트폴리오 데이터 가져오기
+    getProductName
 });
 
 // 상품 종류를 라벨로 변환
@@ -264,6 +337,24 @@ const goToPortfolioList = async () => {
     await portfolioStore.addPortfolioToList(portfolioDetail.value);
     router.push({ name: 'MyPortfolio' });
 };
+
+const fetchProductNames = async () => {
+    if (portfolioDetail.value.portfolioItems) {
+        try {
+            portfolioItemsWithNames.value = await Promise.all(
+                portfolioDetail.value.portfolioItems.map(async (item) => ({
+                    ...item,
+                    productName: await getProductName(item.productId, item.productType)
+                }))
+            );
+        } catch (error) {
+            console.error('Error fetching product names:', error);
+        }
+    }
+};
+
+watch(() => portfolioDetail.value, fetchProductNames, { immediate: true });
+watch(portfolioItemsWithNames, fetchStockDetails, { immediate: true });
 </script>
 
 <style scoped>
@@ -386,64 +477,43 @@ const goToPortfolioList = async () => {
     padding: 15px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    flex-wrap: wrap;
-}
-
-.portfolio-item:hover {
-    transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.portfolio-item span {
-    margin-right: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .item-type {
+    width: 10%;
     font-weight: bold;
     color: #007bff;
     font-size: 1.1em;
-    min-width: 80px;
 }
 
-.item-id,
-.item-code {
-    color: #6c757d;
-    font-size: 0.9em;
+.item-name {
+    width: 25%;
+    color: #333;
+    font-size: 1em;
 }
 
 .item-amount,
 .item-return,
 .item-risk {
-    font-weight: bold;
-    font-size: 1em;
+    width: 20%;
+    display: flex;
+    align-items: center;
 }
 
-.amount-label,
-.return-label,
-.risk-label {
+.label {
     color: #6c757d;
     font-size: 0.9em;
     margin-right: 5px;
 }
 
-.item-amount {
-    color: #28a745;
-}
-
-.item-return {
-    color: #ffc107;
-}
-
-.item-risk {
+.value {
     font-weight: bold;
     font-size: 1em;
 }
 
-.risk-label {
-    color: #6c757d;
-    font-size: 0.9em;
-    margin-right: 5px;
+.item-amount .value {
+    color: black;
 }
 
 .risk-grade {
@@ -537,8 +607,12 @@ const goToPortfolioList = async () => {
         align-items: flex-start;
     }
 
-    .portfolio-item span {
-        margin-right: 0;
+    .item-type,
+    .item-name,
+    .item-amount,
+    .item-return,
+    .item-risk {
+        width: 100%;
         margin-bottom: 10px;
     }
 }
