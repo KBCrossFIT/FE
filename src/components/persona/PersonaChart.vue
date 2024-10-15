@@ -94,13 +94,6 @@ export default {
     margin-left: 8px;
 }
 
-.preference-number {
-    font-size: 0.7rem;
-    font-style: italic;
-    color: #21a8e6;
-    margin-left: 4px;
-}
-
 #chart {
     width: 20vw;
     height: 20vw;
