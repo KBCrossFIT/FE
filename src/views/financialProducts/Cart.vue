@@ -5,21 +5,20 @@
             <div class="spinner"></div>
         </div>
 
+        <!-- 로그인하지 않은 상태 -->
+        <div v-else-if="!isAuthenticated" class="empty_login_data">
+            <h1>로그인 정보가 없습니다.</h1>
+            <p>로그인하고 금융상품을 담아보세요.</p>
+            <router-link to="/login" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt icon"></i>
+                <span class="menu-text"> 로그인하러 가기</span>
+            </router-link>
+        </div>
+
         <!-- 빈 장바구니 상태 -->
         <div v-else-if="cart.length === 0" class="empty-cart">
             <h1>장바구니가 비어 있습니다.</h1>
             <router-link to="/products/deposit?page=1&pageSize=10">상품 보러가기</router-link>
-
-            <br />
-            <span v-if="!authStore.isAuthenticated">로그인하고 금융상품을 담아보세요.</span>
-            <router-link
-                v-if="!authStore.isAuthenticated"
-                to="/login"
-                class="btn btn-primary sidebar-link"
-            >
-                <i class="fas fa-sign-in-alt icon"></i>
-                <span class="menu-text"> 로그인하러 가기</span>
-            </router-link>
         </div>
 
         <!-- 장바구니 목록 -->
@@ -53,8 +52,13 @@
                             />
                         </div>
                         <div class="col product-type">
-                            {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                            <span v-if="item.productType === 'S'">
+                                {{ item.rsrvType === 'S' ? '적금' : '예금' }}
+                            </span>
+                            <span v-else-if="item.productType === 'B'"> 채권 </span>
+                            <span v-else> 펀드 </span>
                         </div>
+
                         <div
                             class="col product-name"
                             @click="
@@ -552,6 +556,37 @@ export default {
     display: flex;
     justify-content: flex-end;
     gap: 20px;
+}
+
+.empty_login_data {
+    position: absolute;
+    top: 40%; /* 조금 위로 올림 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 50px; /* 여백을 살짝 늘림 */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 350px; /* 필요에 따라 너비 조정 */
+}
+
+.empty_login_data h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+    font-size: 1.8rem; /* 글자 크기 키움 */
+    font-weight: bold;
+}
+
+.empty_login_data p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    font-size: 1.2rem; /* 본문 글자 크기 조정 */
+}
+
+.empty_login_data .btn {
+    font-size: 1.1rem; /* 버튼 글자 크기 조정 */
+    padding: 10px 20px;
 }
 
 /* 반응형 디자인 */
