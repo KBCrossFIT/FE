@@ -38,8 +38,6 @@
     <div id="right">
       <v-container>
         <div id="seartext" class="search-container">
-          <h1 class="sixth">_</h1>
-
           <div id="search" class="search-filter">
             <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
             <input
@@ -48,7 +46,7 @@
               class="form-control"
               placeholder="검색어를 입력해 주세요"
             />
-            <v-btn class="erase-btn" @click="eraseSearch"> 지우기 </v-btn>
+            <!-- <v-btn class="erase-btn" @click="eraseSearch"> 지우기 </v-btn> -->
           </div>
         </div>
 
@@ -152,6 +150,7 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   justify-content: space-between;
+  justify-content: flex-end; /* 오른쪽 정렬로 변경 */
 }
 
 #search {

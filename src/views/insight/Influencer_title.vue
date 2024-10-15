@@ -17,13 +17,20 @@
     <!-- 페르소나 데이터를 정상적으로 로드했을 때 -->
     <v-container v-else>
       <v-row>
-        <v-col v-for="persona in paginatedPersonas" :key="persona.personaId" cols="12" md="4">
+        <v-col
+          v-for="persona in paginatedPersonas"
+          :key="persona.personaId"
+          cols="12"
+          md="4"
+        >
           <v-card class="influencer-card my-3" @click="openModal(persona)">
             <!-- 이미지 경로가 있으면 이미지 표시, 없으면 기본 이미지 표시 -->
             <v-img
               :src="
                 persona.imagePath
-                  ? `http://localhost:8080/api/personas/crossfit_images/${persona.imagePath.split('/').pop()}`
+                  ? `http://localhost:8080/api/personas/crossfit_images/${persona.imagePath
+                      .split('/')
+                      .pop()}`
                   : '/default_image.jpg'
               "
               class="image-box"
@@ -31,10 +38,12 @@
               @error="onImageError"
             />
             <v-card-title class="card-title">
-              <h3 class="post-name">{{ persona.personaName || "이름 없음" }}</h3>
+              <h3 class="post-name">
+                {{ persona.personaName || '이름 없음' }}
+              </h3>
             </v-card-title>
             <div class="content">
-              <p class="post-field">{{ persona.job || "직업 정보 없음" }}</p>
+              <p class="post-field">{{ persona.job || '직업 정보 없음' }}</p>
             </div>
           </v-card>
         </v-col>
@@ -44,18 +53,22 @@
     <!-- 페이지네이션 -->
     <div id="Pagination">
       <v-container>
-        <v-pagination v-model="page" :length="totalPages" @input="onPageChange"></v-pagination>
+        <v-pagination
+          v-model="page"
+          :length="totalPages"
+          @input="onPageChange"
+        ></v-pagination>
       </v-container>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import { ref, computed, onMounted, defineComponent } from "vue";
+import axios from 'axios';
+import { ref, computed, onMounted, defineComponent } from 'vue';
 
 export default defineComponent({
-  name: "InfluencerList",
+  name: 'InfluencerList',
   setup(props, { emit }) {
     const personas = ref([]);
     const loading = ref(true);
@@ -64,10 +77,12 @@ export default defineComponent({
 
     const loadPersonas = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/personas/get");
+        const response = await axios.get(
+          'http://localhost:8080/api/personas/get'
+        );
         personas.value = response.data;
       } catch (error) {
-        console.error("Error loading personas:", error);
+        console.error('Error loading personas:', error);
       } finally {
         loading.value = false;
       }
@@ -88,12 +103,12 @@ export default defineComponent({
     };
 
     const onImageError = (event) => {
-      event.target.src = "/default_image.jpg"; // 이미지 로드 실패 시 기본 이미지로 대체
+      event.target.src = '/default_image.jpg'; // 이미지 로드 실패 시 기본 이미지로 대체
       // event.target.src = "@/assets/img/1second.jpg";
     };
 
     const openModal = (persona) => {
-      emit("openModal", persona);
+      emit('openModal', persona);
     };
 
     onMounted(() => {
@@ -117,8 +132,8 @@ export default defineComponent({
 <style scoped>
 .influencer-list {
   padding: 20px;
-  background-color: #f9f9f9; /* 배경색 */
-  max-width: 1200px;
+  /* background-color: #f9f9f9; 배경색 */
+  /* max-width: 1200px; */
   margin: 0 auto; /* 중앙 정렬 */
 }
 

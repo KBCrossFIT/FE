@@ -38,8 +38,6 @@
     <div id="right">
       <v-container>
         <div id="seartext" class="search-container">
-          <h1 class="titleYoutube">_</h1>
-
           <div id="search" class="search-filter">
             <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
             <input
@@ -159,6 +157,7 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   justify-content: space-between;
+  justify-content: flex-end; /* 오른쪽 정렬로 변경 */
 }
 
 #search {

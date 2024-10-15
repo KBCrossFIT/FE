@@ -8,15 +8,16 @@
     <div id="left">
       <v-card class="pa-4" elevation="2" style="height: 100%">
         <v-card-text>
-            <div class="list-container">
-                <span
-                  v-for="item in menuItems"
-                  :key="item.path"
-                  @click="navigateTo(item.path)"
-                  :class="['list-item', { active: isActive(item.path) }]">
-                  {{ item.text }}
-                </span>
-            </div>
+          <div class="list-container">
+            <span
+              v-for="item in menuItems"
+              :key="item.path"
+              @click="navigateTo(item.path)"
+              :class="['list-item', { active: isActive(item.path) }]"
+            >
+              {{ item.text }}
+            </span>
+          </div>
         </v-card-text>
       </v-card>
     </div>
@@ -25,8 +26,6 @@
     <div id="right">
       <v-container>
         <div class="search-container">
-          <h1 class="sixth">뉴스</h1>
-
           <div id="search" class="search-filter">
             <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
             <input
@@ -145,6 +144,7 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   justify-content: space-between;
+  justify-content: flex-end; /* 오른쪽 정렬로 변경 */
 }
 
 #search {

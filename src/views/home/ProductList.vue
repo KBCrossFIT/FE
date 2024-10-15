@@ -354,11 +354,17 @@ export default {
 
             if (investmentResponse[investmentResponse.length - 1] === 1) {
               state.activeInvestment = '안전형';
-            } else if (investmentResponse[investmentResponse.length - 1] === 2) {
+            } else if (
+              investmentResponse[investmentResponse.length - 1] === 2
+            ) {
               state.activeInvestment = '안전추구형';
-            } else if (investmentResponse[investmentResponse.length - 1] === 3) {
+            } else if (
+              investmentResponse[investmentResponse.length - 1] === 3
+            ) {
               state.activeInvestment = '위험중립형';
-            } else if (investmentResponse[investmentResponse.length - 1] === 4) {
+            } else if (
+              investmentResponse[investmentResponse.length - 1] === 4
+            ) {
               state.activeInvestment = '적극투자형';
             } else {
               state.activeInvestment = '공격투자형';
@@ -387,7 +393,7 @@ export default {
       state.activeInvestment = '공격투자형';
       await fetchAgeGroupProducts(20, true);
       await fetchInvestmentProducts(5, true);
-    }
+    };
 
     return {
       state,
@@ -408,11 +414,13 @@ export default {
 
 <style scoped>
 .product-container {
+  /* 배경색 설정 (필요 시) */
   /* background-color: #f9fafb; */
 }
 
 .product-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
@@ -460,9 +468,9 @@ export default {
 /* 상품 카드 스타일 */
 .product-grid,
 .investment-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2%;
+  display: flex; /* flex로 변경하여 세로 배치 설정 */
+  flex-direction: column; /* 세로 방향으로 아이템 배치 */
+  gap: 20px; /* 카드 간의 간격 설정 */
 }
 
 .product-card {
@@ -481,21 +489,18 @@ export default {
 .product-card h3 {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
-  color: #0070f3;
+  color: blackslider-controls;
 }
 
+/* 반응형 설정 */
 @media (max-width: 768px) {
   .product-grid,
   .investment-grid {
-    grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+    flex-direction: column; /* 작은 화면에서는 세로 배치 유지 */
   }
 }
 
 @media (max-width: 576px) {
-  .product-grid,
-  .investment-grid {
-    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
-  }
   .age-tabs button,
   .investment-types button {
     width: 100%;
