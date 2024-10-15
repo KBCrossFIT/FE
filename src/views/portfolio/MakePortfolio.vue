@@ -867,16 +867,20 @@ export default {
                     const newPortfolioItem = formatDataForSave();
                     console.log(newPortfolioItem);
                     if (newPortfolioItem.length > 0) {
-                        await portfolioStore.postPortfolioAction(
-                            formatDataForSave(),
-                            portfolioName.value
-                        );
-                        const id = newPortfolio.value.portfolioId;
-                        router.push(`/portfolio/${id}`);
+                        try {
+                            await portfolioStore.postPortfolioAction(
+                                formatDataForSave(),
+                                portfolioName.value
+                            );
+                            const id = newPortfolio.value.portfolioId;
+                            router.push(`/portfolio/${id}`);
+                        } catch (error) {
+                            console.error('Error while saving the portfolio:', error);
+                        }
                     }
-                    isSaving.value = false;
                 }
             }
+            isSaving.value = false; // 작업 완료 후 isSaving을 항상 false로 설정
         };
 
         onMounted(() => {

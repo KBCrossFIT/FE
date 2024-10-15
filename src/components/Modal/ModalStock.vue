@@ -42,7 +42,6 @@
                                 <input
                                     type="checkbox"
                                     :checked="selected.includes(item.stockCode)"
-                                    @change="toggleSelect(item)"
                                 />
                             </td>
                             <td style="text-align: left">{{ item.stockCode }}</td>
@@ -51,12 +50,12 @@
                             <td style="text-align: right" :style="getColorStyle(item.vs)">
                                 <span v-if="item.vs > 0">▲</span>
                                 <span v-else-if="item.vs < 0">▼</span>
-                                {{ Math.abs(item.vs) }}
+                                {{ Math.abs(item.vs) }}원
                             </td>
                             <td style="text-align: right" :style="getColorStyle(item.fltRt)">
                                 <span v-if="item.fltRt > 0">+</span>{{ item.fltRt }}%
                             </td>
-                            <td style="text-align: right">{{ formatPrice(item.clpr) }}</td>
+                            <td style="text-align: right">{{ formatPrice(item.clpr) }}원</td>
                         </tr>
                     </tbody>
                 </table>

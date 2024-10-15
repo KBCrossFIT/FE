@@ -1,281 +1,328 @@
 <template>
-  <div class="black-bg" v-if="isOpen" @click="closeModal">
-    <div class="white-bg" @click.stop>
-      <div class="content-wrapper">
-        <div class="details">
-          <div class="box1">
-            <div class="persona_image">
-              <PersonaImage :persona="persona" />
-            </div>
-            <div class="persona-comment">
-              <PersonaComment :persona="persona" />
-            </div>
-          </div>
-          <div class="persona-chart">
-            <PersonaChart :persona="persona" />
-          </div>
-        </div>
+    <div class="black-bg" v-if="isOpen" @click="closeModal">
+        <div class="white-bg" @click.stop>
+            <div class="content-wrapper">
+                <div class="details">
+                    <div class="box1">
+                        <h3 class="section-title">{{ persona.personaName || '이름 없음' }}</h3>
+                        <!-- Persona Image -->
+                        <div class="persona_image">
+                            <PersonaImage :persona="persona" />
+                        </div>
+                        <!-- Persona Comment -->
+                        <div class="persona-comment">
+                            <PersonaComment :persona="persona" />
+                        </div>
+                    </div>
 
-        <div class="chatbot">
-          <h4 class="chatbotName">{{ persona.personaName }}</h4>
-          <div class="chatbox">
-            <div class="messages" ref="messageContainer">
-              <p
-                v-for="(msg, index) in messages"
-                :key="index"
-                :class="{
-                  'bot-message': msg.isBot,
-                  'user-message': !msg.isBot,
-                }"
-                v-html="msg.text"
-              ></p>
+                    <!-- Persona Info and Contact Info in a Single Row -->
+                    <div class="info-row">
+                        <!-- Persona Info Section -->
+                        <div class="persona-info">
+                            <p><strong>직업:</strong> {{ persona.job || '직업 정보 없음' }}</p>
+                            <p>
+                                <strong>투자 성향:</strong>
+                                <span class="preference">{{
+                                    getPreferenceText(persona.personaPreference)
+                                }}</span>
+                                <span class="preference-number"
+                                    >({{ persona.personaPreference }})</span
+                                >
+                            </p>
+                        </div>
+
+                        <!-- Contact Info Section -->
+                        <div class="contact-info">
+                            <h3 class="section-title">투자 정보</h3>
+                            <p><strong>예/적금:</strong> {{ persona.savingsRate || 'N/A' }}%</p>
+                            <p><strong>펀드:</strong> {{ persona.fundRate || 'N/A' }}%</p>
+                            <p><strong>채권:</strong> {{ persona.bondRate || 'N/A' }}%</p>
+                            <p><strong>주식:</strong> {{ persona.stockRate || 'N/A' }}%</p>
+                        </div>
+                    </div>
+
+                    <!-- Persona Chart Positioned Below -->
+                    <div class="persona-chart">
+                        <PersonaChart :persona="persona" />
+                    </div>
+                </div>
+
+                <!-- Right Section for Chatbot Interaction -->
+                <div class="chatbot">
+                    <h4 class="chatbotName">{{ persona.personaName }}</h4>
+                    <div class="chatbox">
+                        <div class="messages" ref="messageContainer">
+                            <p
+                                v-for="(msg, index) in messages"
+                                :key="index"
+                                :class="{
+                                    'bot-message': msg.isBot,
+                                    'user-message': !msg.isBot,
+                                }"
+                                v-html="msg.text"
+                            ></p>
+                        </div>
+                        <div class="input-box">
+                            <input
+                                v-model="userMessage"
+                                type="text"
+                                placeholder="메시지를 입력하세요"
+                                @keyup.enter="sendMessage"
+                            />
+                            <button @click="sendMessage">전송</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="input-box">
-              <input
-                v-model="userMessage"
-                type="text"
-                placeholder="메시지를 입력하세요"
-                @keyup.enter="sendMessage"
-              />
-              <button @click="sendMessage">전송</button>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
-import {
-  defineComponent,
-  onMounted,
-  onUnmounted,
-  ref,
-  watch,
-  nextTick,
-} from "vue";
-import sendMessageToChatbot from "@/api/chatbot"; // API 파일 import
-import PersonaImage from "@/components/persona/PersonaImage.vue";
-import PersonaComment from "@/components/persona/PersonaComment.vue";
-import PersonaChart from "@/components/persona/PersonaChart.vue";
+import { defineComponent, ref, watch, nextTick } from 'vue';
+import sendMessageToChatbot from '@/api/chatbot';
+import PersonaImage from '@/components/persona/PersonaImage.vue';
+import PersonaComment from '@/components/persona/PersonaComment.vue';
+import PersonaChart from '@/components/persona/PersonaChart.vue';
 
 export default defineComponent({
-  name: "ModalPersona",
-  components: {
-    PersonaImage,
-    PersonaComment,
-    PersonaChart,
-  },
-  props: {
-    isOpen: {
-      type: Boolean,
-      required: true,
+    name: 'ModalPersona',
+    components: {
+        PersonaImage,
+        PersonaComment,
+        PersonaChart,
     },
-    persona: {
-      type: Object,
-      required: true,
-      default: () => ({}),
+    props: {
+        isOpen: {
+            type: Boolean,
+            required: true,
+        },
+        persona: {
+            type: Object,
+            required: true,
+            default: () => ({}),
+        },
     },
-  },
-  setup(props, { emit }) {
-    const userMessage = ref(""); // 사용자의 메시지를 저장
-    const messages = ref([]); // 대화 내용을 저장
-    const messageContainer = ref(null);
+    setup(props, { emit }) {
+        const userMessage = ref('');
+        const messages = ref([]);
+        const messageContainer = ref(null);
 
-    const scrollToBottom = async () => {
-      await nextTick(); // DOM 업데이트 후 실행
-      if (messageContainer.value) {
-        messageContainer.value.scrollTop = messageContainer.value.scrollHeight; // 스크롤을 맨 아래로 이동
-      }
-    };
+        const scrollToBottom = async () => {
+            await nextTick();
+            if (messageContainer.value) {
+                messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
+            }
+        };
 
-    const sendMessage = async () => {
-      if (!userMessage.value.trim()) return; // 빈 메시지 전송 방지
+        const sendMessage = async () => {
+            if (!userMessage.value.trim()) return;
 
-      const message = userMessage.value; // 사용자가 입력한 메시지
+            const message = userMessage.value;
+            messages.value.push({ text: message, isBot: false });
+            userMessage.value = '';
 
-      // 사용자 메시지 추가
-      messages.value.push({ text: message, isBot: false });
-      userMessage.value = ""; // 입력창 초기화
+            await scrollToBottom();
 
-      // 사용자가 메시지 추가할 때 스크롤 이동
-      await scrollToBottom();
+            try {
+                const response = await sendMessageToChatbot(props.persona.personaName, message);
+                messages.value.push({ text: response, isBot: true });
+            } catch (error) {
+                messages.value.push({ text: '응답을 받을 수 없습니다.', isBot: true });
+            }
 
-      // 챗봇에게 메시지 전송
-      try {
-        const response = await sendMessageToChatbot(
-          props.persona.personaName,
-          message
-        ); // 챗봇에 메시지 전송
-        messages.value.push({ text: response, isBot: true }); // 챗봇 응답 추가
-      } catch (error) {
-        messages.value.push({ text: "응답을 받을 수 없습니다.", isBot: true }); // 오류 메시지
-      }
+            await scrollToBottom();
+        };
 
-      // 챗봇 응답 메시지가 추가될 때도 스크롤 이동
-      await scrollToBottom();
-    };
+        const closeModal = () => {
+            messages.value = [];
+            emit('close');
+        };
 
-    const closeModal = () => {
-      messages.value = [];
-      emit("close");
-    };
+        watch(
+            () => props.isOpen,
+            (newVal) => {
+                if (!newVal) {
+                    messages.value = [];
+                }
+            }
+        );
 
-    watch(
-      () => props.isOpen,
-      (newVal) => {
-        if (!newVal) {
-          messages.value = []; // 모달이 닫힐 때 대화 기록 초기화
-        }
-      }
-    );
+        const getPreferenceText = (preference) => {
+            switch (preference) {
+                case 1:
+                    return '위험 투자';
+                case 2:
+                    return '적극 투자';
+                case 3:
+                    return '위험 중립';
+                case 4:
+                    return '안정 추구';
+                case 5:
+                    return '안정형';
+                default:
+                    return '정보 없음';
+            }
+        };
 
-    onMounted(() => {
-      // document.body.style.overflow = "hidden";
-    });
-
-    onUnmounted(() => {
-      // document.body.style.overflow = "";
-    });
-
-    return {
-      closeModal,
-      sendMessage,
-      userMessage,
-      messages,
-      messageContainer,
-    };
-  },
+        return {
+            closeModal,
+            sendMessage,
+            userMessage,
+            messages,
+            messageContainer,
+            getPreferenceText,
+        };
+    },
 });
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap");
-body {
-  margin: 0;
-}
-div {
-  box-sizing: border-box;
-}
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
 
 .black-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
 }
 .white-bg {
-  height: 80vh; /* 뷰포트 높이의 70% */
-  width: 75vw; /* 뷰포트 너비의 65% */
-  background: white;
-  border-radius: 1rem; /* 둥근 모서리 반응형 */
+    height: 80vh;
+    width: 75vw;
+    background: white;
+    border-radius: 1rem;
 }
 
-/* 챗봇 화면 style css */
 .content-wrapper {
-  display: flex;
-  height: 100%;
+    display: flex;
+    height: 100%;
 }
 
 .details {
-  flex: 6.5; /* 왼쪽 65% */
-  padding-right: 0.3vw; /* 반응형 간격 */
-  border-right: 1px solid #ddd; /* 구분선 */
-}
-
-.personaImage {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 0.5vh; /* 반응형 여백 */
-}
-
-.box1 {
-  display: flex;
-  margin: 10%;
+    flex: 6.5;
+    padding-right: 0.3vw;
+    border-right: 1px solid #ddd;
+    margin-top: 20px;
 }
 
 .persona-comment {
-  flex: 1;
-  margin-left: 15%;
+    margin: 0 auto;
+    width: 60%;
+    text-align: center;
+    font-size: 1.3rem;
 }
 
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+.persona-info,
+.contact-info {
+    flex: 1;
+    padding: 0.5vw;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    color: #424242;
+    text-align: center;
+}
+
+.preference {
+    font-weight: 600;
+    color: #1976d2;
+}
+
+.preference-number {
+    font-style: italic;
+    color: #9e9e9e;
+    margin-left: 4px;
+}
+
+/* Persona Chart Section */
+.persona-chart {
+    margin-top: 2vh;
+    display: flex;
+    justify-content: left;
+    margin-left: 40px;
+}
+
+/* Chatbot styling */
 .chatbot {
-  flex: 3.5; /* 오른쪽 35% */
-  padding-right: 1vw;
-  padding-left: 1vw;
-  font-family: "Nanum Gothic", sans-serif;
-  font-size: 0.8em;
+    flex: 3.5;
+    padding-right: 1vw;
+    padding-left: 1vw;
+    font-family: 'Nanum Gothic', sans-serif;
 }
-
 .chatbotName {
-  font-size: 2rem; /* 반응형 글자 크기 */
-  font-weight: 900;
-  color: #333; /* 글자 색상 */
-  text-align: center; /* 텍스트 정렬 */
-  margin-top: 1.5vh; /* 상하 여백을 반응형으로 설정 */
-  margin-bottom: 0.2vh;
+    font-size: 2rem;
+    font-weight: 900;
+    color: #333;
+    text-align: center;
+    margin: 1.5vh 0 0.2vh;
 }
 
 .chatbox {
-  display: flex;
-  flex-direction: column; /* 세로 정렬 */
-  height: 88%; /* 전체 높이 */
+    display: flex;
+    flex-direction: column;
+    height: 88%;
 }
 
 .messages {
-  flex: 1;
-  overflow-y: scroll;
-  margin-bottom: 1vh; /* 반응형 하단 여백 */
-  padding: 1vw; /* 반응형 패딩 */
-  display: flex;
-  flex-direction: column; /* 아래에서 위로 쌓이게 설정 */
+    flex: 1;
+    overflow-y: scroll;
+    padding: 1vw;
+    display: flex;
+    flex-direction: column;
 }
 
 .bot-message {
-  align-self: flex-start; /* 챗봇 메시지는 왼쪽 정렬 */
-  background-color: #7bd5c3; /* 챗봇 메시지 배경 */
-  border-radius: 1rem; /* 반응형 둥근 모서리 */
-  padding: 0.6vw; /* 반응형 패딩 */
-  color: white;
-  margin: 0.5vh 0; /* 상하 간격 반응형 설정 */
-  margin-right: 20%; /* 반응형 너비 조정 */
+    align-self: flex-start;
+    background-color: #7bd5c3;
+    border-radius: 1rem;
+    padding: 0.6vw;
+    color: white;
+    margin: 0.5vh 0;
+    margin-right: 20%;
 }
 
 .user-message {
-  align-self: flex-end; /* 사용자 메시지는 오른쪽 정렬 */
-  background-color: #e0e0e0; /* 사용자 메시지 배경 */
-  border-radius: 1rem; /* 반응형 둥근 모서리 */
-  padding: 0.6vw; /* 반응형 패딩 */
-  margin: 0.5vh 0; /* 상하 간격 반응형 설정 */
-  margin-left: 20%; /* 반응형 너비 조정 */
+    align-self: flex-end;
+    background-color: #e0e0e0;
+    border-radius: 1rem;
+    padding: 0.6vw;
+    margin: 0.5vh 0;
+    margin-left: 20%;
 }
 
 .input-box {
-  display: flex;
-  margin-top: auto; /* 위쪽에 여백 없이 고정 */
+    display: flex;
 }
 
 .input-box input {
-  flex: 8.5;
-  padding: 0.6vw; /* 반응형 패딩 */
-  border: 1px solid #ddd;
-  border-radius: 0.5rem; /* 반응형 둥근 모서리 */
+    flex: 8.5;
+    padding: 0.6vw;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
 }
 
 .input-box button {
-  flex: 1.5;
-  padding: 0.6vw; /* 반응형 패딩 */
-  margin-left: 0.5vw; /* 반응형 여백 */
-  background-color: #61cafa;
-  color: white;
-  border: none;
-  border-radius: 0.5rem; /* 반응형 둥근 모서리 */
+    flex: 1.5;
+    padding: 0.6vw;
+    margin-left: 0.5vw;
+    background-color: #61cafa;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
 }
 </style>

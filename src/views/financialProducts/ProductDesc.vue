@@ -444,10 +444,10 @@ export default {
 
             const units = [
                 { limit: 1_000_000_000_000_000, label: '경 원' }, // 조 위 단위는 경
-                { limit: 1_000_000_000_000, label: '조 원' },
-                { limit: 100_000_000_000, label: '천 억 원' },
-                { limit: 1_000_000_000, label: '백 억 원' },
-                { limit: 100_000_000, label: '십 억 원' },
+                { limit: 1_000_000_000_000, label: '조원' },
+                { limit: 100_000_000_000, label: '천억 원' },
+                { limit: 1_000_000_000, label: '백억 원' },
+                { limit: 100_000_000, label: '십억 원' },
                 { limit: 10_000_000, label: '억 원' },
                 { limit: 1_000_000, label: '백만 원' },
             ];

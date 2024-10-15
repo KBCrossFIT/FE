@@ -985,7 +985,7 @@ const productDetailUrl = (product) => {
 <style scoped>
 /* 기본 레이아웃 */
 .total-container {
-    width: 50%;
+    width: 80%;
     padding: 20px;
     margin: 0 auto;
 }

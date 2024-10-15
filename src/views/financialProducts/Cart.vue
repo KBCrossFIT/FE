@@ -8,7 +8,7 @@
         <!-- 빈 장바구니 상태 -->
         <div v-else-if="cart.length === 0" class="empty-cart">
             <h1>장바구니가 비어 있습니다.</h1>
-            <a href="http://localhost:5174/products/deposit?page=1&pageSize=10">상품 보러가기</a>
+            <router-link to="/products/deposit?page=1&pageSize=10">상품 보러가기</router-link>
 
             <br />
             <span v-if="!authStore.isAuthenticated">로그인하고 금융상품을 담아보세요.</span>
@@ -42,12 +42,7 @@
                 <hr class="divider" />
 
                 <!-- 테이블 바디 -->
-                <div
-                    v-for="item in paginatedCart"
-                    :key="item.cartId"
-                    class="cart-item"
-                    @click="goToProductDetail(item.productId, item.productType, item.rsrvType)"
-                >
+                <div v-for="item in paginatedCart" :key="item.cartId" class="cart-item">
                     <div class="cart-item-row">
                         <div class="col checkbox-column">
                             <input
@@ -60,7 +55,14 @@
                         <div class="col product-type">
                             {{ item.rsrvType === 'S' ? '적금' : '예금' }}
                         </div>
-                        <div class="col product-name">{{ item.productName }}</div>
+                        <div
+                            class="col product-name"
+                            @click="
+                                goToProductDetail(item.productId, item.productType, item.rsrvType)
+                            "
+                        >
+                            {{ item.productName }}
+                        </div>
                         <div class="col provider">{{ item.provider }}</div>
                         <div
                             class="col expected-return"

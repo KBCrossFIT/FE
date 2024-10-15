@@ -43,7 +43,7 @@
                 </tbody>
             </table>
 
-            <p v-else-if="isSearchAttempted">검색 결과가 없습니다.</p>
+            <p v-else-if="isSearchAttempted" class="no-results-message">검색 결과가 없습니다.</p>
         </div>
     </div>
 </template>
@@ -66,6 +66,8 @@ export default {
                 return;
             }
 
+            this.isSearchAttempted = true;
+
             // API에 요청을 보내 주식 데이터를 가져옴
             fetch(`/api/stock/searchStock?searchTerm=${encodeURIComponent(this.searchTerm)}`)
                 .then((response) => response.json())
@@ -83,6 +85,7 @@ export default {
             this.searchTerm = ''; // 검색어 초기화
             this.stocks = []; // 검색 결과 초기화
             this.isSearched = false; // 검색 시도 상태 리셋
+            this.isSearchAttempted = false;
         },
 
         // 양수, 음수, 0에 따라 색상을 다르게 적용하는 메서드
