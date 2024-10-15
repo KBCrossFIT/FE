@@ -316,7 +316,7 @@
                 </tbody>
             </table>
 
-            <div class="info-message">※ 표시되는 수익률은 12개월 기준입니다.</div>
+            <div class="info-message">※ 표시되는 이율은 12개월 기준입니다.</div>
 
             <!-- Pagination Controls -->
             <div id="Pagination" class="mt-4 pagination-buttons">
