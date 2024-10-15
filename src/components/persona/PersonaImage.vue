@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: "PersonaImage",
+  name: 'PersonaImage',
   props: {
     persona: {
       type: Object,
@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     onImageError(event) {
-      event.target.src = "/default_image.jpg"; // 이미지 로드 실패 시 기본 이미지로 대체
+      event.target.src = '/default_image.jpg'; // 이미지 로드 실패 시 기본 이미지로 대체
     },
   },
 };

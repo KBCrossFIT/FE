@@ -132,8 +132,8 @@
 </template>
 
 <script>
-import { registerUser } from "@/api/memberApi";
-import ModalTest from "@/components/Modal/ModalTest.vue";
+import { registerUser } from '@/api/memberApi';
+import ModalTest from '@/components/Modal/ModalTest.vue';
 
 export default {
   components: {
@@ -141,21 +141,21 @@ export default {
   },
   data() {
     return {
-      memberID: "",
-      memberName: "",
-      password: "",
-      reEnteredPassword: "",
-      email: "",
+      memberID: '',
+      memberName: '',
+      password: '',
+      reEnteredPassword: '',
+      email: '',
       birth: null,
-      gender: "",
+      gender: '',
       selectedYear: null,
       selectedMonth: null,
       selectedDay: null,
       errors: {
-        memberID: "",
-        password: "",
-        reEnteredPassword: "",
-        gender: "",
+        memberID: '',
+        password: '',
+        reEnteredPassword: '',
+        gender: '',
       },
       years: Array.from(
         { length: 100 },
@@ -179,58 +179,58 @@ export default {
     validateMemberID() {
       const pattern = /^(?=.*[a-z0-9])[a-z0-9]{5,15}$/;
       if (!this.memberID) {
-        this.errors.memberID = "아이디는 필수 입력입니다.";
+        this.errors.memberID = '아이디는 필수 입력입니다.';
         return false;
       }
       if (this.memberID.length < 5 || this.memberID.length > 15) {
-        this.errors.memberID = "아이디는 5~15자만 가능합니다.";
+        this.errors.memberID = '아이디는 5~15자만 가능합니다.';
         return false;
       }
       if (!pattern.test(this.memberID)) {
         this.errors.memberID =
-          "아이디는 소문자 영어와 숫자의 조합으로 입력해 주세요.";
+          '아이디는 소문자 영어와 숫자의 조합으로 입력해 주세요.';
         return false;
       }
-      this.errors.memberID = "";
+      this.errors.memberID = '';
       return true;
     },
     validatePassword() {
       const pattern =
         /^(?=.*[A-z])(?=.*\d)(?=.*[#$@!%&*?])[A-z\d#$@!%&*?]{8,30}$/;
       if (!this.password) {
-        this.errors.password = "비밀번호는 필수 입력입니다.";
+        this.errors.password = '비밀번호는 필수 입력입니다.';
         return false;
       }
       if (this.password.length < 8 || this.password.length > 30) {
-        this.errors.password = "비밀번호는 8~30자만 가능합니다.";
+        this.errors.password = '비밀번호는 8~30자만 가능합니다.';
         return false;
       }
       if (!pattern.test(this.password)) {
         this.errors.password =
-          "비밀번호는 영어, 숫자, 특수문자(#$@!%&*?)의 조합으로 입력해 주세요.";
+          '비밀번호는 영어, 숫자, 특수문자(#$@!%&*?)의 조합으로 입력해 주세요.';
         return false;
       }
-      this.errors.password = "";
+      this.errors.password = '';
       return true;
     },
     validateReEnteredPassword() {
       if (!this.reEnteredPassword) {
-        this.errors.reEnteredPassword = "비밀번호 재입력은 필수 입력입니다.";
+        this.errors.reEnteredPassword = '비밀번호 재입력은 필수 입력입니다.';
         return false;
       }
       if (this.reEnteredPassword !== this.password) {
-        this.errors.reEnteredPassword = "비밀번호가 일치하지 않습니다.";
+        this.errors.reEnteredPassword = '비밀번호가 일치하지 않습니다.';
         return false;
       }
-      this.errors.reEnteredPassword = "";
+      this.errors.reEnteredPassword = '';
       return true;
     },
     validateGender() {
       if (!this.gender.match(/^(남|여)$/)) {
-        this.errors.gender = "성별을 선택해주세요.";
+        this.errors.gender = '성별을 선택해주세요.';
         return false;
       }
-      this.errors.gender = "";
+      this.errors.gender = '';
       return true;
     },
     async handleSubmit() {
@@ -239,7 +239,7 @@ export default {
 
       const birthDate = `${this.selectedYear}-${String(
         this.selectedMonth
-      ).padStart(2, "0")}-${String(this.selectedDay).padStart(2, "0")}`;
+      ).padStart(2, '0')}-${String(this.selectedDay).padStart(2, '0')}`;
       const userData = {
         memberID: this.memberID,
         email: this.email,
@@ -252,11 +252,11 @@ export default {
 
       try {
         const result = await registerUser(userData);
-        console.log("회원가입 성공:", result);
-        this.$router.push("/");
+        console.log('회원가입 성공:', result);
+        this.$router.push('/');
       } catch (error) {
-        console.error("회원가입 실패:", error);
-        alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+        console.error('회원가입 실패:', error);
+        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
       }
     },
   },
@@ -266,7 +266,7 @@ export default {
 <style scoped>
 /* Existing styling */
 body {
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
   background-color: #f0f4f8;
 }
 
@@ -291,8 +291,9 @@ body {
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  width: 400px;
+  width: 800px;
   text-align: center;
+  margin-top: 120px;
 }
 
 h2 {

@@ -7,15 +7,23 @@
           <v-card class="news-card">
             <v-row>
               <v-col cols="3">
-                <v-img :src="news.image" aspect-ratio="2" class="news-image"></v-img>
+                <v-img
+                  :src="news.image"
+                  aspect-ratio="2"
+                  class="news-image"
+                ></v-img>
               </v-col>
               <v-col cols="9">
                 <!-- 제목을 링크로 표시하여 클릭 시 뉴스 페이지로 이동 -->
                 <v-card-title class="news-title">
                   <a :href="news.link" target="_blank">{{ news.title }}</a>
                 </v-card-title>
-                <v-card-subtitle class="news-summary">{{ truncateSummary(news.summary) }}</v-card-subtitle>
-                <v-card-subtitle class="news-date">{{ news.date }}</v-card-subtitle>
+                <v-card-subtitle class="news-summary">{{
+                  truncateSummary(news.summary)
+                }}</v-card-subtitle>
+                <v-card-subtitle class="news-date">{{
+                  news.date
+                }}</v-card-subtitle>
               </v-col>
             </v-row>
           </v-card>
@@ -28,17 +36,22 @@
 
     <!-- 페이지네이션 -->
     <v-container class="pagination-container">
-      <v-pagination v-model="page" :length="totalPages" @input="onPageChange" circle></v-pagination>
+      <v-pagination
+        v-model="page"
+        :length="totalPages"
+        @input="onPageChange"
+        circle
+      ></v-pagination>
     </v-container>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from "vue";
-import axios from "axios";
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 
 export default {
-  name: "News_title",
+  name: 'News_title',
   setup() {
     const page = ref(1);
     const pageSize = 5; // 페이지당 7개의 뉴스 표시
@@ -53,8 +66,8 @@ export default {
 
       const formatDate = (date) => {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1
-        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       };
 
@@ -62,20 +75,24 @@ export default {
       const toDate = formatDate(today); // 오늘 날짜
 
       try {
-        const response = await axios.get("https://newsapi.org/v2/everything", {
+        const response = await axios.get('https://newsapi.org/v2/everything', {
           params: {
-            q: "경제 OR 주식 OR 주가 OR 금리 OR 실적 OR 은행 OR 증권", // 검색어
-            apiKey: "9f09451a9a664e5b9cfdd14f301bccad", // API 키
+            q: '경제 OR 주식 OR 주가 OR 금리 OR 실적 OR 은행 OR 증권', // 검색어
+            apiKey: '9f09451a9a664e5b9cfdd14f301bccad', // API 키
             from: fromDate, // 한 달 전 날짜
             to: toDate, // 오늘 날짜
-            sortBy: "publishedAt", // 최신순으로 정렬
+            sortBy: 'publishedAt', // 최신순으로 정렬
             pageSize: 40, // 결과 개수 제한
           },
         });
 
-        console.log("API 응답 데이터:", response.data);
+        console.log('API 응답 데이터:', response.data);
 
-        if (response.data && response.data.articles && response.data.articles.length > 0) {
+        if (
+          response.data &&
+          response.data.articles &&
+          response.data.articles.length > 0
+        ) {
           const newsItems = response.data.articles;
 
           // 뉴스 데이터를 처리합니다.
@@ -84,14 +101,14 @@ export default {
             summary: newsItem.description,
             date: newsItem.publishedAt,
             link: newsItem.url, // 뉴스 페이지로 이동할 링크
-            image: newsItem.urlToImage || "", // 이미지가 없을 경우 빈 값
+            image: newsItem.urlToImage || '', // 이미지가 없을 경우 빈 값
           }));
         } else {
-          console.error("검색 결과가 없습니다.");
+          console.error('검색 결과가 없습니다.');
           newsList.value = [];
         }
       } catch (error) {
-        console.error("뉴스 데이터를 불러오는 중 오류가 발생했습니다.", error);
+        console.error('뉴스 데이터를 불러오는 중 오류가 발생했습니다.', error);
       } finally {
         loading.value = false; // 로딩 완료
       }
@@ -109,7 +126,9 @@ export default {
 
     const truncateSummary = (summary) => {
       const maxLength = 120; // 최대 글자 수 설정
-      return summary.length > maxLength ? summary.substring(0, maxLength) + "..." : summary;
+      return summary.length > maxLength
+        ? summary.substring(0, maxLength) + '...'
+        : summary;
     };
 
     const onPageChange = (newPage) => {
@@ -120,7 +139,14 @@ export default {
       fetchNews();
     });
 
-    return { paginatedNews, totalPages, page, onPageChange, truncateSummary, loading };
+    return {
+      paginatedNews,
+      totalPages,
+      page,
+      onPageChange,
+      truncateSummary,
+      loading,
+    };
   },
 };
 </script>
@@ -128,8 +154,8 @@ export default {
 <style scoped>
 .news-list {
   padding: 20px;
-  background-color: #f9f9f9; /* 배경색 */
-  max-width: 1200px;
+  /* background-color: #f9f9f9; 배경색 */
+  /* max-width: 1200px; */
   margin: 0 auto; /* 중앙 정렬 */
 }
 
