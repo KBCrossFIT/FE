@@ -93,12 +93,14 @@
   <v-container v-else>
     <div class="loading-message">데이터를 찾을 수 없습니다.</div>
   </v-container>
+
+  <v-btn class="back-button" @click="goBack">뒤로가기</v-btn>
 </template>
 
 <script>
 import { useYoutubeStore } from '@/store/youtubeStore';
 import { onMounted, watch, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { marked } from 'marked';
 
 export default {
@@ -106,6 +108,7 @@ export default {
   setup() {
     const youtubeStore = useYoutubeStore();
     const route = useRoute();
+    const router = useRouter();
     const isLoading = ref(true);
     const introContent = ref('');
     const mainTopics = ref([]);
@@ -177,6 +180,10 @@ export default {
       return `https://www.youtube.com/embed/${videoId}`;
     };
 
+    const goBack = () => {
+      router.go(-1); // 이전 페이지로 돌아가기
+    };
+
     const videoDetail = computed(() => youtubeStore.selectedVideoDetail);
 
     return {
@@ -189,6 +196,7 @@ export default {
       handleTopicClick,
       formatTopicTitle,
       formatContent,
+      goBack
     };
   },
 };
@@ -316,4 +324,28 @@ li {
 .timeline-content:last-child {
   margin-bottom: 0;
 }
+/* 뒤로가기 버튼 스타일 */
+.back-button {
+  margin-top: 30px;
+  background-color: #7bd5c3; /* 색상 변경 */
+  color: #000000;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.back-button:hover {
+  background-color: #3dd4b6;
+  transform: translateY(-2px);
+}
+
+.back-button:active {
+  transform: translateY(0);
+}
+
 </style>
