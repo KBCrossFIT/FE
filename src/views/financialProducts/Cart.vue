@@ -9,9 +9,9 @@
         <div v-else-if="!isAuthenticated" class="empty_login_data">
             <h1>로그인 정보 없음.</h1>
             <p>로그인하고 금융상품을 담아보세요.</p>
-            <router-link to="/login" class="login-btn">
+            <router-link to="/login" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt icon"></i>
-                <span class="menu-text"> 로그인하러 가기</span>
+                <span class="menu-text">로그인하러 가기</span>
             </router-link>
         </div>
 
@@ -310,49 +310,49 @@ export default {
     }
 }
 
-/* empty_login_data의 개별 스타일 */
+/* empty_login_data 스타일 묶음 */
 .empty_login_data {
     position: absolute;
-    top: 40%;
+    top: 40%; /* 중앙에서 약간 위로 */
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    padding: 50px;
+    padding: 50px; /* 여백을 늘림 */
     background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 350px;
+    width: 350px; /* 필요에 따라 너비 조정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 중앙 정렬 추가 */
+    justify-content: center; /* 중앙 정렬 추가 */
 }
 
 .empty_login_data h1 {
     margin-bottom: 20px;
     color: #343a40;
-    font-size: 1.8rem;
+    font-size: 1.8rem; /* 큰 제목 글꼴 크기 */
     font-weight: bold;
 }
 
 .empty_login_data p {
     margin-bottom: 20px;
     color: #6c757d;
-    font-size: 1.2rem;
+    font-size: 1.2rem; /* 본문 글꼴 크기 */
 }
 
 .empty_login_data .btn {
-    font-size: 1.1rem;
+    font-size: 1.1rem; /* 버튼 글자 크기 */
     padding: 10px 20px;
-    text-decoration: none;
-    color: inherit;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-}
-
-.empty_login_data .menu-text {
-    font-size: 1.1rem;
+    display: flex;
+    align-items: center; /* 아이콘과 텍스트 수평 중앙 정렬 */
+    justify-content: center; /* 버튼 내용 중앙 정렬 */
+    gap: 5px; /* 아이콘과 텍스트 간 간격 조절 */
 }
 
 .empty_login_data .icon {
-    margin-right: 8px;
+    margin: 0; /* 아이콘의 기본 마진을 제거 */
+    display: inline-flex; /* 아이콘도 flex로 맞춰 정렬 */
 }
 
 /* 장바구니 카드 스타일 */

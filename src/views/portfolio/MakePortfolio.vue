@@ -1194,13 +1194,15 @@ export default {
     border-radius: 4px;
     white-space: nowrap;
 }
+
+/* empty_login_data 스타일 묶음 */
 .empty_login_data {
     position: absolute;
-    top: 40%; /* 조금 위로 올림 */
+    top: 40%; /* 중앙에서 약간 위로 */
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    padding: 50px; /* 여백을 살짝 늘림 */
+    padding: 50px; /* 여백을 늘림 */
     background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -1210,19 +1212,23 @@ export default {
 .empty_login_data h1 {
     margin-bottom: 20px;
     color: #343a40;
-    font-size: 1.8rem; /* 글자 크기 키움 */
+    font-size: 1.8rem; /* 큰 제목 글꼴 크기 */
     font-weight: bold;
 }
 
 .empty_login_data p {
     margin-bottom: 20px;
     color: #6c757d;
-    font-size: 1.2rem; /* 본문 글자 크기 조정 */
+    font-size: 1.2rem; /* 본문 글꼴 크기 */
 }
 
 .empty_login_data .btn {
-    font-size: 1.1rem; /* 버튼 글자 크기 조정 */
+    font-size: 1.1rem; /* 버튼 글꼴 크기 */
     padding: 10px 20px;
+}
+
+.empty_login_data .icon {
+    margin-right: 10px; /* 아이콘과 텍스트 사이 간격 */
 }
 
 .card-title {

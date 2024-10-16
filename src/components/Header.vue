@@ -115,10 +115,10 @@
         <div class="user-controls">
             <template v-if="isLoggedIn">
                 <div class="profile-info">
-                    <button class="usernames" @click="navigateToProfile">
+                    <div class="usernames">
                         <i class="fa-solid fa-user-tie"></i>
                         <span class="username">{{ userProfile.username }}</span>
-                    </button>
+                    </div>
                     <button class="logout-btn" @click.stop="handleLogout">로그아웃</button>
                 </div>
             </template>
@@ -422,7 +422,7 @@ button {
     font-weight: bold; /* 필요 시 추가 */
 }
 
-.investment-test-dialog {
+.user .investment-test-dialog {
     background-color: white !important;
     border-radius: 8px;
 }
