@@ -4,15 +4,14 @@
             <table v-if="paginatedStocks.length > 0" class="table">
                 <thead>
                     <tr>
-                        <th>종목코드</th>
-                        <th>종목명</th>
-                        <th>시장 구분</th>
-                        <th>종가</th>
-                        <th>전일비</th>
-                        <th>등락률</th>
+                        <th style="width: 10%">종목코드</th>
+                        <th style="width: 30%">종목명</th>
+                        <th style="width: 15%">시장 구분</th>
+                        <th style="width: 20%">종가</th>
+                        <th style="width: 10%">전일비</th>
+                        <th style="width: 15%">등락률</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     <template v-for="(stock, idx) in paginatedStocks" :key="stock.stockCode">
                         <tr @click="gotoNaverStock(stock.stockCode)">
