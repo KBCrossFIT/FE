@@ -26,7 +26,6 @@
         </li>
       </ul>
     </div>
-
   </div>
 </template>
 
@@ -36,17 +35,17 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'SavingListView',
   computed: {
-    ...mapGetters('saving',['getSavingList']),  // Vuex에서 적금 리스트 상태 가져오기
+    ...mapGetters('saving', ['getSavingList']), // Vuex에서 적금 리스트 상태 가져오기
     savingProducts() {
-      return this.getSavingList;  // getter를 통해 적금 상품 리스트 반환
-    }
+      return this.getSavingList; // getter를 통해 적금 상품 리스트 반환
+    },
   },
   created() {
     // 컴포넌트가 생성될 때 적금 리스트 데이터 가져오기
     this.fetchSavingList();
   },
   methods: {
-    ...mapActions('saving',['fetchSavingList']),  // Vuex에서 API 호출 액션 매핑
+    ...mapActions('saving', ['fetchSavingList']), // Vuex에서 API 호출 액션 매핑
   },
 };
 </script>
