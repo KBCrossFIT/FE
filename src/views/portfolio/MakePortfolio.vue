@@ -10,7 +10,7 @@
         </div>
 
         <div v-else id="wrap-center">
-            <h1 class="header">포트폴리오 만들기</h1>
+            <h1 class="card-title">포트폴리오 만들기</h1>
             <div class="PortfolioNameProportion">
                 <div class="portfolio-name-container">
                     <label for="nameInput"><h3>포트폴리오 이름 :</h3></label>
@@ -1222,5 +1222,14 @@ export default {
 .empty_login_data .btn {
     font-size: 1.1rem; /* 버튼 글자 크기 조정 */
     padding: 10px 20px;
+}
+
+.card-title {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* 텍스트 중앙 정렬 */
+  margin-bottom: 20px;
 }
 </style>
