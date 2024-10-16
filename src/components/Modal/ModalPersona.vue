@@ -114,15 +114,15 @@ export default defineComponent({
     const getPreferenceText = (preference) => {
       switch (preference) {
         case 1:
-          return '위험 투자';
+          return '안정형';
         case 2:
-          return '적극 투자';
+          return '안정 추구';
         case 3:
           return '위험 중립';
         case 4:
-          return '안정 추구';
+          return '적극 투자';
         case 5:
-          return '안정형';
+          return '위험 투자';
         default:
           return '정보 없음';
       }
