@@ -13,8 +13,14 @@
                     type="text"
                     class="search-input"
                     placeholder="종목명 검색..."
+                    @keydown.enter="performSearch"
                 />
-                <button class="search-button" @click="performSearch">검색</button>
+                <button class="search-button" @click="performSearch">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <button class="erase-filter-btn" @click="eraseFilter">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </button>
             </div>
 
             <!-- 주식 리스트 -->
@@ -154,6 +160,29 @@ export default {
             closeModal();
         }
 
+        async function performSearch() {
+            if (!searchQuery.value) {
+                alert('검색어를 입력하세요!');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `/api/stock/searchStock?searchTerm=${encodeURIComponent(searchQuery.value)}`
+                );
+                const data = await response.json();
+                products.value = data;
+                filterStocks();
+            } catch (error) {
+                console.error('Error fetching stock data:', error);
+            }
+        }
+
+        function eraseFilter() {
+            searchQuery.value = ''; // 검색어 초기화
+            fetchStockItems(); // 전체 주식 데이터 다시 로드
+        }
+
         onMounted(() => {
             fetchStockItems();
         });
@@ -171,6 +200,8 @@ export default {
             closeModal,
             addToPortfolio,
             totalPage,
+            performSearch,
+            eraseFilter,
         };
     },
 };

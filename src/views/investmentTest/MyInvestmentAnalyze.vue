@@ -1,7 +1,7 @@
 <template>
     <!-- 로그인하지 않은 상태 -->
     <div v-if="!authStore.isAuthenticated" class="empty_login_data">
-        <h1>로그인 정보 없음</h1>
+        <h1>로그인 정보 없음.</h1>
         <p>로그인하고 내 투자성향을 확인해보세요.</p>
         <router-link to="/login" class="btn btn-primary sidebar-link">
             <i class="fas fa-sign-in-alt icon"></i>

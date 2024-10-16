@@ -1,7 +1,7 @@
 <template>
     <div id="wrap">
         <div v-if="!isAuthenticated" class="empty_login_data">
-            <h1>로그인 정보가 없습니다.</h1>
+            <h1>로그인 정보 없음.</h1>
             <p>로그인하고 포트폴리오를 만들어보세요.</p>
             <router-link to="/login" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt icon"></i>
@@ -10,7 +10,7 @@
         </div>
 
         <div v-else id="wrap-center">
-            <h1 class="card-title">포트폴리오 만들기</h1>
+            <h1 class="header">포트폴리오 만들기</h1>
             <div class="PortfolioNameProportion">
                 <div class="portfolio-name-container">
                     <label for="nameInput"><h3>포트폴리오 이름 :</h3></label>
@@ -328,7 +328,7 @@
                             <!-- 빈 항목 표시 -->
                             <template v-else>
                                 <tr v-for="n in 1" :key="n">
-                                    <td colspan="6" class="empty-row"><br /></td>
+                                    <td colspan="5" class="empty-row"><br /></td>
                                 </tr>
                             </template>
                         </tbody>
@@ -382,7 +382,9 @@
                                     <td style="width: 10%; text-align: center">
                                         {{ stock.mrktCtg }}
                                     </td>
-                                    <td style="width: 10%; text-align: center">{{ stock.clpr }}</td>
+                                    <td style="width: 10%; text-align: center">
+                                        {{ stock.clpr }}
+                                    </td>
                                     <td style="width: 15%; text-align: center">
                                         <input
                                             type="number"
@@ -407,7 +409,7 @@
                             </template>
                             <template v-else>
                                 <tr v-for="n in 1" :key="n">
-                                    <td colspan="7" class="empty-row"><br /></td>
+                                    <td colspan="6" class="empty-row"><br /></td>
                                 </tr>
                             </template>
                         </tbody>
@@ -1172,8 +1174,7 @@ export default {
     display: flex;
 }
 
-.MakePortfolio-btn,
-.cart-btn {
+.MakePortfolio-btn {
     margin-top: 20px;
 }
 
@@ -1225,11 +1226,11 @@ export default {
 }
 
 .card-title {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center; /* 텍스트 중앙 정렬 */
-  margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* 텍스트 중앙 정렬 */
+    margin-bottom: 20px;
 }
 </style>

@@ -7,9 +7,9 @@
 
         <!-- 로그인하지 않은 상태 -->
         <div v-else-if="!isAuthenticated" class="empty_login_data">
-            <h1>로그인 정보가 없습니다.</h1>
+            <h1>로그인 정보 없음.</h1>
             <p>로그인하고 금융상품을 담아보세요.</p>
-            <router-link to="/login" class="btn btn-primary">
+            <router-link to="/login" class="login-btn">
                 <i class="fas fa-sign-in-alt icon"></i>
                 <span class="menu-text"> 로그인하러 가기</span>
             </router-link>
@@ -310,31 +310,49 @@ export default {
     }
 }
 
-/* 빈 장바구니 스타일 */
-.empty-cart {
+/* empty_login_data의 개별 스타일 */
+.empty_login_data {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     text-align: center;
-    padding: 40px;
+    padding: 50px;
     background-color: #f8f9fa;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    color: #343a40;
+    width: 350px;
 }
 
-.empty-cart h1 {
+.empty_login_data h1 {
     margin-bottom: 20px;
     color: #343a40;
-}
-
-.empty-cart a {
-    display: inline-block;
-    margin-top: 10px;
-    color: #007bff;
-    text-decoration: none;
+    font-size: 1.8rem;
     font-weight: bold;
 }
 
-.empty-cart a:hover {
-    text-decoration: underline;
+.empty_login_data p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.empty_login_data .btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: inherit;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.empty_login_data .menu-text {
+    font-size: 1.1rem;
+}
+
+.empty_login_data .icon {
+    margin-right: 8px;
 }
 
 /* 장바구니 카드 스타일 */
@@ -557,37 +575,6 @@ export default {
     display: flex;
     justify-content: flex-end;
     gap: 20px;
-}
-
-.empty_login_data {
-    position: absolute;
-    top: 40%; /* 조금 위로 올림 */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    padding: 50px; /* 여백을 살짝 늘림 */
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 350px; /* 필요에 따라 너비 조정 */
-}
-
-.empty_login_data h1 {
-    margin-bottom: 20px;
-    color: #343a40;
-    font-size: 1.8rem; /* 글자 크기 키움 */
-    font-weight: bold;
-}
-
-.empty_login_data p {
-    margin-bottom: 20px;
-    color: #6c757d;
-    font-size: 1.2rem; /* 본문 글자 크기 조정 */
-}
-
-.empty_login_data .btn {
-    font-size: 1.1rem; /* 버튼 글자 크기 조정 */
-    padding: 10px 20px;
 }
 
 /* 반응형 디자인 */
