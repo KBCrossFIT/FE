@@ -146,11 +146,17 @@ export default {
 }
 
 .carousel-arrow.left {
-  left: 0; /* 왼쪽에 배치 */
+  left: 0;
+  height: 100%;
+  /* background-color: transparent; 배경 투명하게 */
+  opacity: 0.1; /* 완전히 투명하게 */
 }
 
 .carousel-arrow.right {
-  right: 0; /* 오른쪽에 배치 */
+  right: 0;
+  height: 100%;
+  /* background-color: transparent; 배경 투명하게 */
+  opacity: 0.1; /* 완전히 투명하게 */
 }
 
 .carousel-nav {

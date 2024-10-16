@@ -3,7 +3,7 @@
     <table class="product-table">
       <thead>
         <tr>
-          <th>연령별 금융상품 추천</th>
+          <th class="mc">연령별 금융상품 추천</th>
           <th>투자 성향별 금융상품 추천</th>
         </tr>
       </thead>
@@ -416,6 +416,7 @@ export default {
 .product-container {
   /* 배경색 설정 (필요 시) */
   /* background-color: #f9fafb; */
+  margin-top: 30px;
 }
 
 .product-table {
@@ -427,8 +428,9 @@ export default {
 .product-table th,
 .product-table td {
   padding: 20px;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
   vertical-align: top;
+  font-size: 25px;
 }
 
 /* 타이틀 스타일 */
@@ -506,5 +508,9 @@ export default {
     width: 100%;
     margin-bottom: 0.5rem;
   }
+}
+
+.mc {
+  font-size: 20px;
 }
 </style>
