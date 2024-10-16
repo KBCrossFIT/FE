@@ -29,7 +29,7 @@
                                 :key="item.route"
                                 class="in"
                                 :class="{ active: $route.path === item.route }"
-                                @click="checkInvestmentTestAndNavigate(item.route)"
+                                @click="navigateTo(item.route)"
                             >
                                 {{ item.label }}
                             </li>
@@ -95,14 +95,14 @@
                             <li
                                 class="in"
                                 :class="{ active: isActive('/my-investment-analyze') }"
-                                @click="$router.push('/my-investment-analyze')"
+                                @click="navigateTo('/my-investment-analyze')"
                             >
                                 나의 투자성향
                             </li>
                             <li
                                 class="in"
                                 :class="{ active: isActive('/investment-test-start') }"
-                                @click="$router.push('/investment-test-start')"
+                                @click="navigateTo('/investment-test-start')"
                             >
                                 투자성향 분석하기
                             </li>
@@ -133,28 +133,10 @@
             </template>
         </div>
     </header>
-
-    <!-- 투자성향 분석 안내 대화상자 -->
-    <v-dialog v-model="showInvestmentTestDialog" max-width="400" overlay-opacity="0.5">
-        <v-card class="investment-test-dialog">
-            <v-card-title class="headline">투자성향 분석 필요</v-card-title>
-            <v-card-text>포트폴리오 기능을 사용하기 위해서는 투자성향 분석이 필요합니다.</v-card-text>
-            <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="primary" text @click="goToInvestmentTest">
-                    투자성향 분석하러 가기
-                </v-btn>
-                <v-btn color="grey darken-1" text @click="closeInvestmentTestDialog">
-                    다음에 하기
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
 </template>
 
 <script>
 import { useCookies } from 'vue3-cookies';
-import instance from '@/api';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/authStore';
@@ -164,33 +146,13 @@ export default {
     setup() {
         const router = useRouter();
         const authStore = useAuthStore();
-        const showInvestmentTestDialog = ref(false);
 
-        const checkInvestmentTestAndNavigate = (route) => {
-            if (authStore.isAuthenticated && authStore.isTested) {
-                router.push(route);
-            } else if (authStore.isAuthenticated && !authStore.isTested) {
-                showInvestmentTestDialog.value = true;
-            } else {
-                // 로그인되지 않은 경우
-                router.push('/login');
-            }
-        };
-
-        const goToInvestmentTest = () => {
-            showInvestmentTestDialog.value = false;
-            router.push('/investment-test-start');
-        };
-
-        const closeInvestmentTestDialog = () => {
-            showInvestmentTestDialog.value = false;
+        const navigateTo = (route) => {
+            router.push(route);
         };
 
         return {
-            checkInvestmentTestAndNavigate,
-            showInvestmentTestDialog,
-            goToInvestmentTest,
-            closeInvestmentTestDialog,
+            navigateTo,
         };
     },
     data() {
@@ -232,21 +194,13 @@ export default {
                 query: { page: 1, pageSize: 10 },
             });
         },
-        navigateTo(route) {
-            this.$router.push(route);
-        },
         async handleLogout() {
             const { cookies } = useCookies();
 
-            // 로그아웃 처리
-            // await instance.post('/member/logout');
-
-            // Clear cookies and local storage
             cookies.remove('Authorization');
             cookies.remove('Refresh-Token');
             localStorage.removeItem('user');
 
-            // Update user profile state
             await this.updateUserProfile();
             this.navigateToHome();
         },

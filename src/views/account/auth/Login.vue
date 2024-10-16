@@ -199,4 +199,8 @@ label.active {
     color: red;
     margin-top: 1rem;
 }
+
+input[type='password'] {
+    font-family: 'PasswordFont', sans-serif; /* 비밀번호 필드의 예외 폰트 */
+}
 </style>
