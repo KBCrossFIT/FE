@@ -10,7 +10,6 @@
     </div>
 
     <div v-else class="InvestmentTest-container">
-        <div class="MyInvestment-header"></div>
         <div class="InvestmentTest-body">
             <div class="InvestmentTest-content">
                 <h1>투자성향 분석하기</h1>
@@ -88,38 +87,38 @@ export default {
 <style scoped>
 .InvestmentTest-container {
     display: flex;
-    flex-direction: column; /* 세로 정렬 */
-    align-items: flex-start; /* 좌측 정렬 */
-    justify-content: space-between; /* 상단과 하단 요소 배치 */
-    padding: 20px; /* 좌우 여백 */
-    width: 1300px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centers vertically */
+    padding: 20px;
+    width: 100%;
+    background-color: #f0f0f0;
+    height: 100vh; /* Full viewport height */
+    margin: 0 auto; /* Centers horizontally */
 }
+
 .InvestmentTest-body {
     display: flex;
-    justify-content: center; /* 가운데 정렬 */
-    margin-top: 20px;
+    justify-content: center;
+    align-items: center; /* Centers content within body */
     width: 100%;
-    height: 540px;
+    height: 100%; /* Fill parent container */
 }
+
 .InvestmentTest-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-content: center; */
-    /* width: 100%; */
-    padding: 100px;
-    background-color: #f0f0f0;
-    /* border-radius: 8px; */
-    /* line-height: 1.5; */
-    /* text-align: center; */
-    /* position: static; */
-    margin-left: 387px;
+    padding: 20px; /* Reduced padding to avoid left shift */
 }
+
 .InvestmentTest-text {
     white-space: normal; /* 기본 줄바꿈 사용 */
     line-height: 1.5; /* 줄 간격 조정 */
     text-align: center; /* 텍스트 중앙 정렬 */
     margin-top: 35px;
+    width: 60%;
+    letter-spacing: 0.05em;
 }
 .InvestmentTest-btn {
     width: 180px;

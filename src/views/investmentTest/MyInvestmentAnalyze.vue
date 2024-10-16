@@ -645,4 +645,35 @@ export default {
     font-size: 1.1rem; /* 버튼 글자 크기 조정 */
     padding: 10px 20px;
 }
+
+.empty-test {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 350px;
+}
+
+.empty-test h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.empty-test p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.empty-test .btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+}
 </style>
