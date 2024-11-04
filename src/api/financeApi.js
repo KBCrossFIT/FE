@@ -23,11 +23,16 @@ const fundApi = axios.create({
     },
 });
 
-// 채권 상품 조회 API with pagination
-export async function fetchBondProducts(page = 1, pageSize = 10) {
+// 채권 상품 조회 API with pagination, 정렬
+export async function fetchBondProducts(
+    page = 1,
+    pageSize = 10,
+    sortField = '',
+    sortOrder = 'asc'
+) {
     try {
         const response = await bondApi.get(`/list`, {
-            params: { page, pageSize },
+            params: { page, pageSize, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -47,11 +52,16 @@ export async function getBondProductDetail(productId) {
     }
 }
 
-// 예금 상품 조회 API with pagination
-export async function fetchDepositProducts(page = 1, pageSize = 10) {
+// 예금 상품 조회 API with pagination, 정렬
+export async function fetchDepositProducts(
+    page = 1,
+    pageSize = 10,
+    sortField = '',
+    sortOrder = 'asc'
+) {
     try {
         const response = await savingApi.get(`/deposit`, {
-            params: { page, pageSize },
+            params: { page, pageSize, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -72,11 +82,16 @@ export async function getDepositProductDetail(productId) {
     }
 }
 
-// 적금 상품 조회 API with pagination
-export async function fetchSavingProducts(page = 1, pageSize = 10) {
+// 적금 상품 조회 API with pagination, 정렬
+export async function fetchSavingProducts(
+    page = 1,
+    pageSize = 10,
+    sortField = '',
+    sortOrder = 'asc'
+) {
     try {
         const response = await savingApi.get(`/saving`, {
-            params: { page, pageSize },
+            params: { page, pageSize, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -96,11 +111,16 @@ export async function getSavingProductDetail(productId) {
     }
 }
 
-// 펀드 상품 조회 API with pagination
-export async function fetchFundProducts(page = 1, pageSize = 10) {
+// 펀드 상품 조회 API with pagination, 정렬
+export async function fetchFundProducts(
+    page = 1,
+    pageSize = 10,
+    sortField = '',
+    sortOrder = 'asc'
+) {
     try {
         const response = await fundApi.get(`/list`, {
-            params: { page, pageSize },
+            params: { page, pageSize, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -121,10 +141,10 @@ export async function getFundProductDetail(productId) {
 }
 
 // 펀드 상품 검색 API
-export async function searchFundProduct(keyword) {
+export async function searchFundProduct(keyword, sortField = '', sortOrder = 'asc') {
     try {
         const response = await fundApi.get(`/search`, {
-            params: { keyword },
+            params: { keyword, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -134,10 +154,10 @@ export async function searchFundProduct(keyword) {
 }
 
 // 채권 상품 검색 API
-export async function searchBondProduct(keyword) {
+export async function searchBondProduct(keyword, sortField = '', sortOrder = 'asc') {
     try {
         const response = await bondApi.get(`/search`, {
-            params: { keyword },
+            params: { keyword, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -147,10 +167,10 @@ export async function searchBondProduct(keyword) {
 }
 
 // 예금 상품 검색 API
-export async function searchDepositProduct(keyword) {
+export async function searchDepositProduct(keyword, sortField = '', sortOrder = 'asc') {
     try {
         const response = await savingApi.get(`/depositSearch`, {
-            params: { keyword },
+            params: { keyword, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
@@ -160,10 +180,10 @@ export async function searchDepositProduct(keyword) {
 }
 
 // 적금 상품 검색 API
-export async function searchSavingProduct(keyword) {
+export async function searchSavingProduct(keyword, sortField = '', sortOrder = 'asc') {
     try {
         const response = await savingApi.get(`/savingSearch`, {
-            params: { keyword },
+            params: { keyword, sortField, sortOrder },
         });
         return response.data;
     } catch (error) {
