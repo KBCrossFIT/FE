@@ -4,7 +4,7 @@
         <div v-if="!isAuthenticated" class="empty_login_data">
             <h1>로그인 정보 없음.</h1>
             <p>로그인하고 금융상품을 담아보세요.</p>
-            <router-link to="/login" class="btn">
+            <router-link to="/login" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt icon"></i>
                 <span class="menu-text"> 로그인하러 가기</span>
             </router-link>
@@ -45,6 +45,7 @@
                             </th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <tr v-for="item in sortedPortfolioList" :key="item.id">
                             <td class="checkbox-column">
@@ -228,7 +229,6 @@ const sortIconClass = computed(() => {
 }
 
 .portfolio-name {
-    color: #007bff;
     cursor: pointer;
     font-weight: bold;
     font-size: 18px;
@@ -259,7 +259,7 @@ const sortIconClass = computed(() => {
 
 .btn-primary:hover,
 .btn-danger:hover {
-    scale: 1.3;
+    scale: 1.1;
 }
 
 .btn {
@@ -300,12 +300,13 @@ const sortIconClass = computed(() => {
 }
 
 .empty_login_data .btn {
+    display: block;
     font-size: 1.1rem; /* 버튼 글꼴 크기 */
     padding: 10px 20px;
 }
 
 .empty_login_data .icon {
-    margin-right: 10px; /* 아이콘과 텍스트 사이 간격 */
+    margin-right: 5px; /* 아이콘과 텍스트 사이 간격 */
 }
 
 /* 반응형 디자인 */
