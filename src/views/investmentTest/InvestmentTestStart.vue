@@ -181,7 +181,16 @@ export default {
 }
 
 .empty_login_data .btn {
+    display: block;
     font-size: 1.1rem; /* 버튼 글자 크기 조정 */
     padding: 10px 20px;
+}
+
+.empty_login_data .btn-primary:hover {
+    transform: scale(1.1);
+}
+
+.empty_login_data .icon {
+    margin-right: 5px; /* 아이콘과 텍스트 사이 간격 */
 }
 </style>

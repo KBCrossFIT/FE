@@ -18,7 +18,9 @@
         <!-- 빈 장바구니 상태 -->
         <div v-else-if="cart.length === 0" class="empty-cart">
             <h1>장바구니가 비어 있습니다.</h1>
-            <router-link to="/products/deposit?page=1&pageSize=10">상품 보러가기</router-link>
+            <router-link to="/products/deposit?page=1&pageSize=10">
+                <i class="fa-solid fa-bag-shopping"></i>상품 보러가기</router-link
+            >
         </div>
 
         <!-- 장바구니 목록 -->
@@ -38,7 +40,6 @@
                     <div class="header-cell expected-return">기대 수익률</div>
                     <div class="header-cell text-center"></div>
                 </div>
-                <hr class="divider" />
 
                 <!-- 테이블 바디 -->
                 <div v-for="item in paginatedCart" :key="item.cartId" class="cart-item">
@@ -310,51 +311,6 @@ export default {
     }
 }
 
-/* empty_login_data 스타일 묶음 */
-.empty_login_data {
-    position: absolute;
-    top: 40%; /* 중앙에서 약간 위로 */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    padding: 50px; /* 여백을 늘림 */
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 350px; /* 필요에 따라 너비 조정 */
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* 중앙 정렬 추가 */
-    justify-content: center; /* 중앙 정렬 추가 */
-}
-
-.empty_login_data h1 {
-    margin-bottom: 20px;
-    color: #343a40;
-    font-size: 1.8rem; /* 큰 제목 글꼴 크기 */
-    font-weight: bold;
-}
-
-.empty_login_data p {
-    margin-bottom: 20px;
-    color: #6c757d;
-    font-size: 1.2rem; /* 본문 글꼴 크기 */
-}
-
-.empty_login_data .btn {
-    font-size: 1.1rem; /* 버튼 글자 크기 */
-    padding: 10px 20px;
-    display: flex;
-    align-items: center; /* 아이콘과 텍스트 수평 중앙 정렬 */
-    justify-content: center; /* 버튼 내용 중앙 정렬 */
-    gap: 5px; /* 아이콘과 텍스트 간 간격 조절 */
-}
-
-.empty_login_data .icon {
-    margin: 0; /* 아이콘의 기본 마진을 제거 */
-    display: inline-flex; /* 아이콘도 flex로 맞춰 정렬 */
-}
-
 /* 장바구니 카드 스타일 */
 .cart-card {
     padding: 40px;
@@ -575,6 +531,77 @@ export default {
     display: flex;
     justify-content: flex-end;
     gap: 20px;
+}
+
+/* empty_login_data 스타일 묶음 */
+.empty_login_data {
+    position: absolute;
+    top: 40%; /* 중앙에서 약간 위로 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 50px; /* 여백을 늘림 */
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 350px; /* 필요에 따라 너비 조정 */
+    height: 287.17px;
+}
+
+.empty_login_data h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+    font-size: 1.8rem; /* 큰 제목 글꼴 크기 */
+    font-weight: bold;
+}
+
+.empty_login_data p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    font-size: 1.2rem; /* 본문 글꼴 크기 */
+}
+
+.empty_login_data .btn {
+    display: block;
+    margin: 0 auto;
+    font-size: 1.1rem; /* 버튼 글꼴 크기 */
+    padding: 10px 20px;
+}
+
+.empty_login_data .icon {
+    margin-right: 10px; /* 아이콘과 텍스트 사이 간격 */
+}
+
+/* 로그인 했지만 장바구니가 비어있을 때 스타일 */
+.empty-cart {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 350px;
+}
+
+.empty-cart h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.empty-cart p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.empty-cart router-link {
+    font-size: 1.1rem;
+    padding: 10px 20px;
 }
 
 /* 반응형 디자인 */

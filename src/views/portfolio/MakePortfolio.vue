@@ -1223,8 +1223,13 @@ export default {
 }
 
 .empty_login_data .btn {
+    display: block;
     font-size: 1.1rem; /* 버튼 글꼴 크기 */
     padding: 10px 20px;
+}
+
+.empty_login_data .btn-primary:hover {
+    transform: scale(1.1);
 }
 
 .empty_login_data .icon {
