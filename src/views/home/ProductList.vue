@@ -486,6 +486,7 @@ export default {
 
 .product-card:hover {
   transform: translateY(-0.5rem);
+  cursor: pointer; /* 클릭 커서로 변경 */
 }
 
 .product-card h3 {
