@@ -1,11 +1,21 @@
 <template>
     <div id="wrap">
+        <!-- 로그인 하지 않았을 때 -->
         <div v-if="!isAuthenticated" class="empty_login_data">
             <h1>로그인 정보 없음.</h1>
             <p>로그인하고 포트폴리오를 만들어보세요.</p>
             <router-link to="/login" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt icon"></i>
                 <span class="menu-text">로그인하러 가기</span>
+            </router-link>
+        </div>
+
+        <!-- 로그인했지만, 투자성향 점수가 없는 상태 -->
+        <div v-else-if="user_preference === 0" class="empty-test">
+            <h1>투자 성향 분석 정보가 없습니다.</h1>
+            <router-link to="/investment-test-start" class="btn btn-primary">
+                <i class="fas fa-chart-line icon"></i>
+                <span class="menu-text"> 지금 테스트하기</span>
             </router-link>
         </div>
 
@@ -1234,6 +1244,37 @@ export default {
 
 .empty_login_data .icon {
     margin-right: 10px; /* 아이콘과 텍스트 사이 간격 */
+}
+
+.empty-test {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    padding: 50px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 350px;
+}
+
+.empty-test h1 {
+    margin-bottom: 20px;
+    color: #343a40;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.empty-test p {
+    margin-bottom: 20px;
+    color: #6c757d;
+    font-size: 1.2rem;
+}
+
+.empty-test .btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
 }
 
 .card-title {
