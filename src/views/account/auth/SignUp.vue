@@ -216,8 +216,10 @@ export default {
             this.errors.gender = '';
             return true;
         },
+
+        //회원가입 제출
         async handleSubmit() {
-            // Trigger all validations before submission
+            // 모든 유효성 검사를 트리거
             if (!this.isFormValid) return;
 
             const birthDate = `${this.selectedYear}-${String(this.selectedMonth).padStart(
@@ -240,7 +242,32 @@ export default {
                 this.$router.push('/');
             } catch (error) {
                 console.error('회원가입 실패:', error);
-                alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                console.log('Error Response:', error.response);
+
+                if (error.response && error.response.data) {
+                    const errorCode = error.response.data.responseCode;
+                    const errorMessage = error.response.data.responseMessage || '';
+
+                    let alertMessage = '';
+
+                    if (errorCode === 'EXISTING_MEMBER_ID') {
+                        this.errors.memberID = errorMessage;
+                        alertMessage += errorMessage + '\n';
+                    }
+
+                    if (errorCode === 'EXISTING_EMAIL') {
+                        this.errors.email = errorMessage;
+                        alertMessage += errorMessage + '\n';
+                    }
+
+                    if (alertMessage) {
+                        alert(alertMessage.trim());
+                    } else {
+                        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                    }
+                } else {
+                    alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+                }
             }
         },
     },
