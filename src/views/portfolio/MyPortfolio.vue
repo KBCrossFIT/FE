@@ -63,8 +63,18 @@
                                 {{ item.portfolioName }}
                             </td>
                             <td class="text-right">{{ item.total.toLocaleString() }}원</td>
-                            <td class="text-right">{{ item.expectedReturn }}%</td>
-                            <td class="text-center">{{ item.riskLevel }}등급</td>
+                            <td
+                                class="text-right"
+                                :class="{
+                                    negative: item.expectedReturn < 0,
+                                    positive: item.expectedReturn > 0,
+                                }"
+                            >
+                                {{ item.expectedReturn }}%
+                            </td>
+                            <td class="text-center" :style="getRiskLevelStyle(item.riskLevel)">
+                                {{ mapRiskLevel(item.riskLevel) }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -174,6 +184,32 @@ onMounted(async () => {
 const sortIconClass = computed(() => {
     return sortOrder.value === 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down';
 });
+
+// 위험도 숫자를 텍스트로 변환하는 함수
+const mapRiskLevel = (level) => {
+    const riskLevels = {
+        1: '매우 높음',
+        2: '높음',
+        3: '다소 높음',
+        4: '보통',
+        5: '낮음',
+        6: '매우 낮음',
+    };
+    return riskLevels[level] || `알 수 없음 (${level}등급)`;
+};
+
+// 위험도에 따른 색상을 반환하는 함수
+const getRiskLevelStyle = (level) => {
+    const colors = {
+        1: '#FF0000', // 빨간색
+        2: '#FF6600', // 주황색
+        3: '#FFCC00', // 노란색
+        4: '#CCFF00', // 연두색
+        5: '#66FF00', // 연한 초록색
+        6: '#00FF00', // 초록색
+    };
+    return { color: colors[level] || 'black' };
+};
 </script>
 
 <style scoped>
@@ -270,6 +306,15 @@ const sortIconClass = computed(() => {
 
 .btn i {
     margin-right: 10px;
+}
+
+/* 음수/양수 스타일 */
+.negative {
+    color: blue;
+}
+
+.positive {
+    color: red;
 }
 
 /* empty_login_data 스타일 묶음 */
