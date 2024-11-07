@@ -720,7 +720,7 @@ export default {
 
         // 수정된 alertCartAndIncreaseHit 함수
         const alertCartAndIncreaseHit = async (product) => {
-            if (!authStore.isAuthenticated) {
+            if (!authStore.isLoggedIn()) {
                 alert('로그인이 필요한 서비스입니다.');
                 router.push('/login');
                 return;
