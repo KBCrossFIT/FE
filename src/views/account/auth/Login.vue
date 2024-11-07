@@ -69,16 +69,19 @@ export default {
                 const refreshToken =
                     response.headers['refresh-token'] || response.headers['Refresh-Token'];
 
-                authStore.isTested =
+                const isTested =
                     response.data.responseData.data.investScore > 0 &&
                     response.data.responseData.data.preference > 0;
 
-                console.log(authStore.isTested);
+                console.log('isTested = ', isTested);
 
                 if (authHeader && refreshToken) {
                     cookies.set('Authorization', authHeader, { secure: true, sameSite: 'Lax' });
                     cookies.set('Refresh-Token', refreshToken, { secure: true, sameSite: 'Lax' });
                     localStorage.setItem('user', JSON.stringify(user));
+                    console.log("로컬스토리지에 저장1")
+                    localStorage.setItem('isTested', JSON.stringify(isTested));
+                    console.log("로컬스토리지에 저장2")
                     this.$emit('login', user);
 
                     this.$router.push('/');
