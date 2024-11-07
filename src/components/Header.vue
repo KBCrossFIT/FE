@@ -200,6 +200,7 @@ export default {
             cookies.remove('Authorization');
             cookies.remove('Refresh-Token');
             localStorage.removeItem('user');
+            localStorage.removeItem('isTested');
 
             await this.updateUserProfile();
             this.navigateToHome();

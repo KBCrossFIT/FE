@@ -6,7 +6,7 @@ export const useAuthStore = defineStore("auth", {
     isAuthenticated: false,
     memberNum: null, // memberNum 추가
     userRole: null,
-    isTested: false, // 투자성향 분석 여부
+    isTested: JSON.parse(localStorage.getItem("isTested")) || false, // 초기값을 localStorage에서 가져오기
   }),
   actions: {
     async checkAuth() {
