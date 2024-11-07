@@ -46,5 +46,31 @@ export const useAuthStore = defineStore("auth", {
         this.memberNum = null;
       }
     },
+    
+    async isLoggedIn() {
+      const { cookies } = useCookies();
+      const token = cookies.get('Authorization'); // 쿠키에서 JWT 토큰 가져오기
+      if (!token) return false;
+
+      // 토큰 디코딩 및 만료 시간 검사
+      try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map(function (c) {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        );
+        const decodedToken = JSON.parse(jsonPayload);
+        const now = Math.floor(Date.now() / 1000);
+        return decodedToken.exp > now;
+      } catch (error) {
+        console.error("Invalid token:", error);
+        return false;
+      }
+    },
   },
 });
