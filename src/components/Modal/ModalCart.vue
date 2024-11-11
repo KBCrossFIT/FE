@@ -27,12 +27,12 @@
                     <tbody>
                         <tr
                             v-for="item in paginatedCartItems"
-                            :key="item.cartId"
-                            :class="{ 'selected-row': selected.includes(item.cartId) }"
+                            :key="item.productId"
+                            :class="{ 'selected-row': selected.includes(item.productId) }"
                             @click="toggleSelect(item)"
                         >
                             <td>
-                                <input type="checkbox" :value="item.cartId" v-model="selected" />
+                                <input type="checkbox" :value="item.productId" v-model="selected" />
                             </td>
                             <td>{{ item.provider }}</td>
                             <td>{{ item.productName }}</td>
@@ -133,11 +133,11 @@ export default {
         });
 
         const toggleSelect = (item) => {
-            const index = selected.value.indexOf(item.cartId);
+            const index = selected.value.indexOf(item.productId);
             if (index > -1) {
                 selected.value.splice(index, 1);
             } else {
-                selected.value.push(item.cartId);
+                selected.value.push(item.productId);
             }
         };
 
@@ -145,7 +145,7 @@ export default {
             if (allSelected.value) {
                 selected.value = [];
             } else {
-                selected.value = paginatedCartItems.value.map((item) => item.cartId);
+                selected.value = paginatedCartItems.value.map((item) => item.productId);
                 console.log(selected.value);
             }
         };
@@ -173,8 +173,8 @@ export default {
 
             try {
                 const selectedProducts = await Promise.all(
-                    selected.value.map(async (cartId) => {
-                        const item = cartItems.value.find((item) => item.cartId === cartId);
+                    selected.value.map(async (productId) => {
+                        const item = cartItems.value.find((item) => item.productId === productId);
                         let productDetails;
 
                         if (item.productType === 'S') {

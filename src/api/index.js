@@ -32,6 +32,8 @@ instance.interceptors.request.use(
 
     config.withCredentials = true;
 
+    console.log('All headers:', config.headers);
+
     return config;
   },
   (error) => {
