@@ -35,10 +35,10 @@ export async function postCartItem(cartItem) {
   }
 }
 
-export async function deleteCartItem(cartId) {
+export async function deleteCartItem(productId) {
   try {
-    console.log(cartId);
-    await instance.delete(`/cart/items/${cartId}`);
+    console.log(productId);
+    await instance.delete(`/cart/items/${productId}`);
     return true;
   } catch (error) {
     console.error('Error deleting cart:', error);

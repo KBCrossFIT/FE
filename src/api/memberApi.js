@@ -49,18 +49,23 @@ export async function loginUser(credentials) {
 
 // 비밀번호 변경 API
 export async function updatePassword(userId, newPassword) {
-    try {
-        const response = await userApi.put(`/password/update`, { userId, newPassword });
-        return response.data; // Return response data upon successful password update
-    } catch (error) {
-        console.error('Error updating password:', error);
-        throw error; // Throw error for further handling
-    }
+  try {
+    const response = await userApi.put(`/password/update`, {
+      userId,
+      newPassword,
+    });
+    return response.data; // Return response data upon successful password update
+  } catch (error) {
+    console.error('Error updating password:', error);
+    throw error; // Throw error for further handling
+  }
 }
 // 로그아웃 기능 (토큰 삭제)
-export function logoutUser() {
+export async function logoutUser() {
   try {
+    const response = await userApi.post('/logout');
     localStorage.removeItem('authToken'); // 토큰 삭제
+    return response.data;
   } catch (error) {
     console.error('Error during logout:', error);
   }

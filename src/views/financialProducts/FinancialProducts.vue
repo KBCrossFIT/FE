@@ -748,8 +748,8 @@ export default {
                     );
                     console.log('cartItemToRemove:', cartItemToRemove);
 
-                    if (cartItemToRemove && cartItemToRemove.cartId) {
-                        await cartStore.removeCartItem(cartItemToRemove.cartId);
+                    if (cartItemToRemove && cartItemToRemove.productId) {
+                        await cartStore.removeCartItem(cartItemToRemove.productId);
                         updateCart();
                         alert(`상품이 장바구니에서 제거되었습니다.`);
                     } else {

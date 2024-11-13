@@ -37,12 +37,12 @@ export const useCartStore = defineStore('cart', {
     },
 
     // 장바구니에서 아이템을 삭제하는 메서드
-    async removeCartItem(cartId) {
+    async removeCartItem(productId) {
       try {
-        await deleteCartItem(cartId);
+        await deleteCartItem(productId);
         this.cartItems = this.cartItems.filter(
-          (item) => item.cartId !== cartId
-        ); // cartId typo 수정
+          (item) => item.productId !== productId
+        ); // productId typo 수정
       } catch (error) {
         console.error('Error removing cart item:', error);
       }
@@ -61,7 +61,7 @@ export const useCartStore = defineStore('cart', {
       }
     },
 
-     // 선택된 상품 목록 설정 메서드
+    // 선택된 상품 목록 설정 메서드
     setSelectedProducts(products) {
       this.selectedProducts = products;
     },
