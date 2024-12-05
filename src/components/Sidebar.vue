@@ -105,10 +105,13 @@ export default {
 .uiNavAside {
     position: fixed;
     right: -9px;
-    top: -2px;
+    top: 119px;
     width: 90px;
     height: 100vh;
     display: flex;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
     flex-direction: column;
     padding: 10px;
 }
@@ -118,6 +121,6 @@ export default {
     flex-direction: column;
     flex-grow: 1;
     position: relative;
-    top: 130px;
+    /* top: 130px; */
 }
 </style>
