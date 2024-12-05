@@ -22,25 +22,26 @@ import SideBar from './Sidebar.vue';
 </template>
 
 <style scoped>
+/* 최상위 wrapper에 고정된 너비와 X축 스크롤 추가 */
 .wrapper {
     display: flex;
     flex-direction: column;
+    min-width: 1500px; /* 전체 레이아웃의 최소 너비 고정 */
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
-
-    /* x축 스크롤 활성화 */
-    overflow-x: scroll;
-    min-width: 1300px; /* 최소 너비 설정 */
+    position: relative;
+    overflow-x: auto; /* X축 스크롤 활성화 */
+    overflow-y: hidden; /* Y축 스크롤 유지 */
 }
 
 .container {
     display: flex;
     width: 100%;
-    max-width: 1300px; /* 기본 좌우 여백 유지 */
-    margin: 0 auto; /* 가운데 정렬 */
+    max-width: 1500px; /* 고정 너비 */
+    margin: 0 auto;
     box-sizing: border-box;
-    padding: 0 20px; /* 좌우 여백 추가 */
+    padding: 0 20px;
 }
 
 .main {
@@ -55,30 +56,24 @@ import SideBar from './Sidebar.vue';
 }
 
 .exceptSide {
-    max-width: 1300px;
+    max-width: 100%;
     width: 100%;
-    padding: 20px;
+    padding: 20px 90px 20px 100px;
+    margin: 130px auto 0;
     box-sizing: border-box;
 }
 
-/* 화면 축소 시 여백 제거 및 강제 스크롤 설정 */
+/* 반응형 조건 제거 */
 @media (max-width: 1300px) {
-    .wrapper {
-        min-width: 1300px; /* 최소 너비 강제 설정 */
-        overflow-x: scroll; /* 축소 시 스크롤 활성화 */
-    }
+    /* 해당 섹션 제거 */
+}
 
-    .container {
-        max-width: none; /* 여백 제거 */
-        padding: 0; /* 패딩 제거 */
-        flex-shrink: 0; /* 요소 축소 방지 */
-    }
+@media (max-width: 900px) {
+    /* 해당 섹션 제거 */
+}
 
-    .exceptSide {
-        max-width: none; /* 여백 제거 */
-        padding: 10px; /* 약간의 여백 유지 */
-        flex-shrink: 0; /* 축소 방지 */
-    }
+@media (max-width: 600px) {
+    /* 해당 섹션 제거 */
 }
 
 /* 푸터는 항상 하단 */

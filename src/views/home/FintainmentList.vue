@@ -70,7 +70,8 @@ onMounted(() => {
     align-items: center;
     height: 400px; /* 컨테이너 높이를 늘려서 이미지와 버튼이 겹치지 않도록 설정 */
     background: linear-gradient(to right, #d3d3d35c 10%, white 30%, white 70%, #d3d3d35c 100%);
-    padding: 20px;
+    padding: 60px;
+    margin: 0 auto;
     position: relative; /* 슬라이더 컨트롤을 부모 컨테이너 기준으로 위치시킬 수 있게 설정 */
 }
 

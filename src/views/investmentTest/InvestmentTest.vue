@@ -247,7 +247,7 @@ export default {
 .InvestmentTest-container {
     /* 화면의 중앙에 배치 */
     position: relative; /* absolute 대신 relative로 변경 */
-    top: 25%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
@@ -266,6 +266,7 @@ export default {
 
 .question-progress {
     font-size: 18px;
+    margin: 0 auto;
     margin-bottom: 30px;
     color: #3f51b5;
 }
@@ -317,11 +318,15 @@ export default {
     border: 1px solid #2a9d8f;
 }
 
+.InvestmentTest-container h1 {
+    margin: 0 auto;
+}
+
 .progress-bar {
     width: 50%;
     height: 10px;
     background-color: #ddd;
-    margin: 2px;
+    margin: 0 auto;
     border-radius: 6px;
     overflow: hidden;
 }
