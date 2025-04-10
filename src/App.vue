@@ -1,33 +1,47 @@
+// App.vue
 <template>
-  <div id="app">
-    <DefaultLayout>
-      <router-view />
-    </DefaultLayout>
-  </div>
+    <v-app>
+        <DefaultLayout>
+            <router-view />
+        </DefaultLayout>
+    </v-app>
 </template>
 
 <script>
-import { provide, reactive } from 'vue';
-import DefaultLayout from './components/DefaultLayout.vue';
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
-  name: 'App',
-  setup() {
-    // Use reactive to make the cart reactive
-    const cart = reactive([]);
+    name: 'App',
+    setup() {
+        const router = useRouter();
 
-    // Provide the cart to child components
-    provide('cart', cart);
-
-    return {
-      cart,
-    };
-  },
+        // 로그인 정보 초기화 로직
+        // onMounted(() => {
+        //   // 로그인 상태 확인 후 초기화
+        //   if (localStorage.getItem('user') != null) {
+        //     localStorage.removeItem('user');
+        //     const cookies = document.cookie.split("; ");
+        //     for (const cookie of cookies) {
+        //       const cookieName = cookie.split("=")[0];
+        //       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        //     }
+        //   }
+        // });
+    },
 };
 </script>
 
 <style>
-/* Add your styles here */
-</style>
+@font-face {
+    font-family: 'BMDOHYEON';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff')
+        format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 
-<!-- 커밋 컨벤션 -->
+#app {
+    font-family: 'BMDOHYEON', sans-serif;
+}
+</style>

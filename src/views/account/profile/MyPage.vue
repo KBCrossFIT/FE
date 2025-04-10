@@ -27,62 +27,59 @@
 
                         <v-card-text>
                             <v-form>
-                                전체 이름
-                                <v-text-field
-                                    :value="user.fullName"
-                                    prepend-icon="mdi-account"
-                                    readonly
-                                ></v-text-field>
-                                이메일
-                                <v-text-field
-                                    :value="user.email"
-                                    prepend-icon="mdi-email"
-                                    type="email"
-                                    readonly
-                                ></v-text-field>
+                                <div v-if="!user.fullName">로딩 중...</div> <!-- Loading indicator -->
+                                <div v-else>
+                                    전체 이름
+                                    <v-text-field
+                                        :value="user.fullName"
+                                        prepend-icon="mdi-account"
+                                        readonly
+                                    ></v-text-field>
+                                    이메일
+                                    <v-text-field
+                                        :value="user.email"
+                                        prepend-icon="mdi-email"
+                                        type="email"
+                                        readonly
+                                    ></v-text-field>
 
-                                <v-menu
-                                    ref="menu"
-                                    v-model="menu"
-                                    :close-on-content-click="false"
-                                    transition="scale-transition"
-                                    offset-y
-                                    min-width="auto"
-                                >
-                                    <template v-slot:activator="{ on, attrs }">
-                                        생년월일
-                                        <v-text-field
-                                            :value="user.dob"
-                                            prepend-icon="mdi-calendar"
-                                            readonly
-                                            v-bind="attrs"
-                                            v-on="on"
-                                        ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                        v-model="user.dob"
-                                        @input="menu = false"
-                                        :readonly="true"
-                                    ></v-date-picker>
-                                </v-menu>
+                                    <v-menu
+                                        ref="menu"
+                                        v-model="menu"
+                                        :close-on-content-click="false"
+                                        transition="scale-transition"
+                                        offset-y
+                                        min-width="auto"
+                                    >
+                                        <template v-slot:activator="{ on, attrs }">
+                                            생년월일
+                                            <v-text-field
+                                                :value="user.dob"
+                                                prepend-icon="mdi-calendar"
+                                                readonly
+                                                v-bind="attrs"
+                                                v-on="on"
+                                            ></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                            v-model="user.dob"
+                                            @input="menu = false"
+                                            :readonly="true"
+                                        ></v-date-picker>
+                                    </v-menu>
 
-                                성별
-                                <v-text-field
-                                    :value="user.gender"
-                                    prepend-icon="mdi-gender"
-                                    type="gender"
-                                    readonly
-                                ></v-text-field>
+                                    성별
+                                    <v-text-field
+                                        :value="user.gender"
+                                        prepend-icon="mdi-gender"
+                                        type="gender"
+                                        readonly
+                                    ></v-text-field>
 
-                                <v-btn color="teal" block @click="navigateTo('/mypageEdit')"
-                                    >수정하기</v-btn
-                                >
-                                <v-btn color="teal" block @click="navigateTo('/')">돌아가기</v-btn>
-                                <v-btn color="teal" block @click="navigateTo('/deleteAccount')"
-                                    >탈퇴하기</v-btn
-                                >
-
-                                <!-- <v-btn color="teal" block @click="handleDelete()">탈퇴하기</v-btn> -->
+                                    <v-btn color="teal" block @click="navigateTo('/mypageEdit')">수정하기</v-btn>
+                                    <v-btn color="teal" block @click="navigateTo('/')">돌아가기</v-btn>
+                                    <v-btn color="teal" block @click="handleDelete">탈퇴하기</v-btn>
+                                </div>
                             </v-form>
                         </v-card-text>
                     </v-card>
@@ -91,7 +88,7 @@
         </v-container>
 
         <!-- Confirmation Dialog -->
-        <!-- <v-dialog v-model="dialog" persistent max-width="290">
+        <v-dialog v-model="dialog" persistent max-width="290">
             <v-card>
                 <v-card-title class="headline">탈퇴 확인</v-card-title>
                 <v-card-text>정말로 탈퇴하시겠습니까?</v-card-text>
@@ -101,26 +98,47 @@
                     <v-btn color="grey" text @click="dialog = false">취소</v-btn>
                 </v-card-actions>
             </v-card>
-        </v-dialog> -->
+        </v-dialog>
     </v-app>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'MyPage',
     data() {
         return {
             user: {
-                fullName: '홍길동',
-                email: 'hong@example.com',
-                dob: '1990-01-01', // Example date
-                gender: 'male',
+                fullName: '',
+                email: '',
+                dob: '', // Date of birth
+                gender: '',
             },
             menu: false,
             dialog: false,
         };
     },
+    created() {
+        console.log('MyPage component created');
+        this.fetchUserData(); // Fetch user data when the component is created
+    },
     methods: {
+        async fetchUserData() {
+            console.log('Auth Token:', localStorage.getItem('authToken'));
+            try {
+                const response = await axios.get('http://localhost:8080/api/user/profile', {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('authToken')}`, // Add token for authorization
+                    },
+                });
+                console.log(response.data); // Log the API response
+                this.user = response.data; // Update user data with response
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                // Handle error appropriately (e.g., show an error message)
+            }
+        },
         navigateTo(path) {
             this.$router.push(path);
         },
@@ -129,14 +147,13 @@ export default {
         },
         confirmDelete() {
             this.dialog = false; // Close the dialog
-            this.$router.push('/'); // Redirect to homepage
+            // Add the account deletion logic here, e.g., API call to delete account
+            this.$router.push('/'); // Redirect to homepage after deletion
         },
     },
 };
 </script>
-
 <style scoped>
-/* Styling to match the login and signup pages */
 .v-application {
     background-color: #f0f9f9;
 }

@@ -1,145 +1,188 @@
 <template>
-  <div id="All">
-    <!-- 왼쪽 메뉴 바 -->
-    <div id="left">
-      <v-card class="pa-4" elevation="2" style="height: 100%">
-        <v-card-text>
-          <v-list>
-            <v-list-item @click="navigateTo('/Youtube')">
-              <v-list-item-content>
-                <v-list-item-title>금융 유튜브</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="navigateTo('/Influencer')">
-              <v-list-item-content>
-                <v-list-item-title>인플루언서</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="navigateTo('/News')">
-              <v-list-item-content>
-                <v-list-item-title>뉴스</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-      </v-card>
+    <div class="top">
+        <img src="@/assets/img/2first.jpg" alt="배너 이미지" class="banner" />
     </div>
-    <!-- 상품명 검색, 제목 -->
-    <div id="right">
-      <v-container>
-        <div id="seartext" class="search-container">
-          <h1 class="sixth">_</h1>
-
-          <div id="search" class="search-filter">
-            <i class="fa-solid fa-magnifying-glass" style="font-size: 24px"></i>
-            <input
-              v-model="searchQuery"
-              type="text"
-              class="form-control"
-              placeholder="검색어를 입력해 주세요"
-            />
-          </div>
+    <div id="All">
+        <!-- 왼쪽 메뉴 바 -->
+        <div id="left">
+            <v-card class="pa-4" elevation="2" style="height: 100%">
+                <v-card-text>
+                    <div class="list-container">
+                        <span
+                            @click="navigateTo('/influencer')"
+                            class="list-item"
+                            :class="{ active: $route.path === '/influencer' }"
+                        >
+                            인플루언서
+                        </span>
+                        <span
+                            @click="navigateTo('/youtube')"
+                            class="list-item"
+                            :class="{ active: $route.path === '/youtube' }"
+                        >
+                            유튜브
+                        </span>
+                        <span
+                            @click="navigateTo('/news')"
+                            class="list-item"
+                            :class="{ active: $route.path === '/news' }"
+                        >
+                            뉴스
+                        </span>
+                    </div>
+                </v-card-text>
+            </v-card>
         </div>
 
-        <!-- 메인 -->
-        <Youtube_title />
+        <!-- 상품명 검색, 제목 -->
+        <div id="right">
+            <v-container>
+                <!-- 메인 -->
+                <Influencer_title :searchQuery="searchQuery" @openModal="openModal" />
+            </v-container>
+        </div>
 
-        <!-- 하단 페이지 넘기는 바  -->
-      </v-container>
-      <div id="Pagination">
-        <v-container>
-          <v-pagination
-            v-model="page"
-            :length="5"
-            @input="onPageChange"
-          ></v-pagination>
-        </v-container>
-      </div>
+        <!-- 모달 창 -->
+        <!--    <ModalInfluencer
+            v-if="isModalOpen"
+            :isOpen="isModalOpen"
+            :persona="selectedPersona"
+            @close="closeModal"
+        /> -->
+
+        <ModalPersona :isOpen="isModalOpen" :persona="selectedPersona" @close="closeModal" />
     </div>
-  </div>
 </template>
 
 <script>
-import Youtube_title from './Youtube_title.vue';
+import Influencer_title from './Influencer_title.vue';
+import ModalInfluencer from '@/components/Modal/ModalInfluencer.vue';
+import ModalPersona from '@/components/Modal/ModalPersona.vue';
 
 export default {
-  name: 'Youtube',
-  components: {
-    Youtube_title,
-  },
-  data() {
-    return {
-      searchQuery: '', // 검색어 데이터
-      page: 1, // 현재 페이지
-    };
-  },
-  methods: {
-    navigateTo(path) {
-      this.$router.push(path);
+    name: 'Influencer',
+    components: {
+        Influencer_title,
+        ModalInfluencer, // 모달 컴포넌트 추가
+        ModalPersona,
     },
-    onPageChange(newPage) {
-      this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
-      console.log(`Current page: ${newPage}`);
+    data() {
+        return {
+            searchQuery: '', // 검색어 데이터
+            page: 1, // 현재 페이지
+            isModalOpen: false, // 모달 상태 관리
+            selectedPersona: null, // 선택된 인플루언서 데이터
+        };
     },
-  },
+    methods: {
+        navigateTo(path) {
+            this.$router.push(path);
+        },
+        onPageChange(newPage) {
+            this.page = newPage; // 페이지가 변경될 때 호출되는 메서드
+            console.log(`Current page: ${newPage}`);
+        },
+        openModal(persona) {
+            console.log('Opening modal with persona:', persona);
+            document.body.style.overflow = 'hidden';
+            this.selectedPersona = persona;
+            this.isModalOpen = true;
+        },
+        closeModal() {
+            this.isModalOpen = false;
+            this.selectedPersona = null;
+            document.body.style.overflow = '';
+        },
+
+        // 검색창 지우기 기능
+        eraseSearch() {
+            this.searchQuery = ''; // 검색어를 빈 문자열로 설정하여 검색창을 초기화
+        },
+    },
 };
 </script>
 
 <style scoped>
+.top {
+    width: 100%; /* 상단 영역의 너비를 전체 화면에 맞춤 */
+}
+
+.banner {
+    width: 100%;
+    height: 238px;
+}
+
 #All {
-  display: flex;
-  align-items: stretch; /* 왼쪽과 오른쪽 영역을 세로로 늘림 */
-  padding-left: 100px;
+    display: flex;
+    align-items: stretch;
+    padding-left: 0; /* 왼쪽 패딩 제거 */
 }
+
 #left {
-  width: 300px; /* 고정된 너비 (300px) */
+    width: 250px; /* 너비 조정 */
+    background-color: #f0f0f0; /* 배경색 변경 */
 }
+
 #right {
-  flex: 1; /* 오른쪽 영역은 남은 공간을 모두 차지 */
+    flex: 1;
+    padding-left: 20px; /* 오른쪽 컨텐츠에 왼쪽 패딩 추가 */
 }
+
 .search-container {
-  display: flex;
-  align-items: center; /* 수직 정렬 */
-  margin-bottom: 20px; /* 아래 여백 추가 */
-  justify-content: space-between;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: space-between;
+    justify-content: flex-end; /* 오른쪽 정렬로 변경 */
 }
+
 #search {
-  display: flex; /* 아이콘과 인풋을 나란히 배치 */
-  align-items: center; /* 수직 중앙 정렬 */
-  gap: 10px; /* 아이콘과 인풋 간격 */
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
 .form-control {
-  flex: 1; /* 인풋 필드를 남은 공간에 맞게 확장 */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-h1.sixth {
-  position: relative;
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-h1.sixth:before,
-h1.sixth:after {
-  content: '금융 ';
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  height: 100%;
-  font-size: 1.25em;
-  color: black;
-
-  transition: all 0.5s ease;
+.erase-btn {
+    margin-left: 10px;
 }
 
-h1.sixth:after {
-  content: ' 유튜브';
+.list-container {
+    display: flex;
+    flex-direction: column;
 }
 
-h1.sixth:hover:before {
-  transform: translateX(-5px);
+.list-item {
+    display: block;
+    padding: 15px 20px;
+    cursor: pointer;
+    color: #333333;
+    font-size: 16px;
+    transition: background-color 0.2s, color 0.2s, border-radius 0.2s;
+    border-radius: 0; /* 기본 상태에서는 둥글지 않게 설정 */
 }
 
-h1.sixth:hover:after {
-  transform: translateX(5px);
+.list-item.active {
+    background-color: #7bd5c3;
+    color: white;
+    border-radius: 10px; /* active 상태에서 둥글게 설정 */
+}
+
+.list-item:hover {
+    background-color: #5fc3b1;
+    color: white;
+    border-radius: 10px; /* hover 상태에서 둥글게 설정 */
+}
+
+.list-item.active:hover {
+    background-color: #5fc3b1;
+    color: white;
+    border-radius: 10px; /* active이면서 hover 상태일 때도 둥글게 유지 */
 }
 </style>

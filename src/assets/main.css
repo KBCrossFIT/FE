@@ -1,4 +1,4 @@
-@import './base.css';
+/* @import './base.css';
 
 #app {
   max-width: 1280px;
@@ -32,4 +32,15 @@ a,
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
+} */
+
+@font-face {
+  font-family: 'BMDOHYEON';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  font-family: 'BMDOHYEON', sans-serif;
 }

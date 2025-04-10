@@ -1,155 +1,156 @@
 <template>
-    <div class="find-container">
-      <div class="find-header">
-        <button @click="goHome" class="home-button">Home</button>
-        <h2>아이디/비밀번호 찾기</h2>
+  <div class="find-container">
+    <div class="find-header">
+      <h2>아이디/비밀번호 찾기</h2>
+    </div>
+    <div class="find-box">
+      <div class="tabs">
+        <button
+          :class="{ active: activeTab === 'find-id' }"
+          @click="setActiveTab('find-id')"
+        >
+          아이디 찾기
+        </button>
+        <button
+          :class="{ active: activeTab === 'find-pw' }"
+          @click="setActiveTab('find-pw')"
+        >
+          비밀번호 찾기
+        </button>
       </div>
-      <div class="find-box">
-        <div class="tabs">
-          <button
-            :class="{ active: activeTab === 'find-id' }"
-            @click="setActiveTab('find-id')"
-          >
-            아이디 찾기
+
+      <div v-if="activeTab === 'find-id'" class="find-id">
+        <form @submit.prevent="handleFindId">
+          <div class="form-group">
+            <label for="email">이메일 주소</label>
+            <input type="email" id="email" v-model="email" required />
+          </div>
+          <div class="form-group code-group">
+            <label for="code">코드 입력</label>
+            <div class="code-container">
+              <input
+                type="text"
+                id="code"
+                v-model="code"
+                v-if="showCodeInput"
+                required
+              />
+              <button
+                type="button"
+                class="send-button"
+                @click="handleSendCode"
+                :disabled="isTimerActive"
+              >
+                {{ isTimerActive ? timer : '코드 보내기' }}
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="submit-button" v-if="showCodeInput">
+            확인
           </button>
-          <button
-            :class="{ active: activeTab === 'find-pw' }"
-            @click="setActiveTab('find-pw')"
-          >
-            비밀번호 찾기
+        </form>
+      </div>
+
+      <div v-if="activeTab === 'find-pw'" class="find-pw">
+        <form @submit.prevent="handleFindPw">
+          <div class="form-group">
+            <label for="username">아이디</label>
+            <input type="text" id="username" v-model="username" required />
+          </div>
+          <div class="form-group">
+            <label for="email">이메일 주소</label>
+            <input type="email" id="email" v-model="email" required />
+          </div>
+          <div class="form-group code-group">
+            <label for="code">코드 입력</label>
+            <div class="code-container">
+              <input
+                type="text"
+                id="code"
+                v-model="code"
+                v-if="showCodeInput"
+                required
+              />
+              <button
+                type="button"
+                class="send-button"
+                @click="handleSendCode"
+                :disabled="isTimerActive"
+              >
+                {{ isTimerActive ? timer : '코드 보내기' }}
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="submit-button" v-if="showCodeInput">
+            비밀번호 재설정
           </button>
-        </div>
-  
-        <div v-if="activeTab === 'find-id'" class="find-id">
-          <form @submit.prevent="handleFindId">
-            <div class="form-group">
-              <label for="email">이메일 주소</label>
-              <input type="email" id="email" v-model="email" required />
-            </div>
-            <div class="form-group code-group">
-              <label for="code">코드 입력</label>
-              <div class="code-container">
-                <input
-                  type="text"
-                  id="code"
-                  v-model="code"
-                  v-if="showCodeInput"
-                  required
-                />
-                <button
-                  type="button"
-                  class="send-button"
-                  @click="handleSendCode"
-                  :disabled="isTimerActive"
-                >
-                  {{ isTimerActive ? timer : '코드 보내기' }}
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="submit-button" v-if="showCodeInput">
-              확인
-            </button>
-          </form>
-        </div>
-  
-        <div v-if="activeTab === 'find-pw'" class="find-pw">
-          <form @submit.prevent="handleFindPw">
-            <div class="form-group">
-              <label for="username">아이디</label>
-              <input type="text" id="username" v-model="username" required />
-            </div>
-            <div class="form-group">
-              <label for="email">이메일 주소</label>
-              <input type="email" id="email" v-model="email" required />
-            </div>
-            <div class="form-group code-group">
-              <label for="code">코드 입력</label>
-              <div class="code-container">
-                <input
-                  type="text"
-                  id="code"
-                  v-model="code"
-                  v-if="showCodeInput"
-                  required
-                />
-                <button
-                  type="button"
-                  class="send-button"
-                  @click="handleSendCode"
-                  :disabled="isTimerActive"
-                >
-                  {{ isTimerActive ? timer : '코드 보내기' }}
-                </button>
-              </div>
-            </div>
-            <button type="submit" class="submit-button" v-if="showCodeInput">
-              비밀번호 재설정
-            </button>
-          </form>
-        </div>
+        </form>
       </div>
     </div>
-  </template>
-  <script>
-  export default {
-    data() {
-      return {
-        activeTab: 'find-id', // Default tab
-        email: '',
-        username: '',
-        code: '',
-        showCodeInput: false,
-        timer: '05:00',
-        timerInterval: null,
-        isTimerActive: false,
-      };
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      activeTab: 'find-id', // Default tab
+      email: '',
+      username: '',
+      code: '',
+      showCodeInput: false,
+      timer: '05:00',
+      timerInterval: null,
+      isTimerActive: false,
+    };
+  },
+  methods: {
+    setActiveTab(tab) {
+      this.activeTab = tab;
+      this.resetTimer();
     },
-    methods: {
-      setActiveTab(tab) {
-        this.activeTab = tab;
-        this.resetTimer();
-      },
-      handleFindId() {
-        // Handle find ID logic here
-      },
-      handleFindPw() {
-        // Handle find PW logic here
-      },
-      handleSendCode() {
-        // Handle send code logic here
-        this.showCodeInput = true;
-        this.startTimer();
-      },
-      startTimer() {
-        let time = 300; // 5 minutes
-        this.isTimerActive = true;
-        this.timerInterval = setInterval(() => {
-          const minutes = Math.floor(time / 60);
-          const seconds = time % 60;
-          this.timer = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-          if (time <= 0) {
-            clearInterval(this.timerInterval);
-            this.isTimerActive = false;
-            this.timer = '코드 보내기';
-          }
-          time -= 1;
-        }, 1000);
-      },
-      resetTimer() {
-        clearInterval(this.timerInterval);
-        this.timer = '05:00';
-        this.isTimerActive = false;
-        this.showCodeInput = false;
-      },
-      goHome() {
-        this.$router.push({ name: 'Home' }); // Navigate to the Home route
-      },
+    handleFindId() {
+      // Handle find ID logic here
     },
-    beforeDestroy() {
+    handleFindPw() {
+      // Handle find PW logic here
+    },
+    handleSendCode() {
+      // Handle send code logic here
+      this.showCodeInput = true;
+      this.startTimer();
+    },
+    startTimer() {
+      let time = 300; // 5 minutes
+      this.isTimerActive = true;
+      this.timerInterval = setInterval(() => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        this.timer = `${String(minutes).padStart(2, '0')}:${String(
+          seconds
+        ).padStart(2, '0')}`;
+        if (time <= 0) {
+          clearInterval(this.timerInterval);
+          this.isTimerActive = false;
+          this.timer = '코드 보내기';
+        }
+        time -= 1;
+      }, 1000);
+    },
+    resetTimer() {
       clearInterval(this.timerInterval);
+      this.timer = '05:00';
+      this.isTimerActive = false;
+      this.showCodeInput = false;
     },
-  };
-  </script>
+    goHome() {
+      this.$router.push({ name: 'Home' }); // Navigate to the Home route
+    },
+  },
+  beforeDestroy() {
+    clearInterval(this.timerInterval);
+  },
+};
+</script>
 
 <style scoped>
 .find-container {
@@ -157,13 +158,13 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom, #e0f2f1, #ffffff); /* Gradient from light mint to white */
+  background: linear-gradient(to bottom, #e0f2f1, #ffffff);
 }
 
 .find-header {
   position: absolute;
-  top: 20px; /* Adjust as needed */
-  left: 50%;
+  top: 220px;
+  left: 48%;
   transform: translateX(-50%);
   padding: 10px 20px;
   font-size: 24px;
@@ -172,12 +173,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100% - 40px); /* Adjust to fit inside the container */
+  width: calc(100% - 40px);
 }
 
 .home-button {
   position: absolute;
-  left: 20px; /* Adjust as needed */
+  left: 20px;
   background-color: #4db6ac;
   color: white;
   border: none;

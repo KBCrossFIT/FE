@@ -1,145 +1,1284 @@
 <template>
-  <div class="financial-products-container">
-    <h1>금융상품 페이지</h1>
-    <div class="search-filter">
-      <input
-        v-model="searchQuery"
-        type="text"
-        class="form-control"
-        placeholder="상품명 검색..."
-      />
-      <select v-model="selectedCategory" class="form-select">
-        <option value="">모든 카테고리</option>
-        <option value="savings">적금</option>
-        <option value="bonds">채권</option>
-        <option value="funds">펀드</option>
-      </select>
-    </div>
-
-    <div class="product-list">
-      <div
-        v-for="product in filteredProducts"
-        :key="product.id"
-        class="product-card card"
-      >
-        <div class="card-body">
-          <h5 class="card-title">{{ product.name }}</h5>
-          <p class="card-text">
-            <strong>수익률:</strong><br />
-            <span v-if="product.type === 'bonds'"
-              >3개월: {{ product.yield[0] }}%<br />
-              6개월: {{ product.yield[1] }}%<br />
-              12개월: {{ product.yield[2] }}%</span
+    <div class="financial-products-container">
+        <!-- 탭 버튼 -->
+        <div class="tabs">
+            <v-btn
+                v-for="tab in tabs"
+                :key="tab.value"
+                :class="{ 'v-btn--active': selectedCategory === tab.value }"
+                @click="selectTab(tab.value)"
+                class="nav-button"
+                :style="selectedCategory === tab.value ? activeButtonStyle : {}"
             >
-            <span v-else-if="product.type === 'funds'"
-              >3개월: {{ product.yield[0] }}%<br />
-              6개월: {{ product.yield[1] }}%<br />
-              12개월: {{ product.yield[2] }}%</span
-            >
-            <span v-else>수익률 정보 없음</span>
-          </p>
-          <button @click="addToCart(product)" class="btn btn-primary">
-            장바구니 담기
-          </button>
+                {{ tab.label }}
+            </v-btn>
         </div>
-      </div>
+
+        <!-- 주식 리스트 -->
+        <div class="stock-container">
+            <stock-search v-if="selectedCategory === 'stock'" />
+            <stock-list class="stock-list" v-if="selectedCategory === 'stock'" />
+        </div>
+
+        <!-- 검색 및 필터링 -->
+        <div class="search-box" v-if="selectedCategory !== 'stock'">
+            <input
+                v-model="searchQuery"
+                type="text"
+                class="search-input mb-2"
+                placeholder="상품명 검색..."
+                @keydown.enter="handleSearch"
+            />
+            <button @click="handleSearch" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <button @click="eraseFilter" class="erase-filter-btn">
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+        </div>
+
+        <!-- 로딩 중 메시지 -->
+        <div v-if="isLoading" class="text-center my-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>상품 정보를 불러오는 중입니다...</p>
+        </div>
+
+        <!-- 에러 메시지 -->
+        <div v-if="error" class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+
+        <!-- 상품 리스트 -->
+        <div v-else v-if="selectedCategory !== 'stock'">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <template v-if="selectedCategory === 'fund'">
+                            <th @click="sortBy('companyNm')">
+                                금융회사
+                                <SortIndicator
+                                    field="companyNm"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('productNm')">
+                                상품
+                                <SortIndicator
+                                    field="productNm"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('fundType')">
+                                펀드유형
+                                <SortIndicator
+                                    field="fundType"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('riskLevel')">
+                                위험도
+                                <SortIndicator
+                                    field="riskLevel"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('yield12')">
+                                수익률
+                                <SortIndicator
+                                    field="yield12"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th></th>
+                        </template>
+
+                        <template
+                            v-else-if="
+                                selectedCategory === 'deposit' || selectedCategory === 'saving'
+                            "
+                        >
+                            <th @click="sortBy('korCoNm')">
+                                금융회사
+                                <SortIndicator
+                                    field="korCoNm"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('finPrdtNm')">
+                                상품
+                                <SortIndicator
+                                    field="finPrdtNm"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('intrRate')">
+                                기본금리
+                                <SortIndicator
+                                    field="intrRate"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('intrRate2')">
+                                최고금리
+                                <SortIndicator
+                                    field="intrRate2"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th></th>
+                        </template>
+
+                        <template v-else-if="selectedCategory === 'bond'">
+                            <th @click="sortBy('bondIsurNm')">
+                                발행자
+                                <SortIndicator
+                                    field="bondIsurNm"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('isinCdNm')">
+                                상품
+                                <SortIndicator
+                                    field="isinCdNm"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('bondIssuDt')">
+                                채권발행일자
+                                <SortIndicator
+                                    field="bondIssuDt"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th @click="sortBy('bondSrfcInrt')">
+                                채권금리
+                                <SortIndicator
+                                    field="bondSrfcInrt"
+                                    :currentSortField="sortField"
+                                    :sortDirection="sortOrder"
+                                />
+                            </th>
+                            <th></th>
+                        </template>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                        v-if="
+                            filteredProducts.length === 0 && searchQuery.length >= 2 && !isLoading
+                        "
+                    >
+                        <td :colspan="columnCount">검색 결과가 없습니다.</td>
+                    </tr>
+
+                    <tr
+                        v-for="product in filteredProducts"
+                        :key="product.productId"
+                        :class="{ 'in-cart': isProductInCart(product.productId) }"
+                    >
+                        <!-- 회사명, 금융회사명 또는 발행자 -->
+                        <template v-if="selectedCategory === 'fund'">
+                            <td>
+                                <v-avatar size="22" class="mr-2"
+                                    ><i class="fas fa-chart-line"></i></v-avatar
+                                >{{ product.companyNm }}
+                            </td>
+                        </template>
+                        <template
+                            v-else-if="
+                                selectedCategory === 'deposit' || selectedCategory === 'saving'
+                            "
+                        >
+                            <td>
+                                <!-- 로고 데이터 존재 시 -->
+                                <div v-if="logoExists(product.korCoNm)" class="financial-logo-bank">
+                                    <img
+                                        :src="getLogoPath(product.korCoNm)"
+                                        alt="Logo"
+                                        class="financial-logo"
+                                    />
+                                </div>
+
+                                <!-- 로고 데이터 없을 시 -->
+                                <div v-else class="financal-nonlogo-bank">
+                                    <v-avatar size="22" class="mr-2">
+                                        <i class="fas fa-wallet"></i>
+                                    </v-avatar>
+                                    {{ product.korCoNm }}
+                                </div>
+                            </td>
+                        </template>
+
+                        <template v-else-if="selectedCategory === 'bond'">
+                            <td>
+                                <v-avatar
+                                    v-if="product.bondIsurNm === '대한민국'"
+                                    size="22"
+                                    class="mr-2"
+                                    ><i class="fas fa-landmark"></i>
+                                </v-avatar>
+                                <v-avatar v-else size="22"
+                                    ><i class="fas fa-puzzle-piece"></i
+                                ></v-avatar>
+
+                                {{ product.bondIsurNm }}
+                            </td>
+                        </template>
+
+                        <!-- 상품명 -->
+                        <td @click="gotoDetail(product.productId)" class="Detail-Link">
+                            {{ getProductName(product) }}
+                        </td>
+
+                        <!-- 펀드 정보 -->
+                        <template v-if="selectedCategory === 'fund'">
+                            <td>{{ product.fundType }}</td>
+                            <td :style="getRiskLevelStyle(product.riskLevel)">
+                                {{ mapRiskLevel(product.riskLevel) }}
+                            </td>
+                            <td :style="getColorStyle(product.yield12)">{{ product.yield12 }}%</td>
+                        </template>
+
+                        <!-- 예금 및 적금 정보 -->
+                        <template
+                            v-else-if="
+                                selectedCategory === 'deposit' || selectedCategory === 'saving'
+                            "
+                        >
+                            <td :style="getColorStyle(getRate(product.productId, 12).intrRate)">
+                                {{ getRate(product.productId, 12).intrRate }}%
+                            </td>
+                            <td :style="getColorStyle(getRate(product.productId, 12).intrRate2)">
+                                {{ getRate(product.productId, 12).intrRate2 }}%
+                            </td>
+                        </template>
+
+                        <!-- 채권 정보 -->
+                        <template v-else-if="selectedCategory === 'bond'">
+                            <td>{{ formatDate(product.bondIssuDt) }}</td>
+                            <td :style="getColorStyle(product.bondSrfcInrt)">
+                                {{ product.bondSrfcInrt }}%
+                            </td>
+                        </template>
+
+                        <!-- 장바구니 버튼 -->
+                        <td>
+                            <v-btn
+                                icon
+                                @click="alertCartAndIncreaseHit(product)"
+                                :color="isProductInCart(product.productId) ? 'primary' : 'default'"
+                            >
+                                <v-icon>{{
+                                    isProductInCart(product.productId)
+                                        ? 'mdi-cart-check'
+                                        : 'mdi-cart'
+                                }}</v-icon>
+                            </v-btn>
+                        </td>
+                        <!-- 투자성향 분석 안내 대화상자 추가 -->
+                        <v-dialog
+                            v-model="showInvestmentTestDialog"
+                            max-width="400"
+                            overlay-opacity="0.5"
+                        >
+                            <v-card class="investment-test-dialog">
+                                <v-card-title class="headline">투자성향 분석 필요</v-card-title>
+                                <v-card-text
+                                    >투자성향 분석을 해야 장바구니에 상품을 담을 수
+                                    있습니다.</v-card-text
+                                >
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="primary" text @click="goToInvestmentTest">
+                                        투자성향 분석하러 가기
+                                    </v-btn>
+                                    <v-btn
+                                        color="grey darken-1"
+                                        text
+                                        @click="closeInvestmentTestDialog"
+                                    >
+                                        다음에 하기
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="info-message">※ 표시되는 이율은 12개월 기준입니다.</div>
+
+            <!-- Pagination Controls -->
+            <div id="Pagination" class="mt-4 pagination-buttons">
+                <div class="pagination-container">
+                    <div class="page-navigation">
+                        <button
+                            type="button"
+                            @click.prevent="prevPage"
+                            :disabled="currentPage === 1"
+                            class="pagination-btn"
+                            aria-label="이전 페이지로 이동"
+                        >
+                            이전
+                        </button>
+                        <span>{{ currentPage }} / {{ totalPages }}</span>
+                        <button
+                            type="button"
+                            @click.prevent="nextPage"
+                            :disabled="currentPage === totalPages"
+                            class="pagination-btn"
+                            aria-label="다음 페이지로 이동"
+                        >
+                            다음
+                        </button>
+                    </div>
+                    <div class="page-selection">
+                        <input
+                            v-model.number="goToPage"
+                            type="number"
+                            min="1"
+                            :max="totalPages"
+                            class="page-input"
+                            @keyup.enter.prevent="goToSpecificPage"
+                            placeholder="페이지 번호"
+                        />
+                        <button
+                            type="button"
+                            @click.prevent="goToSpecificPage"
+                            class="go-btn"
+                            aria-label="특정 페이지로 이동"
+                        >
+                            이동
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
-import { ref, computed, inject } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useBondStore } from '@/store/modules/bond.js'; // Pinia bond store 사용
+import { useFundStore } from '@/store/modules/fund.js'; // Pinia fund store 사용
+import { useCartStore } from '@/store/modules/cart.js'; // Pinia cart store 사용
+import { useAuthStore } from '@/store/authStore';
+import { useRouter, useRoute } from 'vue-router';
+import { increaseAgeGroupProductHit, increasePreferenceProductHit } from '@/api/hit';
+import * as financeApi from '@/api/financeApi';
+import StockList from '@/views/stock/StockList.vue';
+import StockSearch from '@/views/stock/StockSearch.vue';
+import SortIndicator from '@/components/SortIndicator.vue'; // SortIndicator 컴포넌트 임포트
+import bankData from '@/assets/banks.json';
 
 export default {
-  name: 'FinancialProducts',
-  setup() {
-    const searchQuery = ref('');
-    const selectedCategory = ref('');
-    const cart = inject('cart');
+    name: 'FinancialProducts',
+    components: {
+        StockList,
+        StockSearch,
+        SortIndicator, // SortIndicator 컴포넌트 등록
+    },
 
-    if (!cart) {
-      throw new Error('Cart not provided');
-    }
+    setup() {
+        const bondStore = useBondStore(); // Pinia bond store 호출
+        const fundStore = useFundStore(); // Pinia fund store 호출
+        const cartStore = useCartStore(); // Pinia cart store 호출
+        const authStore = useAuthStore();
+        const showInvestmentTestDialog = ref(false);
 
-    const products = ref([
-      { id: 1, name: '정기예금 A', type: 'savings' },
-      { id: 2, name: '국채 B', type: 'bonds', yield: [1.2, 1.5, 1.8] },
-      { id: 3, name: '펀드 C', type: 'funds', yield: [3.2, 3.5, 3.8] },
-      { id: 4, name: '정기예금 D', type: 'savings' },
-      { id: 5, name: '회사채 E', type: 'bonds', yield: [2.1, 2.4, 2.7] },
-    ]);
+        const searchQuery = ref('');
+        const selectedCategory = ref('deposit');
 
-    const filteredProducts = computed(() => {
-      return products.value.filter((product) => {
-        const matchesCategory = selectedCategory.value
-          ? product.type === selectedCategory.value
-          : true;
-        const matchesSearch = product.name
-          .toLowerCase()
-          .includes(searchQuery.value.toLowerCase());
-        return matchesCategory && matchesSearch;
-      });
-    });
+        const cartItem = ref({
+            productId: '',
+            productType: '',
+            provider: '',
+            productName: '',
+            expectedReturn: '',
+            rsrvType: '',
+        });
 
-    const addToCart = (product) => {
-      if (cart) {
-        cart.value.push(product);
-        alert(`${product.name}이 장바구니에 추가되었습니다.`);
-      }
-    };
+        const cart = ref([]);
 
-    return {
-      searchQuery,
-      selectedCategory,
-      filteredProducts,
-      addToCart,
-    };
-  },
+        const displayedProducts = ref([]);
+        const currentPage = ref(1);
+        const pageSize = ref(10);
+        const totalPages = ref(1);
+        const isLoading = ref(false);
+        const error = ref(null);
+        const isSearched = ref(false);
+
+        const router = useRouter();
+        const route = useRoute();
+
+        const tabs = [
+            { label: '예금', value: 'deposit' },
+            { label: '적금', value: 'saving' },
+            { label: '채권', value: 'bond' },
+            { label: '펀드', value: 'fund' },
+            { label: '주식', value: 'stock' },
+        ];
+
+        const activeButtonStyle = {
+            backgroundColor: '#3961e4',
+            color: 'white',
+        };
+
+        // 은행 로고 받아오기 경로
+        const logoBasePath = new URL('@/assets/img/bankLogo/', import.meta.url).href;
+
+        // 정렬 상태 관리
+        const sortField = ref(''); // 현재 정렬 기준 필드
+        const sortOrder = ref('asc'); // 현재 정렬 방향: 'asc' 또는 'desc'
+
+        // 페이지 이동을 위한 goToPage
+        const goToPage = ref(1);
+
+        // 필드 매핑 함수 추가(프론트는 snake인데 백 저장 데이터들은 camel로 되어 있음.)
+        const getBackendSortField = (field) => {
+            const fieldMapping = {
+                // 펀드 카테고리 필드 매핑
+                companyNm: 'company_nm',
+                productNm: 'product_nm',
+                fundType: 'fund_type',
+                riskLevel: 'risk_level',
+                yield12: 'yield_12',
+                // 예금/적금 카테고리 필드 매핑
+                korCoNm: 'kor_co_nm',
+                finPrdtNm: 'fin_prdt_nm',
+                intrRate: 'intr_rate',
+                intrRate2: 'intr_rate2',
+                // 채권 카테고리 필드 매핑 (이미 필드명이 동일하므로 매핑 필요 없음)
+                // 필요한 경우 다른 필드 매핑 추가
+            };
+            return fieldMapping[field] || field;
+        };
+
+        // 테이블 헤더 클릭 시 정렬 처리 함수
+        const sortBy = (field) => {
+            if (sortField.value === field) {
+                // 같은 필드를 클릭하면 정렬 방향을 토글
+                sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+            } else {
+                // 새로운 필드를 클릭하면 정렬 기준을 변경하고 정렬 방향을 기본값으로 설정
+                sortField.value = field;
+                sortOrder.value = 'asc';
+            }
+
+            // 라우터 쿼리 파라미터 업데이트
+            router.push({
+                name: 'Products',
+                params: { category: selectedCategory.value },
+                query: {
+                    page: currentPage.value,
+                    pageSize: pageSize.value,
+                    sortField: sortField.value,
+                    sortOrder: sortOrder.value,
+                    search: searchQuery.value || undefined,
+                },
+            });
+
+            loadProducts();
+        };
+
+        // 상품 이름을 가져오는 함수
+        const getProductName = (product) => {
+            if (selectedCategory.value === 'bond') {
+                return product.isinCdNm || '상품명 없음';
+            } else if (selectedCategory.value === 'fund') {
+                return product.productNm || '상품명 없음';
+            } else {
+                return product.finPrdtNm || '상품명 없음';
+            }
+        };
+
+        // 상품 금리를 가져오는 함수
+        const getRate = (productId, term) => {
+            const product = displayedProducts.value.find((p) => p.productId === productId);
+            if (product && product.yield) {
+                // Find the rate for the specified term
+                const rate = product.yield.find((r) => r.saveTrm === term);
+                return rate || { intrRate: 0, intrRate2: 0 }; // Default rates if term is not found
+            }
+            return { intrRate: 0, intrRate2: 0 }; // Default rates if product or yield data is missing
+        };
+
+        // 상품 리스트 가져오기 (로드)
+        const loadProducts = async () => {
+            if (selectedCategory.value === 'stock') return;
+
+            isLoading.value = true;
+            error.value = null;
+
+            try {
+                let data;
+                const mappedSortField = getBackendSortField(sortField.value);
+
+                if (searchQuery.value) {
+                    if (selectedCategory.value === 'bond') {
+                        data = await financeApi.searchBondProduct(
+                            searchQuery.value,
+                            mappedSortField,
+                            sortOrder.value
+                        );
+                    } else if (selectedCategory.value === 'fund') {
+                        data = await financeApi.searchFundProduct(
+                            searchQuery.value,
+                            mappedSortField,
+                            sortOrder.value
+                        );
+                    } else if (selectedCategory.value === 'deposit') {
+                        data = await financeApi.searchDepositProduct(
+                            searchQuery.value,
+                            mappedSortField,
+                            sortOrder.value
+                        );
+                    } else if (selectedCategory.value === 'saving') {
+                        data = await financeApi.searchSavingProduct(
+                            searchQuery.value,
+                            mappedSortField,
+                            sortOrder.value
+                        );
+                    }
+                } else {
+                    // sortField, sortOrder 추가.
+                    if (selectedCategory.value === 'bond') {
+                        data = await financeApi.fetchBondProducts(
+                            currentPage.value,
+                            pageSize.value,
+                            mappedSortField,
+                            sortOrder.value
+                        );
+                    } else if (selectedCategory.value === 'fund') {
+                        data = await financeApi.fetchFundProducts(
+                            currentPage.value,
+                            pageSize.value,
+                            mappedSortField,
+                            sortOrder.value
+                        );
+                    } else if (
+                        selectedCategory.value === 'deposit' ||
+                        selectedCategory.value === 'saving'
+                    ) {
+                        // 예금/적금 상품과 관련 금리를 함께 가져옴
+                        data =
+                            selectedCategory.value === 'deposit'
+                                ? await financeApi.fetchDepositProducts(
+                                      currentPage.value,
+                                      pageSize.value,
+                                      mappedSortField,
+                                      sortOrder.value
+                                  )
+                                : await financeApi.fetchSavingProducts(
+                                      currentPage.value,
+                                      pageSize.value,
+                                      mappedSortField,
+                                      sortOrder.value
+                                  );
+
+                        // 금리가 포함되어 있는지 확인하고 productId로 매핑
+                        if (data.products && data.rates) {
+                            const productRatesMap = data.rates.reduce((acc, rate) => {
+                                if (!acc[rate.productId]) acc[rate.productId] = [];
+                                acc[rate.productId].push(rate);
+                                return acc;
+                            }, {});
+
+                            // 각 상품에 'yield' 속성으로 금리 매핑
+                            data.products = data.products.map((product) => ({
+                                ...product,
+                                yield: productRatesMap[product.productId] || [],
+                            }));
+                        }
+                    }
+                }
+
+                // 모든 상품에 카테고리 추가
+                if (data.products || data.items) {
+                    const productsWithCategory = (data.products || data.items).map((product) => ({
+                        ...product,
+                        type: selectedCategory.value,
+                    }));
+
+                    displayedProducts.value = productsWithCategory;
+                    filteredProducts.value = displayedProducts.value;
+                    totalPages.value = data.totalPages || 1;
+
+                    console.log(
+                        'Updated displayedProducts with category:',
+                        displayedProducts.value
+                    );
+                } else {
+                    displayedProducts.value = [];
+                    filteredProducts.value = [];
+                }
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                error.value = '조회된 상품이 없습니다.';
+            } finally {
+                isLoading.value = false;
+            }
+        };
+
+        // Page change method to handle route params
+        const changePage = (page) => {
+            if (page < 1 || page > totalPages.value) return;
+
+            router
+                .push({
+                    name: 'Products',
+                    params: { category: selectedCategory.value },
+                    query: {
+                        page,
+                        pageSize: pageSize.value,
+                        sortField: sortField.value,
+                        sortOrder: sortOrder.value,
+                        search: searchQuery.value || undefined, // 검색어가 있으면 포함
+                    },
+                })
+                .then(() => {
+                    console.log('라우터 변경 완료:', router.currentRoute.value.fullPath);
+                })
+                .catch((error) => {
+                    console.error('라우터 변경 중 오류:', error);
+                });
+        };
+
+        // 이전 페이지로 이동
+        const prevPage = () => {
+            if (currentPage.value > 1) {
+                changePage(currentPage.value - 1);
+            }
+        };
+
+        // 다음 페이지로 이동
+        const nextPage = () => {
+            if (currentPage.value < totalPages.value) {
+                changePage(currentPage.value + 1);
+            }
+        };
+
+        // 특정 페이지로 이동
+        const goToSpecificPage = () => {
+            if (goToPage.value >= 1 && goToPage.value <= totalPages.value) {
+                changePage(goToPage.value);
+            } else {
+                alert(`1에서 ${totalPages.value} 사이의 유효한 페이지 번호를 입력하세요.`);
+            }
+        };
+
+        const gotoDetail = (productId) => {
+            const productTypeMap = {
+                saving: 'saving',
+                bond: 'bond',
+                fund: 'fund',
+                deposit: 'deposit',
+            };
+
+            const productType = productTypeMap[selectedCategory.value] || 'deposit';
+
+            if (!productType) {
+                console.error('productType이 설정되지 않았습니다.');
+                return;
+            }
+
+            // 페이지를 맨 위로 스크롤
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth', // 부드럽게 스크롤
+            });
+
+            // 라우트 이동
+            router.push({
+                path: `/list/${productId}`,
+                query: { productType },
+            });
+        };
+
+        const isProductInCart = computed(() => {
+            return (productId) => {
+                if (Array.isArray(cartStore.cartItems)) {
+                    return cartStore.cartItems.some((item) => item.productId === productId);
+                }
+                return false;
+            };
+        });
+
+        // 수정된 alertCartAndIncreaseHit 함수
+        const alertCartAndIncreaseHit = async (product) => {
+            if (!authStore.isLoggedIn()) {
+                alert('로그인이 필요한 서비스입니다.');
+                router.push('/login');
+                return;
+            }
+
+            if (!authStore.isTested) {
+                showInvestmentTestDialog.value = true;
+                return;
+            }
+
+            toggleCartAndIncreaseHit(product);
+        };
+
+        // 장바구니 담는 메서드
+        const toggleCartAndIncreaseHit = async (product) => {
+            try {
+                await updateCart();
+                const isInCart = isProductInCart.value(product.productId);
+                console.log('isInCart:', isInCart);
+
+                if (isInCart) {
+                    // 장바구니에서 제거
+                    const cartItemToRemove = cartStore.cartItems.find(
+                        (item) => item.productId === product.productId
+                    );
+                    console.log('cartItemToRemove:', cartItemToRemove);
+
+                    if (cartItemToRemove && cartItemToRemove.productId) {
+                        await cartStore.removeCartItem(cartItemToRemove.productId);
+                        updateCart();
+                        alert(`상품이 장바구니에서 제거되었습니다.`);
+                    } else {
+                        console.error('cartItemToRemove가 존재하지 않습니다.');
+                    }
+                } else {
+                    // 장바구니에 추가
+                    const newCartItem = {
+                        productId: product.productId,
+                        productType: getProductType(product.type),
+                        provider: getProvider(product),
+                        productName: getProductName(product),
+                        expectedReturn: getExpectedReturn(product),
+                        rsrvType: product.type === 'saving' ? 'S' : null,
+                    };
+
+                    const addedItem = await cartStore.addCartItem(newCartItem);
+                    if (addedItem) {
+                        updateCart();
+                        alert(`상품 ID ${product.productId}이 장바구니에 추가되었습니다.`);
+                    }
+                }
+
+                // 조회수 증가
+                await increaseAgeGroupProductHit(product.productId);
+                await increasePreferenceProductHit(product.productId);
+            } catch (error) {
+                console.error('장바구니 상태 업데이트 또는 조회수 증가 오류 발생:', error);
+                alert('장바구니 작업 중 오류가 발생했습니다.');
+            }
+        };
+
+        // 각 타입별 정보 추출 함수
+        const getProductType = (type) => {
+            const typeMap = { saving: 'S', deposit: 'S', bond: 'B', fund: 'F' };
+            return typeMap[type] || '';
+        };
+
+        const getProvider = (product) => {
+            const providerMap = {
+                saving: product.korCoNm,
+                deposit: product.korCoNm,
+                bond: product.bondIsurNm,
+                fund: product.companyNm,
+            };
+            return providerMap[product.type] || '';
+        };
+
+        const getExpectedReturn = (product) => {
+            if (product.type === 'saving' || product.type === 'deposit') {
+                return getRate(product.productId, 12).intrRate2;
+            } else if (product.type === 'bond') {
+                return product.bondSrfcInrt;
+            } else if (product.type === 'fund') {
+                return product.yield12;
+            }
+            return '';
+        };
+
+        const filteredProducts = ref([]); // 필터링된 결과를 저장할 ref
+
+        const handleSearch = () => {
+            if (searchQuery.value.length >= 2) {
+                currentPage.value = 1;
+                router.push({
+                    name: 'Products',
+                    params: { category: selectedCategory.value },
+                    query: {
+                        page: currentPage.value,
+                        pageSize: pageSize.value,
+                        search: searchQuery.value,
+                    },
+                });
+                loadProducts();
+                isSearched.value = true;
+            } else {
+                alert('검색어는 2글자 이상이어야 합니다.');
+            }
+        };
+
+        const eraseFilter = () => {
+            searchQuery.value = '';
+            filteredProducts.value = displayedProducts.value;
+            isSearched.value = false; // 검색 상태 초기화
+            loadProducts(); // 지우기, 되돌리기 시 다시 로드
+        };
+
+        const selectTab = (category) => {
+            searchQuery.value = '';
+            selectedCategory.value = category;
+            currentPage.value = 1;
+            sortField.value = ''; // 정렬 기준 초기화
+            sortOrder.value = 'asc'; // 정렬 방향 초기화
+            router.push({
+                name: 'Products',
+                params: { category },
+                query: {
+                    page: 1,
+                    pageSize: pageSize.value,
+                    sortField: sortField.value,
+                    sortOrder: sortOrder.value,
+                },
+            });
+        };
+
+        const formatDate = (dateStr) => {
+            if (typeof dateStr !== 'string' || dateStr.length !== 8) {
+                return dateStr; // 형식이 맞지 않으면 원래 문자열 반환
+            }
+            const year = dateStr.slice(0, 4);
+            const month = dateStr.slice(4, 6);
+            const day = dateStr.slice(6, 8);
+            return `${year}-${month}-${day}`;
+        };
+
+        //로그인 했을 때만 장바구니 확인
+        const updateCart = async () => {
+            if (authStore.isAuthenticated) {
+                await cartStore.fetchCartItems();
+                cart.value = cartStore.cartItems;
+                console.log('cartStore.cartItems:', cartStore.cartItems);
+                console.log('cart:', cart.value);
+            } else {
+                cart.value = [];
+            }
+        };
+
+        const logoExists = (financialInstitution) => {
+            return bankData.some((bank) => bank.name === financialInstitution);
+        };
+
+        // 은행 이름에 맞는 로고 경로를 가져오는 함수
+        const getLogoPath = (financialInstitution) => {
+            const bank = bankData.find((bank) => bank.name === financialInstitution);
+            const logoPath = bank ? `${logoBasePath}/${bank.logo}` : '';
+            return logoPath;
+        };
+
+        const getColorStyle = (value) => {
+            if (value > 0) {
+                return { color: 'red' };
+            } else if (value < 0) {
+                return { color: 'blue' };
+            } else {
+                return { color: 'black' };
+            }
+        };
+
+        const columnCount = computed(() => {
+            switch (selectedCategory.value) {
+                case 'fund':
+                    return 6;
+                case 'deposit':
+                case 'saving':
+                case 'bond':
+                    return 5;
+                default:
+                    return 5; // 기본값 설정
+            }
+        });
+
+        // 투자성향 분석 페이지로 이동
+        const goToInvestmentTest = () => {
+            showInvestmentTestDialog.value = false;
+            router.push({ name: 'InvestmentTestStart' });
+        };
+
+        // 투자성향 분석 안내 대화상자 닫기
+        const closeInvestmentTestDialog = () => {
+            showInvestmentTestDialog.value = false;
+        };
+
+        // 채권 위험도 매핑
+        const mapRiskLevel = (level) => {
+            const riskLevels = {
+                1: '매우 높음',
+                2: '높음',
+                3: '다소 높음',
+                4: '보통',
+                5: '낮음',
+                6: '매우 낮음',
+            };
+            return riskLevels[level] || `알 수 없음 (${level}등급)`;
+        };
+
+        const getRiskLevelStyle = (level) => {
+            const colors = {
+                1: '#FF0000', // 빨간색
+                2: '#FF6600', // 주황색
+                3: '#FFCC00', // 노란색
+                4: '#CCFF00', // 연두색
+                5: '#66FF00', // 연한 초록색
+                6: '#00FF00', // 초록색
+            };
+            return { color: colors[level] || 'black' };
+        };
+
+        // 컴포넌트가 마운트될 때 장바구니 아이템을 불러옵니다.
+        onMounted(async () => {
+            await cartStore.fetchCartItems();
+            await loadProducts();
+        });
+
+        // 라우트 변경 감지 및 상품 로드
+        watch(
+            () => [
+                route.params.category,
+                route.query.page,
+                route.query.pageSize,
+                route.query.sortField,
+                route.query.sortOrder,
+                route.query.search,
+            ],
+            async ([newCategory, newPage, newPageSize, newSortField, newSortOrder, newSearch]) => {
+                console.log('watch로 경로 변경 감지:', newCategory, newPage, newPageSize);
+                selectedCategory.value = newCategory || 'all';
+                currentPage.value = parseInt(newPage) || 1;
+                pageSize.value = parseInt(newPageSize) || 10;
+                sortField.value = newSortField || '';
+                sortOrder.value = newSortOrder || 'asc';
+                searchQuery.value = newSearch || '';
+
+                await loadProducts(); // 상품 로드 완료 대기
+                await updateCart();
+            },
+            { immediate: true }
+        );
+
+        return {
+            searchQuery,
+            selectedCategory,
+            tabs,
+            filteredProducts,
+            eraseFilter,
+            gotoDetail,
+            currentPage,
+            totalPages,
+            changePage,
+            isLoading,
+            error,
+            handleSearch,
+            selectTab,
+            activeButtonStyle,
+            getProductName, // getProductName 함수 반환
+            getRate,
+            cart: cartStore.cartItems, // Pinia Store의 cartItems
+            toggleCartAndIncreaseHit,
+            isSearched,
+            formatDate,
+            sortBy, // sortBy 메서드 반환
+            sortField, // SortIndicator용 sortField 반환
+            sortOrder, // SortIndicator용 sortOrder 반환
+            alertCartAndIncreaseHit, // 장바구니에 담을지 여부 묻는 창
+            isProductInCart,
+            logoExists,
+            getLogoPath,
+            // 새로 추가된 페이지네이션 관련 속성 및 메서드
+            goToPage,
+            prevPage,
+            nextPage,
+            goToSpecificPage,
+            getColorStyle,
+            columnCount,
+            showInvestmentTestDialog,
+            goToInvestmentTest,
+            closeInvestmentTestDialog,
+            mapRiskLevel,
+            getRiskLevelStyle,
+        };
+    },
 };
 </script>
 
 <style scoped>
 .financial-products-container {
-  padding: 20px;
+    width: 80%;
+    padding: 20px;
+    margin: 0 auto;
+    margin-top: 40px;
 }
 
-.search-filter {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
 }
 
-.form-control {
-  flex: 1;
+.nav-button {
+    text-align: center;
+    width: 20%;
+    margin: 0;
 }
 
-.form-select {
-  flex: 0.3;
+.v-btn--active {
+    background-color: #7bd5c3 !important;
+    color: white !important;
 }
 
-.product-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+.search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 40px;
+    align-items: flex-start;
 }
 
-.product-card {
-  flex: 1 1 calc(33.333% - 20px);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
+.search-input {
+    width: 550px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: border-color 0.3s ease;
 }
 
-.card-body {
-  padding: 20px;
+.search-input:focus {
+    border-color: #5bc0de;
+    outline: none;
 }
 
-.btn-primary {
-  background-color: #007bff;
-  border: none;
+/* 정렬 가능한 헤더 스타일 */
+th {
+    cursor: pointer; /* 헤더가 클릭 가능함을 나타내기 위해 커서 변경 */
+    user-select: none; /* 텍스트 선택 방지 */
+    position: relative;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
+.search-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #7bd5c3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    background-color: #589f91;
+}
+
+.erase-filter-btn {
+    padding: 10px 15px;
+    margin-left: 10px;
+    background-color: #f0f0f0;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.erase-filter-btn:hover {
+    background-color: #ddd;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* 고정된 테이블 레이아웃 */
+}
+
+.table th:nth-child(1) {
+    width: 25%;
+}
+.table th:nth-child(2) {
+    width: 35%;
+}
+.table th:nth-child(3) {
+    width: 15%;
+}
+.table th:nth-child(4) {
+    width: 10%;
+}
+.table th:nth-child(5) {
+    width: 10%;
+}
+.table th:nth-child(6) {
+    width: 10%;
+}
+
+.table th,
+.table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden; /* 내용이 넘칠 경우 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용은 생략부호로 표시 */
+    white-space: normal; /* 텍스트 줄바꿈 방지 */
+    word-wrap: break-word;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.Detail-Link {
+    cursor: pointer;
+    color: #000000;
+}
+
+.Detail-Link:hover {
+    text-decoration: underline;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.pagination-btn {
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #7bd5c3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.pagination-btn.active {
+    background-color: #7bd5c3;
+    color: white;
+}
+
+.pagination-btn:hover {
+    background-color: #42ceb2;
+    color: white;
+}
+
+.pagination-btn:disabled {
+    background-color: #ccc;
+}
+
+.page-input {
+    width: 50px;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.sort-indicator {
+    margin-left: 5px;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+/* 장바구니 있는 상품 하이라이트 강조 */
+.in-cart {
+    background-color: rgb(123, 213, 195, 0.25);
+}
+
+/* 금융사 로고 스타일 */
+.financial-logo-bank {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    width: 100%; /* 테이블 셀 전체 너비 사용 */
+    height: 60px; /* 고정 높이 설정 */
+
+    overflow: hidden; /* 부모 요소가 초과하는 내용 숨기기 */
+}
+
+.financial-logo {
+    width: auto; /* 가로는 자동 조정 */
+    height: 100%; /* 부모 요소 높이에 맞추기 */
+    object-fit: contain; /* 이미지가 잘 맞도록 설정 */
+    max-height: 40px; /* 로고의 최대 높이 설정 */
+}
+
+/* 로고가 없을 시 기본 아이콘 스타일 */
+.financal-nonlogo-bank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 0; /* 여백 추가 */
+}
+
+.financal-nonlogo-bank v-avatar {
+    margin-right: 5px; /* 아이콘과 이름 간격 */
+}
+
+.stock-list {
+    position: relative;
+    top: -0px;
+}
+
+.stock-container {
+    position: relative;
+    width: 100%; /* 부모 컨테이너의 너비를 100%로 설정 */
+}
+
+.custom-dialog {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.investment-test-dialog {
+    background-color: white !important;
+    border-radius: 8px;
+}
+
+.v-dialog > .v-overlay__content > .v-card {
+    box-shadow: none;
+    border: 1px solid;
+}
+/* 배경 블러 효과 수정 */
+::v-deep .v-overlay__scrim {
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.info-message {
+    text-align: right; /* 우측 정렬 */
+    font-size: 14px; /* 폰트 크기 조정 */
+    color: #666666; /* 색상 조정 (회색 계열) */
 }
 </style>
